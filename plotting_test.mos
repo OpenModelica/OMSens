@@ -1,0 +1,30 @@
+loadString("
+class Model
+  parameter Real a=-1;
+  Real x(start=1);
+equation
+  der(x) = a*x;
+end Model;
+"); getErrorString();
+buildModel(Model, outputFormat="csv"); getErrorString();
+results := "time,x,\n";
+for a in -2:2 loop
+  str_a := String(a); getErrorString();
+  setInitXmlStartValue("Model_init.xml", "e", str_a , "Model_init.xml");
+  //str_cmd :="./Model -r=Model_res.mat -override a=" + str_a;
+  str_cmd :="./Model -r=Model_"+str_a+"res.csv -override a=" + str_a;
+  print(str_cmd + "\n"); getErrorString();
+  system(str_cmd, "output.txt"); getErrorString();
+  //res := readSimulationResult("Model_res.mat", x); getErrorString();
+  //print("---------------------------\n");
+  //print(String(size(res,2))+"\n"); getErrorString();
+  //plot(x,fileName="Model_res.mat",externalWindow=true);
+  //results := results + str_a + "," + String(res[size(res, 1), size(res, 2)]) + ",\n";
+  //closeSimulationResultFile();
+end for;
+//print(results); getErrorString();
+//writeFile("results.csv", results);
+//plot(x, true, "results.csv"); 
+
+//plot(v,fileName="BouncingBall_1_res.csv",externalWindow=false,forceOMPlot=true);
+//plot(h,fileName="BouncingBall_23_res.mat",externalWindow=true);
