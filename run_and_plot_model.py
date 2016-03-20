@@ -33,11 +33,10 @@
 import os
 from datetime import datetime
 import inspect
+import subprocess
+import re
 # My imports
-def currentDir():
-    return os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-def parentDir(dir_):
-    return os.path.dirname(dir_)
+import sweeping_mos_creator as swe_mos_creat
 
 
 import logging #en reemplazo de los prints
@@ -45,10 +44,39 @@ logger = logging.getLogger("--Run and Plot OpenModelica--") #un logger especific
 
 def main():
     output_path = makeOutputPath()
+    create_mos_kwargs = {
+        "mo_file":os.path.join(os.path.join(currentDir(),"resource"),"BouncingBall.mo"),
+        # "mo_file": "package.mo",
+        "model_name": "BouncingBall",
+        "sweep_var": "e",
+        # "sweep_var": "life_expect_norm",
+        "plot_var": "h",
+        # "plot_var": "nr_resources",
+        "initial": 0.7,
+        # "initial": 25,
+        "increment": 0.1,
+        # "increment": 1,
+        "iterations": 3,
+        # "iterations": 10,
+        "output_mos_path": os.path.join(output_path,"bball_sweep.mos"),
+        }
+    swe_mos_creat.createMos(**create_mos_kwargs)
+    runMosScript(create_mos_kwargs["output_mos_path"])
+    print("Script path:")
+    print(create_mos_kwargs["output_mos_path"])
+    removeTemporaryFiles(output_path,create_mos_kwargs["model_name"])
+
+
+
+def removeTemporaryFiles(folder_path,name_prefix):
+    for x in os.listdir(folder_path):
+        if re.match(name_prefix+'.*\.(c|o|h|makefile|log|libs|xml|json)$', x):
+            os.remove(os.path.join(folder_path,x))
 
 def makeOutputPath():
     dest_path = destPath()
     timestamp_dir = makeDirFromCurrentTimestamp(dest_path)
+    return timestamp_dir
 
 def makeDirFromCurrentTimestamp(dest_path):
     logger.debug("Making timestamp dir")
@@ -60,13 +88,30 @@ def makeDirFromCurrentTimestamp(dest_path):
     return new_folder_path
 def destPath():
     tmp_path = tmpPath()
-    return os.path.join(tmp_path,"csv_analysis")
+    return os.path.join(tmp_path,"modelica_outputs")
 def tmpPath():
     currentdir = currentDir()
     parentdir = parentDir(currentdir)
     # return os.path.join(parentdir,"tmp")
     return os.path.join(currentdir,"tmp")
+def currentDir():
+    return os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+def parentDir(dir_):
+    return os.path.dirname(dir_)
+def runMosScript(script_path):
+    # def callMMLWithCFGAndOutputNameToFolderPath(cfg_name,outputName,folder_path):
+    script_folder_path = os.path.dirname(script_path)
+    command = "{interpreter} {script_path}".format(interpreter="omc",script_path=script_path)
+    output = callCMDStringInPath(command,script_folder_path)
+    #POR AHORA NO NOS IMPORTA EL OUTPUT EN EL STDOUT:
+    # output_decoded = output.decode("UTF-8") #en un principio no nos importa el output
+    # return output_decoded
 
+
+def callCMDStringInPath(command,path):
+    process = subprocess.Popen(command,stdout=subprocess.PIPE,shell=True,cwd=path)
+    output = process.communicate()[0]
+    return output
 
 if __name__ == "__main__":
     main()

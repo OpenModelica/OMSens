@@ -2,8 +2,8 @@ def main():
     # model_name = "SystemDynamics.WorldDynamics.World3.Scenario_1"
     model_name = "BouncingBall"
     mos_kwargs = {
-        "input_path": "BouncingBall.mo",
-        # "input_path": "package.mo",
+        "mo_file": "BouncingBall.mo",
+        # "mo_file": "package.mo",
         "model_name": model_name, #Lo pongo aparte porque lo uso en el rm_everything
         "sweep_var": "e",
         # "sweep_var": "life_expect_norm",
@@ -15,14 +15,13 @@ def main():
         # "increment": 1,
         "iterations": 3,
         # "iterations": 10,
+        "output_mos_path": "bball_sweep.mos"
         }
-    final_str = mos_skeleton_str.format(**mos_kwargs)
-    output_mos_path = "bball_sweep.mos"
     # output_mos_path = "world3_sweep.mos"
+    createMos(**mos_kwargs)
+def createMos(mo_file,model_name,sweep_var,plot_var,initial,increment,iterations,output_mos_path):
+    final_str = mos_skeleton_str.format(mo_file=mo_file,model_name=model_name,sweep_var=sweep_var,plot_var=plot_var,initial=initial,increment=increment,iterations=iterations)
     writeStrToFile(final_str,output_mos_path)
-
-    #CREAR EL SH QUE BORRA TODO
-    writeStrToFile("rm {0}*{{.c,.o,.h,.makefile,.log,.libs,.xml,.json}}".format(model_name), "rm_everything.sh")
 
 
 
@@ -35,7 +34,7 @@ def writeStrToFile(str_,file_path):
 mos_skeleton_str = \
 """
 // load the file
-loadFile("{input_path}");
+loadFile("{mo_file}");
 getErrorString();
 // build the model once
 //buildModel({model_name});
@@ -52,12 +51,8 @@ for i in 1:{iterations} loop
   //system("{model_name}.exe -r="+file_name_i);
   system("./{model_name} -r="+file_name_i);
   getErrorString();
-  plot({plot_var},fileName=file_name_i,externalWindow=true);
+  //plot({plot_var},fileName=file_name_i,externalWindow=true);
 end for;
-
-//PARA BORRAR LOS ARCHIVOS TEMPORALES RESULTANTES(limpia la carpeta un poco)
-system("bash rm_everything.sh");
-//system("rm rm_everything.sh"); //si borro el borrador, despues de correr el .mos de nuevo no tengo forma de borrarlo.
 """
 
 
