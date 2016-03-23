@@ -36,70 +36,71 @@ import inspect
 import subprocess
 import re
 # My imports
-import sweeping_mos_creator as swe_mos_creat
+import mos_script_factory
 import plot_csv
+
+#Funcs for file:
+def currentDir():
+    return os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+def parentDir(dir_):
+    return os.path.dirname(dir_)
+#GLOBALS:
+_sys_dyn_package_path = os.path.join(os.path.join(os.path.join(currentDir(),"resource"),"SystemDynamics"),"package.mo")
+_world3_scenario_model_skeleton = "SystemDynamics.WorldDynamics.World3.Scenario_{scen_num}"
+_plot_var= "population"
+# "sweep_vars" has defaults for every scenario!! (but can be overriden passing a list of sweep_vars to initialFactoryForWorld3Scenario
+_initial = 2012
+_increment = 10
+_iterations=5
+_startTime= 1900 #variables used to indicate years to run the simulation (1900 to 2100 for example)
+_stopTime= 2500 #variables used to indicate years to run the simulation (1900 to 2100 for example)
 
 
 import logging #en reemplazo de los prints
 logger = logging.getLogger("--Run and Plot OpenModelica--") #un logger especifico para este modulo
 
 def main():
+    #The "root" output folder path.
     output_path = makeOutputPath()
-    # scenarios = [("scenario_2",world3Scenario2Info())]
-    scenarios = [("scenario_2",world3Scenario2Info()),
-                 ("scenario_3",world3Scenario3Info()),
-                 ("scenario_4",world3Scenario4Info()),
-                 ("scenario_5",world3Scenario5Info()),
-                 ("scenario_6",world3Scenario6Info()),
-                 ("scenario_7",world3Scenario7Info()),
-                 ("scenario_8",world3Scenario8Info()),
-                 ("scenario_9",world3Scenario9Info()),
-                 ]
-    #
-    doScenariosSet(scenarios, plot_var="population",initial=2002,increment=1,iterations=10,output_root_path=output_path )
+    #First run scenario 1 without sweeping anything and with 1 iteration (we use it as a base to compare):
+    initial_factory_for_scen_1 = initialFactoryForWorld3Scenario(scen_num=1,start_time=_startTime,stop_time=_stopTime)
+    doScenariosSet([("scenario_1",initial_factory_for_scen_1)], plot_var=_plot_var,initial=_initial,increment=_increment,iterations=1,output_root_path=output_path )
+    #Create scenarios from factory
+    scenarios = []
+    # for i in range(2,10):
+    for i in range(3,4):
+        initial_factory_for_scen_i = initialFactoryForWorld3Scenario(scen_num=i,start_time=_startTime,stop_time=_stopTime)
+        scenario_tuple =("scenario_"+str(i),initial_factory_for_scen_i)
+
+        scenarios.append(scenario_tuple)
+    doScenariosSet(scenarios, plot_var=_plot_var,initial=_initial,increment=_increment,iterations=_iterations,output_root_path=output_path )
 def doScenariosSet(scenarios,plot_var,initial,increment,iterations,output_root_path):
-    for folder_name,scenario_dict in scenarios:
+    for folder_name,initial_scen_factory in scenarios:
         os.makedirs(os.path.join(output_root_path,folder_name))
-        createSweepRunAndPlotForModelInfo(scenario_dict,plot_var=plot_var,initial=initial,increment=increment,iterations=iterations,output_folder_path=os.path.join(output_root_path,folder_name)  )
+        createSweepRunAndPlotForModelInfo(initial_scen_factory,plot_var=plot_var,initial=initial,increment=increment,iterations=iterations,output_folder_path=os.path.join(output_root_path,folder_name)  )
 
-def createSweepRunAndPlotForModelInfo(model_dict,plot_var,initial,increment,iterations,output_folder_path):
+#CREO QUE DE ACA PARA ABAJO ES INDEPENDIENTE DE WORLD3
+def createSweepRunAndPlotForModelInfo(mos_script_factory_inst,plot_var,initial,increment,iterations,output_folder_path):
     # I assume that model dict includes: mo_file, model_name, sweep_vars
-    mos_dict = model_dict.copy()
-    mos_dict["plot_var"] = plot_var
-    mos_dict["initial"] = initial
-    mos_dict["increment"] = increment
-    mos_dict["iterations"] = iterations
-    mos_dict["output_mos_path"] = os.path.join(output_folder_path,"mos_script.mos")
-
-#     create_mos_kwargs = {
-#         # "mo_file":os.path.join(os.path.join(currentDir(),"resource"),"BouncingBall.mo"),
-#         "mo_file": sys_dyn_path,
-#         # "model_name": "BouncingBall",
-#         "model_name": "SystemDynamics.WorldDynamics.World3.Scenario_1",
-#         # "sweep_var": "h",
-#         # "sweep_var": "t_fcaor_time",
-# # SET_t_policy_year       = changeyear ;
-#         "sweep_var": "life_expect_norm",
-#         # "plot_var": "h",
-#         "plot_var": "nr_resources",
-#         # "initial": 0.7,
-#         "initial": 25,
-#         # "increment": 0.1,
-#         "increment": 1,
-#         # "iterations": 3,
-#         "iterations": 10,
-#         "output_mos_path": os.path.join(output_path,"bball_sweep.mos"),
-#         }
-    swe_mos_creat.createMos(**mos_dict)
-    runMosScript(mos_dict["output_mos_path"])
+    output_mos_path = os.path.join(output_folder_path,"mos_script.mos")
+    mos_script_factory_inst.setSetting("plot_var",plot_var)
+    mos_script_factory_inst.setSetting("initial",initial)
+    mos_script_factory_inst.setSetting("increment",increment)
+    mos_script_factory_inst.setSetting("iterations",iterations)
+    mos_script_factory_inst.setSetting("output_mos_path",output_mos_path)
+    mos_script_factory_inst.writeToFile() #argument-less method for now
+    runMosScript(output_mos_path)
     print("Script path:")
-    print(mos_dict["output_mos_path"])
-    removeTemporaryFiles(output_folder_path,mos_dict["model_name"])
+    print(output_mos_path)
+    removeTemporaryFiles(output_folder_path)
     csv_files = csvFiles(output_folder_path)
     plots_folder_path =os.path.join(output_folder_path,"plots")
     os.makedirs(plots_folder_path)
     plot_path = os.path.join(plots_folder_path,plot_var+".svg")
-    plot_csv.plotVarFromCSVs(plot_var,csv_files,plot_path)
+    print(mos_script_factory_inst.initializedSettings())
+    sweeping_vars = mos_script_factory_inst.initializedSettings()["sweep_vars"]
+    plot_title = "Plot for var {plot_var} after sweeping {sweeping_vars_len} vars".format(plot_var=plot_var, sweeping_vars_len= len(sweeping_vars))
+    plot_csv.plotVarFromCSVs(plot_var,csv_files,plot_path,plot_title)
 
 # if iscenario == 4 then
 # SET_t_fcaor_time		= changeyear ;
@@ -107,60 +108,44 @@ def createSweepRunAndPlotForModelInfo(model_dict,plot_var,initial,increment,iter
 # SET_nr_resources_init = 2e12; // As in all scenarios other than 1
 # end if;
 
-def world3Scenario9Info():
-    scen_dict = world3CommonInfo()
-    scen_dict["sweep_vars"] = ["t_fcaor_time",
-        "t_fert_cont_eff_time",
-        "t_ind_equil_time",
-        "t_land_life_time",
-        "t_policy_year",
-        "t_zero_pop_grow_time"]
-    scen_dict["model_name"] = "SystemDynamics.WorldDynamics.World3.Scenario_9"
-    return scen_dict
-
-def world3Scenario8Info():
-    scen_dict = world3CommonInfo()
-    scen_dict["sweep_vars"] = ["t_fcaor_time",
-        "t_fert_cont_eff_time",
-        "t_ind_equil_time",
-        "t_policy_year",
-        "t_zero_pop_grow_time"]
-    scen_dict["model_name"] = "SystemDynamics.WorldDynamics.World3.Scenario_8"
-    return scen_dict
-def world3Scenario7Info():
-    scen_dict = world3CommonInfo()
-    scen_dict["sweep_vars"] = ["t_fcaor_time",
-        "t_fert_cont_eff_time",
-        "t_zero_pop_grow_time"]
-    scen_dict["model_name"] = "SystemDynamics.WorldDynamics.World3.Scenario_7"
-    return scen_dict
-def world3Scenario6Info():
-    scen_dict = world3CommonInfo()
-    scen_dict["sweep_vars"] = ["t_fcaor_time",
-        "t_land_life_time",
-        "t_policy_year"]
-    scen_dict["model_name"] = "SystemDynamics.WorldDynamics.World3.Scenario_6"
-    return scen_dict
-def world3Scenario5Info():
-    scen_dict = world3CommonInfo()
-    scen_dict["sweep_vars"] = ["t_fcaor_time",
-        "t_land_life_time",
-        "t_policy_year"]
-    scen_dict["model_name"] = "SystemDynamics.WorldDynamics.World3.Scenario_5"
-    return scen_dict
-def world3Scenario4Info():
-    scen_dict = world3CommonInfo()
-    scen_dict["sweep_vars"] = ["t_fcaor_time", "t_policy_year"]
-    scen_dict["model_name"] = "SystemDynamics.WorldDynamics.World3.Scenario_4"
-    return scen_dict
-def world3Scenario3Info():
-    scen_dict = world3CommonInfo()
-    scen_dict["sweep_vars"] = ["t_fcaor_time","t_policy_year"]
-    scen_dict["model_name"] = "SystemDynamics.WorldDynamics.World3.Scenario_3"
-    return scen_dict
+def initialFactoryForWorld3Scenario(scen_num,start_time,stop_time,sweep_vars=None):
+    initial_factory_for_scen_1 = initialFactoryForWorld3Scenario
+    #Get the mos script factory for a scenario number (valid from 1 to 11)
+    assert 1<=scen_num<=9 , "The scenario number must be between 1 and 9. Your input: {0}".format(scen_num)
+    if sweep_vars:
+        #If given a list of variables to sweep, don't use defaults
+        final_sweep_vars = sweep_vars
+    else:
+        #If NOT given a list of variables to sweep, use the defaults for that scenario
+        final_sweep_vars = defaultSweepVarsForScenario(scen_num)
+    model_name = _world3_scenario_model_skeleton.format(scen_num=scen_num) #global
+    initial_factory_dict = {
+        "mo_file": _sys_dyn_package_path, #Global
+        "sweep_vars": final_sweep_vars,
+        "model_name": model_name,
+        "startTime" : start_time,
+        "stopTime"  : stop_time
+        }
+    initial_factory = mos_script_factory.MosScriptFactory(initial_factory_dict)
+    return initial_factory
+def defaultSweepVarsForScenario(scen_num):
+    default_sweep_vars_dict = defaultSweepVarsDict()
+    return default_sweep_vars_dict[scen_num]
+def defaultSweepVarsDict():
+    default_sweep_vars_dict ={
+            9: ["t_fcaor_time", "t_fert_cont_eff_time", "t_zero_pop_grow_time", "t_ind_equil_time", "t_policy_year", "t_land_life_time"],
+            8: ["t_fcaor_time", "t_fert_cont_eff_time", "t_zero_pop_grow_time", "t_ind_equil_time", "t_policy_year"],
+            7: ["t_fcaor_time", "t_fert_cont_eff_time", "t_zero_pop_grow_time"],
+            6: ["t_fcaor_time", "t_policy_year", "t_land_life_time"],
+            5: ["t_fcaor_time", "t_policy_year", "t_land_life_time"],
+            4: ["t_fcaor_time", "t_policy_year"],
+            3: ["t_fcaor_time", "t_policy_year"],
+            2: ["t_fcaor_time"],
+            1: []
+            }
+    return default_sweep_vars_dict
 def world3Scenario2Info():
     scen_dict = world3CommonInfo()
-    scen_dict["sweep_vars"] = ["t_fcaor_time"]
     scen_dict["model_name"] = "SystemDynamics.WorldDynamics.World3.Scenario_2"
     return scen_dict
 
@@ -178,9 +163,9 @@ def csvFiles(folder_path):
             csv_files.append(os.path.join(folder_path,x))
     return csv_files
 
-def removeTemporaryFiles(folder_path,name_prefix):
+def removeTemporaryFiles(folder_path):
     for x in os.listdir(folder_path):
-        if re.match(name_prefix+'.*\.(c|o|h|makefile|log|libs|xml|json)$', x):
+        if re.match('.*\.(c|o|h|makefile|log|libs|json)$', x):
             os.remove(os.path.join(folder_path,x))
 
 def makeOutputPath():
@@ -204,10 +189,6 @@ def tmpPath():
     parentdir = parentDir(currentdir)
     # return os.path.join(parentdir,"tmp")
     return os.path.join(currentdir,"tmp")
-def currentDir():
-    return os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-def parentDir(dir_):
-    return os.path.dirname(dir_)
 def runMosScript(script_path):
     # def callMMLWithCFGAndOutputNameToFolderPath(cfg_name,outputName,folder_path):
     script_folder_path = os.path.dirname(script_path)

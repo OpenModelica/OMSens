@@ -28,10 +28,11 @@ def main():
     csvs_list = ["SystemDynamics.WorldDynamics.World3.Scenario_1_1_res.csv","SystemDynamics.WorldDynamics.World3.Scenario_1_2_res.csv"]
     plot_path = "tmp/plot.svg"
     var_name = "nr_resources"
+    plot_title = "Ploteo de archivito"
     # /ENTRADA
-    plotVarFromCSVs(var_name,csvs_list,plot_path)
-def plotVarFromCSVs(var_name,csvs_list,plot_path):
-    setupPlt("Time","f(x)","Ploteo de archivito")
+    plotVarFromCSVs(var_name,csvs_list,plot_path, plot_title)
+def plotVarFromCSVs(var_name,csvs_list,plot_path, plot_title):
+    setupPlt("Time","f(x)",plot_title)
 
     for file_path in csvs_list:
         data = readFromCSV(file_path)
