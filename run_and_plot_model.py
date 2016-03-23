@@ -98,7 +98,7 @@ def createSweepRunAndPlotForModelInfo(model_dict,plot_var,initial,increment,iter
     csv_files = csvFiles(output_folder_path)
     plots_folder_path =os.path.join(output_folder_path,"plots")
     os.makedirs(plots_folder_path)
-    plot_path = os.path.join(plots_folder_path,"sweep_plot.svg")
+    plot_path = os.path.join(plots_folder_path,plot_var+".svg")
     plot_csv.plotVarFromCSVs(plot_var,csv_files,plot_path)
 
 # if iscenario == 4 then
