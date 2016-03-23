@@ -24,23 +24,28 @@ import numpy as np
 import matplotlib.pyplot as plt
 def main():
     #ENTRADA:
-    file_names = ["BouncingBall_1_res.csv","BouncingBall_2_res.csv","BouncingBall_3_res.csv"]
+    # csvs_list = ["BouncingBall_1_res.csv","BouncingBall_2_res.csv","BouncingBall_3_res.csv"]
+    csvs_list = ["SystemDynamics.WorldDynamics.World3.Scenario_1_1_res.csv","SystemDynamics.WorldDynamics.World3.Scenario_1_2_res.csv"]
     plot_path = "tmp/plot.svg"
-    variable = "h"
+    var_name = "nr_resources"
     # /ENTRADA
+    plotVarFromCSVs(var_name,csvs_list,plot_path)
+def plotVarFromCSVs(var_name,csvs_list,plot_path):
     setupPlt("Time","f(x)","Ploteo de archivito")
 
-    for file_name in file_names:
-        data = readFromCSV(file_name)
-        label = "{prefix}_{suffix}".format(prefix=variable,suffix=file_name)
-        plt.plot(data["time"], data[variable], linewidth=0.5, linestyle='-', markersize=3,marker='o',label=label )
-        plt.legend(loc="best",fontsize="small")
+    for file_path in csvs_list:
+        data = readFromCSV(file_path)
+        file_name= file_path.split("/")[-1]
+        label = "{prefix}_{suffix}".format(prefix=var_name,suffix=file_name)
+        plt.plot(data["time"], data[var_name], linewidth=0.5, linestyle='-', markersize=0,marker='o',label=label )
+        # plt.legend(loc="best",fontsize="small")
+        plt.legend(loc="center left",fontsize="small",bbox_to_anchor=(1,0.5))
     plt.grid()
     saveAndClearPlt(plot_path)
 
 
-def readFromCSV(file_name):
-    data = np.genfromtxt(file_name, delimiter=',', skip_footer=10, names=True)
+def readFromCSV(file_path):
+    data = np.genfromtxt(file_path, delimiter=',', skip_footer=10, names=True)
     return data
 
 # def setupPlt(x_label,y_label,title,subtitle,footer):

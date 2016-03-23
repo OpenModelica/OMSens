@@ -1,26 +1,13 @@
 def main():
-    # model_name = "SystemDynamics.WorldDynamics.World3.Scenario_1"
-    model_name = "BouncingBall"
-    mos_kwargs = {
-        "mo_file": "BouncingBall.mo",
-        # "mo_file": "package.mo",
-        "model_name": model_name, #Lo pongo aparte porque lo uso en el rm_everything
-        "sweep_var": "e",
-        # "sweep_var": "life_expect_norm",
-        "plot_var": "h",
-        # "plot_var": "nr_resources",
-        "initial": 0.7,
-        # "initial": 25,
-        "increment": 0.1,
-        # "increment": 1,
-        "iterations": 3,
-        # "iterations": 10,
-        "output_mos_path": "bball_sweep.mos"
-        }
-    # output_mos_path = "world3_sweep.mos"
-    createMos(**mos_kwargs)
-def createMos(mo_file,model_name,sweep_var,plot_var,initial,increment,iterations,output_mos_path):
-    final_str = mos_skeleton_str.format(mo_file=mo_file,model_name=model_name,sweep_var=sweep_var,plot_var=plot_var,initial=initial,increment=increment,iterations=iterations)
+    pass
+def createMos(mo_file,model_name,sweep_vars,plot_var,initial,increment,iterations,output_mos_path):
+    first_half_str = first_half_skeleton.format(mo_file=mo_file,model_name=model_name,initial=initial,increment=increment,iterations=iterations)
+    middle_str = ""
+    for var in sweep_vars:
+        sweep_str = xml_settings_skeleton.format(model_name=model_name,sweep_var=var)
+        middle_str = middle_str + sweep_str
+    ending_str = call_skeleton.format(model_name=model_name)
+    final_str = first_half_str + middle_str + ending_str
     writeStrToFile(final_str,output_mos_path)
 
 
@@ -31,9 +18,8 @@ def writeStrToFile(str_,file_path):
     return 0
 
 
-mos_skeleton_str = \
-"""
-// load the file
+first_half_skeleton= \
+"""// load the file
 loadFile("{mo_file}");
 getErrorString();
 // build the model once
@@ -44,14 +30,18 @@ for i in 1:{iterations} loop
   // BouncingBall_init.xml file will be generated because of buildModel call above.
   // We update the parameter h start value from 0.7 to "0.7 + i".
   value := {initial} + i*{increment};
-  setInitXmlStartValue("{model_name}_init.xml", "{sweep_var}", String(value) , "{model_name}_init.xml");
+"""
+xml_settings_skeleton= \
+"""setInitXmlStartValue("{model_name}_init.xml", "{sweep_var}", String(value) , "{model_name}_init.xml");
   getErrorString();
-  // call the generated simulation code to produce a result file BouncingBall%i%_res.mat
+"""
+call_skeleton= \
+"""// call the generated simulation code to produce a result file BouncingBall%i%_res.mat
   file_name_i := "{model_name}_" + String(i) + "_res.csv";
   //system("{model_name}.exe -r="+file_name_i);
   system("./{model_name} -r="+file_name_i);
   getErrorString();
-  //plot({plot_var},fileName=file_name_i,externalWindow=true);
+  //plot(plot_var,fileName=file_name_i,externalWindow=true);
 end for;
 """
 
