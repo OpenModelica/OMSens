@@ -1,40 +1,12 @@
 #This is the main script for configuring, running and plotting a OpenModelica Sweep
-# 1) Set up run:
-#    a) Get .mo
-#    b) get initial configuration (standard config)
-#    c) get new parameters (parameters that differ from the standard)
-#    d) Choose between .mos script or OMPython:
-#       A) .mos:
-#          A.1) Create output folder (recycle "timestamp dir" from MML_Extra_Scripts)
-#          A.2) Create .mos file in output folder from .mos skeleton that includes the following:
-#               A.3.1) Build model: this will create a binary and a .xml file.
-#                      A.3.1.Alternate.1) If the model doesn't include an initial configuration and no .xml
-#                        file was created, create one yourself from 1.b).
-#                      A.3.Alternate.2) If the .xml file has the initial configuration from 1.b), then just
-#                        use it and don't do anything.
-#               A.3.2) Set the new parameters from 1.c) to the .xml file and run it
-#               A.3.3) repeat A.3.2) for all the sets of parameters.
-#         A.3) Run the .mos file with command omc
-#         A.4) Delete all the {model_name}* temporary files created by the build
-#       B) Very similar to A) but "live" with process comunication using OMPYthon instead of
-#          creating a .mos file
-#   e) Plot using python or OMPlot:
-#      A) Python:
-#         A.1) Get all the csv files and the variables to plot for each experiment
-#         A.2) Setup pyplot
-#         A.3) Get the data for a .csv using np
-#         A.4) plot using the variable to choose the column from the data, "variable_file" as label
-#              and column "time" as x axis
-#         A.5) repeat A.4) for all the variables
-#         A.6) repeat A.3)-A.5) for all the csvs
-#      B) OMPlot:
-#        a) Read Adeel's new mail and find out how to plot multiple experiments from the same model
-#           in the same plot
 import os
 from datetime import datetime
 import inspect
 import subprocess
 import re
+import logging #en reemplazo de los prints
+import sys
+logger = logging.getLogger("--Run and Plot OpenModelica--") #un logger especifico para este modulo
 # My imports
 import mos_script_factory
 import plot_csv
@@ -49,33 +21,41 @@ _sys_dyn_package_path = os.path.join(os.path.join(os.path.join(currentDir(),"res
 _world3_scenario_model_skeleton = "SystemDynamics.WorldDynamics.World3.Scenario_{scen_num}"
 _plot_var= "population"
 # "sweep_vars" has defaults for every scenario!! (but can be overriden passing a list of sweep_vars to initialFactoryForWorld3Scenario
-_initial = 2012
+_sweep_vars = [] #CHANGE TO NONE TO USE DEFAULTS!!!!
+_initial = 2042
 _increment = 10
-_iterations=5
+_iterations=1
 _startTime= 1900 #variables used to indicate years to run the simulation (1900 to 2100 for example)
 _stopTime= 2500 #variables used to indicate years to run the simulation (1900 to 2100 for example)
+_nr_resources_init = 2e12; # std value for scen_1 = 1e12. std value for scen_i for i>1= 2e12 (changes in this global affect only scenarios > 1)
+_run_first_scenario = False #if True, it runs the first scenario alone without sweeping anything. If false, it doesn't even run it
+_first_scen_to_run = 3 #Always >= than 2 to avoid pointless executing of a non-sweeping scenario
+_last_scen_to_run = 9 # Always <= than 9 (even though there are 11 official scenarios)
 
-
-import logging #en reemplazo de los prints
-logger = logging.getLogger("--Run and Plot OpenModelica--") #un logger especifico para este modulo
 
 def main():
+    logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
     #The "root" output folder path.
     output_path = makeOutputPath()
+    #Fixed parameter changes for all the runs:
     #First run scenario 1 without sweeping anything and with 1 iteration (we use it as a base to compare):
-    initial_factory_for_scen_1 = initialFactoryForWorld3Scenario(scen_num=1,start_time=_startTime,stop_time=_stopTime)
-    doScenariosSet([("scenario_1",initial_factory_for_scen_1)], plot_var=_plot_var,initial=_initial,increment=_increment,iterations=1,output_root_path=output_path )
+    if _run_first_scenario:
+        logger.debug("Running first scenario")
+        fixed_params = [] #No fixed changes for scenario 1
+        initial_factory_for_scen_1 = initialFactoryForWorld3Scenario(scen_num=1,start_time=_startTime,stop_time=_stopTime,fixed_params=fixed_params)
+        doScenariosSet([("scenario_1",initial_factory_for_scen_1)], plot_var=_plot_var,initial=_initial,increment=_increment,iterations=1,output_root_path=output_path )
     #Create scenarios from factory
     scenarios = []
-    # for i in range(2,10):
-    for i in range(3,4):
-        initial_factory_for_scen_i = initialFactoryForWorld3Scenario(scen_num=i,start_time=_startTime,stop_time=_stopTime)
+    for i in range(_first_scen_to_run,_last_scen_to_run+1):
+        fixed_params = [("nr_resources_init",_nr_resources_init)] #available resources doubled for scenarios later than 1
+        initial_factory_for_scen_i = initialFactoryForWorld3Scenario(scen_num=i,start_time=_startTime,stop_time=_stopTime,fixed_params=fixed_params,sweep_vars=_sweep_vars)
         scenario_tuple =("scenario_"+str(i),initial_factory_for_scen_i)
 
         scenarios.append(scenario_tuple)
     doScenariosSet(scenarios, plot_var=_plot_var,initial=_initial,increment=_increment,iterations=_iterations,output_root_path=output_path )
 def doScenariosSet(scenarios,plot_var,initial,increment,iterations,output_root_path):
     for folder_name,initial_scen_factory in scenarios:
+        logger.debug("Running scenario {folder_name}".format(folder_name=folder_name))
         os.makedirs(os.path.join(output_root_path,folder_name))
         createSweepRunAndPlotForModelInfo(initial_scen_factory,plot_var=plot_var,initial=initial,increment=increment,iterations=iterations,output_folder_path=os.path.join(output_root_path,folder_name)  )
 
@@ -89,30 +69,35 @@ def createSweepRunAndPlotForModelInfo(mos_script_factory_inst,plot_var,initial,i
     mos_script_factory_inst.setSetting("iterations",iterations)
     mos_script_factory_inst.setSetting("output_mos_path",output_mos_path)
     mos_script_factory_inst.writeToFile() #argument-less method for now
+    writeRunLog(mos_script_factory_inst.initializedSettings(), os.path.join(output_folder_path,"run_info.txt"))
     runMosScript(output_mos_path)
-    print("Script path:")
-    print(output_mos_path)
+    #REEMPLAZAR POR EL LOGGER!
+    # print("Script path:")
+    # print(output_mos_path)
     removeTemporaryFiles(output_folder_path)
     csv_files = csvFiles(output_folder_path)
     plots_folder_path =os.path.join(output_folder_path,"plots")
     os.makedirs(plots_folder_path)
     plot_path = os.path.join(plots_folder_path,plot_var+".svg")
-    print(mos_script_factory_inst.initializedSettings())
     sweeping_vars = mos_script_factory_inst.initializedSettings()["sweep_vars"]
     plot_title = "Plot for var {plot_var} after sweeping {sweeping_vars_len} vars".format(plot_var=plot_var, sweeping_vars_len= len(sweeping_vars))
     plot_csv.plotVarFromCSVs(plot_var,csv_files,plot_path,plot_title)
 
-# if iscenario == 4 then
-# SET_t_fcaor_time		= changeyear ;
-# SET_t_policy_year		= changeyear ;
-# SET_nr_resources_init = 2e12; // As in all scenarios other than 1
-# end if;
+def writeRunLog(run_settings_dict, output_path):
+    with open(output_path, 'w') as outputFile:
+        outputFile.write("""The whole "create mos, run it and plot it" script was run with the following settings"""+"\n")
+        outputFile.write("""<setting_name>:\n   <setting_value>"""+"\n")
+        outputFile.write("""\n""") #a space between explanation and the important things
+        for setting_name,setting_value in run_settings_dict.items():
+            setting_str = """{setting_name}:\n {setting_value}""".format(setting_name=setting_name,setting_value=setting_value)
+            outputFile.write(setting_str+"\n")
+    return 0
 
-def initialFactoryForWorld3Scenario(scen_num,start_time,stop_time,sweep_vars=None):
+def initialFactoryForWorld3Scenario(scen_num,start_time,stop_time,sweep_vars=None,fixed_params=[]):
     initial_factory_for_scen_1 = initialFactoryForWorld3Scenario
     #Get the mos script factory for a scenario number (valid from 1 to 11)
     assert 1<=scen_num<=9 , "The scenario number must be between 1 and 9. Your input: {0}".format(scen_num)
-    if sweep_vars:
+    if sweep_vars or isinstance(sweep_vars,list): #Have to use isinstance for empty lists
         #If given a list of variables to sweep, don't use defaults
         final_sweep_vars = sweep_vars
     else:
@@ -120,11 +105,12 @@ def initialFactoryForWorld3Scenario(scen_num,start_time,stop_time,sweep_vars=Non
         final_sweep_vars = defaultSweepVarsForScenario(scen_num)
     model_name = _world3_scenario_model_skeleton.format(scen_num=scen_num) #global
     initial_factory_dict = {
-        "mo_file": _sys_dyn_package_path, #Global
-        "sweep_vars": final_sweep_vars,
-        "model_name": model_name,
-        "startTime" : start_time,
-        "stopTime"  : stop_time
+        "mo_file"     : _sys_dyn_package_path, #Global
+        "sweep_vars"  : final_sweep_vars,
+        "model_name"  : model_name,
+        "startTime"   : start_time,
+        "stopTime"    : stop_time,
+        "fixed_params": fixed_params,
         }
     initial_factory = mos_script_factory.MosScriptFactory(initial_factory_dict)
     return initial_factory
@@ -195,10 +181,19 @@ def runMosScript(script_path):
     command = "{interpreter} {script_path}".format(interpreter="omc",script_path=script_path)
     output = callCMDStringInPath(command,script_folder_path)
     #POR AHORA NO NOS IMPORTA EL OUTPUT EN EL STDOUT:
+    folder_path = os.path.dirname(script_path)
+    omc_log_path = os.path.join(folder_path,"omc_log.txt")
     output_decoded = output.decode("UTF-8") #en un principio no nos importa el output
-    print(output_decoded)
+    writeOMCLog(output_decoded,omc_log_path)
+    logger.debug("OMC Log written to: {omc_log_path}".format(omc_log_path=omc_log_path))
     return output_decoded
 
+def writeOMCLog(log_str, output_path):
+    with open(output_path, 'w') as outputFile:
+        outputFile.write("""The following is the output from the OMC script runner from Open Modelica"""+"\n")
+        outputFile.write(10*"""-"""+"\n")
+        outputFile.write(log_str)
+        return 0
 
 def callCMDStringInPath(command,path):
     process = subprocess.Popen(command,stdout=subprocess.PIPE,shell=True,cwd=path)
