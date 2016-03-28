@@ -555,10 +555,10 @@ Utility models of the set of functions.
         //assert(x >= x_grid[1] and x <= x_grid[n], "Out of range.");
         assert(x >= x_grid[1] and x <= x_grid[n], "Out of range. Accuracy low. tiempo:"+String(time_)+" x: "+String(x)+" x_grid[1]: "+String(x_grid[1])+" x_grid[n]: "+String(x_grid[n]), AssertionLevel.warning);
         if x<x_grid[1] then
-            Modelica.Utilities.Streams.print("Entro a x<x_grid[1] en tiempo:"+String(time_)+" x: "+String(x)+" x_grid[1]: "+String(x_grid[1])+" x_grid[n]: "+String(x_grid[n]), "printlog.txt");
+            Modelica.Utilities.Streams.print("Entro a x<x_grid[1] en tiempo:"+String(time_)+" x: "+String(x)+" x_grid[1]: "+String(x_grid[1])+" x_grid[n]: "+String(x_grid[n]), "out_of_range_cases.txt");
             y:=y_grid[1];
         elseif x>x_grid[n] then
-            Modelica.Utilities.Streams.print("Entro a x>x_grid[n] en tiempo:"+String(time_)+" x: "+String(x)+" x_grid[1]: "+String(x_grid[1])+" x_grid[n]: "+String(x_grid[n]), "printlog.txt");
+            Modelica.Utilities.Streams.print("Entro a x>x_grid[n] en tiempo:"+String(time_)+" x: "+String(x)+" x_grid[1]: "+String(x_grid[1])+" x_grid[n]: "+String(x_grid[n]), "out_of_range_cases.txt");
             y:=y_grid[n];
         end if;
         for i in 1:n - 1 loop

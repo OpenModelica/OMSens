@@ -29,8 +29,8 @@ _startTime= 1900 #variables used to indicate years to run the simulation (1900 t
 _stopTime= 2500 #variables used to indicate years to run the simulation (1900 to 2100 for example)
 _nr_resources_init = 2e12; # std value for scen_1 = 1e12. std value for scen_i for i>1= 2e12 (changes in this global affect only scenarios > 1)
 _run_first_scenario = False #if True, it runs the first scenario alone without sweeping anything. If false, it doesn't even run it
-_first_scen_to_run = 3 #Always >= than 2 to avoid pointless executing of a non-sweeping scenario
-_last_scen_to_run = 9 # Always <= than 9 (even though there are 11 official scenarios)
+_first_scen_to_run = 4 #Always >= than 2 to avoid pointless executing of a non-sweeping scenario
+_last_scen_to_run = 4 # Always <= than 9 (even though there are 11 official scenarios)
 
 
 def main():
