@@ -36,7 +36,7 @@ def plotVarFromCSVs(var_name,csvs_list,plot_path, plot_title):
 
     for file_path in csvs_list:
         data = readFromCSV(file_path)
-        file_name= file_path.split("/")[-1]
+        file_name= file_path.split("/")[-1] #Creo que no funciona en MS-Win (barra distinta en paths)
         label = "{prefix}_{suffix}".format(prefix=var_name,suffix=file_name)
         plt.plot(data["time"], data[var_name], linewidth=0.5, linestyle='-', markersize=0,marker='o',label=label )
         # plt.legend(loc="best",fontsize="small")
