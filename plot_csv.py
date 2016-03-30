@@ -1,25 +1,5 @@
-# import matplotlib
-# matplotlib.use("SVG") # necesario para que escupa a archivo y no tire error
-# import matplotlib.pyplot as plt
-# import codecs
-# import sys
-# import os
-# import subprocess
-# import numpy #para usar sus arrays y sus masks
-# from datetime import datetime #to get time and date for folder name
-# import shutil #to copy files
-# #Hack to import packages in other folders
-# import inspect
-# currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-# parentdir = os.path.dirname(currentdir)
-# sys.path.insert(0, parentdir)
-# from input.yearlydata import YearlyData
-# from processing.datadiffer import DataDiffer
-# import logging #en reemplazo de los prints
-# logger = logging.getLogger("Plotter") #un logger especifico para este modulo
-
-# variables_dict_script_path = currentdir+"/../processing/variables-dict.py"
-####### Imports que seguro van:
+import logging #en reemplazo de los prints
+logger = logging.getLogger("--CSV Plotter--") #un logger especifico para este modulo
 import numpy as np
 import matplotlib.pyplot as plt
 def main():
@@ -32,6 +12,8 @@ def main():
     # /ENTRADA
     plotVarFromCSVs(var_name,csvs_list,plot_path, plot_title)
 def plotVarFromCSVs(var_name,csvs_list,plot_path, plot_title):
+    logger_plot_str = "Plotting:\n  plotvar:{var_name}\n  csvs:{csvs_list}\n path:{plot_path}".format(var_name=var_name,csvs_list=csvs_list,plot_path=plot_path)
+    logger.debug(logger_plot_str)
     setupPlt("Time","f(x)",plot_title)
 
     for file_path in csvs_list:
