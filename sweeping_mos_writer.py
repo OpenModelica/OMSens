@@ -31,31 +31,33 @@ def writeStrToFile(str_,file_path):
 
 load_and_build_skeleton= \
 """// load the file
+print("Loading file:{mo_file}\\n");
 loadFile("{mo_file}");
 getErrorString();
 // build the model once
 //buildModel({model_name});
+print("Building model:{model_name}\\n");
 buildModel({model_name}, startTime={startTime},stopTime={stopTime},outputFormat="csv");
 getErrorString();"""
 fixed_params_skeleton= \
-"""setInitXmlStartValue("{model_name}_init.xml", "{var_name}", String({value}) , "{model_name}_init.xml");
-  getErrorString();
 """
+setInitXmlStartValue("{model_name}_init.xml", "{var_name}", String({value}) , "{model_name}_init.xml");
+getErrorString();"""
 
 for_declaration_skeleton=\
-"""for i in 0:({iterations}-1) loop
-  value := {initial} + i*{increment};
 """
+for i in 0:({iterations}-1) loop
+  value := {initial} + i*{increment};"""
 sweeping_vars_skeleton= \
-"""\
+"""
   setInitXmlStartValue("{model_name}_init.xml", "{sweep_var}", String(value) , "{model_name}_init.xml");
   getErrorString();
 """
 call_and_endfor_skeleton= \
-"""\
+"""
   file_name_i := "{model_name}_" + String(i) + "_res.csv";
   cmd := "./{model_name} {omc_logger_flags} "+ "-r="+file_name_i;
-  print(cmd+"\n");
+  print("Running command: "+cmd+"\\n");
   system(cmd);
   getErrorString();
   //plot(plot_var,fileName=file_name_i,externalWindow=true);
