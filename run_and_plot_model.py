@@ -7,13 +7,13 @@ logger = logging.getLogger("--Run and Plot OpenModelica--") #un logger especific
 # My imports
 import plot_csv
 
-def createSweepRunAndPlotForModelInfo(mos_script_factory_inst,plot_var,initial,increment,iterations,output_folder_path):
-    # I assume that the script factory includes: mo_file, model_name, sweep_vars
+def createSweepRunAndPlotForModelInfo(mos_script_factory_inst,plot_var,initial,increment,iterations,output_folder_path,sweep_value_formula_skeleton):
     output_mos_path = os.path.join(output_folder_path,"mos_script.mos")
     mos_script_factory_inst.setSetting("plot_var",plot_var)
     mos_script_factory_inst.setSetting("initial",initial)
     mos_script_factory_inst.setSetting("increment",increment)
     mos_script_factory_inst.setSetting("iterations",iterations)
+    mos_script_factory_inst.setSetting("sweep_value_formula_skeleton",sweep_value_formula_skeleton)
     mos_script_factory_inst.setSetting("output_mos_path",output_mos_path)
     mos_script_factory_inst.writeToFile() #argument-less method for now
     writeRunLog(mos_script_factory_inst.initializedSettings(), os.path.join(output_folder_path,"run_info.txt"))

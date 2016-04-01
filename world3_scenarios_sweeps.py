@@ -16,6 +16,7 @@ _sweep_vars = None #CHANGE TO NONE TO USE DEFAULTS!!!!
 _initial = 2012
 _increment = 10
 _iterations=3
+_sweep_value_formula_skeleton = "{d[initial]} + i*{d[increment]}" #Example: "{d[initial]} + i*{d[increment]}". Using "d[x]" instead of just "x" is mandatory because of python's lack of better options. i is fixed by the for inside the .mos script and is the variable that increases from 0 to iterations-1 by 1
 _startTime= 1900 #variables used to indicate years to run the simulation (1900 to 2100 for example)
 _stopTime= 2500 #variables used to indicate years to run the simulation (1900 to 2100 for example)
 _nr_resources_init = 2e12; # std value for scen_1 = 1e12. std value for scen_i for i>1= 2e12 (changes in this global affect only scenarios > 1)
@@ -42,14 +43,14 @@ def main():
         scenario_tuple =("scenario_"+str(i),initial_factory_for_scen_i)
 
         scenarios.append(scenario_tuple)
-    doScenariosSet(scenarios, plot_var=_plot_var,initial=_initial,increment=_increment,iterations=_iterations,output_root_path=output_path )
+    doScenariosSet(scenarios, plot_var=_plot_var,initial=_initial,increment=_increment,iterations=_iterations,output_root_path=output_path, sweep_value_formula_skeleton=_sweep_value_formula_skeleton)
 
 #World3 specific:
-def doScenariosSet(scenarios,plot_var,initial,increment,iterations,output_root_path):
+def doScenariosSet(scenarios,plot_var,initial,increment,iterations,output_root_path,sweep_value_formula_skeleton=_sweep_value_formula_skeleton):
     for folder_name,initial_scen_factory in scenarios:
         logger.debug("Running scenario {folder_name}".format(folder_name=folder_name))
         os.makedirs(os.path.join(output_root_path,folder_name))
-        run_and_plot_model.createSweepRunAndPlotForModelInfo(initial_scen_factory,plot_var=plot_var,initial=initial,increment=increment,iterations=iterations,output_folder_path=os.path.join(output_root_path,folder_name)  )
+        run_and_plot_model.createSweepRunAndPlotForModelInfo(initial_scen_factory,plot_var=plot_var,initial=initial,increment=increment,iterations=iterations,output_folder_path=os.path.join(output_root_path,folder_name),sweep_value_formula_skeleton=sweep_value_formula_skeleton  )
 def initialFactoryForWorld3Scenario(scen_num,start_time,stop_time,sweep_vars=None,fixed_params=[]):
     initial_factory_for_scen_1 = initialFactoryForWorld3Scenario
     #Get the mos script factory for a scenario number (valid from 1 to 11)

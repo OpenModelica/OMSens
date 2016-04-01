@@ -6,23 +6,54 @@
 omc_logger_flags = ""
 def main():
     pass
-def createMos(mo_file,model_name,sweep_vars,plot_var,initial,increment,iterations,output_mos_path,startTime,stopTime,fixed_params):
+def createMos(mo_file,model_name,sweep_vars,plot_var,initial,increment,iterations,output_mos_path,startTime,stopTime,fixed_params,sweep_value_formula_skeleton):
+    load_and_build_str = strForLoadingAndBuilding(mo_file,model_name,startTime,stopTime)
+    fixed_params_str = strForFixedParams(fixed_params,model_name)
+    for_declaration_str = strForForDeclaration(iterations)
+    sweep_value_str = strForSweepValue(initial,increment,iterations,sweep_value_formula_skeleton)
+    sweeping_vars_str = strForSweepingVars(model_name,sweep_vars)
+    system_call_str = strForSystemCall(model_name,omc_logger_flags)
+    end_for_str = strForEndFor()
+    final_str = load_and_build_str + fixed_params_str + for_declaration_str + \
+                sweep_value_str    + sweeping_vars_str + system_call_str + \
+                end_for_str
+    writeStrToFile(final_str,output_mos_path)
+
+
+def strForLoadingAndBuilding(mo_file,model_name,startTime,stopTime):
     load_and_build_str = load_and_build_skeleton.format(mo_file=mo_file,model_name=model_name,startTime=startTime,stopTime=stopTime)
+    return load_and_build_str
+
+def strForFixedParams(fixed_params,model_name):
     fixed_params_str =""
     for var,value in fixed_params:
         set_param_str = fixed_params_skeleton.format(model_name=model_name,var_name=var,value=value)
         fixed_params_str = fixed_params_str + set_param_str
-    for_declaration_str = for_declaration_skeleton.format(initial=initial,increment=increment,iterations=iterations)
+    return fixed_params_str
+
+def strForForDeclaration(iterations):
+    for_declaration_str = for_declaration_skeleton.format(iterations=iterations)
+    return for_declaration_str
+
+def strForSweepValue(initial,increment,iterations,sweep_value_formula_skeleton):
+    d= {"initial":initial,"increment":increment,"iterations":iterations}
+    formula_inst = sweep_value_formula_skeleton.format(d=d)
+    sweep_value_str = "\n  value := "+ formula_inst + ";"
+    return sweep_value_str
+
+def strForSweepingVars(model_name,sweep_vars):
     sweeping_vars_str = ""
     for var in sweep_vars:
         var_sweep_str = sweeping_vars_skeleton.format(model_name=model_name,sweep_var=var)
         sweeping_vars_str = sweeping_vars_str + var_sweep_str
-    ending_str = call_and_endfor_skeleton.format(model_name=model_name,omc_logger_flags=omc_logger_flags)
-    final_str = load_and_build_str + fixed_params_str + for_declaration_str + sweeping_vars_str + ending_str
-    writeStrToFile(final_str,output_mos_path)
+    return sweeping_vars_str
+def strForSystemCall(model_name,omc_logger_flags):
+    system_call_str = system_call_skeleton.format(model_name=model_name,omc_logger_flags=omc_logger_flags)
+    return system_call_str
 
-
-
+def strForEndFor():
+    end_for_str = "\n end for;"
+    return end_for_str
 def writeStrToFile(str_,file_path):
     with open(file_path, 'w') as outputFile:
         outputFile.write(str_)
@@ -47,23 +78,20 @@ getErrorString();"""
 
 for_declaration_skeleton=\
 """
-for i in 0:({iterations}-1) loop
-  value := {initial} + i*{increment};"""
+for i in 0:({iterations}-1) loop"""
 sweeping_vars_skeleton= \
 """
   setInitXmlStartValue("{model_name}_init.xml", "{sweep_var}", String(value) , "{model_name}_init.xml");
   getErrorString();
 """
-call_and_endfor_skeleton= \
+system_call_skeleton= \
 """
   file_name_i := "{model_name}_" + String(i) + "_res.csv";
   cmd := "./{model_name} {omc_logger_flags} "+ "-r="+file_name_i;
   print("Running command: "+cmd+"\\n");
   system(cmd);
   getErrorString();
-  //plot(plot_var,fileName=file_name_i,externalWindow=true);
-end for;
-"""
+  //plot(plot_var,fileName=file_name_i,externalWindow=true);"""
 
 
 
