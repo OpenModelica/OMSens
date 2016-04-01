@@ -29,6 +29,7 @@ def writeStrToFile(str_,file_path):
     return 0
 
 
+#String skeletons: (the names inside "{ }" are variables)
 load_and_build_skeleton= \
 """// load the file
 print("Loading file:{mo_file}\\n");
