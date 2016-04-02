@@ -34,15 +34,3 @@ class MosScriptFactory():
         missing_settings = self.missingSettings()
         assert len(missing_settings)==0 , "You're missing settings:"+ str(missing_settings)
         sweeping_mos_writer.createMos(**self._settings_dict)
-
-
-#BORRAR DE ACA PARA ABAJO:
-    def invalidDict(self):
-        return {"mo_file": "asd",
-                "model_name": "asd",
-                "sweep_vars": "asd",
-                "plot_var": "asd",
-                "initial": "asd",
-                "increment": "asd",
-                "iterations": "asd",
-                "output_mos_path": "ads"}
