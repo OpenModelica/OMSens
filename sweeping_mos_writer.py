@@ -6,11 +6,11 @@
 omc_logger_flags = ""
 def main():
     pass
-def createMos(mo_file,model_name,sweep_vars,plot_var,initial,increment,iterations,output_mos_path,startTime,stopTime,fixed_params,sweep_value_formula_skeleton):
+def createMos(mo_file,model_name,sweep_vars,plot_var,iterations,output_mos_path,startTime,stopTime,fixed_params,sweep_value_formula_str):
     load_and_build_str = strForLoadingAndBuilding(mo_file,model_name,startTime,stopTime)
     fixed_params_str = strForFixedParams(fixed_params,model_name)
     for_declaration_str = strForForDeclaration(iterations)
-    sweep_value_str = strForSweepValue(initial,increment,iterations,sweep_value_formula_skeleton)
+    sweep_value_str = strForSweepValue(iterations,sweep_value_formula_str)
     sweeping_vars_str = strForSweepingVars(model_name,sweep_vars)
     system_call_str = strForSystemCall(model_name,omc_logger_flags)
     end_for_str = strForEndFor()
@@ -35,10 +35,8 @@ def strForForDeclaration(iterations):
     for_declaration_str = for_declaration_skeleton.format(iterations=iterations)
     return for_declaration_str
 
-def strForSweepValue(initial,increment,iterations,sweep_value_formula_skeleton):
-    d= {"initial":initial,"increment":increment,"iterations":iterations}
-    formula_inst = sweep_value_formula_skeleton.format(d=d)
-    sweep_value_str = "\n  value := "+ formula_inst + ";"
+def strForSweepValue(iterations,sweep_value_formula_str):
+    sweep_value_str = "\n  value := "+ sweep_value_formula_str + ";"
     return sweep_value_str
 
 def strForSweepingVars(model_name,sweep_vars):
