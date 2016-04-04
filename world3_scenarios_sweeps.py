@@ -7,44 +7,33 @@ import mos_script_factory
 import run_and_plot_model
 import files_aux
 
-#GLOBALS:
+##### GLOBALS: #####
 _sys_dyn_package_path = os.path.join(os.path.join(os.path.join(files_aux.currentDir(),"resource"),"SystemDynamics"),"package.mo")
 _world3_scenario_model_skeleton = "SystemDynamics.WorldDynamics.World3.Scenario_{scen_num}"
 _plot_var= "population"
+_startTime= 1900 # year to start the simulation (1900 example)
+_stopTime= 2500  # year to end the simulation (2100 for example)
+_scens_to_run = [1] #List of ints representing the scenarios to run (from 1 to 11).  Example: [1,2,3,4,5,6,7,8,9]
+_fixed_params = []  # Params changes that will be fixed throughout the sweep. Example: [("nr_resources_init",2e12)]
 # "sweep_vars" has defaults for every scenario!! (but can be overriden passing a list of sweep_vars to initialFactoryForWorld3Scenario
-_sweep_vars = None #CHANGE TO NONE TO USE DEFAULTS!!!!
-_iterations=3
-_sweep_value_formula_str = "{initial}*(({delta}/100)+i-({iterations}/2))".format(initial="2032",delta="(10/2032)",iterations="4") #Example: "2012 + i*10". Free variable: i (goes from 0 to (iterations-1) )
-_startTime= 1900 #variables used to indicate years to run the simulation (1900 to 2100 for example)
-_stopTime= 2500 #variables used to indicate years to run the simulation (1900 to 2100 for example)
-_nr_resources_init = 2e12; # std value for scen_1 = 1e12. std value for scen_i for i>1= 2e12 (changes in this global affect only scenarios > 1)
-_run_first_scenario = False #if True, it runs the first scenario alone without sweeping anything. If false, it doesn't even run it
-_first_scen_to_run = 4 #Always >= than 2 to avoid pointless executing of a non-sweeping scenario
-_last_scen_to_run = 4 # Always <= than 9 (even though there are 11 official scenarios)
+_sweep_vars= ["nr_resources_init"] # Set to None to use scenario specific defaults (year of application of policies)
+_sweep_value_formula_str = "1e12*((20/100)*i+1)" #Example: "2012 + i*10". Another example: "10*((5/100)*i+1)" Free variable: i (goes from 0 to (iterations-1) )
+_iterations = 6
 
 def main():
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
     #The "root" output folder path.
     output_path = files_aux.makeOutputPath()
-    #Fixed parameter changes for all the runs:
-    #First run scenario 1 without sweeping anything and with 1 iteration (we use it as a base to compare):
-    if _run_first_scenario:
-        logger.debug("Running first scenario")
-        fixed_params = [] #No fixed changes for scenario 1
-        initial_factory_for_scen_1 = initialFactoryForWorld3Scenario(scen_num=1,start_time=_startTime,stop_time=_stopTime,fixed_params=fixed_params)
-        doScenariosSet([("scenario_1",initial_factory_for_scen_1)], plot_var=_plot_var,iterations=1,output_root_path=output_path )
     #Create scenarios from factory
     scenarios = []
-    for i in range(_first_scen_to_run,_last_scen_to_run+1):
-        fixed_params = [("nr_resources_init",_nr_resources_init)] #available resources doubled for scenarios later than 1
-        initial_factory_for_scen_i = initialFactoryForWorld3Scenario(scen_num=i,start_time=_startTime,stop_time=_stopTime,fixed_params=fixed_params,sweep_vars=_sweep_vars)
+    for i in _scens_to_run:
+        initial_factory_for_scen_i = initialFactoryForWorld3Scenario(scen_num=i,start_time=_startTime,stop_time=_stopTime,fixed_params=_fixed_params,sweep_vars=_sweep_vars)
         scenario_tuple =("scenario_"+str(i),initial_factory_for_scen_i)
-
         scenarios.append(scenario_tuple)
     doScenariosSet(scenarios, plot_var=_plot_var,iterations=_iterations,output_root_path=output_path, sweep_value_formula_str=_sweep_value_formula_str)
 
 #World3 specific:
-def doScenariosSet(scenarios,plot_var,iterations,output_root_path,sweep_value_formula_str=_sweep_value_formula_str):
+def doScenariosSet(scenarios,plot_var,iterations,output_root_path,sweep_value_formula_str):
     for folder_name,initial_scen_factory in scenarios:
         logger.debug("Running scenario {folder_name}".format(folder_name=folder_name))
         os.makedirs(os.path.join(output_root_path,folder_name))
