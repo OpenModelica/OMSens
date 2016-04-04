@@ -22,8 +22,38 @@ def createSweepRunAndPlotForModelInfo(mos_script_factory_inst,plot_var,iteration
     os.makedirs(plots_folder_path)
     plot_path = os.path.join(plots_folder_path,plot_var+".svg")
     sweeping_vars = mos_script_factory_inst.initializedSettings()["sweep_vars"]
-    plot_title = "Plot for var {plot_var} after sweeping {sweeping_vars_len} vars".format(plot_var=plot_var, sweeping_vars_len= len(sweeping_vars))
-    plot_csv.plotVarFromCSVs(plot_var,csv_files,plot_path,plot_title)
+    # plot_title = "Plot for var {plot_var} after sweeping {sweeping_vars_len} vars".format(plot_var=plot_var, sweeping_vars_len= len(sweeping_vars))
+    # plot_csv.plotVarFromCSVs(plot_var,csv_files,plot_path,plot_title)
+    sweeping_info = sweepingInfoPerIteration(mos_script_factory_inst.initializedSettings())
+    plot_csv.plotVarFromSweepingInfo(plot_var,sweeping_info,plot_path)
+
+def sweepingInfoPerIteration(settings):
+    iterations      = settings["iterations"]
+    sweep_formula   = settings["sweep_value_formula_str"] #only variable should be i
+    model_name      = settings["model_name"]
+    output_mos_path = settings["output_mos_path"]
+    run_root_folder = os.path.dirname(output_mos_path)
+    sweep_vars = settings["sweep_vars"]
+    file_name_skeleton = "{model_name}_{i_str}_res.csv" #CAREFUL! Depends on harcoded string in sweeping_mos_writer.py
+    per_iter_info_dict = {}
+    for i in range(0,iterations):
+        iter_dict = {}
+        csv_name = file_name_skeleton.format(model_name=model_name,i_str=str(i))
+        csv_path = os.path.join(run_root_folder,csv_name)
+        iter_dict["file_path"]   = csv_path
+        iter_dict["sweep_value"] = eval(sweep_formula) # this eval uses i!!!
+        per_iter_info_dict[i] = iter_dict
+    sweeping_info_dict = {}
+    sweeping_info_dict["per_iter_info_dict"] = per_iter_info_dict
+    sweeping_info_dict["sweep_vars"] = sweep_vars
+    # BORRA DESDE ACA
+    # for i in range(0,iterations):
+    #     print("i:"+str(i))
+    #     iter_dict = per_iter_info_dict[i]
+    #     print("  file_path:"+str(iter_dict["file_path"]))
+    #     print("  sweep_value:"+str(iter_dict["sweep_value"]))
+    #BORRA HASTA ACA
+    return sweeping_info_dict
 
 def writeRunLog(run_settings_dict, output_path):
     with open(output_path, 'w') as outputFile:

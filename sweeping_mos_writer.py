@@ -73,7 +73,7 @@ fixed_params_skeleton= \
 """
 setInitXmlStartValue("{model_name}_init.xml", "{var_name}", String({value}) , "{model_name}_init.xml");
 getErrorString();"""
-
+#CAREFUL! run_and_plot_model.py assumes that i goes from 0 to (iterations-1)
 for_declaration_skeleton=\
 """
 for i in 0:({iterations}-1) loop"""
@@ -82,6 +82,7 @@ sweeping_vars_skeleton= \
   setInitXmlStartValue("{model_name}_init.xml", "{sweep_var}", String(value) , "{model_name}_init.xml");
   getErrorString();
 """
+#CAREFUL! Don't change file_name_i. May break everything (we assume in run_and_plot_model.py that the file_names will follow this standard)
 system_call_skeleton= \
 """
   file_name_i := "{model_name}_" + String(i) + "_res.csv";
@@ -89,7 +90,7 @@ system_call_skeleton= \
   print("Running command: "+cmd+"\\n");
   system(cmd);
   getErrorString();
-  //plot(plot_var,fileName=file_name_i,externalWindow=true);"""
+  //plot(plot_var,fileName=file_name_i,externalWindow=true);"""#CAREFUL! Don't change file_name_i. May break everything (we assume in run_and_plot_model.py that the file_names will follow this standard)
 
 
 
