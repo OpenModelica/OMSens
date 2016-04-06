@@ -13,11 +13,12 @@ _world3_scenario_model_skeleton = "SystemDynamics.WorldDynamics.World3.Scenario_
 _plot_var= "population"
 _startTime= 1900 # year to start the simulation (1900 example)
 _stopTime= 2500  # year to end the simulation (2100 for example)
-_scens_to_run = [1] #List of ints representing the scenarios to run (from 1 to 11).  Example: [1,2,3,4,5,6,7,8,9]
+_scens_to_run = [9] #List of ints representing the scenarios to run (from 1 to 11).  Example: [1,2,3,4,5,6,7,8,9]
 _fixed_params = []  # Params changes that will be fixed throughout the sweep. Example: [("nr_resources_init",2e12)]
 # "sweep_vars" has defaults for every scenario!! (but can be overriden passing a list of sweep_vars to initialFactoryForWorld3Scenario
-_sweep_vars= ["nr_resources_init"] # Set to None to use scenario specific defaults (year of application of policies)
-_sweep_value_formula_str = "1e12*((20/100)*i+1)" #Example: "2012 + i*10". Another example: "10*((5/100)*i+1)" Free variable: i (goes from 0 to (iterations-1) )
+_sweep_vars= None # Set to None to use scenario specific defaults (year of application of policies)
+# _sweep_value_formula_str = "1e12*((20/100)*i+1)" #Example: "2012 + i*10". Another example: "10*((5/100)*i+1)" Free variable: i (goes from 0 to (iterations-1) )
+_sweep_value_formula_str = "2012 + i*10"
 _iterations = 6
 
 def main():

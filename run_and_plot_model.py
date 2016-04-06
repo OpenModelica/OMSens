@@ -25,7 +25,8 @@ def createSweepRunAndPlotForModelInfo(mos_script_factory_inst,plot_var,iteration
     # plot_title = "Plot for var {plot_var} after sweeping {sweeping_vars_len} vars".format(plot_var=plot_var, sweeping_vars_len= len(sweeping_vars))
     # plot_csv.plotVarFromCSVs(plot_var,csv_files,plot_path,plot_title)
     sweeping_info = sweepingInfoPerIteration(mos_script_factory_inst.initializedSettings())
-    plot_csv.plotVarFromSweepingInfo(plot_var,sweeping_info,plot_path)
+    model_name_only = mos_script_factory_inst.initializedSettings()["model_name"].split(".")[-1]
+    plot_csv.plotVarFromSweepingInfo(plot_var,model_name_only,sweeping_info,plot_path)
 
 def sweepingInfoPerIteration(settings):
     iterations      = settings["iterations"]
