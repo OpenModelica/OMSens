@@ -7,6 +7,14 @@ import mos_script_factory
 import run_and_plot_model
 import files_aux
 
+#Aux for GLOBALS:
+## Skeletons of _sweep_value_formula_str. Free variable: i (goes from 0 to (_iterations-1) ):
+_increasing_by_increment_from_initial_skeleton = "{initial} + i*{increment}"
+_increasing_by_percentage_from_initial_skeleton = "{initial}*({percentage}/100*i+1)"
+def deltaBeforeAndAfter(p,iterations,delta): #Have to create a function for "delta_before_and_after" because I have to convert to int in python and not in the Modelica Scripting Language
+    iterations_div_2_int = int(iterations/2)
+    return "{p}*(1-{iterations_div_2_int}*{delta}) + {p}*({delta}*i)".format(p=p,iterations_div_2_int=iterations_div_2_int,delta=delta)
+
 ##### GLOBALS: #####
 _sys_dyn_package_path = os.path.join(os.path.join(os.path.join(files_aux.currentDir(),"resource"),"SystemDynamics"),"package.mo")
 _world3_scenario_model_skeleton = "SystemDynamics.WorldDynamics.World3.Scenario_{scen_num}"
@@ -14,12 +22,18 @@ _plot_var= "population"
 _startTime= 1900 # year to start the simulation (1900 example)
 _stopTime= 2500  # year to end the simulation (2100 for example)
 _scens_to_run = [9] #List of ints representing the scenarios to run (from 1 to 11).  Example: [1,2,3,4,5,6,7,8,9]
-_fixed_params = []  # Params changes that will be fixed throughout the sweep. Example: [("nr_resources_init",2e12)]
-# "sweep_vars" has defaults for every scenario!! (but can be overriden passing a list of sweep_vars to initialFactoryForWorld3Scenario
-_sweep_vars= None # Set to None to use scenario specific defaults (year of application of policies)
-# _sweep_value_formula_str = "1e12*((20/100)*i+1)" #Example: "2012 + i*10". Another example: "10*((5/100)*i+1)" Free variable: i (goes from 0 to (iterations-1) )
-_sweep_value_formula_str = "2012 + i*10"
 _iterations = 6
+_fixed_params = []  # Params changes that will be fixed throughout the sweep. Example: [("nr_resources_init",2e12)]
+# "sweep_vars" has defaults for every scenario!! (but can be overriden passing a list of sweep_vars to initialFactoryForWorld3Scenario)
+_sweep_vars= None # Set to None to use scenario specific defaults (year of application of policies). Examples: None, ["nr_resources_init"]
+# _sweep_value_formula_str = deltaBeforeAndAfter(p=1e12,delta=0.1,iterations=_iterations) #Has to be a string with only free variable "i"
+_sweep_value_formula_str = _increasing_by_increment_from_initial_skeleton.format(initial=2012,increment=10) # "2012 + i*10" --> 2012,2022,2032...
+## Examples:
+# _sweep_value_formula_str = _increasing_by_increment_from_initial_skeleton.format(initial=2012,increment=10) # "2012 + i*10" --> 2012,2022,2032...
+# _sweep_value_formula_str = _increasing_by_percentage_from_initial_skeleton.format(initial=1e12,percentage=20) # "1e12*((20/100)*i+1)" --> 1e12, 1.2e12, 1.4e12 ...
+# _sweep_value_formula_str = deltaBeforeAndAfter(p=10,delta=0.01,iterations=_iterations) # '10*(1-3*0.01) + 10*(0.01*i)' --> 9.7, 9.8, 9.9, 10, 10.1 ....
+
+
 
 def main():
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
