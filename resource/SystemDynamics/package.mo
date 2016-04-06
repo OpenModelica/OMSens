@@ -546,6 +546,8 @@ Utility models of the set of functions.
         //NUEVO: le pasamos time para que podamos usarlo adentro de la funcion
         input Real time_;
         output Real y "Interpolated result";
+        //Nuevo: para no repetir tanto codigo:
+        String info_debug_base;
       protected
         Integer n;
       algorithm
@@ -554,20 +556,24 @@ Utility models of the set of functions.
         assert(size(x_grid, 1) == size(y_grid, 1), "Size mismatch");
         //assert(x >= x_grid[1] and x <= x_grid[n], "Out of range.");
         assert(x >= x_grid[1] and x <= x_grid[n], "Out of range. Accuracy low. tiempo:"+String(time_)+" x: "+String(x)+" x_grid[1]: "+String(x_grid[1])+" x_grid[n]: "+String(x_grid[n]), AssertionLevel.warning);
+        info_debug_base := " time:"+String(time_)+" x: "+String(x)+" x_grid[1]: "+String(x_grid[1])+" x_grid[n]: "+String(x_grid[n]);
         if x<x_grid[1] then
-            Modelica.Utilities.Streams.print("Entro a x<x_grid[1] en tiempo:"+String(time_)+" x: "+String(x)+" x_grid[1]: "+String(x_grid[1])+" x_grid[n]: "+String(x_grid[n]), "out_of_range_cases.txt");
-            y:=y_grid[1];
+            y:=y_grid[1]; // Uncomment this to use constant value for values outside of range
+            //y := y_grid[1] + (y_grid[2] - y_grid[1])  *((x - x_grid[1]) / (x_grid[2] - x_grid[1]));   // Extrapolates backwards using the first interval
+            Modelica.Utilities.Streams.print("x<x_grid[1] " +info_debug_base + " y: " + String(y) , "out_of_range_cases.txt");
         elseif x>x_grid[n] then
-            Modelica.Utilities.Streams.print("Entro a x>x_grid[n] en tiempo:"+String(time_)+" x: "+String(x)+" x_grid[1]: "+String(x_grid[1])+" x_grid[n]: "+String(x_grid[n]), "out_of_range_cases.txt");
-            y:=y_grid[n];
-        end if;
-        for i in 1:n - 1 loop
-          if x >= x_grid[i] and x <= x_grid[i + 1] then 
-            y:=y_grid[i] + (y_grid[i + 1] - y_grid[i]) * (x - x_grid[i]) / (x_grid[i + 1] - x_grid[i]);
-          else
+            y:=y_grid[n]; // Uncomment this to use constant value for values outside of range
+            //y := y_grid[n] + (y_grid[n] - y_grid[n-1])*((x - x_grid[n]) / (x_grid[n] - x_grid[n-1])); // Extrapolates forward using the last interval
+            Modelica.Utilities.Streams.print("x>x_grid[n] " +info_debug_base + " y: " + String(y) , "out_of_range_cases.txt");
+        else
+            for i in 1:n - 1 loop
+              if x >= x_grid[i] and x <= x_grid[i + 1] then 
+                y:=y_grid[i] + (y_grid[i + 1] - y_grid[i]) * (x - x_grid[i]) / (x_grid[i + 1] - x_grid[i]);
+              else
 
-          end if;
-        end for;
+              end if;
+            end for;
+        end if;
 
         // ORIGINAL:
         //assert(size(x_grid, 1) == size(y_grid, 1), "Size mismatch");
