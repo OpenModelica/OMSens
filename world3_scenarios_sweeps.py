@@ -14,6 +14,10 @@ _increasing_by_percentage_from_initial_skeleton = "{initial}*({percentage}/100*i
 def deltaBeforeAndAfter(p,iterations,delta): #Have to create a function for "delta_before_and_after" because I have to convert to int in python and not in the Modelica Scripting Language
     iterations_div_2_int = int(iterations/2)
     return "{p}*(1-{iterations_div_2_int}*{delta}) + {p}*({delta}*i)".format(p=p,iterations_div_2_int=iterations_div_2_int,delta=delta)
+## Examples:
+# sweep_value_formula_str = _increasing_by_increment_from_initial_skeleton.format(initial=2012,increment=10) # "2012 + i*10" --> 2012,2022,2032...
+# sweep_value_formula_str = _increasing_by_percentage_from_initial_skeleton.format(initial=1e12,percentage=20) # "1e12*((20/100)*i+1)" --> 1e12, 1.2e12, 1.4e12 ...
+# sweep_value_formula_str = deltaBeforeAndAfter(p=10,delta=0.01,iterations=_iterations) # '10*(1-3*0.01) + 10*(0.01*i)' --> 9.7, 9.8, 9.9, 10, 10.1 ....
 
 ##### GLOBALS: #####
 _sys_dyn_package_path = os.path.join(os.path.join(os.path.join(files_aux.currentDir(),"resource"),"SystemDynamics"),"package.mo")
@@ -22,10 +26,6 @@ _plot_var= "population"
 _startTime= 1900 # year to start the simulation (1900 example)
 _stopTime= 2500  # year to end the simulation (2100 for example)
 _scens_to_run = [1,2,3,4,5,6,7,8,9] #List of ints representing the scenarios to run (from 1 to 11).  Example: [1,2,3,4,5,6,7,8,9]
-## Examples:
-# sweep_value_formula_str = _increasing_by_increment_from_initial_skeleton.format(initial=2012,increment=10) # "2012 + i*10" --> 2012,2022,2032...
-# sweep_value_formula_str = _increasing_by_percentage_from_initial_skeleton.format(initial=1e12,percentage=20) # "1e12*((20/100)*i+1)" --> 1e12, 1.2e12, 1.4e12 ...
-# sweep_value_formula_str = deltaBeforeAndAfter(p=10,delta=0.01,iterations=_iterations) # '10*(1-3*0.01) + 10*(0.01*i)' --> 9.7, 9.8, 9.9, 10, 10.1 ....
 
 def main():
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
@@ -39,15 +39,7 @@ def testDeltaNRResources():
     sweep_vars= ["nr_resources_init"] # Set to None to use scenario specific defaults (year of application of policies). Examples: None, ["nr_resources_init"]
     sweep_value_formula_str = deltaBeforeAndAfter(p=1e12,delta=0.1,iterations=iterations) #Has to be a string with only free variable "i"
     fixed_params = []  # Params changes that will be fixed throughout the sweep. Example: [("nr_resources_init",2e12)]
-    #The "root" output folder path.
-    output_path = files_aux.makeOutputPath()
-    #Create scenarios from factory
-    scenarios = []
-    for i in _scens_to_run:
-        initial_factory_for_scen_i = initialFactoryForWorld3Scenario(scen_num=i,start_time=_startTime,stop_time=_stopTime,fixed_params=fixed_params,sweep_vars=sweep_vars)
-        scenario_tuple =("scenario_"+str(i),initial_factory_for_scen_i)
-        scenarios.append(scenario_tuple)
-    doScenariosSet(scenarios, plot_var=_plot_var,iterations=iterations,output_root_path=output_path, sweep_value_formula_str=sweep_value_formula_str)
+    setUpSweepsAndRun(iterations,sweep_vars,sweep_value_formula_str,fixed_params)
 
 def testYears():
     iterations = 6
@@ -55,6 +47,10 @@ def testYears():
     sweep_vars= None # Set to None to use scenario specific defaults (year of application of policies). Examples: None, ["nr_resources_init"]
     sweep_value_formula_str = _increasing_by_increment_from_initial_skeleton.format(initial=2012,increment=10) # "2012 + i*10" --> 2012,2022,2032...
     fixed_params = []  # Params changes that will be fixed throughout the sweep. Example: [("nr_resources_init",2e12)]
+    setUpSweepsAndRun(iterations,sweep_vars,sweep_value_formula_str,fixed_params)
+
+#World3 specific:
+def setUpSweepsAndRun(iterations,sweep_vars,sweep_value_formula_str,fixed_params):
     #The "root" output folder path.
     output_path = files_aux.makeOutputPath()
     #Create scenarios from factory
@@ -64,8 +60,6 @@ def testYears():
         scenario_tuple =("scenario_"+str(i),initial_factory_for_scen_i)
         scenarios.append(scenario_tuple)
     doScenariosSet(scenarios, plot_var=_plot_var,iterations=iterations,output_root_path=output_path, sweep_value_formula_str=sweep_value_formula_str)
-
-#World3 specific:
 def doScenariosSet(scenarios,plot_var,iterations,output_root_path,sweep_value_formula_str):
     for folder_name,initial_scen_factory in scenarios:
         logger.debug("Running scenario {folder_name}".format(folder_name=folder_name))
