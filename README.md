@@ -11,8 +11,8 @@ If errors occur, it's likely because of a missing python module. Install the pyt
 If the script is run in %dir%, then this script will create an output folder with
 path
 
-    %dir$/tmp/modelica_outputs/<date>/<time>/
- 
+    %dir%/tmp/modelica_outputs/<date>/<time>/
+
 There, if running the world3 predefined sweeps (i.e. those offered as inline examples in world3\_scenarios\_sweeps.py), it will create a new folder scenario\_<i> for each scenario ran, and inside those folders:
 
   - A .mos script that loads the Modelica Model, sets the fixed initial
