@@ -5,8 +5,6 @@ import logging
 logger = logging.getLogger("--Files aux funcs--") #un logger especifico para este modulo
 
 # Functions to get current directory, create folder, create "tmp" folder to dump results, etc
-def currentDir():
-    return os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 def parentDir(dir_):
     return os.path.dirname(dir_)
 def makeOutputPath():
@@ -26,7 +24,7 @@ def destPath():
     tmp_path = tmpPath()
     return os.path.join(tmp_path,"modelica_outputs")
 def tmpPath():
-    currentdir = currentDir()
+    currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
     parentdir = parentDir(currentdir)
-    # return os.path.join(parentdir,"tmp")
-    return os.path.join(currentdir,"tmp")
+    return os.path.join(parentdir,"tmp")
+    # return os.path.join(currentdir,"tmp")

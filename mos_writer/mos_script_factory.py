@@ -1,6 +1,6 @@
 import inspect
 #Mine:
-import sweeping_mos_writer
+import mos_writer.sweeping_mos_writer as sweeping_mos_writer
 class MosScriptFactory():
     #Init
     def __init__(self,settings_dict):

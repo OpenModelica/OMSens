@@ -6,7 +6,7 @@ import platform
 import logging #en reemplazo de los prints
 logger = logging.getLogger("--Run and Plot OpenModelica--") #un logger especifico para este modulo
 # My imports
-import plot_csv
+import plotting.plot_csv as plot_csv
 
 #Globals:
 _interpreter_windows= "%OPENMODELICAHOME%\\bin\\omc"
