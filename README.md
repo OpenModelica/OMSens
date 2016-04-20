@@ -1,5 +1,6 @@
 # Reqs
 - Python 3 with some extra libraries. (anaconda3 includes all the dependencies)
+- OpenModelica basic install (with "omc" command in path). The SystemDynamics library is included in this repo and the one included in the complete install is not needed (or used)
 - Linux (hasn't been tested on Windows yet)
 # How to:
 ## Run:
