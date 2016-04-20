@@ -2,13 +2,20 @@
 import os
 import subprocess
 import re
+import platform
 import logging #en reemplazo de los prints
 logger = logging.getLogger("--Run and Plot OpenModelica--") #un logger especifico para este modulo
 # My imports
 import plot_csv
 
+#Globals:
+_interpreter_windows= "%OPENMODELICAHOME%\\bin\\omc"
+_interpreter_linux = "omc"
+
 def createSweepRunAndPlotForModelInfo(mos_script_factory_inst,plot_var,iterations,output_folder_path,sweep_value_formula_str):
     output_mos_path = os.path.join(output_folder_path,"mos_script.mos")
+	# EL scripting de modelica se rompe con la backslash (aunque estemos en windows). Hay que mandar la de unix nomas:
+    output_mos_path = output_mos_path.replace("\\","/")
     mos_script_factory_inst.setSetting("plot_var",plot_var)
     mos_script_factory_inst.setSetting("iterations",iterations)
     mos_script_factory_inst.setSetting("sweep_value_formula_str",sweep_value_formula_str)
@@ -80,7 +87,17 @@ def removeTemporaryFiles(folder_path):
 
 def runMosScript(script_path):
     script_folder_path = os.path.dirname(script_path)
-    command = "{interpreter} {script_path}".format(interpreter="omc",script_path=script_path)
+    #Check if windows or linux:
+    if platform.system() == "Linux":
+        interpreter = _interpreter_linux
+    elif platform.system() == "Windows":
+        interpreter = _interpreter_windows
+    else:
+        logger.error("This script was tested only on Windows and Linux. The omc interpreter for another platform has not been set")
+
+    command = "{interpreter} {script_path}".format(interpreter=interpreter,script_path=script_path)
+    print("interpreter:"+interpreter)
+    print("script_path:"+script_path)
     output = callCMDStringInPath(command,script_folder_path)
     folder_path = os.path.dirname(script_path)
     omc_log_path = os.path.join(folder_path,"omc_log.txt")

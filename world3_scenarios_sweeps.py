@@ -25,12 +25,12 @@ _world3_scenario_model_skeleton = "SystemDynamics.WorldDynamics.World3.Scenario_
 _plot_var= "population"
 _startTime= 1900 # year to start the simulation (1900 example)
 _stopTime= 2500  # year to end the simulation (2100 for example)
-_scens_to_run = [1,2,3,4,5,6,7,8,9] #List of ints representing the scenarios to run (from 1 to 11).  Example: [1,2,3,4,5,6,7,8,9]
+_scens_to_run = [1] #List of ints representing the scenarios to run (from 1 to 11).  Example: [1,2,3,4,5,6,7,8,9]
 
 def main():
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
     testYears()
-    testDeltaNRResources()
+    #testDeltaNRResources()
 
 ## Predefined tests
 def testDeltaNRResources():
@@ -42,7 +42,7 @@ def testDeltaNRResources():
     setUpSweepsAndRun(iterations,sweep_vars,sweep_value_formula_str,fixed_params)
 
 def testYears():
-    iterations = 6
+    iterations = 2
 # "sweep_vars" has defaults for scenarios 1 to 9!! (but can be overriden passing a list of sweep_vars to initialFactoryForWorld3Scenario)
     sweep_vars= None # Set to None to use scenario specific defaults (year of application of policies). Examples: None, ["nr_resources_init"]
     sweep_value_formula_str = _increasing_by_increment_from_initial_skeleton.format(initial=2012,increment=10) # "2012 + i*10" --> 2012,2022,2032...
@@ -77,7 +77,7 @@ def initialFactoryForWorld3Scenario(scen_num,start_time,stop_time,sweep_vars=Non
         final_sweep_vars = defaultSweepVarsForScenario(scen_num)
     model_name = _world3_scenario_model_skeleton.format(scen_num=scen_num) #global
     initial_factory_dict = {
-        "mo_file"     : _sys_dyn_package_path, #Global
+        "mo_file"     : _sys_dyn_package_path.replace("\\","/"), #Global
         "sweep_vars"  : final_sweep_vars,
         "model_name"  : model_name,
         "startTime"   : start_time,

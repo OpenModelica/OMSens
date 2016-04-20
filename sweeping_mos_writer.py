@@ -1,3 +1,5 @@
+import platform
+
 #Posibles lv para el omc_logger:
 # LOG_DEBUG: muestra todos los valores leidos del .xml (3k lineas)
 # LOG_SOLVER: muestra informacion sobre la jacobiana
@@ -12,10 +14,10 @@ def createMos(mo_file,model_name,sweep_vars,plot_var,iterations,output_mos_path,
     for_declaration_str = strForForDeclaration(iterations)
     sweep_value_str = strForSweepValue(iterations,sweep_value_formula_str)
     sweeping_vars_str = strForSweepingVars(model_name,sweep_vars)
-    system_call_str = strForSystemCall(model_name,omc_logger_flags)
+    full_system_call_str = strForFullSystemCall(model_name,omc_logger_flags)
     end_for_str = strForEndFor()
     final_str = load_and_build_str + fixed_params_str + for_declaration_str + \
-                sweep_value_str    + sweeping_vars_str + system_call_str + \
+                sweep_value_str    + sweeping_vars_str + full_system_call_str + \
                 end_for_str
     writeStrToFile(final_str,output_mos_path)
 
@@ -45,9 +47,20 @@ def strForSweepingVars(model_name,sweep_vars):
         var_sweep_str = sweeping_vars_skeleton.format(model_name=model_name,sweep_var=var)
         sweeping_vars_str = sweeping_vars_str + var_sweep_str
     return sweeping_vars_str
-def strForSystemCall(model_name,omc_logger_flags):
-    system_call_str = system_call_skeleton.format(model_name=model_name,omc_logger_flags=omc_logger_flags)
-    return system_call_str
+def strForFullSystemCall(model_name,omc_logger_flags):
+    file_name_str = file_name_skeleton.format(model_name=model_name)
+    #cmd str
+    cmd_str = ""
+    if platform.system() == "Linux":
+        cmd_str= linux_cmd_skeleton.format(model_name=model_name,omc_logger_flags=omc_logger_flags)
+    elif platform.system() == "Windows":
+        cmd_str= windows_cmd_skeleton.format(model_name=model_name,omc_logger_flags=omc_logger_flags)
+    else:
+        logger.error("This script was tested only on Windows and Linux. The way to execute for another platform has not been set")
+    system_call_str = system_call_skeleton.format() #no parameters
+    full_system_call_str = file_name_str + cmd_str + system_call_str
+
+    return full_system_call_str
 
 def strForEndFor():
     end_for_str = "\n end for;"
@@ -83,10 +96,20 @@ sweeping_vars_skeleton= \
   getErrorString();
 """
 #CAREFUL! Don't change file_name_i. May break everything (we assume in run_and_plot_model.py that the file_names will follow this standard)
+file_name_skeleton= \
+"""
+  file_name_i := "{model_name}_" + String(i) + "_res.csv";"""
+#CAREFUL! Don't change file_name_i. May break everything (we assume in run_and_plot_model.py that the file_names will follow this standard)
+windows_cmd_skeleton= \
+"""
+  cmd := "{model_name}.exe {omc_logger_flags} "+ "-r="+file_name_i;"""
+#CAREFUL! Don't change file_name_i. May break everything (we assume in run_and_plot_model.py that the file_names will follow this standard)
+linux_cmd_skeleton= \
+"""
+  cmd := "./{model_name} {omc_logger_flags} "+ "-r="+file_name_i;"""
+#CAREFUL! Don't change file_name_i. May break everything (we assume in run_and_plot_model.py that the file_names will follow this standard)
 system_call_skeleton= \
 """
-  file_name_i := "{model_name}_" + String(i) + "_res.csv";
-  cmd := "./{model_name} {omc_logger_flags} "+ "-r="+file_name_i;
   print("Running command: "+cmd+"\\n");
   system(cmd);
   getErrorString();
