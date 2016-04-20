@@ -54,13 +54,6 @@ def sweepingInfoPerIteration(settings):
     sweeping_info_dict = {}
     sweeping_info_dict["per_iter_info_dict"] = per_iter_info_dict
     sweeping_info_dict["sweep_vars"] = sweep_vars
-    # BORRA DESDE ACA
-    # for i in range(0,iterations):
-    #     print("i:"+str(i))
-    #     iter_dict = per_iter_info_dict[i]
-    #     print("  file_path:"+str(iter_dict["file_path"]))
-    #     print("  sweep_value:"+str(iter_dict["sweep_value"]))
-    #BORRA HASTA ACA
     return sweeping_info_dict
 
 def writeRunLog(run_settings_dict, output_path):
@@ -96,8 +89,6 @@ def runMosScript(script_path):
         logger.error("This script was tested only on Windows and Linux. The omc interpreter for another platform has not been set")
 
     command = "{interpreter} {script_path}".format(interpreter=interpreter,script_path=script_path)
-    print("interpreter:"+interpreter)
-    print("script_path:"+script_path)
     output = callCMDStringInPath(command,script_folder_path)
     folder_path = os.path.dirname(script_path)
     omc_log_path = os.path.join(folder_path,"omc_log.txt")
