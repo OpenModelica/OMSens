@@ -35,12 +35,12 @@ def main():
     plot_path = "/home/adanos/Documents/tesis/prog/modelica_scripts/tmp/modelica_outputs/2016-04-06/12_05_41/scenario_9/plots/population.svg"
     plotVarFromSweepingInfo(var_name,model_name,sweeping_info,plot_path)
 
-def plotVarFromSweepingInfo(var_name,model_name,sweeping_info,plot_path):
+def plotVarFromSweepingInfo(var_name,model_name,sweeping_info,plot_path_without_extension):
     # print("var_name = "+str(var_name))
     # print("model_name = "+str(model_name))
     # print("sweeping_info = "+str(sweeping_info))
     # print("plot_path = "+str(plot_path))
-    logger_plot_str = "Plotting:\n  plotvar:{var_name}\n path:{plot_path}".format(var_name=var_name,plot_path=plot_path)
+    logger_plot_str = "Plotting:\n  plotvar:{var_name}\n path:{plot_path_without_extension}".format(var_name=var_name,plot_path_without_extension=plot_path_without_extension)
     logger.debug(logger_plot_str)
     title = "Sweeping Plot for model: {model_name}".format(model_name=model_name)
     subtitle ="Plotting var: {var_name}".format(var_name=var_name)
@@ -65,7 +65,7 @@ def plotVarFromSweepingInfo(var_name,model_name,sweeping_info,plot_path):
     lgd = plt.legend(loc="center left",fontsize="small",fancybox=True, shadow=True, bbox_to_anchor=(1,0.5)) #A la derecha
     # lgd = plt.legend(loc="center left",fontsize="small",fancybox=True, shadow=True, bbox_to_anchor=(0.5,-0.5)) #Abajo (anda mal)
     # saveAndClearPlt(plot_path,lgd)
-    saveAndClearPlt(plot_path,lgd,footer_artist)
+    saveAndClearPlt(plot_path_without_extension,lgd,footer_artist)
 def plotVarFromCSVs(var_name,csvs_list,plot_path, plot_title):
     # IMPORTANT: needs fix with new setupPlt!!! (doesn't work)
     logger_plot_str = "Plotting:\n  plotvar:{var_name}\n  csvs:{csvs_list}\n path:{plot_path}".format(var_name=var_name,csvs_list=csvs_list,plot_path=plot_path)
@@ -106,9 +106,12 @@ def setupPlt(x_label,y_label,title,subtitle,footer):
     # plt.figtext(.1,.1,footer)
     return footer_artist
 
-def saveAndClearPlt(plot_path,lgd,footer_artist):
+def saveAndClearPlt(plot_path_without_extension,lgd,footer_artist):
     # plt.savefig(plot_path)
-    plt.savefig(plot_path,bbox_extra_artists=(lgd,footer_artist), bbox_inches='tight')
+    extensions = [".svg",".png"]
+    for ext in extensions:
+        plot_path = plot_path_without_extension + ext
+        plt.savefig(plot_path,bbox_extra_artists=(lgd,footer_artist), bbox_inches='tight')
     # plt.show()
     plt.clf()
 
