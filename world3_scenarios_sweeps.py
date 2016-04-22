@@ -1,12 +1,12 @@
 import os
 import sys
-import inspect
 import logging #en reemplazo de los prints
 logger = logging.getLogger("--World3 scenarios sweep--") #un logger especifico para este modulo
 # Mine:
 import mos_writer.mos_script_factory as mos_script_factory
 import sweeping.run_and_plot_model as run_and_plot_model
 import filesystem.files_aux as files_aux
+import settings.settings_world3_sweep as world3_settings
 
 #Aux for GLOBALS:
 ## Skeletons of sweep_value_formula_str. Free variable: i (goes from 0 to (iterations-1) ):
@@ -21,9 +21,6 @@ def deltaBeforeAndAfter(p,iterations,delta): #Have to create a function for "del
 # sweep_value_formula_str = deltaBeforeAndAfter(p=10,delta=0.01,iterations=_iterations) # '10*(1-3*0.01) + 10*(0.01*i)' --> 9.7, 9.8, 9.9, 10, 10.1 ....
 
 ##### GLOBALS: #####
-_currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-_sys_dyn_package_path = os.path.join(os.path.join(os.path.join(_currentdir,"resource"),"SystemDynamics"),"package.mo")
-_world3_scenario_model_skeleton = "SystemDynamics.WorldDynamics.World3.Scenario_{scen_num}"
 _plot_var= "population"
 _startTime= 1900 # year to start the simulation (1900 example)
 _stopTime= 2500  # year to end the simulation (2100 for example)
@@ -44,7 +41,7 @@ def testDeltaNRResources():
     setUpSweepsAndRun(iterations,sweep_vars,sweep_value_formula_str,fixed_params)
 
 def testYears():
-    iterations = 5
+    iterations = 1
 # "sweep_vars" has defaults for scenarios 1 to 9!! (but can be overriden passing a list of sweep_vars to initialFactoryForWorld3Scenario)
     sweep_vars= None # Set to None to use scenario specific defaults (year of application of policies). Examples: None, ["nr_resources_init"]
     sweep_value_formula_str = _increasing_by_increment_from_initial_skeleton.format(initial=2012,increment=10) # "2012 + i*10" --> 2012,2022,2032...
@@ -66,7 +63,7 @@ def doScenariosSet(scenarios,plot_var,iterations,output_root_path,sweep_value_fo
     for folder_name,initial_scen_factory in scenarios:
         logger.debug("Running scenario {folder_name}".format(folder_name=folder_name))
         os.makedirs(os.path.join(output_root_path,folder_name))
-        run_and_plot_model.createSweepRunAndPlotForModelInfo(initial_scen_factory,plot_var=plot_var,iterations=iterations,output_folder_path=os.path.join(output_root_path,folder_name),sweep_value_formula_str=sweep_value_formula_str  )
+        run_and_plot_model.createSweepRunAndPlotForModelInfo(initial_scen_factory,plot_var=plot_var,iterations=iterations,output_folder_path=os.path.join(output_root_path,folder_name),sweep_value_formula_str=sweep_value_formula_str,csv_file_name_modelica_skeleton=world3_settings.csv_file_name_modelica_skeleton,csv_file_name_python_skeleton=world3_settings.csv_file_name_python_skeleton  )
 def initialFactoryForWorld3Scenario(scen_num,start_time,stop_time,sweep_vars=None,fixed_params=[]):
     initial_factory_for_scen_1 = initialFactoryForWorld3Scenario
     #Get the mos script factory for a scenario number (valid from 1 to 11)
@@ -77,9 +74,9 @@ def initialFactoryForWorld3Scenario(scen_num,start_time,stop_time,sweep_vars=Non
     else:
         #If NOT given a list of variables to sweep, use the defaults for that scenario
         final_sweep_vars = defaultSweepVarsForScenario(scen_num)
-    model_name = _world3_scenario_model_skeleton.format(scen_num=scen_num) #global
+    model_name = world3_settings._world3_scenario_model_skeleton.format(scen_num=scen_num) #global
     initial_factory_dict = {
-        "mo_file"     : _sys_dyn_package_path.replace("\\","/"), #Global
+        "mo_file"     : world3_settings._sys_dyn_package_path.replace("\\","/"), #Global
         "sweep_vars"  : final_sweep_vars,
         "model_name"  : model_name,
         "startTime"   : start_time,

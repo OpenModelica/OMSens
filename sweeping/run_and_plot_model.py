@@ -7,24 +7,24 @@ import logging #en reemplazo de los prints
 logger = logging.getLogger("--Run and Plot OpenModelica--") #un logger especifico para este modulo
 # My imports
 import plotting.plot_csv as plot_csv
+import settings.gral_settings as gral_settings
 
 #Globals:
 _interpreter_windows= "%OPENMODELICAHOME%\\bin\\omc"
 _interpreter_linux = "omc"
 
 def createSweepRunAndPlotForModelInfo(mos_script_factory_inst,plot_var,iterations,output_folder_path,sweep_value_formula_str,csv_file_name_python_skeleton,csv_file_name_modelica_skeleton):
-    output_mos_path = os.path.join(output_folder_path,"mos_script.mos")
+    output_mos_path = os.path.join(output_folder_path,gral_settings.mos_script_filename)
 	# EL scripting de modelica se rompe con la backslash (aunque estemos en windows). Hay que mandar la de unix nomas:
     output_mos_path = output_mos_path.replace("\\","/")
-    csv_file_name_modelica = file_name_modelica_skeleton.format(**{"model_name":model_name,"i_str":str(i)})
+    csv_file_name_modelica = csv_file_name_modelica_skeleton.format(**{})
     mos_script_factory_inst.setSetting("csv_file_name_modelica",csv_file_name_modelica)
-    mos_script_factory_inst.setSetting("csv_file_name_python_skeleton",csv_file_name_python_skeleton)
     mos_script_factory_inst.setSetting("plot_var",plot_var)
     mos_script_factory_inst.setSetting("iterations",iterations)
     mos_script_factory_inst.setSetting("sweep_value_formula_str",sweep_value_formula_str)
     mos_script_factory_inst.setSetting("output_mos_path",output_mos_path)
     mos_script_factory_inst.createMosScript() #argument-less method for now
-    writeRunLog(mos_script_factory_inst.initializedSettings(), os.path.join(output_folder_path,"run_info.txt"))
+    writeRunLog(mos_script_factory_inst.initializedSettings(), os.path.join(output_folder_path,gral_settings.omc_creation_settings_filename))
     runMosScript(output_mos_path)
     removeTemporaryFiles(output_folder_path)
     # csv_files = csvFiles(output_folder_path)
@@ -34,16 +34,15 @@ def createSweepRunAndPlotForModelInfo(mos_script_factory_inst,plot_var,iteration
     sweeping_vars = mos_script_factory_inst.initializedSettings()["sweep_vars"]
     # plot_title = "Plot for var {plot_var} after sweeping {sweeping_vars_len} vars".format(plot_var=plot_var, sweeping_vars_len= len(sweeping_vars))
     # plot_csv.plotVarFromCSVs(plot_var,csv_files,plot_path,plot_title)
-    sweeping_info = sweepingInfoPerIteration(mos_script_factory_inst.initializedSettings())
+    sweeping_info = sweepingInfoPerIteration(mos_script_factory_inst.initializedSettings(),csv_file_name_python_skeleton)
     model_name_only = mos_script_factory_inst.initializedSettings()["model_name"].split(".")[-1]
     plot_csv.plotVarFromSweepingInfo(plot_var,model_name_only,sweeping_info,plot_path_without_extension)
 
-def sweepingInfoPerIteration(settings):
+def sweepingInfoPerIteration(settings,csv_file_name_python_skeleton):
     iterations                = settings["iterations"]
     sweep_formula             = settings["sweep_value_formula_str"] #only variable should be i
     model_name                = settings["model_name"]
     output_mos_path           = settings["output_mos_path"]
-    csv_file_name_python_skeleton = settings["csv_file_name_python_skeleton"]
     run_root_folder = os.path.dirname(output_mos_path)
     sweep_vars = settings["sweep_vars"]
     per_iter_info_dict = {}
@@ -94,7 +93,7 @@ def runMosScript(script_path):
     command = "{interpreter} {script_path}".format(interpreter=interpreter,script_path=script_path)
     output = callCMDStringInPath(command,script_folder_path)
     folder_path = os.path.dirname(script_path)
-    omc_log_path = os.path.join(folder_path,"omc_log.txt")
+    omc_log_path = os.path.join(folder_path,gral_settings.omc_run_log_filename)
     output_decoded = output.decode("UTF-8")
     writeOMCLog(output_decoded,omc_log_path)
     logger.debug("OMC Log written to: {omc_log_path}".format(omc_log_path=omc_log_path))

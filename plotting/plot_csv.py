@@ -45,7 +45,7 @@ def plotVarFromSweepingInfo(var_name,model_name,sweeping_info,plot_path_without_
     title = "Sweeping Plot for model: {model_name}".format(model_name=model_name)
     subtitle ="Plotting var: {var_name}".format(var_name=var_name)
     per_iter_info_dict = sweeping_info["per_iter_info_dict"]
-    sweep_vars  = sweeping_info["sweep_vars"]
+    sweep_vars         = sweeping_info["sweep_vars"]
     sweep_vars_str = ", ".join(sweep_vars)
     footer = "Swept variables:\n {sweep_vars_str}".format(sweep_vars_str=sweep_vars_str)
     footer_artist = setupPlt("Time",var_name,title,subtitle,footer)
