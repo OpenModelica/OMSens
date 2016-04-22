@@ -30,7 +30,7 @@ class MosScriptFactory():
                 missing_settings.append(k)
         return missing_settings
 
-    def writeToFile(self):
+    def createMosScript(self):
         missing_settings = self.missingSettings()
         assert len(missing_settings)==0 , "You're missing settings:"+ str(missing_settings)
         sweeping_mos_writer.createMos(**self._settings_dict)

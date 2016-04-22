@@ -49,7 +49,6 @@ def plotVarFromSweepingInfo(var_name,model_name,sweeping_info,plot_path):
     sweep_vars_str = ", ".join(sweep_vars)
     footer = "Swept variables:\n {sweep_vars_str}".format(sweep_vars_str=sweep_vars_str)
     footer_artist = setupPlt("Time",var_name,title,subtitle,footer)
-    per_iter_info_dict = sweeping_info["per_iter_info_dict"]
     iterations = per_iter_info_dict.keys()
     colors = plt.get_cmap('jet')(np.linspace(0, 1.0, len(iterations)))
 

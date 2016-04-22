@@ -8,13 +8,13 @@ import platform
 omc_logger_flags = ""
 def main():
     pass
-def createMos(mo_file,model_name,sweep_vars,plot_var,iterations,output_mos_path,startTime,stopTime,fixed_params,sweep_value_formula_str):
+def createMos(mo_file,model_name,sweep_vars,plot_var,iterations,output_mos_path,startTime,stopTime,fixed_params,sweep_value_formula_str,csv_file_name_modelica):
     load_and_build_str = strForLoadingAndBuilding(mo_file,model_name,startTime,stopTime)
     fixed_params_str = strForFixedParams(fixed_params,model_name)
     for_declaration_str = strForForDeclaration(iterations)
     sweep_value_str = strForSweepValue(iterations,sweep_value_formula_str)
     sweeping_vars_str = strForSweepingVars(model_name,sweep_vars)
-    full_system_call_str = strForFullSystemCall(model_name,omc_logger_flags)
+    full_system_call_str = strForFullSystemCall(csv_file_name_modelica,omc_logger_flags)
     end_for_str = strForEndFor()
     final_str = load_and_build_str + fixed_params_str + for_declaration_str + \
                 sweep_value_str    + sweeping_vars_str + full_system_call_str + \
@@ -47,8 +47,8 @@ def strForSweepingVars(model_name,sweep_vars):
         var_sweep_str = sweeping_vars_skeleton.format(model_name=model_name,sweep_var=var)
         sweeping_vars_str = sweeping_vars_str + var_sweep_str
     return sweeping_vars_str
-def strForFullSystemCall(model_name,omc_logger_flags):
-    file_name_str = file_name_skeleton.format(model_name=model_name)
+def strForFullSystemCall(model_name,csv_file_name_modelica,omc_logger_flags):
+    file_name_str = "file_name_i := " + csv_file_name_modelica
     #cmd str
     cmd_str = ""
     if platform.system() == "Linux":

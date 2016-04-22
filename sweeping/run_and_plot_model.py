@@ -12,19 +12,22 @@ import plotting.plot_csv as plot_csv
 _interpreter_windows= "%OPENMODELICAHOME%\\bin\\omc"
 _interpreter_linux = "omc"
 
-def createSweepRunAndPlotForModelInfo(mos_script_factory_inst,plot_var,iterations,output_folder_path,sweep_value_formula_str):
+def createSweepRunAndPlotForModelInfo(mos_script_factory_inst,plot_var,iterations,output_folder_path,sweep_value_formula_str,csv_file_name_python_skeleton,csv_file_name_modelica_skeleton):
     output_mos_path = os.path.join(output_folder_path,"mos_script.mos")
 	# EL scripting de modelica se rompe con la backslash (aunque estemos en windows). Hay que mandar la de unix nomas:
     output_mos_path = output_mos_path.replace("\\","/")
+    csv_file_name_modelica = file_name_modelica_skeleton.format(**{"model_name":model_name,"i_str":str(i)})
+    mos_script_factory_inst.setSetting("csv_file_name_modelica",csv_file_name_modelica)
+    mos_script_factory_inst.setSetting("csv_file_name_python_skeleton",csv_file_name_python_skeleton)
     mos_script_factory_inst.setSetting("plot_var",plot_var)
     mos_script_factory_inst.setSetting("iterations",iterations)
     mos_script_factory_inst.setSetting("sweep_value_formula_str",sweep_value_formula_str)
     mos_script_factory_inst.setSetting("output_mos_path",output_mos_path)
-    mos_script_factory_inst.writeToFile() #argument-less method for now
+    mos_script_factory_inst.createMosScript() #argument-less method for now
     writeRunLog(mos_script_factory_inst.initializedSettings(), os.path.join(output_folder_path,"run_info.txt"))
     runMosScript(output_mos_path)
     removeTemporaryFiles(output_folder_path)
-    csv_files = csvFiles(output_folder_path)
+    # csv_files = csvFiles(output_folder_path)
     plots_folder_path =os.path.join(output_folder_path,"plots")
     os.makedirs(plots_folder_path)
     plot_path = os.path.join(plots_folder_path,plot_var+".svg")
@@ -36,17 +39,17 @@ def createSweepRunAndPlotForModelInfo(mos_script_factory_inst,plot_var,iteration
     plot_csv.plotVarFromSweepingInfo(plot_var,model_name_only,sweeping_info,plot_path)
 
 def sweepingInfoPerIteration(settings):
-    iterations      = settings["iterations"]
-    sweep_formula   = settings["sweep_value_formula_str"] #only variable should be i
-    model_name      = settings["model_name"]
-    output_mos_path = settings["output_mos_path"]
+    iterations                = settings["iterations"]
+    sweep_formula             = settings["sweep_value_formula_str"] #only variable should be i
+    model_name                = settings["model_name"]
+    output_mos_path           = settings["output_mos_path"]
+    csv_file_name_python_skeleton = settings["csv_file_name_python_skeleton"]
     run_root_folder = os.path.dirname(output_mos_path)
     sweep_vars = settings["sweep_vars"]
-    file_name_skeleton = "{model_name}_{i_str}_res.csv" #CAREFUL! Depends on harcoded string in sweeping_mos_writer.py
     per_iter_info_dict = {}
     for i in range(0,iterations):
         iter_dict = {}
-        csv_name = file_name_skeleton.format(model_name=model_name,i_str=str(i))
+        csv_name = csv_file_name_python_skeleton.format(**{"model_name":model_name,"i_str":str(i)})
         csv_path = os.path.join(run_root_folder,csv_name)
         iter_dict["file_path"]   = csv_path
         iter_dict["sweep_value"] = eval(sweep_formula) # this eval uses i!!!
