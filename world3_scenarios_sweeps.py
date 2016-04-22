@@ -1,11 +1,12 @@
 import os
 import sys
+import inspect
 import logging #en reemplazo de los prints
 logger = logging.getLogger("--World3 scenarios sweep--") #un logger especifico para este modulo
 # Mine:
-import mos_script_factory
-import run_and_plot_model
-import files_aux
+import mos_writer.mos_script_factory as mos_script_factory
+import sweeping.run_and_plot_model as run_and_plot_model
+import filesystem.files_aux as files_aux
 
 #Aux for GLOBALS:
 ## Skeletons of sweep_value_formula_str. Free variable: i (goes from 0 to (iterations-1) ):
@@ -20,12 +21,13 @@ def deltaBeforeAndAfter(p,iterations,delta): #Have to create a function for "del
 # sweep_value_formula_str = deltaBeforeAndAfter(p=10,delta=0.01,iterations=_iterations) # '10*(1-3*0.01) + 10*(0.01*i)' --> 9.7, 9.8, 9.9, 10, 10.1 ....
 
 ##### GLOBALS: #####
-_sys_dyn_package_path = os.path.join(os.path.join(os.path.join(files_aux.currentDir(),"resource"),"SystemDynamics"),"package.mo")
+_currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+_sys_dyn_package_path = os.path.join(os.path.join(os.path.join(_currentdir,"resource"),"SystemDynamics"),"package.mo")
 _world3_scenario_model_skeleton = "SystemDynamics.WorldDynamics.World3.Scenario_{scen_num}"
 _plot_var= "population"
 _startTime= 1900 # year to start the simulation (1900 example)
 _stopTime= 2500  # year to end the simulation (2100 for example)
-_scens_to_run = [1] #List of ints representing the scenarios to run (from 1 to 11).  Example: [1,2,3,4,5,6,7,8,9]
+_scens_to_run = [9] #List of ints representing the scenarios to run (from 1 to 11).  Example: [1,2,3,4,5,6,7,8,9]
 
 def main():
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
@@ -42,7 +44,7 @@ def testDeltaNRResources():
     setUpSweepsAndRun(iterations,sweep_vars,sweep_value_formula_str,fixed_params)
 
 def testYears():
-    iterations = 2
+    iterations = 5
 # "sweep_vars" has defaults for scenarios 1 to 9!! (but can be overriden passing a list of sweep_vars to initialFactoryForWorld3Scenario)
     sweep_vars= None # Set to None to use scenario specific defaults (year of application of policies). Examples: None, ["nr_resources_init"]
     sweep_value_formula_str = _increasing_by_increment_from_initial_skeleton.format(initial=2012,increment=10) # "2012 + i*10" --> 2012,2022,2032...
