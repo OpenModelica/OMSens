@@ -41,7 +41,7 @@ def testDeltaNRResources():
     setUpSweepsAndRun(iterations,sweep_vars,sweep_value_formula_str,fixed_params)
 
 def testYears():
-    iterations = 1
+    iterations = 2
 # "sweep_vars" has defaults for scenarios 1 to 9!! (but can be overriden passing a list of sweep_vars to initialFactoryForWorld3Scenario)
     sweep_vars= None # Set to None to use scenario specific defaults (year of application of policies). Examples: None, ["nr_resources_init"]
     sweep_value_formula_str = _increasing_by_increment_from_initial_skeleton.format(initial=2012,increment=10) # "2012 + i*10" --> 2012,2022,2032...
