@@ -8,6 +8,7 @@ logger = logging.getLogger("--Run and Plot OpenModelica--") #un logger especific
 # My imports
 import plotting.plot_csv as plot_csv
 import settings.gral_settings as gral_settings
+import readme_writer.readme_writer as readme_writer
 
 #Globals:
 _interpreter_windows= "%OPENMODELICAHOME%\\bin\\omc"
@@ -37,6 +38,9 @@ def createSweepRunAndPlotForModelInfo(mos_script_factory_inst,plot_var,iteration
     sweeping_info = sweepingInfoPerIteration(mos_script_factory_inst.initializedSettings(),csv_file_name_python_skeleton)
     model_name_only = mos_script_factory_inst.initializedSettings()["model_name"].split(".")[-1]
     plot_csv.plotVarFromSweepingInfo(plot_var,model_name_only,sweeping_info,plot_path_without_extension)
+    readme_path = os.path.join(output_folder_path,gral_settings.readme_filename)
+    readme_writer.writeReadme(readme_path,sweeping_info)
+
 
 def sweepingInfoPerIteration(settings,csv_file_name_python_skeleton):
     iterations                = settings["iterations"]

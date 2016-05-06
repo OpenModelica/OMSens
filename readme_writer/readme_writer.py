@@ -11,9 +11,9 @@ sweeping_info_asd ={'sweep_vars': ['t_fcaor_time', 't_fert_cont_eff_time', 't_ze
             'sweep_value': 2022}}}
 ## BORRA HASTA ACA
 
-def writeReadme(output_path):
+def writeReadme(output_path,sweeping_info):
     run_indep_info = runIndependantInformation()
-    run_specif_info = runSpecificInformation(sweeping_info_asd)
+    run_specif_info = runSpecificInformation(sweeping_info)
     with open(output_path, 'w') as outputFile:
         outputFile.write(introduction+"\n\n")
         outputFile.write(run_indep_info+"\n\n")
