@@ -16,6 +16,7 @@ path
 
 There, if running the world3 predefined sweeps (i.e. those offered as inline examples in world3\_scenarios\_sweeps.py), it will create a new folder scenario\_<i> for each scenario ran, and inside those folders:
 
+  - A readme.txt file that explains the results specific to that run and results common in every run
   - A .mos script that loads the Modelica Model, sets the fixed initial
 parameter (if any) and runs the sweep for the desired sweep_variable(s)
   - The resulting csv output files. One for each iteration of the sweep.
