@@ -45,12 +45,12 @@ def xmlFileStr():
 
 def omcScriptStr():
     filename= gral_settings.mos_script_filename
-    explanation = "This file has the OpenModelica Scripting code to be run using omc. It was automatically generated."
+    explanation = "This file has the OpenModelica Scripting code to be run using omc. It was automatically generated. For example, it will be ran in Linux with the command 'omc {filename}'.".format(filename=filename)
     return strTemplate(filename,explanation)
 
 def omcCreationSettingsStr():
     filename = gral_settings.omc_creation_settings_filename
-    explanation = "This file includes the settings with which the OpenModelica script (.mos) was created. This file includes required information to compile and run the simulations, such as the model name, the start and stop time, etc. "
+    explanation = "This file includes the settings with which the OpenModelica script (.mos) was created. This file includes required information to compile and run the simulations, such as the model name, the start and stop time, the variables to be swept, the fixed parameters for each iteration, etc "
     return strTemplate(filename,explanation)
 
 def omcRunLogStr():
