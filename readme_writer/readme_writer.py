@@ -1,3 +1,8 @@
+#Imports:
+#Standard
+import logging #en reemplazo de los prints
+logger = logging.getLogger("-- Automatic readme for run writer --") #un logger especifico para este modulo
+#Mine:
 import settings.gral_settings as gral_settings
 introduction = "This readme file was automatically generated to ease the effort of understanding the produced outputs. Here you'll find run-specific and run-independant information."
 
@@ -12,6 +17,7 @@ sweeping_info_asd ={'sweep_vars': ['t_fcaor_time', 't_fert_cont_eff_time', 't_ze
 ## BORRA HASTA ACA
 
 def writeReadme(output_path,sweeping_info):
+    logger.debug("Writing readme to path:{output_path}".format(output_path=output_path))
     run_indep_info = runIndependantInformation()
     run_specif_info = runSpecificInformation(sweeping_info)
     with open(output_path, 'w') as outputFile:
@@ -26,9 +32,19 @@ def runIndependantInformation():
             omcRunLogStr(),
             xmlFileStr(),
             binaryFileStr(),
-            csvFilesStr(),]
+            csvFilesStr(),
+            outOfRangeCasesStr(),
+            plotsFolderStr(),]
     return "\n".join(strs)
 
+def plotsFolderStr():
+    filename= "plots/<var>"
+    explanation = "The plot for the plot_variable (different than the sweep_variables) for each of its values for each iteration."
+    return strTemplate(filename,explanation)
+def outOfRangeCasesStr():
+    filename= "out_of_range_cases.txt"
+    explanation = "This file is generated when the interpolation function from SystemDynamics model in OpenModelica is asked to interpolate values outside the default range (lower than the minimum or greater than the maximum). In those cases, we extrapolate linearly outwards the standard interval."
+    return strTemplate(filename,explanation)
 def csvFilesStr():
     filename= "*.csv files"
     explanation = "This are the results of the sweep. Each .csv corresponds to an iteration. The filenames for this specific run are explained in the 'Run Specific Information' section"

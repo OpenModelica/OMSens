@@ -14,13 +14,13 @@ import readme_writer.readme_writer as readme_writer
 _interpreter_windows= "%OPENMODELICAHOME%\\bin\\omc"
 _interpreter_linux = "omc"
 
-def createSweepRunAndPlotForModelInfo(mos_script_factory_inst,plot_var,iterations,output_folder_path,sweep_value_formula_str,csv_file_name_python_skeleton,csv_file_name_modelica_skeleton):
+def createSweepRunAndPlotForModelInfo(mos_script_factory_inst,plot_vars,iterations,output_folder_path,sweep_value_formula_str,csv_file_name_python_skeleton,csv_file_name_modelica_skeleton):
     output_mos_path = os.path.join(output_folder_path,gral_settings.mos_script_filename)
 	# EL scripting de modelica se rompe con la backslash (aunque estemos en windows). Hay que mandar la de unix nomas:
     output_mos_path = output_mos_path.replace("\\","/")
     csv_file_name_modelica = csv_file_name_modelica_skeleton.format(**{})
     mos_script_factory_inst.setSetting("csv_file_name_modelica",csv_file_name_modelica)
-    mos_script_factory_inst.setSetting("plot_var",plot_var)
+    # mos_script_factory_inst.setSetting("plot_vars",plot_vars)
     mos_script_factory_inst.setSetting("iterations",iterations)
     mos_script_factory_inst.setSetting("sweep_value_formula_str",sweep_value_formula_str)
     mos_script_factory_inst.setSetting("output_mos_path",output_mos_path)
@@ -28,16 +28,12 @@ def createSweepRunAndPlotForModelInfo(mos_script_factory_inst,plot_var,iteration
     writeRunLog(mos_script_factory_inst.initializedSettings(), os.path.join(output_folder_path,gral_settings.omc_creation_settings_filename))
     runMosScript(output_mos_path)
     removeTemporaryFiles(output_folder_path)
-    # csv_files = csvFiles(output_folder_path)
     plots_folder_path =os.path.join(output_folder_path,"plots")
     os.makedirs(plots_folder_path)
-    plot_path_without_extension = os.path.join(plots_folder_path,plot_var)
     sweeping_vars = mos_script_factory_inst.initializedSettings()["sweep_vars"]
-    # plot_title = "Plot for var {plot_var} after sweeping {sweeping_vars_len} vars".format(plot_var=plot_var, sweeping_vars_len= len(sweeping_vars))
-    # plot_csv.plotVarFromCSVs(plot_var,csv_files,plot_path,plot_title)
     sweeping_info = sweepingInfoPerIteration(mos_script_factory_inst.initializedSettings(),csv_file_name_python_skeleton)
     model_name_only = mos_script_factory_inst.initializedSettings()["model_name"].split(".")[-1]
-    plot_csv.plotVarFromSweepingInfo(plot_var,model_name_only,sweeping_info,plot_path_without_extension)
+    plot_csv.plotVarsFromSweepingInfo(plot_vars,model_name_only,sweeping_info,plots_folder_path)
     readme_path = os.path.join(output_folder_path,gral_settings.readme_filename)
     readme_writer.writeReadme(readme_path,sweeping_info)
 

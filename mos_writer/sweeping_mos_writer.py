@@ -8,7 +8,7 @@ import platform
 omc_logger_flags = ""
 def main():
     pass
-def createMos(mo_file,model_name,sweep_vars,plot_var,iterations,output_mos_path,startTime,stopTime,fixed_params,sweep_value_formula_str,csv_file_name_modelica):
+def createMos(mo_file,model_name,sweep_vars,iterations,output_mos_path,startTime,stopTime,fixed_params,sweep_value_formula_str,csv_file_name_modelica):
     load_and_build_str = strForLoadingAndBuilding(mo_file,model_name,startTime,stopTime)
     fixed_params_str = strForFixedParams(fixed_params,model_name)
     for_declaration_str = strForForDeclaration(iterations)
