@@ -1,7 +1,7 @@
 # Reqs
+- Linux or Windows
 - Python 3 with some extra libraries. (anaconda3 includes all the dependencies)
-- OpenModelica basic install (with "omc" command in path). The SystemDynamics library is included in this repo and the one included in the complete install is not needed (or used)
-- Linux (hasn't been tested on Windows yet)
+- OpenModelica basic install (with "omc" command in path in Linux or "%OPENMODELICAHOME%\\bin\\omc" for Windows). The SystemDynamics library is included in this repo and the one included in the complete install is not needed (or used)
 # How to:
 ## Run:
 To run a predefined parameter sweep experiment, modify global variables at the top of in world3\_scenarios\_sweeps.py and then run the following command:
