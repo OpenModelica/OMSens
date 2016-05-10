@@ -1,7 +1,7 @@
 # Reqs
+- Linux or Windows
 - Python 3 with some extra libraries. (anaconda3 includes all the dependencies)
-- OpenModelica basic install (with "omc" command in path). The SystemDynamics library is included in this repo and the one included in the complete install is not needed (or used)
-- Linux (hasn't been tested on Windows yet)
+- OpenModelica basic install (with "omc" command in path in Linux or "%OPENMODELICAHOME%\\bin\\omc" for Windows). The SystemDynamics library is included in this repo and the one included in the complete install is not needed (or used)
 # How to:
 ## Run:
 To run a predefined parameter sweep experiment, modify global variables at the top of in world3\_scenarios\_sweeps.py and then run the following command:
@@ -16,6 +16,7 @@ path
 
 There, if running the world3 predefined sweeps (i.e. those offered as inline examples in world3\_scenarios\_sweeps.py), it will create a new folder scenario\_<i> for each scenario ran, and inside those folders:
 
+  - A readme.txt file that explains the results specific to that run and results common in every run
   - A .mos script that loads the Modelica Model, sets the fixed initial
 parameter (if any) and runs the sweep for the desired sweep_variable(s)
   - The resulting csv output files. One for each iteration of the sweep.

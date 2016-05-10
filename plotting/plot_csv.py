@@ -1,3 +1,4 @@
+import os
 import logging #en reemplazo de los prints
 logger = logging.getLogger("--CSV Plotter--") #un logger especifico para este modulo
 import numpy as np
@@ -33,13 +34,18 @@ def main():
     'sweep_vars': ['t_fcaor_time', 't_fert_cont_eff_time', 't_zero_pop_grow_time', 't_ind_equil_time',
     't_policy_year', 't_land_life_time']}
     plot_path = "/home/adanos/Documents/tesis/prog/modelica_scripts/tmp/modelica_outputs/2016-04-06/12_05_41/scenario_9/plots/population.svg"
-    plotVarFromSweepingInfo(var_name,model_name,sweeping_info,plot_path)
+    plotVarsFromSweepingInfo(var_name,model_name,sweeping_info,plot_path)
 
-def plotVarFromSweepingInfo(var_name,model_name,sweeping_info,plot_path_without_extension):
+def plotVarsFromSweepingInfo(plot_vars,model_name,sweeping_info,plots_folder_path):
+    for var_name in plot_vars:
+        plotVar(var_name,model_name,sweeping_info,plots_folder_path)
+
+def plotVar(var_name,model_name,sweeping_info,plots_folder_path):
     # print("var_name = "+str(var_name))
     # print("model_name = "+str(model_name))
     # print("sweeping_info = "+str(sweeping_info))
     # print("plot_path = "+str(plot_path))
+    plot_path_without_extension = os.path.join(plots_folder_path,var_name)
     logger_plot_str = "Plotting:\n  plotvar:{var_name}\n path:{plot_path_without_extension}".format(var_name=var_name,plot_path_without_extension=plot_path_without_extension)
     logger.debug(logger_plot_str)
     title = "Sweeping Plot for model: {model_name}".format(model_name=model_name)
