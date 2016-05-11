@@ -5,58 +5,32 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib #for configuration
 
+import settings.settings_world3_sweep as world3_settings
+
+#GLOBALS:
+_std_run_csv = world3_settings._std_run_csv 
+
 
 def main():
-    #ENTRADA:
-    # csvs_list = ["BouncingBall_1_res.csv","BouncingBall_2_res.csv","BouncingBall_3_res.csv"]
-    # csvs_list = ["SystemDynamics.WorldDynamics.World3.Scenario_1_1_res.csv","SystemDynamics.WorldDynamics.World3.Scenario_1_2_res.csv"]
-    # plot_path = "tmp/plot.svg"
-    # var_name = "nr_resources"
-    # plot_title = "Ploteo de archivito"
-    # # /ENTRADA
-    # plotVarFromCSVs(var_name,csvs_list,plot_path, plot_title)
-
-
-    var_name = "population"
-    model_name = "Scenario_9"
-    sweeping_info = {'per_iter_info_dict': {0: {'sweep_value': 2012, 'file_path':
-    '/home/adanos/Documents/tesis/prog/modelica_scripts/tmp/modelica_outputs/2016-04-06/12_05_41/scenario_9/SystemDynamics.WorldDynamics.World3.Scenario_9_0_res.csv'},
-    1: {'sweep_value': 2022, 'file_path':
-    '/home/adanos/Documents/tesis/prog/modelica_scripts/tmp/modelica_outputs/2016-04-06/12_05_41/scenario_9/SystemDynamics.WorldDynamics.World3.Scenario_9_1_res.csv'},
-    2: {'sweep_value': 2032, 'file_path':
-    '/home/adanos/Documents/tesis/prog/modelica_scripts/tmp/modelica_outputs/2016-04-06/12_05_41/scenario_9/SystemDynamics.WorldDynamics.World3.Scenario_9_2_res.csv'},
-    3: {'sweep_value': 2042, 'file_path':
-    '/home/adanos/Documents/tesis/prog/modelica_scripts/tmp/modelica_outputs/2016-04-06/12_05_41/scenario_9/SystemDynamics.WorldDynamics.World3.Scenario_9_3_res.csv'},
-    4: {'sweep_value': 2052, 'file_path':
-    '/home/adanos/Documents/tesis/prog/modelica_scripts/tmp/modelica_outputs/2016-04-06/12_05_41/scenario_9/SystemDynamics.WorldDynamics.World3.Scenario_9_4_res.csv'},
-    5: {'sweep_value': 2062, 'file_path':
-    '/home/adanos/Documents/tesis/prog/modelica_scripts/tmp/modelica_outputs/2016-04-06/12_05_41/scenario_9/SystemDynamics.WorldDynamics.World3.Scenario_9_5_res.csv'}},
-    'sweep_vars': ['t_fcaor_time', 't_fert_cont_eff_time', 't_zero_pop_grow_time', 't_ind_equil_time',
-    't_policy_year', 't_land_life_time']}
-    plot_path = "/home/adanos/Documents/tesis/prog/modelica_scripts/tmp/modelica_outputs/2016-04-06/12_05_41/scenario_9/plots/population.svg"
-    plotVarsFromSweepingInfo(var_name,model_name,sweeping_info,plot_path)
+    pass
 
 def plotVarsFromSweepingInfo(plot_vars,model_name,sweeping_info,plots_folder_path):
     for var_name in plot_vars:
-        plotVar(var_name,model_name,sweeping_info,plots_folder_path)
+        plotVarFromSweepingInfo(var_name,model_name,sweeping_info,plots_folder_path)
 
-def plotVar(var_name,model_name,sweeping_info,plots_folder_path):
-    # print("var_name = "+str(var_name))
-    # print("model_name = "+str(model_name))
-    # print("sweeping_info = "+str(sweeping_info))
-    # print("plot_path = "+str(plot_path))
+def plotVarFromSweepingInfo(var_name,model_name,sweeping_info,plots_folder_path):
     plot_path_without_extension = os.path.join(plots_folder_path,var_name)
     logger_plot_str = "Plotting:\n  plotvar:{var_name}\n path:{plot_path_without_extension}".format(var_name=var_name,plot_path_without_extension=plot_path_without_extension)
     logger.debug(logger_plot_str)
-    title = "Sweeping Plot for model: {model_name}".format(model_name=model_name)
-    subtitle ="Plotting var: {var_name}".format(var_name=var_name)
-    per_iter_info_dict = sweeping_info["per_iter_info_dict"]
     sweep_vars         = sweeping_info["sweep_vars"]
     sweep_vars_str = ", ".join(sweep_vars)
-    footer = "Swept variables:\n {sweep_vars_str}".format(sweep_vars_str=sweep_vars_str)
+    title,subtitle,footer = sweepingPlotTexts(model_name,var_name,sweep_vars_str)
+    per_iter_info_dict = sweeping_info["per_iter_info_dict"]
     footer_artist = setupPlt("Time",var_name,title,subtitle,footer)
     iterations = per_iter_info_dict.keys()
     colors = plt.get_cmap('jet')(np.linspace(0, 1.0, len(iterations)))
+
+    plotStandardRun(var_name,colors)
 
     for i in iterations:
         iter_dict = per_iter_info_dict[i]
@@ -65,13 +39,18 @@ def plotVar(var_name,model_name,sweeping_info,plots_folder_path):
         sweep_value = iter_dict["sweep_value"]
         label = "val={sweep_value}".format(sweep_value=sweep_value)
         plt.plot(data["time"], data[var_name], linewidth=1, linestyle='-', markersize=0,marker='o',label=label,color = colors[i])
-        # plt.plot(data["time"], data[var_name],label=label )
-        # plt.legend(loc="best",fontsize="small")
-    # plt.grid()
     lgd = plt.legend(loc="center left",fontsize="small",fancybox=True, shadow=True, bbox_to_anchor=(1,0.5)) #A la derecha
     # lgd = plt.legend(loc="center left",fontsize="small",fancybox=True, shadow=True, bbox_to_anchor=(0.5,-0.5)) #Abajo (anda mal)
-    # saveAndClearPlt(plot_path,lgd)
     saveAndClearPlt(plot_path_without_extension,lgd,footer_artist)
+def sweepingPlotTexts(model_name,var_name,sweep_vars_str):
+    title = "Sweeping Plot for model: {model_name}".format(model_name=model_name)
+    subtitle ="Plotting var: {var_name}".format(var_name=var_name)
+    footer = "Swept variables:\n {sweep_vars_str}".format(sweep_vars_str=sweep_vars_str)
+    return (title,subtitle,footer)
+def plotStandardRun(var_name,colors):
+        data = readFromCSV(_std_run_csv)
+        label = "STD_RUN"
+        plt.plot(data["time"], data[var_name], linewidth=1, linestyle='-', markersize=0,marker='o',label=label,color = "black")
 def plotVarFromCSVs(var_name,csvs_list,plot_path, plot_title):
     # IMPORTANT: needs fix with new setupPlt!!! (doesn't work)
     logger_plot_str = "Plotting:\n  plotvar:{var_name}\n  csvs:{csvs_list}\n path:{plot_path}".format(var_name=var_name,csvs_list=csvs_list,plot_path=plot_path)
