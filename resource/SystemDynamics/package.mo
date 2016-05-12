@@ -4334,6 +4334,7 @@ Pollutants can take many forms.  For this reason, the <font color=red><b>WORLD3<
 </html>"));
       end Pollution_Dynamics;
       block Population_Dynamics "Population dynamics"
+        output Real FFW=Pop_0_14.y1/Population.y; //NOT ORIGINAL!!! DELETE!
         parameter Real pop1_init = 650000000.0 "Initial population 14 years and younger";
         parameter Real pop2_init = 700000000.0 "Initial population 15 to 44 years old";
         parameter Real pop3_init = 190000000.0 "Initial population 45 to 64 years old";
