@@ -34,7 +34,7 @@ def plotVarFromSweepingInfo(var_name,model_name,sweeping_info,plots_folder_path)
     iterations = per_iter_info_dict.keys()
     colors = plt.get_cmap('jet')(np.linspace(0, 1.0, len(iterations)))
 
-    plotStandardRun(var_name,colors)
+    # plotStandardRun(var_name,colors)
 
     for i in iterations:
         iter_dict = per_iter_info_dict[i]
