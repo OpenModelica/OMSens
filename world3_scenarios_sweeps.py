@@ -33,15 +33,15 @@ _scens_to_run = [9] #List of ints representing the scenarios to run (from 1 to 1
 
 def main():
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
-    testPolicyYears()
+    # testPolicyYears()
     #testDeltaNRResources()
-    # testFertility()
+    testFertility()
 
 ## Predefined tests
 def testFertility():
-    iterations = 15
-    sweep_vars= ["max_tot_fert"]
-    sweep_value_formula_str = deltaBeforeAndAfter(p=12,delta=0.2,iterations=iterations) #Has to be a string with only free variable "i"
+    iterations = 12
+    sweep_vars= ["max_tot_fert_norm"]
+    sweep_value_formula_str = deltaBeforeAndAfter(p=12,delta=0.1,iterations=iterations) #Has to be a string with only free variable "i"
     fixed_params = [  # Params changes that will be fixed throughout the sweep. Example: [("nr_resources_init",2e12)]
                     ("p_ind_cap_out_ratio_1",3.15),   #ICOR= 3.15
                     ("p_avg_life_ind_cap_1", 13.3),   #ALIC= 13.3
