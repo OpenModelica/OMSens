@@ -1,3 +1,4 @@
+
 import os
 import sys
 import logging #en reemplazo de los prints
@@ -28,13 +29,13 @@ SPECIAL_policy_years = None # Special vars sweeping that sweeps the year to appl
 ##### GLOBALS: #####
 _plot_vars= ["population","nr_resources"]
 _startTime= 1900 # year to start the simulation (1900 example)
-_stopTime= 2100  # year to end the simulation (2100 for example)
-_scens_to_run = [9] #List of ints representing the scenarios to run (from 1 to 11).  Example: [1,2,3,4,5,6,7,8,9]
+_stopTime= 2300  # year to end the simulation (2100 for example)
+_scens_to_run = [1] #List of ints representing the scenarios to run (from 1 to 11).  Example: [1,2,3,4,5,6,7,8,9]
 
 def main():
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
     # testPolicyYears()
-    #testDeltaNRResources()
+    # testDeltaNRResources()
     testFertility()
 
 ## Predefined tests
@@ -58,7 +59,7 @@ def testDeltaNRResources():
     setUpSweepsAndRun(iterations,sweep_vars,sweep_value_formula_str,fixed_params)
 
 def testPolicyYears():
-    iterations = 1
+    iterations = 3
 # "sweep_vars" has defaults for sweeping policy years for scenarios 1 to 9!!
     sweep_vars= SPECIAL_policy_years # Set to SPECIAL_policy_years to use scenario specific defaults (year of application of policies). Examples: SPECIAL_policy_years, ["nr_resources_init"]
     sweep_value_formula_str = _increasing_by_increment_from_initial_skeleton.format(initial=2012,increment=10) # "2012 + i*10" --> 2012,2022,2032...
