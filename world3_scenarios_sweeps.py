@@ -28,7 +28,7 @@ SPECIAL_policy_years = None # Special vars sweeping that sweeps the year to appl
 ##### GLOBALS: #####
 _plot_vars= ["population"]#,"nr_resources","Population_Dynamics1FFW"] #without the "." in "...Dynamics.FFW" because numpy doesn't play well with dots in column names
 _startTime= 1900 # year to start the simulation (1900 example)
-_stopTime= 2500  # year to end the simulation (2100 for example)
+_stopTime= 2100  # year to end the simulation (2100 for example)
 _scens_to_run = [1] #List of ints representing the scenarios to run (from 1 to 11).  Example: [1,2,3,4,5,6,7,8,9]
 
 def main():
@@ -37,15 +37,39 @@ def main():
     # testDeltaNRResources()
     # testFertility()
     # testFertility2()
-    standardRun()
+    # standardRun()
+    testVermeulenAndJonghRun2() #Run1 is Meadows' std run
+    # testVermeulenAndJonghRun3()
 
 ## Predefined tests
+def testVermeulenAndJonghRun2():
+    #The first run (for now we have to plot each run separately)
+    kwargs = {
+# "plot_vars":["population","ppoll_index","industrial_output","nr_resources"],#,"nr_resources","Population_Dynamics1FFW"] #without the "." in "...Dynamics.FFW" because numpy doesn't play well with dots in column names
+    "plot_vars":[#"pseudo" parameters:
+                 "Industrial_Investment1Industrial_Outputs_ind_cap_out_ratio", "Industrial_Investment1S_FIOA_Conss_fioa_cons_const","Industrial_Investment1S_Avg_Life_Ind_Caps_avg_life_ind_cap",
+                 "population","ppoll_index","industrial_output","nr_resources"],#,"nr_resources","Population_Dynamics1FFW"] #without the "." in "...Dynamics.FFW" because numpy doesn't play well with dots in column names
+    "startTime": 1900 ,# year to start the simulation (1900 example)
+    "stopTime": 2100  ,# year to end the simulation (2100 for example)
+    "scens_to_run" : [1] ,#List of ints representing the scenarios to run (from 1 to 11).  Example: [1,2,3,4,5,6,7,8,9]
+    "iterations" : 1 ,#No sweeping: more than one iteration is irrelevant
+    "sweep_vars": [] ,#No sweeping done in VermeulenAndJonghRun
+    "sweep_value_formula_str" : "i" ,#irrelevant formula (no sweeping)
+    "fixed_params" : [  # Params changes that will be fixed throughout the sweep. Example: [("nr_resources_init",2e12)]
+            # ("p_ind_cap_out_ratio_1",3.3),   #V&J-2: ICOR= 3.3, Default: ICOR=3
+            # ("p_fioa_cons_const_1",0.473),   #V&J-2: FIOAC= 0.473, Default: FIOAC=0.43
+            # ("p_avg_life_ind_cap_1", 12.6),  #V&J-2: ALIC= 12.6, Default: ALIC=14
+                   ],
+    }
+
+    setUpSweepsAndRun(**kwargs)
+
 def standardRun(): #ONLY TO GET THE STANDARD CSV!
-    iterations = 1
-    sweep_vars= []
-    sweep_value_formula_str = "i"
-    fixed_params = []
-    setUpSweepsAndRun(iterations,sweep_vars,sweep_value_formula_str,fixed_params)
+    iterations = 1 #More than one iteration is irrelevant
+    sweep_vars= [] #No sweeping done in std run
+    sweep_value_formula_str = "i" #irrelevant formula (now sweeping)
+    fixed_params = [] #We don't want to change any parameters
+    setUpSweepsAndRun(iterations,sweep_vars,sweep_value_formula_str,fixed_params,plot_vars,startTime,stopTime,scens_to_run)
 def testFertility2():
     iterations = 8
     sweep_vars= ["pseudo_ffw"] #NOT ORIGINAL PARAMETER! ADDED ONLY TO SCENARIO 1
@@ -85,16 +109,16 @@ def testPolicyYears():
     setUpSweepsAndRun(iterations,sweep_vars,sweep_value_formula_str,fixed_params)
 
 #World3 specific:
-def setUpSweepsAndRun(iterations,sweep_vars,sweep_value_formula_str,fixed_params):
+def setUpSweepsAndRun(iterations,sweep_vars,sweep_value_formula_str,fixed_params,plot_vars,startTime,stopTime,scens_to_run):
     #The "root" output folder path.
     output_path = files_aux.makeOutputPath()
     #Create scenarios from factory
     scenarios = []
-    for i in _scens_to_run:
-        initial_factory_for_scen_i = initialFactoryForWorld3Scenario(scen_num=i,start_time=_startTime,stop_time=_stopTime,fixed_params=fixed_params,sweep_vars=sweep_vars)
+    for i in scens_to_run:
+        initial_factory_for_scen_i = initialFactoryForWorld3Scenario(scen_num=i,start_time=startTime,stop_time=stopTime,fixed_params=fixed_params,sweep_vars=sweep_vars)
         scenario_tuple =("scenario_"+str(i),initial_factory_for_scen_i)
         scenarios.append(scenario_tuple)
-    doScenariosSet(scenarios, plot_vars=_plot_vars,iterations=iterations,output_root_path=output_path, sweep_value_formula_str=sweep_value_formula_str)
+    doScenariosSet(scenarios, plot_vars=plot_vars,iterations=iterations,output_root_path=output_path, sweep_value_formula_str=sweep_value_formula_str)
 def doScenariosSet(scenarios,plot_vars,iterations,output_root_path,sweep_value_formula_str):
     for folder_name,initial_scen_factory in scenarios:
         logger.debug("Running scenario {folder_name}".format(folder_name=folder_name))

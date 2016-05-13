@@ -42,6 +42,7 @@ def sweepingInfoPerIteration(settings,csv_file_name_python_skeleton):
     output_mos_path           = settings["output_mos_path"]
     run_root_folder = os.path.dirname(output_mos_path)
     sweep_vars = settings["sweep_vars"]
+    fixed_params = settings["fixed_params"]
     per_iter_info_dict = {}
     for i in range(0,iterations):
         iter_dict = {}
@@ -53,6 +54,7 @@ def sweepingInfoPerIteration(settings,csv_file_name_python_skeleton):
     sweeping_info_dict = {}
     sweeping_info_dict["per_iter_info_dict"] = per_iter_info_dict
     sweeping_info_dict["sweep_vars"] = sweep_vars
+    sweeping_info_dict["fixed_params"] = fixed_params
     return sweeping_info_dict
 
 def writeRunLog(run_settings_dict, output_path):

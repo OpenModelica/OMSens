@@ -3,3 +3,4 @@ ICOR,p_ind_cap_out_ratio_1,3
 ALIC,p_avg_life_ind_cap_1,14
 ALSC,p_avg_life_serv_cap_1,20
 SCOR,p_serv_cap_out_ratio_1,1
+FIOAC,p_fioa_cons_const_1,0.43

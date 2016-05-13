@@ -7490,7 +7490,10 @@ This function is described on p.293 of <a href=\"http://www.pegasuscom.com/BookD
           parameter Real p_avg_life_ind_cap_2(unit = "yr") = 14 "Controlled average life of industrial capital";
           output Real s_avg_life_ind_cap(unit = "yr") "Average life of industrial capital";
         equation
-          s_avg_life_ind_cap = if time > t_policy_year then p_avg_life_ind_cap_2 else p_avg_life_ind_cap_1;
+        //Orig:
+          //s_avg_life_ind_cap = if time > t_policy_year then p_avg_life_ind_cap_2 else p_avg_life_ind_cap_1;
+          s_avg_life_ind_cap = if time > 1975 then 12.6 else p_avg_life_ind_cap_1;// # ("p_avg_life_ind_cap_1", 12.6),  #V&J-2: ALIC= 12.6, Default: ALIC=14
+        //not orig ^
           y = s_avg_life_ind_cap;
           annotation(Documentation(info = "<html>
 This function is described on p.221 of <a href=\"http://www.pegasuscom.com/BookDetail.asp?BookQuery_Action=Find('ISBN','XDYGO')\">Dynamics of Growth in a Finite World</a>.
@@ -7533,7 +7536,9 @@ This function is described on p.287 of <a href=\"http://www.pegasuscom.com/BookD
         equation
           s_fioa_cons_const = u1;
           p_fioa_cons_var = u2;
+          // Orig:
           s_fioa_cons = if time > t_ind_equil_time then p_fioa_cons_var else s_fioa_cons_const;
+          // not orig^
           y = s_fioa_cons;
           annotation(Documentation(info = "<html>
 This function is described on p.223 of <a href=\"http://www.pegasuscom.com/BookDetail.asp?BookQuery_Action=Find('ISBN','XDYGO')\">Dynamics of Growth in a Finite World</a>.
@@ -7546,7 +7551,10 @@ This function is described on p.223 of <a href=\"http://www.pegasuscom.com/BookD
           parameter Real p_fioa_cons_const_2 = 0.43 "Controlled fraction of industrial output allocated to consumption";
           output Real s_fioa_cons_const "Fraction of industrial output allocated to consumption";
         equation
-          s_fioa_cons_const = if time > t_policy_year then p_fioa_cons_const_2 else p_fioa_cons_const_1;
+          //Orig:
+          //s_fioa_cons_const = if time > t_policy_year then p_fioa_cons_const_2 else p_fioa_cons_const_1;
+          s_fioa_cons_const = if time > 1975 then 0.473 else p_fioa_cons_const_1; // # ("p_fioa_cons_const_1",0.473),   #V&J-2: FIOAC= 0.473, Default: FIOAC=0.43
+          // Not orig^
           y = s_fioa_cons_const;
           annotation(Documentation(info = "<html>
 This function is described on p.223 of <a href=\"http://www.pegasuscom.com/BookDetail.asp?BookQuery_Action=Find('ISBN','XDYGO')\">Dynamics of Growth in a Finite World</a>.
@@ -7590,7 +7598,10 @@ This function is described on p.393 of <a href=\"http://www.pegasuscom.com/BookD
           output Real s_ind_cap_out_ratio(unit = "yr") "Industrial capital output ratio";
         equation
           p_ind_cap_out_ratio_2 = u;
-          s_ind_cap_out_ratio = if time > t_policy_year then p_ind_cap_out_ratio_2 else p_ind_cap_out_ratio_1;
+          //Orig:
+          //s_ind_cap_out_ratio = if time > t_policy_year then p_ind_cap_out_ratio_2 else p_ind_cap_out_ratio_1;
+          s_ind_cap_out_ratio = if time > 1975 then 3.3 else 3;
+          // Not orig^
           y = s_ind_cap_out_ratio;
           annotation(Documentation(info = "<html>
 This function is described on p.216 of <a href=\"http://www.pegasuscom.com/BookDetail.asp?BookQuery_Action=Find('ISBN','XDYGO')\">Dynamics of Growth in a Finite World</a>.
