@@ -4334,7 +4334,10 @@ Pollutants can take many forms.  For this reason, the <font color=red><b>WORLD3<
 </html>"));
       end Pollution_Dynamics;
       block Population_Dynamics "Population dynamics"
-        output Real FFW=Pop_0_14.y1/Population.y; //NOT ORIGINAL!!! DELETE!
+        // Not original:
+        output Real FFW = Pop_0_14.y1 / Population.y;
+        parameter Real pseudo_ffw = 1 "Pseudo equivalent to ffw in first world3 version";
+        // Not original^
         parameter Real pop1_init = 650000000.0 "Initial population 14 years and younger";
         parameter Real pop2_init = 700000000.0 "Initial population 15 to 44 years old";
         parameter Real pop3_init = 190000000.0 "Initial population 45 to 64 years old";
@@ -4353,7 +4356,10 @@ Pollutants can take many forms.  For this reason, the <font color=red><b>WORLD3<
         SystemDynamics.Levels.Level Pop_65plus(x0 = pop4_init) "p.57 of Dynamics of Growth in a Finite World" annotation(Placement(visible = true, transformation(origin = {102.0,15.0}, extent = {{-12.0,-12.0},{12.0,12.0}}, rotation = 0)));
         SystemDynamics.Rates.RRate Deaths_65p "p.57 of Dynamics of Growth in a Finite World" annotation(Placement(visible = true, transformation(origin = {132.0,15.0}, extent = {{-12.0,-12.0},{12.0,12.0}}, rotation = 0)));
         SystemDynamics.Sources.Sink sink annotation(Placement(visible = true, transformation(origin = {160.0,15.0}, extent = {{-10.0,-10.0},{10.0,10.0}}, rotation = 0)));
-        SystemDynamics.WorldDynamics.World3.Utilities.Birth_Factors births(Repro_Life = reproductive_lifetime, t_pop_equil_time = t_pop_equil_time) "p.96 of Dynamics of Growth in a Finite World" annotation(Placement(visible = true, transformation(origin = {-140.0,-29.0}, extent = {{-10.0,-11.0},{10.0,11.0}}, rotation = -270)));
+        // Original:
+        //SystemDynamics.WorldDynamics.World3.Utilities.Birth_Factors births(Repro_Life = reproductive_lifetime, t_pop_equil_time = t_pop_equil_time) "p.96 of Dynamics of Growth in a Finite World" annotation(Placement(visible = true, transformation(origin = {-140.0,-29.0}, extent = {{-10.0,-11.0},{10.0,11.0}}, rotation = -270)));
+        SystemDynamics.WorldDynamics.World3.Utilities.Birth_Factors births(Repro_Life = reproductive_lifetime, t_pop_equil_time = t_pop_equil_time, pseudo_ffw=pseudo_ffw) "p.96 of Dynamics of Growth in a Finite World" annotation(Placement(visible = true, transformation(origin = {-140.0,-29.0}, extent = {{-10.0,-11.0},{10.0,11.0}}, rotation = -270)));
+        // Not original ^
         SystemDynamics.Rates.RRate Deaths_0_14 "p.57 of Dynamics of Growth in a Finite World" annotation(Placement(visible = true, transformation(origin = {-90.0,-60.0}, extent = {{-12.0,-12.0},{12.0,12.0}}, rotation = -270)));
         SystemDynamics.Sources.Sink sink1 annotation(Placement(visible = true, transformation(origin = {-80.0,-90.0}, extent = {{-10.0,-10.0},{10.0,10.0}}, rotation = -90)));
         SystemDynamics.Rates.RRate Deaths_15_44 "p.57 of Dynamics of Growth in a Finite World" annotation(Placement(visible = true, transformation(origin = {-20.0,-60.0}, extent = {{-12.0,-12.0},{12.0,12.0}}, rotation = -270)));
@@ -4530,6 +4536,9 @@ The service capital is measured in U.S. dollars.
 </html>"));
       end Service_Sector_Investment;
       model Scenario_1 "Original WORLD3 model"
+        // Not original:
+        parameter Real pseudo_ffw = 1 "Pseudo equivalent to ffw in first world3 version";
+        // Not original^
         parameter Real agr_mtl_toxic_index(unit = "1/dollar") = 1 "Agricultural materials toxicity index";
         parameter Real assim_half_life_1970(unit = "yr") = 1.5 "Pollution assimilation half life in 1970";
         parameter Real avg_life_land_norm(unit = "yr") = 1000 "Normal life span of land";
@@ -4623,7 +4632,10 @@ The service capital is measured in U.S. dollars.
         output Real ind_out_pc(unit = "dollar/yr") "Total annual consumer goods per person";
         output Real human_ecological_footprint(unit = "Gha") "Human ecological footprint";
         output Real human_welfare_index "Human welfare index";
-        SystemDynamics.WorldDynamics.World3.Population_Dynamics Population_Dynamics1(pop1_init = pop1_init, pop2_init = pop2_init, pop3_init = pop3_init, pop4_init = pop4_init, labor_force_partic = labor_force_partic, reproductive_lifetime = reproductive_lifetime, t_pop_equil_time = t_pop_equil_time) "Population dynamics" annotation(Placement(visible = true, transformation(origin = {-100.0,180.0}, extent = {{-20.0,-20.0},{20.0,20.0}}, rotation = 0)), Dialog(group = "Variables"));
+        // Original:
+        //SystemDynamics.WorldDynamics.World3.Population_Dynamics Population_Dynamics1(pop1_init = pop1_init, pop2_init = pop2_init, pop3_init = pop3_init, pop4_init = pop4_init, labor_force_partic = labor_force_partic, reproductive_lifetime = reproductive_lifetime, t_pop_equil_time = t_pop_equil_time) "Population dynamics" annotation(Placement(visible = true, transformation(origin = {-100.0,180.0}, extent = {{-20.0,-20.0},{20.0,20.0}}, rotation = 0)), Dialog(group = "Variables"));
+        SystemDynamics.WorldDynamics.World3.Population_Dynamics Population_Dynamics1(pop1_init = pop1_init, pop2_init = pop2_init, pop3_init = pop3_init, pop4_init = pop4_init, labor_force_partic = labor_force_partic, reproductive_lifetime = reproductive_lifetime, t_pop_equil_time = t_pop_equil_time,pseudo_ffw=pseudo_ffw) "Population dynamics" annotation(Placement(visible = true, transformation(origin = {-100.0,180.0}, extent = {{-20.0,-20.0},{20.0,20.0}}, rotation = 0)), Dialog(group = "Variables"));
+        // Not original ^
         SystemDynamics.WorldDynamics.World3.Pollution_Dynamics Pollution_Dynamics1(agr_mtl_toxic_index = agr_mtl_toxic_index, assim_half_life_1970 = assim_half_life_1970, des_ppoll_index_DPOLX = des_ppoll_index_DPOLX, fr_agr_inp_pers_mtl = fr_agr_inp_pers_mtl, frac_res_pers_mtl = frac_res_pers_mtl, ind_mtl_emiss_fact = ind_mtl_emiss_fact, ind_mtl_toxic_index = ind_mtl_toxic_index, ind_out_in_1970 = ind_out_in_1970, p_ppoll_gen_fact_1 = p_ppoll_gen_fact_1, pers_pollution_init = pers_pollution_init, ppoll_in_1970 = ppoll_in_1970, ppoll_tech_init = ppoll_tech_init, ppoll_trans_del = ppoll_trans_del, t_air_poll_time = t_air_poll_time, t_policy_year = t_policy_year, tech_dev_del_TDD = tech_dev_del_TDD, p_ppoll_tech_chg_mlt = p_ppoll_tech_chg_mlt) "Persistent pollution generation" annotation(Placement(visible = true, transformation(origin = {-100.0,80.0}, extent = {{-20.0,-20.0},{20.0,20.0}}, rotation = 0)));
         SystemDynamics.WorldDynamics.World3.Arable_Land_Dynamics Arable_Land_Dynamics1(arable_land_init = arable_land_init, avg_life_land_norm = avg_life_land_norm, inherent_land_fert = inherent_land_fert, pot_arable_land_init = pot_arable_land_init, pot_arable_land_tot = pot_arable_land_tot, social_discount = social_discount, t_land_life_time = t_land_life_time, urban_ind_land_init = urban_ind_land_init, urb_ind_land_dev_time = urb_ind_land_dev_time) "Arable land dynamics" annotation(Placement(visible = true, transformation(origin = {-100.0,-20.0}, extent = {{-20.0,-20.0},{20.0,20.0}}, rotation = 0)), Dialog(group = "Variables"));
         SystemDynamics.WorldDynamics.World3.Food_Production Food_Production1(agr_inp_init = agr_inp_init, food_short_perc_del = food_short_perc_del, p_avg_life_agr_inp_1 = p_avg_life_agr_inp_1, p_avg_life_agr_inp_2 = p_avg_life_agr_inp_2, p_land_yield_fact_1 = p_land_yield_fact_1, perc_food_ratio_init = perc_food_ratio_init, processing_loss = processing_loss, subsist_food_pc = subsist_food_pc, t_policy_year = t_policy_year, tech_dev_del_TDD = tech_dev_del_TDD, land_fr_harvested = land_fr_harvested) "Food production" annotation(Placement(visible = true, transformation(origin = {-100.0,-120.0}, extent = {{-20.0,-20.0},{20.0,20.0}}, rotation = 0)), Dialog(group = "Variables"));
@@ -6981,6 +6993,9 @@ This function is described on p.140 of <a href=\"http://www.pegasuscom.com/BookD
         end BD_Rates;
         block Birth_Factors "Birth factors of WORLD3 model"
           extends Interfaces.Nonlin_3;
+          // Not original:
+          parameter Real pseudo_ffw = 1 "Pseudo equivalent to ffw in first world3 version";
+          // Not original^
           parameter Real Repro_Life(unit = "yr") = 30 "Reproductive lifetime";
           parameter Real t_pop_equil_time(unit = "yr") = 4000 "Population equilibrium time";
           output Real tot_fert "Total fertility";
@@ -6991,7 +7006,7 @@ This function is described on p.140 of <a href=\"http://www.pegasuscom.com/BookD
           tot_fert = u1;
           deaths = u2;
           pop_15_44 = u3;
-          births = if time > t_pop_equil_time then deaths else 0.5 * tot_fert * pop_15_44 / Repro_Life;
+          births = if time > t_pop_equil_time then deaths else pseudo_ffw * 0.5 * tot_fert * pop_15_44 / Repro_Life;
           y = births;
           annotation(Documentation(info = "<html>
 This function is described on p.96 of <a href=\"http://www.pegasuscom.com/BookDetail.asp?BookQuery_Action=Find('ISBN','XDYGO')\">Dynamics of Growth in a Finite World</a>.

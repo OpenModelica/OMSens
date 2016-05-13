@@ -26,18 +26,37 @@ SPECIAL_policy_years = None # Special vars sweeping that sweeps the year to appl
 
 
 ##### GLOBALS: #####
-_plot_vars= ["population","nr_resources"]
+_plot_vars= ["population","nr_resources","Population_Dynamics1FFW"] #without the "." in "...Dynamics.FFW" because numpy doesn't play well with dots in column names
 _startTime= 1900 # year to start the simulation (1900 example)
-_stopTime= 2300  # year to end the simulation (2100 for example)
+_stopTime= 2500  # year to end the simulation (2100 for example)
 _scens_to_run = [1] #List of ints representing the scenarios to run (from 1 to 11).  Example: [1,2,3,4,5,6,7,8,9]
 
 def main():
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
     # testPolicyYears()
     # testDeltaNRResources()
-    testFertility()
+    # testFertility()
+    testFertility2()
+    # standardRun()
 
 ## Predefined tests
+def standardRun(): #ONLY TO GET THE STANDARD CSV!
+    iterations = 1
+    sweep_vars= []
+    sweep_value_formula_str = "i"
+    fixed_params = []
+    setUpSweepsAndRun(iterations,sweep_vars,sweep_value_formula_str,fixed_params)
+def testFertility2():
+    iterations = 8
+    sweep_vars= ["pseudo_ffw"] #NOT ORIGINAL PARAMETER! ADDED ONLY TO SCENARIO 1
+    sweep_value_formula_str = deltaBeforeAndAfter(p=1,delta=0.01,iterations=iterations) #Has to be a string with only free variable "i"
+    fixed_params = [  # Params changes that will be fixed throughout the sweep. Example: [("nr_resources_init",2e12)]
+                    ("p_ind_cap_out_ratio_1",3.15),   #ICOR= 3.15
+                    ("p_avg_life_ind_cap_1", 13.3),   #ALIC= 13.3
+                    ("p_avg_life_serv_cap_1", 17.1),   #ALSC= 17.1
+                    ("p_serv_cap_out_ratio_1", 1.05)  #SCOR= 1.05
+                   ]
+    setUpSweepsAndRun(iterations,sweep_vars,sweep_value_formula_str,fixed_params)
 def testFertility():
     iterations = 12
     sweep_vars= ["max_tot_fert_norm"]
