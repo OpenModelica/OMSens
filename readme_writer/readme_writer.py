@@ -4,6 +4,7 @@ import logging #en reemplazo de los prints
 logger = logging.getLogger("-- Automatic readme for run writer --") #un logger especifico para este modulo
 #Mine:
 import settings.gral_settings as gral_settings
+import filesystem.files_aux
 introduction = "This readme file was automatically generated to ease the effort of understanding the produced outputs. Here you'll find run-specific and run-independant information."
 
 
@@ -20,10 +21,8 @@ def writeReadme(output_path,sweeping_info):
     logger.debug("Writing readme to path:{output_path}".format(output_path=output_path))
     run_indep_info = runIndependantInformation()
     run_specif_info = runSpecificInformation(sweeping_info)
-    with open(output_path, 'w') as outputFile:
-        outputFile.write(introduction+"\n\n")
-        outputFile.write(run_indep_info+"\n\n")
-        outputFile.write(run_specif_info)
+    final_str = (introduction+"\n\n") + (run_indep_info+"\n\n") + (run_specif_info)
+    filesystem.files_aux.writeStrToFile(final_str,output_path)
 
 def runIndependantInformation():
     strs = ["... Information not specific to this run ...",

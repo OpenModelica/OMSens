@@ -28,3 +28,8 @@ def tmpPath():
     parentdir = parentDir(currentdir)
     return os.path.join(parentdir,"tmp")
     # return os.path.join(currentdir,"tmp")
+# Functions to modify filesystem:
+def writeStrToFile(str_,file_path):
+    with open(file_path, 'w') as outputFile:
+        outputFile.write(str_)
+    return 0
