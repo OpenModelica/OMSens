@@ -51,10 +51,10 @@ def testFertility2():
     sweep_vars= ["pseudo_ffw"] #NOT ORIGINAL PARAMETER! ADDED ONLY TO SCENARIO 1
     sweep_value_formula_str = deltaBeforeAndAfter(p=1,delta=0.01,iterations=iterations) #Has to be a string with only free variable "i"
     fixed_params = [  # Params changes that will be fixed throughout the sweep. Example: [("nr_resources_init",2e12)]
-                    ("p_ind_cap_out_ratio_1",3.15),   #ICOR= 3.15
-                    ("p_avg_life_ind_cap_1", 13.3),   #ALIC= 13.3
-                    ("p_avg_life_serv_cap_1", 17.1),   #ALSC= 17.1
-                    ("p_serv_cap_out_ratio_1", 1.05)  #SCOR= 1.05
+            ("p_ind_cap_out_ratio_1",3.15),   #Hugo: ICOR= 3.15, Default: ICOR=3
+            ("p_avg_life_ind_cap_1", 13.3),   #Hugo: ALIC= 13.3, Default: ALIC=14
+            ("p_avg_life_serv_cap_1", 17.1),  #Hugo: ALSC= 17.1, Default: ALSC=20
+            ("p_serv_cap_out_ratio_1", 1.05)  #Hugo: SCOR= 1.05, Default: SCOR=1
                    ]
     setUpSweepsAndRun(iterations,sweep_vars,sweep_value_formula_str,fixed_params)
 def testFertility():
@@ -62,10 +62,10 @@ def testFertility():
     sweep_vars= ["max_tot_fert_norm"]
     sweep_value_formula_str = deltaBeforeAndAfter(p=12,delta=0.1,iterations=iterations) #Has to be a string with only free variable "i"
     fixed_params = [  # Params changes that will be fixed throughout the sweep. Example: [("nr_resources_init",2e12)]
-                    ("p_ind_cap_out_ratio_1",3.15),   #ICOR= 3.15
-                    ("p_avg_life_ind_cap_1", 13.3),   #ALIC= 13.3
-                    ("p_avg_life_serv_cap_1", 17.1),   #ALSC= 17.1
-                    ("p_serv_cap_out_ratio_1", 1.05)  #SCOR= 1.05
+       ("p_ind_cap_out_ratio_1",3.15),   #Hugo: ICOR= 3.15, Default: ICOR=3  
+       ("p_avg_life_ind_cap_1", 13.3),   #Hugo: ALIC= 13.3, Default: ALIC=14 
+       ("p_avg_life_serv_cap_1", 17.1),  #Hugo: ALSC= 17.1, Default: ALSC=20 
+       ("p_serv_cap_out_ratio_1", 1.05)  #Hugo: SCOR= 1.05, Default: SCOR=1  
                    ]
     setUpSweepsAndRun(iterations,sweep_vars,sweep_value_formula_str,fixed_params)
 
