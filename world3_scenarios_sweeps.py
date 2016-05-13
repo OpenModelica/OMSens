@@ -36,8 +36,8 @@ def main():
     # testPolicyYears()
     # testDeltaNRResources()
     # testFertility()
-    testFertility2()
-    # standardRun()
+    # testFertility2()
+    standardRun()
 
 ## Predefined tests
 def standardRun(): #ONLY TO GET THE STANDARD CSV!

@@ -1,4 +1,7 @@
+#Std
 import platform
+#Mine
+import filesystem.files_aux
 
 #Posibles lv para el omc_logger:
 # LOG_DEBUG: muestra todos los valores leidos del .xml (3k lineas)
@@ -19,7 +22,7 @@ def createMos(mo_file,model_name,sweep_vars,iterations,output_mos_path,startTime
     final_str = load_and_build_str + fixed_params_str + for_declaration_str + \
                 sweep_value_str    + sweeping_vars_str + full_system_call_str + \
                 end_for_str
-    writeStrToFile(final_str,output_mos_path)
+    filesystem.files_aux.writeStrToFile(final_str,output_mos_path)
 
 
 def strForLoadingAndBuilding(mo_file,model_name,startTime,stopTime):
@@ -65,10 +68,6 @@ def strForFullSystemCall(model_name,csv_file_name_modelica,omc_logger_flags):
 def strForEndFor():
     end_for_str = "\n end for;"
     return end_for_str
-def writeStrToFile(str_,file_path):
-    with open(file_path, 'w') as outputFile:
-        outputFile.write(str_)
-    return 0
 
 
 #String skeletons: (the names inside "{ }" are variables)
