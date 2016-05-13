@@ -1,0 +1,90 @@
+Vermeulen&J (V&J) made 5 runs, each run changing a set of parameters in the year 1975 (not from the start in 1900). We can reproduce the results for the first 3 runs in V&J by changing a line per variable. Each line change is described below.
+Run1: Meadow's STD Run (no changes)
+Run2:
+ p_fioa_cons_const_1 (FIOAC):
+   // Orig:
+   //s_fioa_cons_const = if time > t_policy_year then p_fioa_cons_const_2 else p_fioa_cons_const_1;
+     s_fioa_cons_const = if time > 1975 then 0.473 else p_fioa_cons_const_1;
+   // Not orig^
+ 
+ p_avg_life_ind_cap_1 (ALIC):
+   //Orig:
+   //s_avg_life_ind_cap = if time > t_policy_year then p_avg_life_ind_cap_2 else p_avg_life_ind_cap_1;
+     s_avg_life_ind_cap = if time > 1975 then 12.6 else p_avg_life_ind_cap_1;
+   //not orig ^
+
+ p_ind_cap_out_ratio_1 (ICOR):
+  //Orig:
+  //s_ind_cap_out_ratio = if time > t_policy_year then p_ind_cap_out_ratio_2 else p_ind_cap_out_ratio_1;
+    s_ind_cap_out_ratio = if time > 1975 then 3.3 else 3;
+  // Not orig^
+
+Run3:
+ p_fioa_cons_const_1 (FIOAC):
+   // Orig:
+   //s_fioa_cons_const = if time > t_policy_year then p_fioa_cons_const_2 else p_fioa_cons_const_1;
+     s_fioa_cons_const = if time > 1975 then 0.387 else p_fioa_cons_const_1;
+   // Not orig^
+ 
+ p_avg_life_ind_cap_1 (ALIC):
+   //Orig:
+   //s_avg_life_ind_cap = if time > t_policy_year then p_avg_life_ind_cap_2 else p_avg_life_ind_cap_1;
+     s_avg_life_ind_cap = if time > 1975 then 15.4 else p_avg_life_ind_cap_1;
+   //not orig ^
+
+ p_ind_cap_out_ratio_1 (ICOR):
+  //Orig:
+  //s_ind_cap_out_ratio = if time > t_policy_year then p_ind_cap_out_ratio_2 else p_ind_cap_out_ratio_1;
+    s_ind_cap_out_ratio = if time > 1975 then 2.7 else 3;
+  // Not orig^
+
+Run4 (imposible to reproduce 100%. Missing var DCFSN whose default in the first version was 4 children):
+ p_fioa_cons_const_1 (FIOAC):
+   // Orig:
+   //s_fioa_cons_const = if time > t_policy_year then p_fioa_cons_const_2 else p_fioa_cons_const_1;
+     s_fioa_cons_const = if time > 1975 then 0.473 else p_fioa_cons_const_1;
+   // Not orig^
+ 
+ p_avg_life_ind_cap_1 (ALIC):
+   //Orig:
+   //s_avg_life_ind_cap = if time > t_policy_year then p_avg_life_ind_cap_2 else p_avg_life_ind_cap_1;
+     s_avg_life_ind_cap = if time > 1975 then 12.6 else p_avg_life_ind_cap_1;
+   //not orig ^
+
+ p_ind_cap_out_ratio_1 (ICOR):
+  //Orig:
+  //s_ind_cap_out_ratio = if time > t_policy_year then p_ind_cap_out_ratio_2 else p_ind_cap_out_ratio_1;
+    s_ind_cap_out_ratio = if time > 1975 then 3.3 else 3;
+  // Not orig^
+ reproductive_lifetime (RLT):
+  //Orig:
+  //births = if time > t_pop_equil_time then deaths else 0.5 * tot_fert * pop_15_44 / Repro_Life;
+  // Orig modified by us previously with pseudo_ffw
+  //births = if time > t_pop_equil_time then deaths else pseudo_ffw * 0.5 * tot_fert * pop_15_44 / Repro_Life;
+    births = if time > t_pop_equil_time then deaths else 0.5 * tot_fert * pop_15_44 / 27;
+   // Not orig^
+Run5(imposible to reproduce 100%. Missing var DCFSN whose default in the first version was 4 children): :
+ p_fioa_cons_const_1 (FIOAC):
+   // Orig:
+   //s_fioa_cons_const = if time > t_policy_year then p_fioa_cons_const_2 else p_fioa_cons_const_1;
+     s_fioa_cons_const = if time > 1975 then 0.387 else p_fioa_cons_const_1;
+   // Not orig^
+ 
+ p_avg_life_ind_cap_1 (ALIC):
+   //Orig:
+   //s_avg_life_ind_cap = if time > t_policy_year then p_avg_life_ind_cap_2 else p_avg_life_ind_cap_1;
+     s_avg_life_ind_cap = if time > 1975 then 15.4 else p_avg_life_ind_cap_1;
+   //not orig ^
+
+ p_ind_cap_out_ratio_1 (ICOR):
+  //Orig:
+  //s_ind_cap_out_ratio = if time > t_policy_year then p_ind_cap_out_ratio_2 else p_ind_cap_out_ratio_1;
+    s_ind_cap_out_ratio = if time > 1975 then 2.7 else 3;
+  // Not orig^
+ reproductive_lifetime (RLT):
+  //Orig:
+  //births = if time > t_pop_equil_time then deaths else 0.5 * tot_fert * pop_15_44 / Repro_Life;
+  // Orig modified by us previously with pseudo_ffw
+  //births = if time > t_pop_equil_time then deaths else pseudo_ffw * 0.5 * tot_fert * pop_15_44 / Repro_Life;
+    births = if time > t_pop_equil_time then deaths else 0.5 * tot_fert * pop_15_44 / 33;
+   // Not orig^
