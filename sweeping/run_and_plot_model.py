@@ -12,8 +12,6 @@ import readme_writer.readme_writer as readme_writer
 import filesystem.files_aux
 
 #Globals:
-_interpreter_windows= "%OPENMODELICAHOME%\\bin\\omc"
-_interpreter_linux = "omc"
 
 def createSweepRunAndPlotForModelInfo(mos_script_factory_inst,plot_vars,iterations,output_folder_path,sweep_value_formula_str,csv_file_name_python_skeleton,csv_file_name_modelica_skeleton):
     output_mos_path = os.path.join(output_folder_path,gral_settings.mos_script_filename)
@@ -87,9 +85,9 @@ def runMosScript(script_path):
     script_folder_path = os.path.dirname(script_path)
     #Check if windows or linux:
     if platform.system() == "Linux":
-        interpreter = _interpreter_linux
+        interpreter = gral_settings._interpreter_linux
     elif platform.system() == "Windows":
-        interpreter = _interpreter_windows
+        interpreter = gral_settings._interpreter_windows
     else:
         logger.error("This script was tested only on Windows and Linux. The omc interpreter for another platform has not been set")
 
