@@ -9,6 +9,7 @@ logger = logging.getLogger("--Run and Plot OpenModelica--") #un logger especific
 import plotting.plot_csv as plot_csv
 import settings.gral_settings as gral_settings
 import readme_writer.readme_writer as readme_writer
+import filesystem.files_aux
 
 #Globals:
 _interpreter_windows= "%OPENMODELICAHOME%\\bin\\omc"
@@ -59,13 +60,15 @@ def sweepingInfoPerIteration(settings,csv_file_name_python_skeleton):
     return sweeping_info_dict
 
 def writeRunLog(run_settings_dict, output_path):
-    with open(output_path, 'w') as outputFile:
-        outputFile.write("""The whole "create mos, run it and plot it" script was run with the following settings"""+"\n")
-        outputFile.write("""<setting_name>:\n   <setting_value>"""+"\n")
-        outputFile.write("""\n""") #a space between explanation and the important things
-        for setting_name,setting_value in run_settings_dict.items():
-            setting_str = """{setting_name}:\n {setting_value}""".format(setting_name=setting_name,setting_value=setting_value)
-            outputFile.write(setting_str+"\n")
+    intro_str = """The whole "create mos, run it and plot it" script was run with the following settings"""+"\n"
+    format_explanation_str = """<setting_name>:\n   <setting_value>"""+"\n"
+    all_settings = []
+    for setting_name,setting_value in run_settings_dict.items():
+        setting_str = """{setting_name}:\n {setting_value}""".format(setting_name=setting_name,setting_value=setting_value)
+        all_settings.append(setting_str)
+    all_settings_str = "\n".join(all_settings)
+    final_str = intro_str + format_explanation_str + "\n" + all_settings_str
+    filesystem.files_aux.writeStrToFile(final_str,output_path)
     return 0
 
 def csvFiles(folder_path):
@@ -100,11 +103,11 @@ def runMosScript(script_path):
     return output_decoded
 
 def writeOMCLog(log_str, output_path):
-    with open(output_path, 'w') as outputFile:
-        outputFile.write("""The following is the output from the OMC script runner from Open Modelica"""+"\n")
-        outputFile.write(10*"""-"""+"\n")
-        outputFile.write(log_str)
-        return 0
+    intro_str ="""The following is the output from the OMC script runner from Open Modelica"""+"\n"
+    separator_str = 10*"""-"""+"\n"
+    final_str = intro_str+separator_str+log_str
+    filesystem.files_aux.writeStrToFile(final_str,output_path)
+    return 0
 
 def callCMDStringInPath(command,path):
     process = subprocess.Popen(command,stdout=subprocess.PIPE,shell=True,cwd=path)

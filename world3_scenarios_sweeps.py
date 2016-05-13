@@ -26,7 +26,7 @@ SPECIAL_policy_years = None # Special vars sweeping that sweeps the year to appl
 
 
 ##### GLOBALS: #####
-_plot_vars= ["population","nr_resources","Population_Dynamics1FFW"] #without the "." in "...Dynamics.FFW" because numpy doesn't play well with dots in column names
+_plot_vars= ["population"]#,"nr_resources","Population_Dynamics1FFW"] #without the "." in "...Dynamics.FFW" because numpy doesn't play well with dots in column names
 _startTime= 1900 # year to start the simulation (1900 example)
 _stopTime= 2500  # year to end the simulation (2100 for example)
 _scens_to_run = [1] #List of ints representing the scenarios to run (from 1 to 11).  Example: [1,2,3,4,5,6,7,8,9]
