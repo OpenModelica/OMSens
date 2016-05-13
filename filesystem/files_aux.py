@@ -2,6 +2,7 @@ import os
 import inspect
 from datetime import datetime
 import logging
+import subprocess
 logger = logging.getLogger("--Files aux funcs--") #un logger especifico para este modulo
 
 # Functions to get current directory, create folder, create "tmp" folder to dump results, etc
@@ -28,8 +29,14 @@ def tmpPath():
     parentdir = parentDir(currentdir)
     return os.path.join(parentdir,"tmp")
     # return os.path.join(currentdir,"tmp")
+
 # Functions to modify filesystem:
 def writeStrToFile(str_,file_path):
     with open(file_path, 'w') as outputFile:
         outputFile.write(str_)
     return 0
+
+def callCMDStringInPath(command,path):
+    process = subprocess.Popen(command,stdout=subprocess.PIPE,shell=True,cwd=path)
+    output = process.communicate()[0]
+    return output

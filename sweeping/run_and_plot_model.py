@@ -1,6 +1,5 @@
 #This is the main script for configuring, running and plotting a OpenModelica Sweep
 import os
-import subprocess
 import re
 import platform
 import logging #en reemplazo de los prints
@@ -12,7 +11,6 @@ import readme_writer.readme_writer as readme_writer
 import filesystem.files_aux
 
 #Globals:
-
 def createSweepRunAndPlotForModelInfo(mos_script_factory_inst,plot_vars,iterations,output_folder_path,sweep_value_formula_str,csv_file_name_python_skeleton,csv_file_name_modelica_skeleton):
     output_mos_path = os.path.join(output_folder_path,gral_settings.mos_script_filename)
 	# EL scripting de modelica se rompe con la backslash (aunque estemos en windows). Hay que mandar la de unix nomas:
@@ -92,7 +90,7 @@ def runMosScript(script_path):
         logger.error("This script was tested only on Windows and Linux. The omc interpreter for another platform has not been set")
 
     command = "{interpreter} {script_path}".format(interpreter=interpreter,script_path=script_path)
-    output = callCMDStringInPath(command,script_folder_path)
+    output = filesystem.files_aux.callCMDStringInPath(command,script_folder_path)
     folder_path = os.path.dirname(script_path)
     omc_log_path = os.path.join(folder_path,gral_settings.omc_run_log_filename)
     output_decoded = output.decode("UTF-8")
@@ -106,10 +104,3 @@ def writeOMCLog(log_str, output_path):
     final_str = intro_str+separator_str+log_str
     filesystem.files_aux.writeStrToFile(final_str,output_path)
     return 0
-
-def callCMDStringInPath(command,path):
-    process = subprocess.Popen(command,stdout=subprocess.PIPE,shell=True,cwd=path)
-    output = process.communicate()[0]
-    return output
-
-
