@@ -16,9 +16,9 @@ class TestsCompareTwoCSVs(unittest.TestCase):
         self._temp_files = [] #each test case can create individual files
     def tearDown(self):
         pass
-        # shutil.rmtree(self._temp_dir)
-        # for f in self._temp_files:
-        #     f.close()
+        shutil.rmtree(self._temp_dir)
+        for f in self._temp_files:
+            f.close()
 #TDD
     # def test_empty_csv_raises_exception(self):
     #     file_path= os.path.join(currentdir, csvs_path+"/empty_file.csv")
