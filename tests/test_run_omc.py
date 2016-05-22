@@ -3,14 +3,9 @@ import unittest
 import os
 import tempfile #para crear el tempdir
 import shutil #para borrar el tempdir
-import filecmp #para saber si 2 files son iguales o no
-import platform #para saber la platform en la que se está corriendo el script
 import re #para los regex
 #Mine
-from plotting import plot_csv
 import tests.aux_tests
-import settings.gral_settings as gral_settings
-import filesystem.files_aux
 import running.run_omc as omc_runner
 
 class TestsCompareTwoCSVs(unittest.TestCase):
@@ -49,10 +44,6 @@ class TestsCompareTwoCSVs(unittest.TestCase):
             if re.match('.*\.(c|o|h|makefile|log|libs|json)$', x):
                 trash_files.append(x)
         self.assertEqual(trash_files,[])
-
-
-        #Assert que ninguna de las files tiene extensión de los archivos temporales en el regex que
-        #usa remove temporary files en run_and_plot
 
         #BORRA DE ACA PARA ABAJO:
         # print(mos_folder_path)
