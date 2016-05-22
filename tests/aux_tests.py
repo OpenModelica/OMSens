@@ -1,12 +1,22 @@
 #Std
+import os
 import tempfile #para crear el tempdir
 
 # Auxs for testing (create temp dir, create tmp file, etc)
+def createTempFromStrIntoTestCaseTempFolder(file_content,test_case,suffix=""):
+    # create temp file in temp folder
+    temp_name = "tmp_file"+suffix
+    temp_folder_path = test_case._temp_dir
+    temp_path = os.path.join(temp_folder_path,temp_name)
+    with open(temp_path,"w") as outf:
+        outf.write(str(file_content,'utf-8'))
+    return temp_path
 def createTempFromStrAndAddToTestCase(file_content,test_case,suffix=""):
-    new_temp_f = createTempFromStr(file_content,suffix)
+    # Create standalone temp
+    new_temp_f = createStandaoleTempFromStr(file_content,suffix)
     test_case._temp_files.append(new_temp_f)
     return new_temp_f.name
-def createTempFromStr(file_content,suffix):
+def createStandaoleTempFromStr(file_content,suffix):
     new_temp_f = tempfile.NamedTemporaryFile(suffix=suffix)
     new_temp_f.write(file_content)
     new_temp_f.seek(0)

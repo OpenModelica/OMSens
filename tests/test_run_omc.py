@@ -5,12 +5,13 @@ import tempfile #para crear el tempdir
 import shutil #para borrar el tempdir
 import filecmp #para saber si 2 files son iguales o no
 import platform #para saber la platform en la que se está corriendo el script
-from nose.plugins.attrib import attr #to tag tests as slow, fast, etc
+import re #para los regex
 #Mine
 from plotting import plot_csv
 import tests.aux_tests
 import settings.gral_settings as gral_settings
 import filesystem.files_aux
+import running.run_omc as omc_runner
 
 class TestsCompareTwoCSVs(unittest.TestCase):
 #setup y teardown de los tests
@@ -27,19 +28,35 @@ class TestsCompareTwoCSVs(unittest.TestCase):
     # def test_empty_csv_raises_exception(self):
     #     file_path= os.path.join(currentdir, csvs_path+"/empty_file.csv")
     #     self.assertRaises(EmptyCSVException,CSVData,file_path)
-    @attr(speed='fast')
     def test_omc_loads_a_model_correctly(self):
         mos_str= model_str
         mos_path=createTMPMos(mos_str,self)
-        process_output = runMosScript(mos_path)
+        process_output = omc_runner.runMosScript(mos_path)
         self.assertEqual(process_output,"true\n")
-    @attr(speed='fast')
+
     def test_omc_builds_a_model_correctly(self):
         mos_str= model_str + build_model_str
         mos_path=createTMPMos(mos_str,self)
-        process_output = runMosScript(mos_path)
+        process_output = omc_runner.runMosScript(mos_path)
         error_line = process_output.splitlines()[-1]
         self.assertEqual(error_line,'""')
+        # The following should be another test but beacuse of slow building times, we minimize the
+        # amount of compiling Modelica times
+        # test_omc_leaves_no_trash_after_building(self):
+        mos_folder_path=os.path.dirname(mos_path)
+        trash_files = []
+        for x in os.listdir(mos_folder_path):
+            if re.match('.*\.(c|o|h|makefile|log|libs|json)$', x):
+                trash_files.append(x)
+        self.assertEqual(trash_files,[])
+
+
+        #Assert que ninguna de las files tiene extensión de los archivos temporales en el regex que
+        #usa remove temporary files en run_and_plot
+
+        #BORRA DE ACA PARA ABAJO:
+        # print(mos_folder_path)
+        # print(os.listdir(mos_folder_path))
         # with open(mos_path,"r") as outf:
         #     print(outf.read())
         # print(process_output)
@@ -48,26 +65,11 @@ class TestsCompareTwoCSVs(unittest.TestCase):
 ###########
 # Globals #
 ###########
-def runMosScript(script_path):
-    script_folder_path = os.path.dirname(script_path)
-    #Check if windows or linux:
-    if platform.system() == "Linux":
-        interpreter = gral_settings._interpreter_linux
-    elif platform.system() == "Windows":
-        interpreter = gral_settings._interpreter_windows
-    # else:
-        # logger.error("This script was tested only on Windows and Linux. The omc interpreter for another platform has not been set")
-
-    command = "{interpreter} {script_path} +d=initialization".format(interpreter=interpreter,script_path=script_path)
-    output = filesystem.files_aux.callCMDStringInPath(command,script_folder_path)
-    folder_path = os.path.dirname(script_path)
-    omc_log_path = os.path.join(folder_path,gral_settings.omc_run_log_filename)
-    output_decoded = output.decode("UTF-8")
-    # writeOMCLog(output_decoded,omc_log_path)
-    # logger.debug("OMC Log written to: {omc_log_path}".format(omc_log_path=omc_log_path))
-    return output_decoded
 def createTMPMos(file_str,test_case):
-    return tests.aux_tests.createTempFromStrAndAddToTestCase(file_str,test_case,suffix=".mos")
+    # Creates mos script in temp folder
+    return tests.aux_tests.createTempFromStrIntoTestCaseTempFolder(file_str,test_case,suffix=".mos")
+    # Creates stand alone tempfile
+    # return tests.aux_tests.createTempFromStrAndAddToTestCase(file_str,test_case,suffix=".mos")
 model_str =\
 b"""loadString("
 class Model

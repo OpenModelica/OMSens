@@ -1,8 +1,9 @@
 import os
 import inspect
 from datetime import datetime
-import logging
 import subprocess
+import re #regex
+import logging
 logger = logging.getLogger("--Files aux funcs--") #un logger especifico para este modulo
 
 # Functions to get current directory, create folder, create "tmp" folder to dump results, etc
@@ -40,3 +41,8 @@ def callCMDStringInPath(command,path):
     process = subprocess.Popen(command,stdout=subprocess.PIPE,shell=True,cwd=path)
     output = process.communicate()[0]
     return output
+
+def removeFilesWithRegexAndPath(regex,folder_path):
+    for x in os.listdir(folder_path):
+        if re.match(regex, x):
+            os.remove(os.path.join(folder_path,x))

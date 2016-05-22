@@ -9,6 +9,7 @@ import plotting.plot_csv as plot_csv
 import settings.gral_settings as gral_settings
 import readme_writer.readme_writer as readme_writer
 import filesystem.files_aux
+import running.run_omc
 
 #Globals:
 def createSweepRunAndPlotForModelInfo(mos_script_factory_inst,plot_vars,iterations,output_folder_path,sweep_value_formula_str,csv_file_name_python_skeleton,csv_file_name_modelica_skeleton):
@@ -23,8 +24,7 @@ def createSweepRunAndPlotForModelInfo(mos_script_factory_inst,plot_vars,iteratio
     mos_script_factory_inst.setSetting("output_mos_path",output_mos_path)
     mos_script_factory_inst.createMosScript() #argument-less method for now
     writeRunLog(mos_script_factory_inst.initializedSettings(), os.path.join(output_folder_path,gral_settings.omc_creation_settings_filename))
-    runMosScript(output_mos_path)
-    removeTemporaryFiles(output_folder_path)
+    running.run_omc.runMosScript(output_mos_path)
     plots_folder_path =os.path.join(output_folder_path,"plots")
     os.makedirs(plots_folder_path)
     sweeping_vars = mos_script_factory_inst.initializedSettings()["sweep_vars"]
@@ -69,40 +69,3 @@ def writeRunLog(run_settings_dict, output_path):
     filesystem.files_aux.writeStrToFile(final_str,output_path)
     return 0
 
-def csvFiles(folder_path):
-    csv_files = []
-    for x in os.listdir(folder_path):
-        if re.match('.*\.csv$', x):
-            csv_files.append(os.path.join(folder_path,x))
-    return csv_files
-
-def removeTemporaryFiles(folder_path):
-    for x in os.listdir(folder_path):
-        if re.match('.*\.(c|o|h|makefile|log|libs|json)$', x):
-            os.remove(os.path.join(folder_path,x))
-
-def runMosScript(script_path):
-    script_folder_path = os.path.dirname(script_path)
-    #Check if windows or linux:
-    if platform.system() == "Linux":
-        interpreter = gral_settings._interpreter_linux
-    elif platform.system() == "Windows":
-        interpreter = gral_settings._interpreter_windows
-    else:
-        logger.error("This script was tested only on Windows and Linux. The omc interpreter for another platform has not been set")
-
-    command = "{interpreter} {script_path}".format(interpreter=interpreter,script_path=script_path)
-    output = filesystem.files_aux.callCMDStringInPath(command,script_folder_path)
-    folder_path = os.path.dirname(script_path)
-    omc_log_path = os.path.join(folder_path,gral_settings.omc_run_log_filename)
-    output_decoded = output.decode("UTF-8")
-    writeOMCLog(output_decoded,omc_log_path)
-    logger.debug("OMC Log written to: {omc_log_path}".format(omc_log_path=omc_log_path))
-    return output_decoded
-
-def writeOMCLog(log_str, output_path):
-    intro_str ="""The following is the output from the OMC script runner from Open Modelica"""+"\n"
-    separator_str = 10*"""-"""+"\n"
-    final_str = intro_str+separator_str+log_str
-    filesystem.files_aux.writeStrToFile(final_str,output_path)
-    return 0
