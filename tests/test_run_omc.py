@@ -58,11 +58,11 @@ class TestsCompareTwoCSVs(unittest.TestCase):
 ###########
 def createTMPMos(file_str,test_case):
     # Creates mos script in temp folder
-    return tests.aux_tests.createTempFromStrIntoTestCaseTempFolder(file_str,test_case,suffix=".mos")
+    return tests.aux_tests.createTempFromStrIntoTestCaseTempFolder(file_str,test_case,"script.mos")
     # Creates stand alone tempfile
     # return tests.aux_tests.createTempFromStrAndAddToTestCase(file_str,test_case,suffix=".mos")
 model_str =\
-b"""loadString("
+"""loadString("
 class Model
   parameter Real a=-1;
   Real x(start=1,fixed=true);
@@ -71,6 +71,6 @@ equation
 end Model;
 ");\n """
 build_model_str =\
-b"""buildModel(Model);getErrorString();\n"""
+"""buildModel(Model);getErrorString();\n"""
 set_initial_val_str =\
-b"""setInitXmlStartValue("Model_init.xml", "x", String(1) , "Model_init.xml");"""
+"""setInitXmlStartValue("Model_init.xml", "x", String(1) , "Model_init.xml");"""
