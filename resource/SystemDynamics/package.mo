@@ -47,7 +47,7 @@ Typical tools for such purposes would include <font color=red><b>ARENA</b></font
 
 <ol>
 <li> Kelton, W.D., R.P. Sadowski, and D.T. Sturrock (2003), <a href=\"http://www.amazon.com/Simulation-Arena-CD-Rom-David-Kelton/dp/0072919817\">Simulation with Arena</a>, 3<sup>rd</sup> Edition, McGraw-Hill, 672 p.
-<li> Prat, V.S., A.Urqu�a, and S. Dormido (2006), <a href=\"http://www.modelica.org/events/modelica2006/Proceedings/sessions/Session5c2.pdf\">ARENALib: A Modelica Library for Discrete-Event System
+<li> Prat, V.S., A.Urquï¿½a, and S. Dormido (2006), <a href=\"http://www.modelica.org/events/modelica2006/Proceedings/sessions/Session5c2.pdf\">ARENALib: A Modelica Library for Discrete-Event System
 Simulation</a>, <i>Proc. 6<sup>th</sup> Modelica Conference</i>, Vienna, Austria, pp.539-548.
 </ol> <p>
 </html>", revisions = ""));
@@ -81,7 +81,7 @@ The <font color=red><b>Modelica</b></font> implementations of the two methodolog
 
 <ol>
 <li> Kelton, W.D., R.P. Sadowski, and D.T. Sturrock (2003), <a href=\"http://www.amazon.com/Simulation-Arena-CD-Rom-David-Kelton/dp/0072919817\">Simulation with Arena</a>, 3<sup>rd</sup> Edition, McGraw-Hill, 672 p.
-<li> Prat, V.S., A.Urqu�a, and S. Dormido (2006), <a href=\"http://www.modelica.org/events/modelica2006/Proceedings/sessions/Session5c2.pdf\">ARENALib: A Modelica Library for Discrete-Event System
+<li> Prat, V.S., A.Urquï¿½a, and S. Dormido (2006), <a href=\"http://www.modelica.org/events/modelica2006/Proceedings/sessions/Session5c2.pdf\">ARENALib: A Modelica Library for Discrete-Event System
 Simulation</a>, <i>Proc. 6<sup>th</sup> Modelica Conference</i>, Vienna, Austria, pp.539-548.
 </ol> <p>
 </html>"));
@@ -205,7 +205,7 @@ be used by Dr. Cellier's students. <p>
     annotation(DocumentationClass = true, Documentation(info = "<html>
 <h4><font color=\"#008000\" size=5>Users Guide of Package SystemDynamics</font></h4>
 <p>
-Library <b>SystemDynamics</b> is a <b>free</b> Modelica package providing components to model mass and information flows in continuous-time systems using the System Dynamics methodology. This package contains the <b>user’s  guide</b> to the library, and has the following content:
+Library <b>SystemDynamics</b> is a <b>free</b> Modelica package providing components to model mass and information flows in continuous-time systems using the System Dynamics methodology. This package contains the <b>userâ€™s  guide</b> to the library, and has the following content:
 </p>
 <ol>
 <li><a href=\"Modelica://SystemDynamics.UsersGuide.Overview\">Overview of library</a>
@@ -7490,10 +7490,7 @@ This function is described on p.293 of <a href=\"http://www.pegasuscom.com/BookD
           parameter Real p_avg_life_ind_cap_2(unit = "yr") = 14 "Controlled average life of industrial capital";
           output Real s_avg_life_ind_cap(unit = "yr") "Average life of industrial capital";
         equation
-        //Orig:
-          //s_avg_life_ind_cap = if time > t_policy_year then p_avg_life_ind_cap_2 else p_avg_life_ind_cap_1;
-          s_avg_life_ind_cap = if time > 1975 then 12.6 else p_avg_life_ind_cap_1;// # ("p_avg_life_ind_cap_1", 12.6),  #V&J-2: ALIC= 12.6, Default: ALIC=14
-        //not orig ^
+          s_avg_life_ind_cap = if time > t_policy_year then p_avg_life_ind_cap_2 else p_avg_life_ind_cap_1;
           y = s_avg_life_ind_cap;
           annotation(Documentation(info = "<html>
 This function is described on p.221 of <a href=\"http://www.pegasuscom.com/BookDetail.asp?BookQuery_Action=Find('ISBN','XDYGO')\">Dynamics of Growth in a Finite World</a>.
@@ -7536,9 +7533,7 @@ This function is described on p.287 of <a href=\"http://www.pegasuscom.com/BookD
         equation
           s_fioa_cons_const = u1;
           p_fioa_cons_var = u2;
-          // Orig:
           s_fioa_cons = if time > t_ind_equil_time then p_fioa_cons_var else s_fioa_cons_const;
-          // not orig^
           y = s_fioa_cons;
           annotation(Documentation(info = "<html>
 This function is described on p.223 of <a href=\"http://www.pegasuscom.com/BookDetail.asp?BookQuery_Action=Find('ISBN','XDYGO')\">Dynamics of Growth in a Finite World</a>.
@@ -7551,10 +7546,7 @@ This function is described on p.223 of <a href=\"http://www.pegasuscom.com/BookD
           parameter Real p_fioa_cons_const_2 = 0.43 "Controlled fraction of industrial output allocated to consumption";
           output Real s_fioa_cons_const "Fraction of industrial output allocated to consumption";
         equation
-          //Orig:
-          //s_fioa_cons_const = if time > t_policy_year then p_fioa_cons_const_2 else p_fioa_cons_const_1;
-          s_fioa_cons_const = if time > 1975 then 0.473 else p_fioa_cons_const_1; // # ("p_fioa_cons_const_1",0.473),   #V&J-2: FIOAC= 0.473, Default: FIOAC=0.43
-          // Not orig^
+          s_fioa_cons_const = if time > t_policy_year then p_fioa_cons_const_2 else p_fioa_cons_const_1;
           y = s_fioa_cons_const;
           annotation(Documentation(info = "<html>
 This function is described on p.223 of <a href=\"http://www.pegasuscom.com/BookDetail.asp?BookQuery_Action=Find('ISBN','XDYGO')\">Dynamics of Growth in a Finite World</a>.
@@ -7598,10 +7590,7 @@ This function is described on p.393 of <a href=\"http://www.pegasuscom.com/BookD
           output Real s_ind_cap_out_ratio(unit = "yr") "Industrial capital output ratio";
         equation
           p_ind_cap_out_ratio_2 = u;
-          //Orig:
-          //s_ind_cap_out_ratio = if time > t_policy_year then p_ind_cap_out_ratio_2 else p_ind_cap_out_ratio_1;
-          s_ind_cap_out_ratio = if time > 1975 then 3.3 else 3;
-          // Not orig^
+          s_ind_cap_out_ratio = if time > t_policy_year then p_ind_cap_out_ratio_2 else p_ind_cap_out_ratio_1;
           y = s_ind_cap_out_ratio;
           annotation(Documentation(info = "<html>
 This function is described on p.216 of <a href=\"http://www.pegasuscom.com/BookDetail.asp?BookQuery_Action=Find('ISBN','XDYGO')\">Dynamics of Growth in a Finite World</a>.
@@ -7825,7 +7814,7 @@ Unfortunately, <font color=red><b>STELLA</b></font> doesn't offer means for docu
  
 In order to make it as easy as possible to compare the <font color=red><b>Modelica</b></font> version of the <font color=red><b>WORLD3</b></font> model with the <font color=red><b>STELLA</b></font>-coded original, I decided to keep the same variable names in my model that Dennis had chosen for his version. <p>
  
-I also wish to acknowledge <a href=\"http://www.bi.no/Content/AcademicProfile____63388.aspx?ansattid=/fgl99096\">Prof. J�rgen Randers</a> who provided me with the information necessary to reproduce the 10 scenarios proposed in the book <a href=\"http://www.amazon.com/Limits-Growth-Donella-H-Meadows/dp/193149858X\">Limits to Growth: The 30-Year Update</a>. <p>
+I also wish to acknowledge <a href=\"http://www.bi.no/Content/AcademicProfile____63388.aspx?ansattid=/fgl99096\">Prof. Jï¿½rgen Randers</a> who provided me with the information necessary to reproduce the 10 scenarios proposed in the book <a href=\"http://www.amazon.com/Limits-Growth-Donella-H-Meadows/dp/193149858X\">Limits to Growth: The 30-Year Update</a>. <p>
  
 <hr> <p>
  
@@ -8304,4 +8293,3 @@ This package contains a number of introductory examples that can be used to fami
 <p>&nbsp;</p>
 <hr /> </html>", revisions = ""));
 end SystemDynamics;
-
