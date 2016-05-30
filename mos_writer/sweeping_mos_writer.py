@@ -85,6 +85,7 @@ def strForEndFor():
 load_and_build_skeleton= \
 """// load the file
 print("Loading file:{mo_file}\\n");
+loadModel(Modelica); //new OMC version stopped importing Modelica model
 loadFile("{mo_file}");
 getErrorString();
 // build the model once
