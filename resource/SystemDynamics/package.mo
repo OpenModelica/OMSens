@@ -4335,8 +4335,11 @@ Pollutants can take many forms.  For this reason, the <font color=red><b>WORLD3<
       end Pollution_Dynamics;
       block Population_Dynamics "Population dynamics"
         // Not original:
+        //// FFWs:
         output Real FFW = Pop_0_14.y1 / Population.y;
         parameter Real pseudo_ffw = 1 "Pseudo equivalent to ffw in first world3 version";
+        //// Population
+        Real pop_state_var_new(start=pop1_init+pop2_init+pop3_init+pop4_init) "equivalent to Population in value but this one is defined by its differential";
         // Not original^
         parameter Real pop1_init = 650000000.0 "Initial population 14 years and younger";
         parameter Real pop2_init = 700000000.0 "Initial population 15 to 44 years old";
@@ -4392,6 +4395,9 @@ Pollutants can take many forms.  For this reason, the <font color=red><b>WORLD3<
         SystemDynamics.Interfaces.MassInPort total_fertility "Average human fertility" annotation(Placement(visible = true, transformation(origin = {-210.0,60.0}, extent = {{-10.0,-10.0},{10.0,10.0}}, rotation = 0), iconTransformation(origin = {-110.0,50.0}, extent = {{-10.0,-10.0},{10.0,10.0}}, rotation = 0)), Dialog(group = "Variables"));
         SystemDynamics.Interfaces.MassOutPort population "Population" annotation(Placement(visible = true, transformation(origin = {210.0,60.0}, extent = {{-10.0,-10.0},{10.0,10.0}}, rotation = 0), iconTransformation(origin = {110.0,50.0}, extent = {{-10.0,-10.0},{10.0,10.0}}, rotation = 0)));
       equation
+        // NOT ORIGINAL!!!:
+        der(pop_state_var_new) =(Births.y1 - (Matur_14.y+Deaths_0_14.y1))+(Matur_14.y1 - (Matur_44.y1+Deaths_15_44.y1))+(Matur_44.y1-(Matur_64.y1+Deaths_45_64.y1))+(Matur_64.y1-(Deaths_65p.y1));// inflows - outflows. The inflows are the inflows of the sub population levels (pop_0_14, etc). The outflows are the outflows of those same sub pop levels (the deaths and the aging)
+        // NOT ORIGINAL^
         connect(Labor_Force.y,labor_force) annotation(Line(visible = true, points = {{107.0,50.0},{188.0,50.0},{188.0,-80.0},{210.0,-80.0}}, color = {0,0,191}));
         connect(Labor_Force.u,Work_Pop.y) annotation(Line(visible = true, origin = {72.5,50.0}, points = {{11.5,0.0},{-11.5,0.0}}, color = {0,0,191}));
         connect(matur_64.u1,Pop_45_64.y1) annotation(Line(visible = true, points = {{66.0,-24.0},{66.0,-30.0},{39.0,-30.0},{39.0,2.2}}, color = {0,0,191}));
