@@ -58,9 +58,9 @@ def testVermeulenAndJonghRun2():
 
 def standardRun(): #ONLY TO GET THE STANDARD CSV!
     kwargs = {
-    "plot_vars":[],
+    "plot_vars":["population","Population_Dynamics1pop_state_var_new"],
     "startTime": 1900 ,# year to start the simulation (1900 example)
-    "stopTime": 2100  ,# year to end the simulation (2100 for example)
+    "stopTime": 2200  ,# year to end the simulation (2100 for example)
     "scens_to_run" : [1], #The standard run corresponds to the first scenario
     "iterations" : 1, #More than one iteration is irrelevant
     "sweep_vars": [] ,#No sweeping done in std run
@@ -121,13 +121,13 @@ def testDeltaNRResources():
 
 def testPolicyYears():
     kwargs = {
-    "plot_vars":[],
+    "plot_vars":["population","nr_resources"],
     "startTime": 1900 ,# year to start the simulation (1900 example)
-    "stopTime": 2100  ,# year to end the simulation (2100 for example)
-    "scens_to_run" : [1], #The standard run corresponds to the first scenario
-    "iterations" : 3,
+    "stopTime": 2200  ,# year to end the simulation (2100 for example)
+    "scens_to_run" : [9],
+    "iterations" : 1,
     "sweep_vars":  SPECIAL_policy_years, # Set to SPECIAL_policy_years to use scenario specific defaults (year of application of policies). Examples: SPECIAL_policy_years, ["nr_resources_init"]
-    "sweep_value_formula_str" : _increasing_by_increment_from_initial_skeleton.format(initial=2012,increment=10), # "2012 + i*10" --> 2012,2022,2032...
+    "sweep_value_formula_str" : _increasing_by_increment_from_initial_skeleton.format(initial=2022,increment=10), # "2012 + i*10" --> 2012,2022,2032...
     "fixed_params" : []  # No fixed parameter changes. Example: [("nr_resources_init",6.3e9),("des_compl_fam_size_norm",2),...]
     }
     setUpSweepsAndRun(**kwargs)
@@ -160,7 +160,11 @@ def initialFactoryForWorld3Scenario(scen_num,start_time,stop_time,sweep_vars=Non
         final_sweep_vars = defaultSweepVarsForScenario(scen_num)
     model_name = world3_settings._world3_scenario_model_skeleton.format(scen_num=scen_num) #global
     initial_factory_dict = {
-        "mo_file"     : world3_settings._sys_dyn_package_path.replace("\\","/"), #Global
+        #"mo_file"     : world3_settings._sys_dyn_package_path.replace("\\","/"), #Global
+        #"mo_file"     :  world3_settings._sys_dyn_package_pw_fix_path.replace("\\","/"), #Global
+        # "mo_file"     :  world3_settings._sys_dyn_package_vanilla_path.replace("\\","/"), #Global
+        "mo_file"     :  world3_settings._sys_dyn_package_pop_state_var_new.replace("\\","/"), #Global
+
         "sweep_vars"  : final_sweep_vars,
         "model_name"  : model_name,
         "startTime"   : start_time,
