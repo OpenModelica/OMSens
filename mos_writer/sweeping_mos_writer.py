@@ -91,7 +91,7 @@ getErrorString();
 // build the model once
 //buildModel({model_name});
 print("Building model:{model_name}\\n");
-buildModel({model_name}, startTime={startTime},stopTime={stopTime},outputFormat="csv");
+buildModel({model_name}, startTime={startTime},stopTime={stopTime},outputFormat="csv",stepSize=1);
 getErrorString();"""
 fixed_params_skeleton= \
 """
