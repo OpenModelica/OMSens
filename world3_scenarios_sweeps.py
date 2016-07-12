@@ -32,9 +32,12 @@ def main():
 # The vermeulen tests need a modified SystemDynamics .mo!
     # testVermeulenAndJonghRun2() #Run1 is Meadows' std run
     # testVermeulenAndJonghRun3()
+# From IDA sens analysis:
     # testDeltaAvgLifeInd()
-    # testDeltaIncomeExpectAvgTime()
-    testDeltaHlthServImpactDel()
+    testDeltaIncomeExpectAvgTime()
+    # testDeltaHlthServImpactDel()
+    # testDeltaFrCapAlObtRes2Bracket5Bracket()
+
 
 ## Predefined tests
 def testVermeulenAndJonghRun2():
@@ -109,6 +112,19 @@ def testFertility():
 
     setUpSweepsAndRun(**kwargs)
 
+def testDeltaFrCapAlObtRes2Bracket5Bracket():
+    iterations = 10;
+    kwargs = {
+    "plot_vars":["Food_Production1Agr_InpIntegrator1y","population"],
+    "startTime": 1900 ,# year to start the simulation (1900 example)
+    "stopTime": 2100  ,# year to end the simulation (2100 for example)
+    "scens_to_run" : [1], #The standard run corresponds to the first scenario
+    "iterations" : iterations,
+    "sweep_vars":  ["p_fr_cap_al_obt_res_2[5]"], # Examples: SPECIAL_policy_years, ["nr_resources_init"]
+    "sweep_value_formula_str" : deltaBeforeAndAfter(p=0.05,delta=0.1,iterations=iterations), # Sweep floor(iterations/2) times before and after p changing by a percentage of delta*100
+    "fixed_params" : [],  # No fixed parameter changes. Example: [("nr_resources_init",6.3e9),("des_compl_fam_size_norm",2),...]
+    }
+    setUpSweepsAndRun(**kwargs)
 def testDeltaHlthServImpactDel():
     iterations = 5;
     kwargs = {
@@ -123,7 +139,7 @@ def testDeltaHlthServImpactDel():
     }
     setUpSweepsAndRun(**kwargs)
 def testDeltaIncomeExpectAvgTime():
-    iterations = 5;
+    iterations = 10;
     kwargs = {
     "plot_vars":["Population_Dynamics1Pop_0_14y","population"],
     "startTime": 1900 ,# year to start the simulation (1900 example)
