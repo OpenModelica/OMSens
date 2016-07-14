@@ -38,7 +38,7 @@ def plotVarFromSweepingInfo(var_name,model_name,sweeping_info,plots_folder_path)
     iterations = per_iter_info_dict.keys()
     colors = plt.get_cmap('jet')(np.linspace(0, 1.0, len(iterations)))
 
-    plotStandardRun(var_name,colors)
+    plotStandardRun(var_name,colors) # plots always the std run .csv!!
 
     for i in iterations:
         iter_dict = per_iter_info_dict[i]
@@ -63,7 +63,10 @@ def plotStandardRun(var_name,colors):
         plt.plot(data["time"], data[var_name], linewidth=1, linestyle='-', markersize=0,marker='o',label=label,color = "black")
 
 def readFromCSV(file_path):
-    data = np.genfromtxt(file_path, delimiter=',', skip_footer=10, names=True)
+    # El que estaba antes: (no plotea para mayores de 2091 y tiene puesto el skip footer)
+    # data = np.genfromtxt(file_path, delimiter=',', skip_footer=10, names=True)
+    # El nuevo:
+    data = np.genfromtxt(file_path, delimiter=',', names=True)
     return data
 
 def setupPlt(x_label,y_label,title,subtitle,footer):
