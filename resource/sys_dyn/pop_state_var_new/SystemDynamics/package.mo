@@ -543,20 +543,49 @@ Utility models of the set of functions.
         input Real x "Independent variable";
         input Real x_grid[:] "Independent variable data points";
         input Real y_grid[:] "Dependent variable data points";
+        //New: time_ is an input so we can use it inside
+        input Real time_;
         output Real y "Interpolated result";
+        //Nuevo: para no repetir tanto codigo:
+        protected String info_debug_base;
       protected
         Integer n;
       algorithm
         n:=size(x_grid, 1);
+        // Adaptation to allow out of range values
         assert(size(x_grid, 1) == size(y_grid, 1), "Size mismatch");
-        assert(x >= x_grid[1] and x <= x_grid[n], "Out of range");
-        for i in 1:n - 1 loop
-                  if x >= x_grid[i] and x <= x_grid[i + 1] then 
-            y:=y_grid[i] + (y_grid[i + 1] - y_grid[i]) * (x - x_grid[i]) / (x_grid[i + 1] - x_grid[i]);
-          else
+        //assert(x >= x_grid[1] and x <= x_grid[n], "Out of range.");
+        assert(x >= x_grid[1] and x <= x_grid[n], "Out of range. Accuracy low.  time:"+String(time_)+" x: "+String(x)+" x_grid[1]: "+String(x_grid[1])+" x_grid[n]: "+String(x_grid[n]), AssertionLevel.warning);
+        info_debug_base := " time:"+String(time_)+" x: "+String(x)+" x_grid[1]: "+String(x_grid[1])+" x_grid[n]: "+String(x_grid[n]);
+        if x<x_grid[1] then
+            //y:=y_grid[1]; // Uses constant value for values outside of range
+            y := y_grid[1] + (y_grid[2] - y_grid[1])  *((x - x_grid[1]) / (x_grid[2] - x_grid[1]));   // Extrapolates backwards using the first interval
+            // Uncomment the following line to log to file (SLOWS DOWN EXECUTION CONSIDERABLY!)
+            //Modelica.Utilities.Streams.print("x<x_grid[1] " +info_debug_base + " y: " + String(y) , "out_of_range_cases.txt");
+        elseif x>x_grid[n] then
+            //y:=y_grid[n]; // Uses constant value for values outside of range
+            y := y_grid[n] + (y_grid[n] - y_grid[n-1])*((x - x_grid[n]) / (x_grid[n] - x_grid[n-1])); // Extrapolates forward using the last interval
+            // Uncomment the following line to log to file (SLOWS DOWN EXECUTION CONSIDERABLY!)
+            //Modelica.Utilities.Streams.print("x>x_grid[n] " +info_debug_base + " y: " + String(y) , "out_of_range_cases.txt");
+        else
+            for i in 1:n - 1 loop
+              if x >= x_grid[i] and x <= x_grid[i + 1] then 
+                y:=y_grid[i] + (y_grid[i + 1] - y_grid[i]) * (x - x_grid[i]) / (x_grid[i + 1] - x_grid[i]);
+              else
+              end if;
+            end for;
+        end if;
 
-          end if;
-        end for;
+        // ORIGINAL:
+        //assert(size(x_grid, 1) == size(y_grid, 1), "Size mismatch");
+        //assert(x >= x_grid[1] and x <= x_grid[n], "Out of range");
+        //for i in 1:n - 1 loop
+        //          if x >= x_grid[i] and x <= x_grid[i + 1] then 
+        //    y:=y_grid[i] + (y_grid[i + 1] - y_grid[i]) * (x - x_grid[i]) / (x_grid[i + 1] - x_grid[i]);
+        //  else
+
+        //  end if;
+        //end for;
         annotation(Diagram(coordinateSystem(extent = {{-100,-100},{100,100}}), graphics = {Rectangle(extent = {{-44,60},{-8,40}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,0}),Rectangle(extent = {{-44,40},{-8,20}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,0}),Rectangle(extent = {{-44,20},{-8,-2}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,0}),Rectangle(extent = {{-44,0},{-8,-22}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,0}),Rectangle(extent = {{-44,-20},{-8,-42}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,0}),Rectangle(extent = {{-44,-40},{-8,-60}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,0}),Rectangle(extent = {{-8,60},{28,40}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,255}),Rectangle(extent = {{-8,40},{28,20}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,255}),Rectangle(extent = {{-8,20},{28,-2}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,255}),Rectangle(extent = {{-8,0},{28,-20}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,255}),Rectangle(extent = {{-8,-20},{28,-40}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,255}),Rectangle(extent = {{-8,-40},{28,-60}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,255}),Text(lineColor = {0,0,255}, extent = {{-96,94},{98,70}}, textString = "Linear interpolation")}), Icon(coordinateSystem(extent = {{-100,-100},{100,100}}), graphics = {Rectangle(extent = {{-44,60},{-8,40}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,0}),Rectangle(extent = {{-44,40},{-8,20}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,0}),Rectangle(extent = {{-44,20},{-8,-2}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,0}),Rectangle(extent = {{-44,0},{-8,-22}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,0}),Rectangle(extent = {{-44,-20},{-8,-42}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,0}),Rectangle(extent = {{-44,-40},{-8,-60}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,0}),Rectangle(extent = {{-8,60},{28,40}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,255}),Rectangle(extent = {{-8,40},{28,20}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,255}),Rectangle(extent = {{-8,20},{28,-2}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,255}),Rectangle(extent = {{-8,0},{28,-20}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,255}),Rectangle(extent = {{-8,-20},{28,-40}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,255}),Rectangle(extent = {{-8,-40},{28,-60}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,255})}));
       end Piecewise;
     end Utilities;
