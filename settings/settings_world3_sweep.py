@@ -14,7 +14,10 @@ csv_file_name_python_skeleton = "iter_{i_str}.csv"
 csv_file_name_modelica_skeleton= """ "iter_" + String(i) + ".csv";"""
 
 #System Dynamics versions:
-_sys_dyn_package_path = os.path.join(os.path.join(_resource_path,"SystemDynamics"),"package.mo")
-_sys_dyn_package_pw_fix_path = os.path.join(os.path.join(os.path.join(os.path.join(_resource_path,"sys_dyn"),"pw_fix"),"SystemDynamics"),"package.mo")
-_sys_dyn_package_vanilla_path = os.path.join(os.path.join(os.path.join(os.path.join(_resource_path,"sys_dyn"),"vanilla"),"SystemDynamics"),"package.mo")
-_sys_dyn_package_pop_state_var_new = os.path.join(os.path.join(os.path.join(os.path.join(_resource_path,"sys_dyn"),"pop_state_var_new"),"SystemDynamics"),"package.mo")
+_sys_dyn_package_path = os.path.join(os.path.join(_resource_path,"SystemDynamics"),"package.mo") ## This one is the one that has undocumented changes (obsolete)
+_sys_dyn_package_vanilla_path = os.path.join(os.path.join(os.path.join(os.path.join(_resource_path,"sys_dyn"),"vanilla"),"SystemDynamics"),"package.mo") # The System Dynamics package without modifications
+_sys_dyn_package_pw_fix_path = os.path.join(os.path.join(os.path.join(os.path.join(_resource_path,"sys_dyn"),"pw_fix"),"SystemDynamics"),"package.mo") # Piecewise function modified to accept queries for values outside of range. Interpolate linearly using closest 2 values
+_sys_dyn_package_pop_state_var_new = os.path.join(os.path.join(os.path.join(os.path.join(_resource_path,"sys_dyn"),"pop_state_var_new"),"SystemDynamics"),"package.mo") # Added a new "population" var that includes an integrator. Numerically it's the same as "population" but with the advantage that now we can calculate sensitivities for it
+
+_sys_dyn_package_v_and_j_run_2 = os.path.join(os.path.join(os.path.join(os.path.join(_resource_path,"sys_dyn"),"vermeulen_and_jongh_run_2"),"SystemDynamics"),"package.mo")
+_sys_dyn_package_v_and_j_run_3 = os.path.join(os.path.join(os.path.join(os.path.join(_resource_path,"sys_dyn"),"vermeulen_and_jongh_run_3"),"SystemDynamics"),"package.mo")
