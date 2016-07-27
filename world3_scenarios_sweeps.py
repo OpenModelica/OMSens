@@ -21,6 +21,12 @@ def deltaBeforeAndAfter(p,iterations,delta): #Have to create a function for "del
 # sweep_value_formula_str = deltaBeforeAndAfter(p=10,delta=0.01,iterations=7) # '10*(1-3*0.01) + 10*(0.01*i)' --> 9.7, 9.8, 9.9, 10, 10.1, 10.2, 10.3
 # Special sweeps constants definitions: DON'T CHANGE ANYTHING
 SPECIAL_policy_years = None # Special vars sweeping that sweeps the year to apply the different policies respective of each scenario. (each scenario has it's policies to apply.)
+# System Dynamics .mo to use:
+vanilla_SysDyn_mo_path =  world3_settings._sys_dyn_package_vanilla_path.replace("\\","/") # The System Dynamics package without modifications
+piecewiseMod_SysDyn_mo_path =  world3_settings._sys_dyn_package_pw_fix_path.replace("\\","/") # Piecewise function modified to accept queries for values outside of range. Interpolate linearly using closest 2 values
+populationTankNewVar_SysDyn_mo_path = world3_settings._sys_dyn_package_pop_state_var_new.replace("\\","/") # Added a new "population" var that includes an integrator. Numerically it's the same as "population" but with the advantage that now we can calculate sensitivities for it
+Run2vermeulenAndJongh_SysDyn_mo_path= world3_settings._sys_dyn_package_v_and_j_run_2.replace("\\","/") # Added a new "population" var that includes an integrator. Numerically it's the same as "population" but with the advantage that now we can calculate sensitivities for it
+Run3vermeulenAndJongh_SysDyn_mo_path= world3_settings._sys_dyn_package_v_and_j_run_3.replace("\\","/") # Added a new "population" var that includes an integrator. Numerically it's the same as "population" but with the advantage that now we can calculate sensitivities for it
 
 def main():
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
@@ -31,9 +37,9 @@ def main():
     # standardRun()
 # The vermeulen tests need a modified SystemDynamics .mo!
     # testVermeulenAndJonghRun2() #Run1 is Meadows' std run
-    # testVermeulenAndJonghRun3()
+    testVermeulenAndJonghRun3()
 # From IDA sens analysis:
-    testDeltaAvgLifeInd()
+    # testDeltaAvgLifeInd()
     # testDeltaIncomeExpectAvgTime()
     # testDeltaHlthServImpactDel()
     # testDeltaFrCapAlObtRes2Bracket5Bracket()
@@ -42,9 +48,12 @@ def main():
 
 ## Predefined tests
 def testVermeulenAndJonghRun2():
-    #The first run (for now we have to plot each run separately)
+    ### Changes must be made in the code and not in initial parameters
+       #Changes for 1975 in the code: (AND NOT IN YEAR 1900)
+            # ("p_ind_cap_out_ratio_1",3.3),   #V&J-2: ICOR= 3.3, Default: ICOR=3
+            # ("p_fioa_cons_const_1",0.473),   #V&J-2: FIOAC= 0.473, Default: FIOAC=0.43
+            # ("p_avg_life_ind_cap_1", 12.6),  #V&J-2: ALIC= 12.6, Default: ALIC=14
     kwargs = {
-# "plot_vars":["population","ppoll_index","industrial_output","nr_resources"],#,"nr_resources","Population_Dynamics1FFW"] #without the "." in "...Dynamics.FFW" because numpy doesn't play well with dots in column names
     "plot_vars":[#"pseudo" parameters:
                  "Industrial_Investment1Industrial_Outputs_ind_cap_out_ratio", "Industrial_Investment1S_FIOA_Conss_fioa_cons_const","Industrial_Investment1S_Avg_Life_Ind_Caps_avg_life_ind_cap",
                  "population","ppoll_index","industrial_output","nr_resources"],#,"nr_resources","Population_Dynamics1FFW"] #without the "." in "...Dynamics.FFW" because numpy doesn't play well with dots in column names
@@ -54,11 +63,31 @@ def testVermeulenAndJonghRun2():
     "iterations" : 1 ,#No sweeping: more than one iteration is irrelevant
     "sweep_vars": [] ,#No sweeping done in VermeulenAndJonghRun
     "sweep_value_formula_str" : "i" ,#irrelevant formula (no sweeping)
-    "fixed_params" : [  # Params changes that will be fixed throughout the sweep. Example: [("nr_resources_init",2e12)]
-            # ("p_ind_cap_out_ratio_1",3.3),   #V&J-2: ICOR= 3.3, Default: ICOR=3
-            # ("p_fioa_cons_const_1",0.473),   #V&J-2: FIOAC= 0.473, Default: FIOAC=0.43
-            # ("p_avg_life_ind_cap_1", 12.6),  #V&J-2: ALIC= 12.6, Default: ALIC=14
-                   ],
+    "fixed_params" : [ ], #No changes in params (for year 1900)
+    "mo_file" : Run2vermeulenAndJongh_SysDyn_mo_path,
+    "plot_std_run": True, #Choose to plot std run alognside this test results
+    }
+
+    setUpSweepsAndRun(**kwargs)
+def testVermeulenAndJonghRun3():
+    ### Changes must be made in the code and not in initial parameters
+       #Changes for 1975 in the code: (AND NOT IN YEAR 1900)
+            # ("p_ind_cap_out_ratio_1",2.7),   #V&J-3: ICOR= 2.7, Default: ICOR=3
+            # ("p_fioa_cons_const_1",0.387),   #V&J-3: FIOAC= 0.387, Default: FIOAC=0.43
+            # ("p_avg_life_ind_cap_1", 15.4),  #V&J-3: ALIC= 15.4, Default: ALIC=14
+    kwargs = {
+    "plot_vars":[#"pseudo" parameters:
+                 "Industrial_Investment1Industrial_Outputs_ind_cap_out_ratio", "Industrial_Investment1S_FIOA_Conss_fioa_cons_const","Industrial_Investment1S_Avg_Life_Ind_Caps_avg_life_ind_cap",
+                 "population","ppoll_index","industrial_output","nr_resources"],#,"nr_resources","Population_Dynamics1FFW"] #without the "." in "...Dynamics.FFW" because numpy doesn't play well with dots in column names
+    "startTime": 1900 ,# year to start the simulation (1900 example)
+    "stopTime": 2100  ,# year to end the simulation (2100 for example)
+    "scens_to_run" : [1] ,#List of ints representing the scenarios to run (from 1 to 11).  Example: [1,2,3,4,5,6,7,8,9]
+    "iterations" : 1 ,#No sweeping: more than one iteration is irrelevant
+    "sweep_vars": [] ,#No sweeping done in VermeulenAndJonghRun
+    "sweep_value_formula_str" : "i" ,#irrelevant formula (no sweeping)
+    "fixed_params" : [ ], #No changes in params (for year 1900)
+    "mo_file" : Run3vermeulenAndJongh_SysDyn_mo_path,
+    "plot_std_run": True, #Choose to plot std run alognside this test results
     }
 
     setUpSweepsAndRun(**kwargs)
@@ -155,7 +184,7 @@ def testDeltaHlthServImpactDel():
 def testDeltaIncomeExpectAvgTime():
     iterations = 10;
     kwargs = {
-    "plot_vars":["Population_Dynamics1Pop_0_14y","population"],
+    "plot_vars":["Food_Production1Agr_InpIntegrator1y","Population_Dynamics1Pop_0_14y","population"],
     "startTime": 1900 ,# year to start the simulation (1900 example)
     "stopTime": 2100  ,# year to end the simulation (2100 for example)
     "scens_to_run" : [1], #The standard run corresponds to the first scenario
@@ -205,22 +234,22 @@ def testPolicyYears():
     setUpSweepsAndRun(**kwargs)
 
 #World3 specific:
-def setUpSweepsAndRun(iterations,sweep_vars,sweep_value_formula_str,fixed_params,plot_vars,startTime,stopTime,scens_to_run):
+def setUpSweepsAndRun(iterations,sweep_vars,sweep_value_formula_str,fixed_params,plot_vars,startTime,stopTime,scens_to_run,mo_file,plot_std_run=False):
     #The "root" output folder path.
     output_path = files_aux.makeOutputPath()
     #Create scenarios from factory
     scenarios = []
     for i in scens_to_run:
-        initial_factory_for_scen_i = initialFactoryForWorld3Scenario(scen_num=i,start_time=startTime,stop_time=stopTime,fixed_params=fixed_params,sweep_vars=sweep_vars)
+        initial_factory_for_scen_i = initialFactoryForWorld3Scenario(scen_num=i,start_time=startTime,stop_time=stopTime,mo_file=mo_file,fixed_params=fixed_params,sweep_vars=sweep_vars)
         scenario_tuple =("scenario_"+str(i),initial_factory_for_scen_i)
         scenarios.append(scenario_tuple)
-    doScenariosSet(scenarios, plot_vars=plot_vars,iterations=iterations,output_root_path=output_path, sweep_value_formula_str=sweep_value_formula_str)
-def doScenariosSet(scenarios,plot_vars,iterations,output_root_path,sweep_value_formula_str):
+    doScenariosSet(scenarios, plot_vars=plot_vars,iterations=iterations,output_root_path=output_path, sweep_value_formula_str=sweep_value_formula_str,plot_std_run=plot_std_run)
+def doScenariosSet(scenarios,plot_vars,iterations,output_root_path,sweep_value_formula_str,plot_std_run):
     for folder_name,initial_scen_factory in scenarios:
         logger.debug("Running scenario {folder_name}".format(folder_name=folder_name))
         os.makedirs(os.path.join(output_root_path,folder_name))
-        run_and_plot_model.createSweepRunAndPlotForModelInfo(initial_scen_factory,plot_vars=plot_vars,iterations=iterations,output_folder_path=os.path.join(output_root_path,folder_name),sweep_value_formula_str=sweep_value_formula_str,csv_file_name_modelica_skeleton=world3_settings.csv_file_name_modelica_skeleton,csv_file_name_python_skeleton=world3_settings.csv_file_name_python_skeleton  )
-def initialFactoryForWorld3Scenario(scen_num,start_time,stop_time,sweep_vars=None,fixed_params=[]):
+        run_and_plot_model.createSweepRunAndPlotForModelInfo(initial_scen_factory,plot_vars=plot_vars,iterations=iterations,output_folder_path=os.path.join(output_root_path,folder_name),sweep_value_formula_str=sweep_value_formula_str,csv_file_name_modelica_skeleton=world3_settings.csv_file_name_modelica_skeleton,csv_file_name_python_skeleton=world3_settings.csv_file_name_python_skeleton,plot_std_run=plot_std_run)
+def initialFactoryForWorld3Scenario(scen_num,start_time,stop_time,mo_file,sweep_vars=None,fixed_params=[]):
     initial_factory_for_scen_1 = initialFactoryForWorld3Scenario
     #Get the mos script factory for a scenario number (valid from 1 to 11)
     assert 1<=scen_num<=9 , "The scenario number must be between 1 and 9. Your input: {0}".format(scen_num)
@@ -232,11 +261,8 @@ def initialFactoryForWorld3Scenario(scen_num,start_time,stop_time,sweep_vars=Non
         final_sweep_vars = defaultSweepVarsForScenario(scen_num)
     model_name = world3_settings._world3_scenario_model_skeleton.format(scen_num=scen_num) #global
     initial_factory_dict = {
-        #"mo_file"     : world3_settings._sys_dyn_package_path.replace("\\","/"), #Global
-        #"mo_file"     :  world3_settings._sys_dyn_package_pw_fix_path.replace("\\","/"), #Global
-        # "mo_file"     :  world3_settings._sys_dyn_package_vanilla_path.replace("\\","/"), #Global
-        "mo_file"     :  world3_settings._sys_dyn_package_pop_state_var_new.replace("\\","/"), #Global
-
+        # "mo_file"     :  world3_settings._sys_dyn_package_pop_state_var_new.replace("\\","/"), #Global
+        "mo_file"     : mo_file,
         "sweep_vars"  : final_sweep_vars,
         "model_name"  : model_name,
         "startTime"   : start_time,

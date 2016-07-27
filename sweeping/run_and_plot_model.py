@@ -12,7 +12,7 @@ import filesystem.files_aux
 import running.run_omc
 
 #Globals:
-def createSweepRunAndPlotForModelInfo(mos_script_factory_inst,plot_vars,iterations,output_folder_path,sweep_value_formula_str,csv_file_name_python_skeleton,csv_file_name_modelica_skeleton):
+def createSweepRunAndPlotForModelInfo(mos_script_factory_inst,plot_vars,iterations,output_folder_path,sweep_value_formula_str,csv_file_name_python_skeleton,csv_file_name_modelica_skeleton,plot_std_run):
     output_mos_path = os.path.join(output_folder_path,gral_settings.mos_script_filename)
 	# EL scripting de modelica se rompe con la backslash (aunque estemos en windows). Hay que mandar la de unix nomas:
     output_mos_path = output_mos_path.replace("\\","/")
@@ -30,7 +30,10 @@ def createSweepRunAndPlotForModelInfo(mos_script_factory_inst,plot_vars,iteratio
     sweeping_vars = mos_script_factory_inst.initializedSettings()["sweep_vars"]
     sweeping_info = sweepingInfoPerIteration(mos_script_factory_inst.initializedSettings(),csv_file_name_python_skeleton)
     model_name_only = mos_script_factory_inst.initializedSettings()["model_name"].split(".")[-1]
-    plot_csv.plotVarsFromSweepingInfo(plot_vars,model_name_only,sweeping_info,plots_folder_path)
+    # Orig:
+    # plot_csv.plotVarsFromSweepingInfo(plot_vars,model_name_only,sweeping_info,plots_folder_path)
+    # With "plot std run":
+    plot_csv.plotVarsFromSweepingInfo(plot_vars,model_name_only,sweeping_info,plots_folder_path,plot_std_run)
     readme_path = os.path.join(output_folder_path,gral_settings.readme_filename)
     readme_writer.writeReadme(readme_path,sweeping_info)
 

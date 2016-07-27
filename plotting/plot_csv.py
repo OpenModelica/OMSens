@@ -18,11 +18,11 @@ def addSeriesFromCSVToPlot(csv_path,var_name,label,color):
         data = readFromCSV(csv_path)
         plt.plot(data["time"], data[var_name], linewidth=1, linestyle='-', markersize=0,marker='o',label=label,color = color)
 
-def plotVarsFromSweepingInfo(plot_vars,model_name,sweeping_info,plots_folder_path):
+def plotVarsFromSweepingInfo(plot_vars,model_name,sweeping_info,plots_folder_path,plot_std_run):
     for var_name in plot_vars:
-        plotVarFromSweepingInfo(var_name,model_name,sweeping_info,plots_folder_path)
+        plotVarFromSweepingInfo(var_name,model_name,sweeping_info,plots_folder_path,plot_std_run)
 
-def plotVarFromSweepingInfo(var_name,model_name,sweeping_info,plots_folder_path):
+def plotVarFromSweepingInfo(var_name,model_name,sweeping_info,plots_folder_path,plot_std_run):
     # print(str(sweeping_info))
     plot_path_without_extension = os.path.join(plots_folder_path,var_name)
     logger_plot_str = "Plotting:\n  plotvar:{var_name}\n path:{plot_path_without_extension}".format(var_name=var_name,plot_path_without_extension=plot_path_without_extension)
@@ -38,7 +38,8 @@ def plotVarFromSweepingInfo(var_name,model_name,sweeping_info,plots_folder_path)
     iterations = per_iter_info_dict.keys()
     colors = plt.get_cmap('jet')(np.linspace(0, 1.0, len(iterations)))
 
-    plotStandardRun(var_name,colors) # plots always the std run .csv!!
+    if plot_std_run:
+        plotStandardRun(var_name,colors)
 
     for i in iterations:
         iter_dict = per_iter_info_dict[i]
