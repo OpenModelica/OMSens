@@ -77,9 +77,10 @@ def setupPlt(x_label,y_label,title,subtitle,footer):
     plt.style.use('fivethirtyeight')
     plt.gca().set_position([0.10, 0.15, 0.80, 0.77])
     plt.xlabel(x_label)
-    plt.title(title+"\n"+subtitle, fontsize=14)
+    plt.title(title+"\n"+subtitle, fontsize=14, y=1.08)
     # plt.title(title)
     plt.ylabel(y_label)
+    plt.ticklabel_format(useOffset=False) # So it doesn't use an offset on the x axis
     footer_artist = plt.annotate(footer, (0,0), (0, -40), xycoords='axes fraction', textcoords='offset points', va='top')
     # fig = plt.figure()
     # fig.text(.1,.1,footer)
