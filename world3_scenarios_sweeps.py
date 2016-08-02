@@ -37,16 +37,81 @@ def main():
     # standardRun()
 # The vermeulen tests need a modified SystemDynamics .mo!
     # testVermeulenAndJonghRun2() #Run1 is Meadows' std run
-    testVermeulenAndJonghRun3()
+    # testVermeulenAndJonghRun3()
 # From IDA sens analysis:
-    # testDeltaAvgLifeInd()
     # testDeltaIncomeExpectAvgTime()
     # testDeltaHlthServImpactDel()
     # testDeltaFrCapAlObtRes2Bracket5Bracket()
-    # Tests for 1901 sens
+  # Tests for 1901 sens
     # testDeltaIndMtlEmissFact()
+    # testDeltaAvgLifeIndCap1()
+    # testDeltaMtlToxicIndex()
+  # MULTI TEST: Multiple tests in one.
+    # testMultiTest1901Top20ParamVar()
+  # Dynamics to Growth tests:
+    testDeltaICOR()
 
 ## Predefined tests
+def testDeltaICOR():
+    ## According to Dynamics To Growth:
+    # Run 3-3 (Figure 3-39) DECREASED ICOR BY 33%: ICOR1=2
+    # Run 3-4 (Figure 3-40) INCREASED ICOR BY 33%: ICOR1=4
+    # ICOR is also modified in Vermeulen but not at the start (in Verm is modified in 1975)
+    #   and this is a sweep of only this var
+    # ICOR is "p_ind_cap_out_ratio_1", Default: ICOR=3
+    # Plots: 
+    #      "industrial output"                                   --> output Real industrial_output(unit = "dollar/yr") "Total annual world industrial output";
+    #      "service output per capita"                           --> output Real serv_out_pc(unit = "dollar/yr") "Total annual services per person";
+    #      "capital utilization fraction"                        --> Industrial_Investment1.Industrial_Output.capital_util_fr (there's no var at the top)
+    #      "industrial output per capita"                        --> output Real ind_out_pc(unit = "dollar/yr") "Total annual consumer goods per person";
+    #      "fraction of industrial output allocated to services" --> output Real s_fioa_serv "Fraction of industrial output allocated to service sector";
+
+    iterations = 9;
+    kwargs = {
+    "plot_vars":["Industrial_Investment1Industrial_Outputcapital_util_fr", "industrial_output", "serv_out_pc", "ind_out_pc", "s_fioa_serv",],
+    "startTime": 1900 ,# year to start the simulation (1900 example)
+    "stopTime": 2100  ,# year to end the simulation (2100 for example)
+    "scens_to_run" : [1], #The standard run corresponds to the first scenario
+    "iterations" : iterations,
+    "sweep_vars":  ["p_ind_cap_out_ratio_1"], # Examples: SPECIAL_policy_years, ["nr_resources_init"]
+    "sweep_value_formula_str" : deltaBeforeAndAfter(p=3,delta=0.1,iterations=iterations), # Sweep floor(iterations/2) times before and after p changing by a percentage of delta*100
+    "fixed_params" : [],  # No fixed parameter changes. Example: [("nr_resources_init",6.3e9),("des_compl_fam_size_norm",2),...]
+    "mo_file" : vanilla_SysDyn_mo_path, # Mo without modifications
+    "plot_std_run": False, #Choose to plot std run alognside this test results
+    }
+    setUpSweepsAndRun(**kwargs)
+
+def testMultiTest1901Top20ParamVar():
+    # The plot vars remain the same for each sub-test
+    # Only one parameter per sub-test (iterating one by one "parameters to sweep" list)
+    # SLOWWWWWWW!. Compiles model again for each new param. It was made quickly.
+    param_list= \
+       [("p_fr_cap_al_obt_res_2[4]" ,0.05 ),
+        ("p_avg_life_ind_cap_1"      ,14   ),
+        ("ind_mtl_toxic_index"       ,10   ),
+        ("p_fr_cap_al_obt_res_2[3]"  ,0.1  ),
+        ("p_avg_life_agr_inp_2"      ,2    ),
+        ("ind_mtl_emiss_fact"        ,0.1  ),
+        ("agr_mtl_toxic_index"       ,1    ),
+        ("assim_half_life_1970"      ,1.5  ),
+        ("life_expect_norm"          ,28   ),]
+
+    # Common "test arguments":
+    kwargs = {
+    "plot_vars":["Food_Production1Agr_InpIntegrator1y","Arable_Land_Dynamics1Pot_Arable_LandIntegrator1y","Arable_Land_Dynamics1Arable_LandIntegrator1y","population","nr_resources"],
+    "startTime": 1900 ,# year to start the simulation (1900 example)
+    "stopTime": 1910  ,# year to end the simulation (2100 for example)
+    "scens_to_run" : [1], #The standard run corresponds to the first scenario
+    "iterations" : 5,
+    "fixed_params" : [],  # No fixed parameter changes. Example: [("nr_resources_init",6.3e9),("des_compl_fam_size_norm",2),...]
+    "mo_file" : vanilla_SysDyn_mo_path, # Mo without modifications
+    "plot_std_run": False, #Choose to plot std run alognside this test results
+    }
+    # Iterate params and run Scenario 1 with ^ settings for each one
+    for param,default in param_list:
+        kwargs["sweep_vars"] = [param]
+        kwargs["sweep_value_formula_str"] = deltaBeforeAndAfter(p=default,delta=0.1,iterations=kwargs["iterations"]) # Sweep floor(iterations/2) times before and after p changing by a percentage of delta*100
+        setUpSweepsAndRun(**kwargs)
 def testVermeulenAndJonghRun2():
     ### Changes must be made in the code and not in initial parameters
        #Changes for 1975 in the code: (AND NOT IN YEAR 1900)
@@ -102,6 +167,8 @@ def standardRun(): #ONLY TO GET THE STANDARD CSV!
     "sweep_vars": [] ,#No sweeping done in std run
     "sweep_value_formula_str" : "i" ,#irrelevant formula (no sweeping)
     "fixed_params" : [], #We don't want to change any parameters
+    "mo_file" : vanilla_SysDyn_mo_path, # Mo without modifications
+    "plot_std_run": False, #Choose to plot std run alognside this test results
     }
     setUpSweepsAndRun(**kwargs)
 
@@ -120,6 +187,8 @@ def testFertility2():
             ("p_avg_life_serv_cap_1", 17.1),  #Hugo: ALSC= 17.1, Default: ALSC=20
             ("p_serv_cap_out_ratio_1", 1.05)  #Hugo: SCOR= 1.05, Default: SCOR=1
         ],
+    "mo_file" : vanilla_SysDyn_mo_path, # Mo without modifications
+    "plot_std_run": False, #Choose to plot std run alognside this test results
     }
     setUpSweepsAndRun(**kwargs)
 
@@ -133,11 +202,13 @@ def testFertility():
     "sweep_vars":  ["max_tot_fert_norm"], #NOT ORIGINAL PARAMETER! ADDED ONLY TO SCENARIO 1
     "sweep_value_formula_str" : deltaBeforeAndAfter(p=12,delta=0.1,iterations=iterations), #Has to be a string with only free variable "i"
     "fixed_params" : [
-       ("p_ind_cap_out_ratio_1",3.15),   #Hugo: ICOR= 3.15, Default: ICOR=3  
-       ("p_avg_life_ind_cap_1", 13.3),   #Hugo: ALIC= 13.3, Default: ALIC=14 
-       ("p_avg_life_serv_cap_1", 17.1),  #Hugo: ALSC= 17.1, Default: ALSC=20 
-       ("p_serv_cap_out_ratio_1", 1.05)  #Hugo: SCOR= 1.05, Default: SCOR=1  
+       ("p_ind_cap_out_ratio_1",3.15),   #Hugo: ICOR= 3.15, Default: ICOR=3
+       ("p_avg_life_ind_cap_1", 13.3),   #Hugo: ALIC= 13.3, Default: ALIC=14
+       ("p_avg_life_serv_cap_1", 17.1),  #Hugo: ALSC= 17.1, Default: ALSC=20
+       ("p_serv_cap_out_ratio_1", 1.05)  #Hugo: SCOR= 1.05, Default: SCOR=1
         ],
+    "mo_file" : vanilla_SysDyn_mo_path, # Mo without modifications
+    "plot_std_run": False, #Choose to plot std run alognside this test results
     }
 
     setUpSweepsAndRun(**kwargs)
@@ -145,14 +216,31 @@ def testFertility():
 def testDeltaIndMtlEmissFact():
     iterations = 10;
     kwargs = {
-    "plot_vars":["Food_Production1Agr_InpIntegrator1y","Arable_Land_Dynamics1Pot_Arable_LandIntegrator1y","population"],
+    "plot_vars":["Food_Production1Agr_InpIntegrator1y","Arable_Land_Dynamics1Pot_Arable_LandIntegrator1y","Arable_Land_Dynamics1Arable_LandIntegrator1y","population","nr_resources"], # Examples: SPECIAL_policy_years, ["nr_resources_init"]
     "startTime": 1900 ,# year to start the simulation (1900 example)
-    "stopTime": 2100  ,# year to end the simulation (2100 for example)
+    "stopTime": 1910  ,# year to end the simulation (2100 for example)
     "scens_to_run" : [1], #The standard run corresponds to the first scenario
     "iterations" : iterations,
     "sweep_vars":  ["ind_mtl_emiss_fact"], # Examples: SPECIAL_policy_years, ["nr_resources_init"]
     "sweep_value_formula_str" : deltaBeforeAndAfter(p=0.1,delta=0.1,iterations=iterations), # Sweep floor(iterations/2) times before and after p changing by a percentage of delta*100
     "fixed_params" : [],  # No fixed parameter changes. Example: [("nr_resources_init",6.3e9),("des_compl_fam_size_norm",2),...]
+    "mo_file" : vanilla_SysDyn_mo_path, # Mo without modifications
+    "plot_std_run": False, #Choose to plot std run alognside this test results
+    }
+    setUpSweepsAndRun(**kwargs)
+def testDeltaFrCapAlObtRes2Bracket4Bracket():
+    iterations = 10;
+    kwargs = {
+    "plot_vars":["Food_Production1Agr_InpIntegrator1y","population" "Arable_Land_Dynamics1Arable_LandIntegrator1y", "Arable_Land_Dynamics1Pot_Arable_LandIntegrator1y"],
+    "startTime": 1900 ,# year to start the simulation (1900 example)
+    "stopTime": 2100  ,# year to end the simulation (2100 for example)
+    "scens_to_run" : [1], #The standard run corresponds to the first scenario
+    "iterations" : iterations,
+    "sweep_vars":  ["p_fr_cap_al_obt_res_2[4]"], # Examples: SPECIAL_policy_years, ["nr_resources_init"]
+    "sweep_value_formula_str" : deltaBeforeAndAfter(p=0.05,delta=0.1,iterations=iterations), # Sweep floor(iterations/2) times before and after p changing by a percentage of delta*100
+    "fixed_params" : [],  # No fixed parameter changes. Example: [("nr_resources_init",6.3e9),("des_compl_fam_size_norm",2),...]
+    "mo_file" : vanilla_SysDyn_mo_path, # Mo without modifications
+    "plot_std_run": False, #Choose to plot std run alognside this test results
     }
     setUpSweepsAndRun(**kwargs)
 def testDeltaFrCapAlObtRes2Bracket5Bracket():
@@ -166,6 +254,8 @@ def testDeltaFrCapAlObtRes2Bracket5Bracket():
     "sweep_vars":  ["p_fr_cap_al_obt_res_2[5]"], # Examples: SPECIAL_policy_years, ["nr_resources_init"]
     "sweep_value_formula_str" : deltaBeforeAndAfter(p=0.05,delta=0.1,iterations=iterations), # Sweep floor(iterations/2) times before and after p changing by a percentage of delta*100
     "fixed_params" : [],  # No fixed parameter changes. Example: [("nr_resources_init",6.3e9),("des_compl_fam_size_norm",2),...]
+    "mo_file" : vanilla_SysDyn_mo_path, # Mo without modifications
+    "plot_std_run": False, #Choose to plot std run alognside this test results
     }
     setUpSweepsAndRun(**kwargs)
 def testDeltaHlthServImpactDel():
@@ -179,6 +269,8 @@ def testDeltaHlthServImpactDel():
     "sweep_vars":  ["hlth_serv_impact_del"], # Examples: SPECIAL_policy_years, ["nr_resources_init"]
     "sweep_value_formula_str" : deltaBeforeAndAfter(p=20,delta=0.1,iterations=iterations), # Sweep floor(iterations/2) times before and after p changing by a percentage of delta*100
     "fixed_params" : [],  # No fixed parameter changes. Example: [("nr_resources_init",6.3e9),("des_compl_fam_size_norm",2),...]
+    "mo_file" : vanilla_SysDyn_mo_path, # Mo without modifications
+    "plot_std_run": False, #Choose to plot std run alognside this test results
     }
     setUpSweepsAndRun(**kwargs)
 def testDeltaIncomeExpectAvgTime():
@@ -192,19 +284,38 @@ def testDeltaIncomeExpectAvgTime():
     "sweep_vars":  ["income_expect_avg_time"], # Examples: SPECIAL_policy_years, ["nr_resources_init"]
     "sweep_value_formula_str" : deltaBeforeAndAfter(p=3,delta=0.1,iterations=iterations), # Sweep floor(iterations/2) times before and after p changing by a percentage of delta*100
     "fixed_params" : [],  # No fixed parameter changes. Example: [("nr_resources_init",6.3e9),("des_compl_fam_size_norm",2),...]
+    "mo_file" : vanilla_SysDyn_mo_path, # Mo without modifications
+    "plot_std_run": False, #Choose to plot std run alognside this test results
     }
     setUpSweepsAndRun(**kwargs)
-def testDeltaAvgLifeInd():
+def testDeltaMtlToxicIndex():
     iterations = 5;
     kwargs = {
-    "plot_vars":["Food_Production1Agr_InpIntegrator1y","Arable_Land_Dynamics1Pot_Arable_LandIntegrator1y", "Population_Dynamics1Pop_0_14y","population"],
+    "plot_vars":["Food_Production1Agr_InpIntegrator1y","Arable_Land_Dynamics1Pot_Arable_LandIntegrator1y","Arable_Land_Dynamics1.Arable_Land.Integrator1.y","population","nr_resources"],
     "startTime": 1900 ,# year to start the simulation (1900 example)
-    "stopTime": 2500  ,# year to end the simulation (2100 for example)
+    "stopTime": 1910  ,# year to end the simulation (2100 for example)
+    "scens_to_run" : [1], #The standard run corresponds to the first scenario
+    "iterations" : iterations,
+    "sweep_vars":  ["ind_mtl_toxic_index"], # Examples: SPECIAL_policy_years, ["nr_resources_init"]
+    "sweep_value_formula_str" : deltaBeforeAndAfter(p=10,delta=0.1,iterations=iterations), # Sweep floor(iterations/2) times before and after p changing by a percentage of delta*100
+    "fixed_params" : [],  # No fixed parameter changes. Example: [("nr_resources_init",6.3e9),("des_compl_fam_size_norm",2),...]
+    "mo_file" : vanilla_SysDyn_mo_path, # Mo without modifications
+    "plot_std_run": False, #Choose to plot std run alognside this test results
+    }
+    setUpSweepsAndRun(**kwargs)
+def testDeltaAvgLifeIndCap1():
+    iterations = 5;
+    kwargs = {
+    "plot_vars":["Food_Production1Agr_InpIntegrator1y","Arable_Land_Dynamics1Pot_Arable_LandIntegrator1y","Arable_Land_Dynamics1.Arable_Land.Integrator1.y","population","nr_resources"],
+    "startTime": 1900 ,# year to start the simulation (1900 example)
+    "stopTime": 1910  ,# year to end the simulation (2100 for example)
     "scens_to_run" : [1], #The standard run corresponds to the first scenario
     "iterations" : iterations,
     "sweep_vars":  ["p_avg_life_ind_cap_1"], # Examples: SPECIAL_policy_years, ["nr_resources_init"]
     "sweep_value_formula_str" : deltaBeforeAndAfter(p=14,delta=0.1,iterations=iterations), # Sweep floor(iterations/2) times before and after p changing by a percentage of delta*100
     "fixed_params" : [],  # No fixed parameter changes. Example: [("nr_resources_init",6.3e9),("des_compl_fam_size_norm",2),...]
+    "mo_file" : vanilla_SysDyn_mo_path, # Mo without modifications
+    "plot_std_run": False, #Choose to plot std run alognside this test results
     }
     setUpSweepsAndRun(**kwargs)
 def testDeltaNRResources():
@@ -217,6 +328,8 @@ def testDeltaNRResources():
     "sweep_vars":  ["nr_resources_init"], # Sweep only one var: "nr_resources_init". Examples: SPECIAL_policy_years, ["nr_resources_init"]
     "sweep_value_formula_str" : deltaBeforeAndAfter(p=1e12,delta=0.1,iterations=iterations), # Sweep floor(iterations/2) times before and after p changing by a percentage of delta*100
     "fixed_params" : [],  # No fixed parameter changes. Example: [("nr_resources_init",6.3e9),("des_compl_fam_size_norm",2),...]
+    "mo_file" : vanilla_SysDyn_mo_path, # Mo without modifications
+    "plot_std_run": False, #Choose to plot std run alognside this test results
     }
     setUpSweepsAndRun(**kwargs)
 
@@ -229,7 +342,9 @@ def testPolicyYears():
     "iterations" : 1,
     "sweep_vars":  SPECIAL_policy_years, # Set to SPECIAL_policy_years to use scenario specific defaults (year of application of policies). Examples: SPECIAL_policy_years, ["nr_resources_init"]
     "sweep_value_formula_str" : _increasing_by_increment_from_initial_skeleton.format(initial=2022,increment=10), # "2012 + i*10" --> 2012,2022,2032...
-    "fixed_params" : []  # No fixed parameter changes. Example: [("nr_resources_init",6.3e9),("des_compl_fam_size_norm",2),...]
+    "fixed_params" : [],  # No fixed parameter changes. Example: [("nr_resources_init",6.3e9),("des_compl_fam_size_norm",2),...]
+    "mo_file" : vanilla_SysDyn_mo_path, # Mo without modifications
+    "plot_std_run": False, #Choose to plot std run alognside this test results
     }
     setUpSweepsAndRun(**kwargs)
 
