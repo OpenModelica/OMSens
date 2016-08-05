@@ -48,6 +48,7 @@ def multipleCSVsAndVarsSimplePlot(vars_list,csvs_path_label_pair_list,plot_title
         lgd = plt.legend(loc="center left",fontsize="small",fancybox=True, shadow=True, bbox_to_anchor=(1,0.5)) #A la derecha
         # lgd = plt.legend(loc="center left",fontsize="small",fancybox=True, shadow=True, bbox_to_anchor=(0.5,-0.5)) #Abajo (anda mal)
         plt.xlim(x_range)
+        autoscale_view(tight=None, scalex=False, scaley=True)
         print(output_folder_path)
 
         plot_path_without_extension = os.path.join(output_folder_path,var_name)
@@ -81,7 +82,7 @@ def plotVarFromSweepingInfo(var_name,model_name,sweeping_info,plots_folder_path,
         file_path = iter_dict["file_path"]
         data = readFromCSV(file_path)
         sweep_value = iter_dict["sweep_value"]
-        label = "val={sweep_value}".format(sweep_value=sweep_value)
+        label = "param_val={sweep_value:.2f}".format(sweep_value=sweep_value)
         plt.plot(data["time"], data[var_name], linewidth=1, linestyle='-', markersize=0,marker='o',label=label,color = colors[i])
     lgd = plt.legend(loc="center left",fontsize="small",fancybox=True, shadow=True, bbox_to_anchor=(1,0.5)) #A la derecha
     # lgd = plt.legend(loc="center left",fontsize="small",fancybox=True, shadow=True, bbox_to_anchor=(0.5,-0.5)) #Abajo (anda mal)
@@ -89,7 +90,7 @@ def plotVarFromSweepingInfo(var_name,model_name,sweeping_info,plots_folder_path,
 def sweepingPlotTexts(model_name,var_name,sweep_vars_str,fixed_params_str):
     title = "Sweeping Plot for model: {model_name}".format(model_name=model_name)
     subtitle ="Plotting var: {var_name}".format(var_name=var_name)
-    swept_vars_full_str = "Swept variables:\n {sweep_vars_str}".format(sweep_vars_str=sweep_vars_str)
+    swept_vars_full_str = "Swept parameters:\n {sweep_vars_str}".format(sweep_vars_str=sweep_vars_str)
     fixed_params_full_str = "Fixed params:\n {fixed_params_str}".format(fixed_params_str=fixed_params_str)
     footer = swept_vars_full_str+"\n"+fixed_params_str
     return (title,subtitle,footer)
@@ -116,10 +117,11 @@ def setupPlt(x_label,y_label,title,subtitle,footer):
     # plt.title(title)
     plt.ylabel(y_label)
     plt.ticklabel_format(useOffset=False) # So it doesn't use an offset on the x axis
-    footer_artist = plt.annotate(footer, (0,0), (0, -40), xycoords='axes fraction', textcoords='offset points', va='top')
+    footer_artist = plt.annotate(footer, (-0.01,0), (2, -40), xycoords='axes fraction', textcoords='offset points', va='top', horizontalalignment='right')
     # fig = plt.figure()
     # fig.text(.1,.1,footer)
     # plt.figtext(.1,.1,footer)
+    plt.margins(x=0.1, y=0.1) #increase buffer so points falling on it are plotted
     return footer_artist
 
 def saveAndClearPlt(plot_path_without_extension,lgd,footer_artist):
