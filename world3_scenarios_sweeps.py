@@ -70,13 +70,14 @@ def testDeltaICOR():
     kwargs = {
     "plot_vars":["Industrial_Investment1Industrial_Outputcapital_util_fr", "industrial_output", "serv_out_pc", "ind_out_pc", "s_fioa_serv",],
     "startTime": 1900 ,# year to start the simulation (1900 example)
-    "stopTime": 2100  ,# year to end the simulation (2100 for example)
+    "stopTime": 2000  ,# year to end the simulation (2100 for example)
     "scens_to_run" : [1], #The standard run corresponds to the first scenario
     "iterations" : iterations,
     "sweep_vars":  ["p_ind_cap_out_ratio_1"], # Examples: SPECIAL_policy_years, ["nr_resources_init"]
-    "sweep_value_formula_str" : deltaBeforeAndAfter(p=3,delta=0.1,iterations=iterations), # Sweep floor(iterations/2) times before and after p changing by a percentage of delta*100
+    "sweep_value_formula_str" : deltaBeforeAndAfter(p=3,delta=1/12,iterations=iterations), # Sweep floor(iterations/2) times before and after p changing by a percentage of delta*100
     "fixed_params" : [],  # No fixed parameter changes. Example: [("nr_resources_init",6.3e9),("des_compl_fam_size_norm",2),...]
-    "mo_file" : vanilla_SysDyn_mo_path, # Mo without modifications
+    # "mo_file" : vanilla_SysDyn_mo_path, # Mo without modifications
+    "mo_file" : piecewiseMod_SysDyn_mo_path, # mo that interpolates outwards with values that lie outside of range
     "plot_std_run": False, #Choose to plot std run alognside this test results
     }
     setUpSweepsAndRun(**kwargs)
@@ -100,11 +101,12 @@ def testMultiTest1901Top20ParamVar():
     kwargs = {
     "plot_vars":["Food_Production1Agr_InpIntegrator1y","Arable_Land_Dynamics1Pot_Arable_LandIntegrator1y","Arable_Land_Dynamics1Arable_LandIntegrator1y","population","nr_resources"],
     "startTime": 1900 ,# year to start the simulation (1900 example)
-    "stopTime": 1910  ,# year to end the simulation (2100 for example)
+    "stopTime": 2100  ,# year to end the simulation (2100 for example)
     "scens_to_run" : [1], #The standard run corresponds to the first scenario
     "iterations" : 5,
     "fixed_params" : [],  # No fixed parameter changes. Example: [("nr_resources_init",6.3e9),("des_compl_fam_size_norm",2),...]
-    "mo_file" : vanilla_SysDyn_mo_path, # Mo without modifications
+    # "mo_file" : vanilla_SysDyn_mo_path, # Mo without modifications
+    "mo_file" : piecewiseMod_SysDyn_mo_path, # mo that interpolates outwards with values that lie outside of range
     "plot_std_run": False, #Choose to plot std run alognside this test results
     }
     # Iterate params and run Scenario 1 with ^ settings for each one
