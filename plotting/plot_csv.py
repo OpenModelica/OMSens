@@ -15,8 +15,8 @@ _std_run_csv = world3_settings._std_run_csv
 def main():
     ##Example for "multipleCSVsAndVarsSimplePlot" using Vermeulen Run 2 & 3 Results.
     vars_list = ["Industrial_Investment1Industrial_Outputs_ind_cap_out_ratio", "Industrial_Investment1S_FIOA_Conss_fioa_cons_const","Industrial_Investment1S_Avg_Life_Ind_Caps_avg_life_ind_cap", "population","ppoll_index","industrial_output","nr_resources"]
-    csvs_path_label_pair_list = [("/home/adanos/Documents/TPs/tesis/repos/modelica_scripts/tmp/modelica_outputs/2016-07-31/02_01_10/scenario_1/vj_run2.csv", "V&J Run 2"),
-                                  ("/home/adanos/Documents/TPs/tesis/repos/modelica_scripts/tmp/modelica_outputs/2016-07-31/02_01_54/scenario_1/vj_run3.csv", "V&J Run 3")]
+    csvs_path_label_pair_list = [("/home/adanos/Documents/tesis/prog/modelica_scripts/resource/vj_run2.csv", "V&J Run 2"),
+                                 ("/home/adanos/Documents/tesis/prog/modelica_scripts/resource/vj_run3.csv", "V&J Run 3"),]
     plot_title = "Vermeulen & Jong Runs 2 and 3 using modified models"
     x_range=[1900,2100]
     include_stdrun = True
@@ -48,7 +48,6 @@ def multipleCSVsAndVarsSimplePlot(vars_list,csvs_path_label_pair_list,plot_title
         lgd = plt.legend(loc="center left",fontsize="small",fancybox=True, shadow=True, bbox_to_anchor=(1,0.5)) #A la derecha
         # lgd = plt.legend(loc="center left",fontsize="small",fancybox=True, shadow=True, bbox_to_anchor=(0.5,-0.5)) #Abajo (anda mal)
         plt.xlim(x_range)
-        autoscale_view(tight=None, scalex=False, scaley=True)
         print(output_folder_path)
 
         plot_path_without_extension = os.path.join(output_folder_path,var_name)
