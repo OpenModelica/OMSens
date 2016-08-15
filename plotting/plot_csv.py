@@ -15,8 +15,8 @@ _std_run_csv = world3_settings._std_run_csv
 def main():
     ##Example for "multipleCSVsAndVarsSimplePlot" using Vermeulen Run 2 & 3 Results.
     vars_list = ["Industrial_Investment1Industrial_Outputs_ind_cap_out_ratio", "Industrial_Investment1S_FIOA_Conss_fioa_cons_const","Industrial_Investment1S_Avg_Life_Ind_Caps_avg_life_ind_cap", "population","ppoll_index","industrial_output","nr_resources"]
-    csvs_path_label_pair_list = [("/home/adanos/Documents/TPs/tesis/repos/modelica_scripts/tmp/modelica_outputs/2016-07-31/02_01_10/scenario_1/vj_run2.csv", "V&J Run 2"),
-                                  ("/home/adanos/Documents/TPs/tesis/repos/modelica_scripts/tmp/modelica_outputs/2016-07-31/02_01_54/scenario_1/vj_run3.csv", "V&J Run 3")]
+    csvs_path_label_pair_list = [("/home/adanos/Documents/TPs/tesis/repos/modelica_scripts/resource/vj_run2.csv", "V&J Run 2"),
+                                 ("/home/adanos/Documents/TPs/tesis/repos/modelica_scripts/resource/vj_run3.csv", "V&J Run 3"),]
     plot_title = "Vermeulen & Jong Runs 2 and 3 using modified models"
     x_range=[1900,2100]
     include_stdrun = True
@@ -75,10 +75,12 @@ def plotVarFromSweepingInfo(var_name,model_name,sweeping_info,plots_folder_path,
     per_iter_info_dict = sweeping_info["per_iter_info_dict"]
     footer_artist = setupPlt("Time",var_name,title,subtitle,footer)
     iterations = per_iter_info_dict.keys()
-    colors = plt.get_cmap('jet')(np.linspace(0, 1.0, len(iterations)))
+    # colors = plt.get_cmap('jet')(np.linspace(0, 1.0, len(iterations)))
+    colors_list = plt.get_cmap('jet')(np.linspace(0, 1.0, len(iterations)))
+    colors_iter = iter(colors_list)
 
     if plot_std_run:
-        plotStandardRun(var_name,colors)
+        plotStandardRun(var_name)
 
     for i in iterations:
         iter_dict = per_iter_info_dict[i]
@@ -86,7 +88,7 @@ def plotVarFromSweepingInfo(var_name,model_name,sweeping_info,plots_folder_path,
         data = readFromCSV(file_path)
         sweep_value = iter_dict["sweep_value"]
         label = "param_val={sweep_value:.2f}".format(sweep_value=sweep_value)
-        plt.plot(data["time"], data[var_name], linewidth=1, linestyle='-', markersize=0,marker='o',label=label,color = colors[i])
+        plt.plot(data["time"], data[var_name], linewidth=1, linestyle='-', markersize=0,marker='o',label=label,color = next(colors_iter))
     lgd = plt.legend(loc="center left",fontsize="small",fancybox=True, shadow=True, bbox_to_anchor=(1,0.5)) #A la derecha
     # lgd = plt.legend(loc="center left",fontsize="small",fancybox=True, shadow=True, bbox_to_anchor=(0.5,-0.5)) #Abajo (anda mal)
     saveAndClearPlt(plot_path_without_extension,lgd,footer_artist)
