@@ -22,10 +22,11 @@ def main():
     include_stdrun = True
     output_base_path = "/home/adanos/Documents/TPs/tesis/repos/modelica_scripts/tmp/simple_plots/"
     output_folder_path = filesystem.files_aux.makeDirFromCurrentTimestamp(output_base_path)
-    multipleCSVsAndVarsSimplePlot(vars_list,csvs_path_label_pair_list,plot_title,x_range,output_folder_path,include_stdrun)
+    extra_ticks = [1975]
+    multipleCSVsAndVarsSimplePlot(vars_list,csvs_path_label_pair_list,plot_title,x_range,output_folder_path,extra_ticks,include_stdrun)
 
 
-def multipleCSVsAndVarsSimplePlot(vars_list,csvs_path_label_pair_list,plot_title,x_range,output_folder_path,include_stdrun=False):
+def multipleCSVsAndVarsSimplePlot(vars_list,csvs_path_label_pair_list,plot_title,x_range,output_folder_path,extra_ticks,include_stdrun=False):
     colors_list = plt.get_cmap('jet')(np.linspace(0, 1.0, len(csvs_path_label_pair_list)))
     for var_name in vars_list:
         colors_iter = iter(colors_list)
@@ -47,7 +48,9 @@ def multipleCSVsAndVarsSimplePlot(vars_list,csvs_path_label_pair_list,plot_title
             i=i+1 #for the colours
         lgd = plt.legend(loc="center left",fontsize="small",fancybox=True, shadow=True, bbox_to_anchor=(1,0.5)) #A la derecha
         # lgd = plt.legend(loc="center left",fontsize="small",fancybox=True, shadow=True, bbox_to_anchor=(0.5,-0.5)) #Abajo (anda mal)
-        plt.xlim(x_range)
+        ## Settings that differ from the automatic plotter:
+        plt.xlim(x_range) #set an specific x range
+        plt.xticks(list(plt.xticks()[0]) + extra_ticks) # add extra ticks (1975 for vermeulen for example)
         autoscale_view(tight=None, scalex=False, scaley=True)
         print(output_folder_path)
 
