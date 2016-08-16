@@ -13,11 +13,14 @@ _std_run_csv = world3_settings._std_run_csv
 
 
 def main():
+    plotVermeulenResults()
+
+def plotVermeulenResults():
     ##Example for "multipleCSVsAndVarsSimplePlot" using Vermeulen Run 2 & 3 Results.
     vars_list = ["Industrial_Investment1Industrial_Outputs_ind_cap_out_ratio", "Industrial_Investment1S_FIOA_Conss_fioa_cons_const","Industrial_Investment1S_Avg_Life_Ind_Caps_avg_life_ind_cap", "population","ppoll_index","industrial_output","nr_resources"]
     csvs_path_label_pair_list = [("/home/adanos/Documents/TPs/tesis/repos/modelica_scripts/resource/vj_run2.csv", "V&J Run 2"),
                                  ("/home/adanos/Documents/TPs/tesis/repos/modelica_scripts/resource/vj_run3.csv", "V&J Run 3"),]
-    plot_title = "Vermeulen & Jong Runs 2 and 3 using modified models"
+    plot_title = "Vermeulen & de Jong Runs 2 and 3 using modified models"
     x_range=[1900,2100]
     include_stdrun = True
     output_base_path = "/home/adanos/Documents/TPs/tesis/repos/modelica_scripts/tmp/simple_plots/"
@@ -51,7 +54,6 @@ def multipleCSVsAndVarsSimplePlot(vars_list,csvs_path_label_pair_list,plot_title
         ## Settings that differ from the automatic plotter:
         plt.xlim(x_range) #set an specific x range
         plt.xticks(list(plt.xticks()[0]) + extra_ticks) # add extra ticks (1975 for vermeulen for example)
-        autoscale_view(tight=None, scalex=False, scaley=True)
         print(output_folder_path)
 
         plot_path_without_extension = os.path.join(output_folder_path,var_name)
