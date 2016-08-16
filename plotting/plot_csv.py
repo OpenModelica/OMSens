@@ -124,7 +124,7 @@ def setupPlt(x_label,y_label,title,subtitle,footer):
     # plt.title(title)
     plt.ylabel(y_label)
     plt.ticklabel_format(useOffset=False) # So it doesn't use an offset on the x axis
-    footer_artist = plt.annotate(footer, (-0.01,0), (2, -40), xycoords='axes fraction', textcoords='offset points', va='top', horizontalalignment='right')
+    footer_artist = plt.annotate(footer, (1,0), (0, -40), xycoords='axes fraction', textcoords='offset points', va='top', horizontalalignment='right')
     # fig = plt.figure()
     # fig.text(.1,.1,footer)
     # plt.figtext(.1,.1,footer)
