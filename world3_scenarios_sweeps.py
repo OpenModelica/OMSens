@@ -34,7 +34,7 @@ def main():
     # testDeltaNRResources()
     # testFertility()
     # testFertility2()
-    # standardRun()
+    standardRun()
 # The vermeulen tests need a modified SystemDynamics .mo!
     # testVermeulenAndJonghRun2() #Run1 is Meadows' std run
     # testVermeulenAndJonghRun3()
@@ -49,7 +49,7 @@ def main():
   # MULTI TEST: Multiple tests in one.
     # testMultiTest1901Top20ParamVar()
   # Dynamics to Growth tests:
-    testDeltaICOR()
+    # testDeltaICOR()
 
 ## Predefined tests
 def testDeltaICOR():
@@ -68,7 +68,8 @@ def testDeltaICOR():
 
     iterations = 9;
     kwargs = {
-    "plot_vars":["Industrial_Investment1Industrial_Outputcapital_util_fr", "industrial_output", "serv_out_pc", "ind_out_pc", "s_fioa_serv",],
+    "plot_vars":["Industrial_Investment1Industrial_Outputcapital_util_fr"],
+    # "plot_vars":["Industrial_Investment1Industrial_Outputcapital_util_fr", "industrial_output", "serv_out_pc", "ind_out_pc", "s_fioa_serv",],
     "startTime": 1900 ,# year to start the simulation (1900 example)
     "stopTime": 2000  ,# year to end the simulation (2100 for example)
     "scens_to_run" : [1], #The standard run corresponds to the first scenario
@@ -163,7 +164,7 @@ def standardRun(): #ONLY TO GET THE STANDARD CSV!
     kwargs = {
     "plot_vars":["population","Population_Dynamics1pop_state_var_new"],
     "startTime": 1900 ,# year to start the simulation (1900 example)
-    "stopTime": 2200  ,# year to end the simulation (2100 for example)
+    "stopTime": 2500  ,# year to end the simulation (2100 for example)
     "scens_to_run" : [1], #The standard run corresponds to the first scenario
     "iterations" : 1, #More than one iteration is irrelevant
     "sweep_vars": [] ,#No sweeping done in std run
@@ -365,7 +366,7 @@ def doScenariosSet(scenarios,plot_vars,iterations,output_root_path,sweep_value_f
     for folder_name,initial_scen_factory in scenarios:
         logger.debug("Running scenario {folder_name}".format(folder_name=folder_name))
         os.makedirs(os.path.join(output_root_path,folder_name))
-        run_and_plot_model.createSweepRunAndPlotForModelInfo(initial_scen_factory,plot_vars=plot_vars,iterations=iterations,output_folder_path=os.path.join(output_root_path,folder_name),sweep_value_formula_str=sweep_value_formula_str,csv_file_name_modelica_skeleton=world3_settings.csv_file_name_modelica_skeleton,csv_file_name_python_skeleton=world3_settings.csv_file_name_python_skeleton,plot_std_run=plot_std_run)
+        run_and_plot_model.createSweepRunAndPlotForModelInfo(initial_scen_factory,plot_vars=plot_vars,iterations=iterations,output_folder_path=os.path.join(output_root_path,folder_name),sweep_value_formula_str=sweep_value_formula_str,csv_file_name_modelica_skeleton=world3_settings.sweeping_csv_file_name_modelica_skeleton,csv_file_name_python_skeleton=world3_settings.sweeping_csv_file_name_python_skeleton,plot_std_run=plot_std_run)
 def initialFactoryForWorld3Scenario(scen_num,start_time,stop_time,mo_file,sweep_vars=None,fixed_params=[]):
     initial_factory_for_scen_1 = initialFactoryForWorld3Scenario
     #Get the mos script factory for a scenario number (valid from 1 to 11)

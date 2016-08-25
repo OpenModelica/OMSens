@@ -107,10 +107,6 @@ sweeping_vars_skeleton= \
   getErrorString();
 """
 #CAREFUL! Don't change file_name_i. May break everything (we assume in run_and_plot_model.py that the file_names will follow this standard)
-file_name_skeleton= \
-"""
-  file_name_i := "{model_name}_" + String(i) + "_res.csv";"""
-#CAREFUL! Don't change file_name_i. May break everything (we assume in run_and_plot_model.py that the file_names will follow this standard)
 windows_cmd_skeleton= \
 """
   cmd := "{model_name}.exe {omc_logger_flags} "+ "-r="+file_name_i;"""

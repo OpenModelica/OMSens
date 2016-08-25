@@ -9,9 +9,12 @@ _parentdir = files_aux.parentDir(_currentdir)
 _resource_path =os.path.join(_parentdir,"resource")
 _std_run_csv = os.path.join(_resource_path,"standard_run.csv")
 
-# CAREFUL: both must be equivalent!! (because of differences between modelica and python we can't merge them into one)
-csv_file_name_python_skeleton = "iter_{i_str}.csv"
-csv_file_name_modelica_skeleton= """ "iter_" + String(i) + ".csv";"""
+# CAREFUL: python vs modelica must be equivalent!! (because of differences between modelica and python we can't merge them into one)
+sweeping_csv_file_name_python_skeleton = "iter_{i_str}.csv"
+sweeping_csv_file_name_modelica_skeleton= """ "iter_" + String(i) + ".csv";"""
+
+calc_sens_csv_file_name_skeleton = """{param_name}_perturbated.csv"""
+
 
 #System Dynamics versions:
 _sys_dyn_package_path = os.path.join(os.path.join(_resource_path,"SystemDynamics"),"package.mo") ## This one is the one that has undocumented changes (obsolete)
