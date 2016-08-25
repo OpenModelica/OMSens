@@ -26,7 +26,9 @@ Run3vermeulenAndJongh_SysDyn_mo_path= world3_settings._sys_dyn_package_v_and_j_r
 
 def main():
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
-    simpleSensitivitiesCalculator(percentage=1,var_target="population",year_target=1950)
+    simpleSensitivitiesCalculator(percentage=2,var_target="population",year_target=2100)
+    simpleSensitivitiesCalculator(percentage=5,var_target="population",year_target=2100)
+    simpleSensitivitiesCalculator(percentage=10,var_target="population",year_target=2100)
 
 ## Predefined sensitivities calculators
 def simpleSensitivitiesCalculator(percentage,var_target,year_target):
@@ -41,7 +43,7 @@ def simpleSensitivitiesCalculator(percentage,var_target,year_target):
         "target_vars":["population"],
         "percentage": percentage,
         "startTime": 1900 ,# DONT CHANGE! W3-Modelica can't be started on an arbitrary year
-        "stopTime": 2100  ,# year to calculate sensitivities from target_vars to parameters
+        "stopTime": year_target  ,# year to calculate sensitivities from target_vars to parameters
         "scens_to_run" : [1], #The standard run corresponds to the first scenario
         "mo_file" : piecewiseMod_SysDyn_mo_path, # mo that interpolates outwards with values that lie outside of range
         "plot_std_run": True, #Choose to plot std run alognside this test results
