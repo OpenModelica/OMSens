@@ -13,7 +13,10 @@ _std_run_csv = os.path.join(_resource_path,"standard_run.csv")
 sweeping_csv_file_name_python_skeleton = "iter_{i_str}.csv"
 sweeping_csv_file_name_modelica_skeleton= """ "iter_" + String(i) + ".csv";"""
 
-calc_sens_csv_file_name_skeleton = """ "{param_name}_perturbated.csv"; """
+#The csv file name of the parameters from calculation of sensitivities needs to be a function because we have to replace the brackets ([) in python and in modelica
+def calc_sens_csv_file_name_function(param_name):
+    standarized_param_name = removeSpecialCharactersTo(param_name)
+    return "{param_name}_perturbed.csv".format(param_name=standarized_param_name)
 
 
 #System Dynamics versions:
@@ -24,3 +27,12 @@ _sys_dyn_package_pop_state_var_new = os.path.join(os.path.join(os.path.join(os.p
 
 _sys_dyn_package_v_and_j_run_2 = os.path.join(os.path.join(os.path.join(os.path.join(_resource_path,"sys_dyn"),"vermeulen_and_jongh_run_2"),"SystemDynamics"),"package.mo")
 _sys_dyn_package_v_and_j_run_3 = os.path.join(os.path.join(os.path.join(os.path.join(_resource_path,"sys_dyn"),"vermeulen_and_jongh_run_3"),"SystemDynamics"),"package.mo")
+
+
+
+#Aux:
+def removeSpecialCharactersTo(param_name):
+    wo_left_bracket  = param_name.replace("[","_bracket_")
+    wo_both_brackets = wo_left_bracket.replace("]","_bracket")
+    standarized_param_name = wo_both_brackets
+    return standarized_param_name

@@ -1,3 +1,4 @@
+import re
 import os
 import logging #en reemplazo de los prints
 logger = logging.getLogger("--CSV Plotter--") #un logger especifico para este modulo
@@ -13,7 +14,26 @@ _std_run_csv = world3_settings._std_run_csv
 
 
 def main():
-    plotVermeulenResults()
+    # plotVermeulenResults()
+    plotEmpiricalSensitivities()
+
+def plotEmpiricalSensitivities():
+    ##Example for "multipleCSVsAndVarsSimplePlot" using Vermeulen Run 2 & 3 Results.
+
+    folder_path = "tmp/modelica_outputs/2016-08-25/10_39_00/"
+    regex = '.*\.(csv)$'
+    csvs_path_label_pair_list = []
+    for x in os.listdir(folder_path):
+        if re.match(regex, x):
+            csvs_path_label_pair_list.append((os.path.join(folder_path,x),x))
+    vars_list = ["population"]
+    plot_title = "Population in all the individual parameter perturbations"
+    x_range=[1900,1950]
+    include_stdrun = True
+    output_base_path = "/home/adanos/Documents/TPs/tesis/repos/modelica_scripts/tmp/simple_plots/"
+    output_folder_path = filesystem.files_aux.makeDirFromCurrentTimestamp(output_base_path)
+    extra_ticks = []
+    multipleCSVsAndVarsSimplePlot(vars_list,csvs_path_label_pair_list,plot_title,x_range,output_folder_path,extra_ticks,include_stdrun)
 
 def plotVermeulenResults():
     ##Example for "multipleCSVsAndVarsSimplePlot" using Vermeulen Run 2 & 3 Results.
