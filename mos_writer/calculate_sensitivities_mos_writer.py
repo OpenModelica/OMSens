@@ -44,8 +44,14 @@ def strForPerturbateParamAndRun(parameters_to_perturbate_tuples,model_name,csv_f
 def strForLoadingAndBuilding(mo_file,model_name,startTime,stopTime):
     load_and_build_str = load_and_build_skeleton.format(mo_file=mo_file,model_name=model_name,startTime=startTime,stopTime=stopTime)
     return load_and_build_str
+def removeSpecialCharactersTo(param_name):
+    wo_left_bracket  = param_name.replace("[","bracket")
+    wo_both_brackets = wo_left_bracket.replace("]","bracket")
+    standarized_param_name = wo_both_brackets
+    return standarized_param_name
 def strForFilenameAndCmdDefs(csv_file_name_modelica_skeleton,param_name,model_name,omc_logger_flags):
-    file_name_str = "file_name_i := " + csv_file_name_modelica_skeleton.format(param_name=param_name)
+    standarized_param_name = removeSpecialCharactersTo(param_name)
+    file_name_str = "file_name_i := " + csv_file_name_modelica_skeleton.format(param_name=standarized_param_name)
     #cmd str
     cmd_str = ""
     if platform.system() == "Linux":

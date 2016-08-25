@@ -11,6 +11,7 @@ import settings.gral_settings as gral_settings
 import resource.standard_run_params_defaults
 
 import mos_writer.calculate_sensitivities_mos_writer
+import running.run_omc
 
 #Aux for GLOBALS:
 
@@ -51,6 +52,7 @@ def setUpSensitivitiesCalculationAndRun(target_vars, startTime, stopTime, scens_
     assert len(scens_to_run)==1, "Only one scenario for now"
     model_name = world3_settings._world3_scenario_model_skeleton.format(scen_num=scen_num) #global
     mos_writer.calculate_sensitivities_mos_writer.createMos(mo_file,model_name,parameters_to_perturbate_tuples,output_mos_path,startTime,stopTime, world3_settings.calc_sens_csv_file_name_skeleton)
+    running.run_omc.runMosScript(output_mos_path)
 # def createMos(mo_file,model_name,parameters_to_perturbate_tuples,output_mos_path,startTime,stopTime,csv_file_name_modelica):
 # BORRAR DESDE ACA: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
     # iterations = 9;

@@ -13,7 +13,7 @@ _std_run_csv = os.path.join(_resource_path,"standard_run.csv")
 sweeping_csv_file_name_python_skeleton = "iter_{i_str}.csv"
 sweeping_csv_file_name_modelica_skeleton= """ "iter_" + String(i) + ".csv";"""
 
-calc_sens_csv_file_name_skeleton = """{param_name}_perturbated.csv"""
+calc_sens_csv_file_name_skeleton = """ "{param_name}_perturbated.csv"; """
 
 
 #System Dynamics versions:
