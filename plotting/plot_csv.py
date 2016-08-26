@@ -19,21 +19,28 @@ def main():
 
 def plotEmpiricalSensitivities():
     ##Example for "multipleCSVsAndVarsSimplePlot" using Vermeulen Run 2 & 3 Results.
+    # (folderpath,subtitle, footer)
+    experiments_tuples = \
+       [("tmp/modelica_outputs/2016-08-25/16_27_22/", "101% of default","Each parameter perturbed in isolation"),
+       ("tmp/modelica_outputs/2016-08-25/17_28_47/", "102% of default","Each parameter perturbed in isolation"),
+       ("tmp/modelica_outputs/2016-08-25/17_34_02/", "105% of default","Each parameter perturbed in isolation"),
+       ("tmp/modelica_outputs/2016-08-25/17_39_19/", "110% of default","Each parameter perturbed in isolation"),
+    ]
 
-    folder_path = "tmp/modelica_outputs/2016-08-25/10_39_00/"
-    regex = '.*\.(csv)$'
-    csvs_path_label_pair_list = []
-    for x in os.listdir(folder_path):
-        if re.match(regex, x):
-            csvs_path_label_pair_list.append((os.path.join(folder_path,x),x))
-    vars_list = ["population"]
-    plot_title = "Population in all the individual parameter perturbations"
-    x_range=[1900,1950]
-    include_stdrun = True
-    output_base_path = "/home/adanos/Documents/TPs/tesis/repos/modelica_scripts/tmp/simple_plots/"
-    output_folder_path = filesystem.files_aux.makeDirFromCurrentTimestamp(output_base_path)
-    extra_ticks = []
-    multipleCSVsAndVarsSimplePlot(vars_list,csvs_path_label_pair_list,plot_title,x_range,output_folder_path,extra_ticks,include_stdrun)
+    for folder_path,subtitle,footer in experiments_tuples:
+        regex = '.*perturbed\.(csv)$'
+        csvs_path_label_pair_list = []
+        for x in os.listdir(folder_path):
+            if re.match(regex, x):
+                csvs_path_label_pair_list.append((os.path.join(folder_path,x),x))
+        vars_list = ["population"]
+        plot_title = "Population in all the individual parameter perturbations"
+        x_range=[1900,2100]
+        include_stdrun = True
+        output_base_path = "/home/adanos/Documents/TPs/tesis/repos/modelica_scripts/tmp/simple_plots/"
+        output_folder_path = filesystem.files_aux.makeDirFromCurrentTimestamp(output_base_path)
+        extra_ticks = []
+        multipleCSVsAndVarsSimplePlot(vars_list,csvs_path_label_pair_list,plot_title,x_range,output_folder_path,extra_ticks,include_stdrun,subtitle=subtitle,footer=footer)
 
 def plotVermeulenResults():
     ##Example for "multipleCSVsAndVarsSimplePlot" using Vermeulen Run 2 & 3 Results.
@@ -49,11 +56,11 @@ def plotVermeulenResults():
     multipleCSVsAndVarsSimplePlot(vars_list,csvs_path_label_pair_list,plot_title,x_range,output_folder_path,extra_ticks,include_stdrun)
 
 
-def multipleCSVsAndVarsSimplePlot(vars_list,csvs_path_label_pair_list,plot_title,x_range,output_folder_path,extra_ticks,include_stdrun=False):
+def multipleCSVsAndVarsSimplePlot(vars_list,csvs_path_label_pair_list,plot_title,x_range,output_folder_path,extra_ticks,include_stdrun=False,subtitle="",footer=""):
     colors_list = plt.get_cmap('jet')(np.linspace(0, 1.0, len(csvs_path_label_pair_list)))
     for var_name in vars_list:
         colors_iter = iter(colors_list)
-        footer_artist = setupPlt("Time",var_name,plot_title,"","")
+        footer_artist = setupPlt("Time",var_name,plot_title,subtitle,footer)
         if include_stdrun:
             plotStandardRun(var_name)
         # for i in iterations:

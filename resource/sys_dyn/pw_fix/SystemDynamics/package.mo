@@ -4535,6 +4535,9 @@ The service capital is measured in U.S. dollars.
 </html>"));
       end Service_Sector_Investment;
       model Scenario_1 "Original WORLD3 model"
+      //BORRAR:
+        parameter Boolean ale=true;
+      //BORRAR^
         parameter Real agr_mtl_toxic_index(unit = "1/dollar") = 1 "Agricultural materials toxicity index";
         parameter Real assim_half_life_1970(unit = "yr") = 1.5 "Pollution assimilation half life in 1970";
         parameter Real avg_life_land_norm(unit = "yr") = 1000 "Normal life span of land";
