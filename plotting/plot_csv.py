@@ -15,7 +15,22 @@ _std_run_csv = world3_settings._std_run_csv
 
 def main():
     # plotVermeulenResults()
-    plotEmpiricalSensitivities()
+    # plotEmpiricalSensitivities()
+    plotSimpleCSV()
+def plotSimpleCSV():
+    subtitle = "101% value (1% perturbance) for 6 parameters"
+    footer = "Parameters perturbed: \n p_fioa_cons_const_1, p_ind_cap_out_ratio_1, life_expect_norm, \n reproductive_lifetime, des_compl_fam_size_norm, p_avg_life_ind_cap_1."
+    regex = '.*perturbed\.(csv)$'
+    csvs_path_label_pair_list = [("/home/adanos/Documents/TPs/tesis/repos/modelica_scripts/tmp/6_most_senstive/6_most_sensitive_perturbation.csv","6 params perturbed")]
+    vars_list = ["population"]
+    plot_title = "Population for 6 parameters perturbed"
+    x_range=[1900,2100]
+    include_stdrun = True
+    output_base_path = "/home/adanos/Documents/TPs/tesis/repos/modelica_scripts/tmp/simple_plots/"
+    output_folder_path = filesystem.files_aux.makeDirFromCurrentTimestamp(output_base_path)
+    extra_ticks = []
+    multipleCSVsAndVarsSimplePlot(vars_list,csvs_path_label_pair_list,plot_title,x_range,output_folder_path,extra_ticks,include_stdrun,subtitle=subtitle,footer=footer)
+
 
 def plotEmpiricalSensitivities():
     ##Example for "multipleCSVsAndVarsSimplePlot" using Vermeulen Run 2 & 3 Results.
