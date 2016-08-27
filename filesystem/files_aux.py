@@ -9,8 +9,8 @@ logger = logging.getLogger("--Files aux funcs--") #un logger especifico para est
 # Functions to get current directory, create folder, create "tmp" folder to dump results, etc
 def parentDir(dir_):
     return os.path.dirname(dir_)
-def makeOutputPath():
-    dest_path = destPath()
+def makeOutputPath(folder_name="modelica_output"):
+    dest_path = destPath(folder_name)
     timestamp_dir = makeDirFromCurrentTimestamp(dest_path)
     return timestamp_dir
 
@@ -22,9 +22,9 @@ def makeDirFromCurrentTimestamp(dest_path):
     new_folder_path = os.path.join(dest_path,dateAndTime.strftime('%Y-%m-%d/%H_%M_%S'))
     os.makedirs(new_folder_path)
     return new_folder_path
-def destPath():
+def destPath(folder_name):
     tmp_path = tmpPath()
-    return os.path.join(tmp_path,"modelica_outputs")
+    return os.path.join(tmp_path,folder_name)
 def tmpPath():
     currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
     parentdir = parentDir(currentdir)
