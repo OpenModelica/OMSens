@@ -26,7 +26,7 @@ def getInteractiveArguments(csvs_paths_list):
     plot_var = input("Variable to plot?\n  ")
     plot_title = input("Plot title?\n  ")
     plot_subtitle = input("Plot subtitle?\n  ")
-    plot_footer = input("Plot footer?\n  ")
+    plot_footer = input("Plot footer?\n  ").replace("\\n","\n") #input function cant handle \n. The replace fixes it
 
     csvs_path_label_pair_list = []
     for csv_path in csvs_paths_list:
