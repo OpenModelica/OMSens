@@ -1,0 +1,776 @@
+// load the file
+print("Loading Modelica\n");
+loadModel(Modelica); //new OMC version stopped importing Modelica model
+print("Loading file:/home/adanos/Documents/modelica_scripts/resource/sys_dyn/pw_fix/SystemDynamics/package.mo\n");
+loadFile("/home/adanos/Documents/modelica_scripts/resource/sys_dyn/pw_fix/SystemDynamics/package.mo"); getErrorString();
+// build the model once
+print("Building model:SystemDynamics.WorldDynamics.World3.Scenario_1\n");
+buildModel(SystemDynamics.WorldDynamics.World3.Scenario_1, startTime=1900,stopTime=2100,outputFormat="csv",stepSize=1); getErrorString();
+// Perturbing parameter: agr_inp_init
+  file_name_i := "agr_inp_init_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "agr_inp_init", String(5050000000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "agr_inp_init", String(5000000000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: agr_mtl_toxic_index
+  file_name_i := "agr_mtl_toxic_index_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "agr_mtl_toxic_index", String(1.01) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "agr_mtl_toxic_index", String(1.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: arable_land_init
+  file_name_i := "arable_land_init_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "arable_land_init", String(909000000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "arable_land_init", String(900000000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: assim_half_life_1970
+  file_name_i := "assim_half_life_1970_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "assim_half_life_1970", String(1.515) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "assim_half_life_1970", String(1.5) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: avg_life_land_norm
+  file_name_i := "avg_life_land_norm_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "avg_life_land_norm", String(1010.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "avg_life_land_norm", String(1000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: des_compl_fam_size_norm
+  file_name_i := "des_compl_fam_size_norm_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "des_compl_fam_size_norm", String(3.8379999999999996) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "des_compl_fam_size_norm", String(3.8) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: des_food_ratio_dfr
+  file_name_i := "des_food_ratio_dfr_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "des_food_ratio_dfr", String(2.02) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "des_food_ratio_dfr", String(2.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: des_ppoll_index_DPOLX
+  file_name_i := "des_ppoll_index_DPOLX_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "des_ppoll_index_DPOLX", String(1.212) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "des_ppoll_index_DPOLX", String(1.2) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: des_res_use_rt_DNRUR
+  file_name_i := "des_res_use_rt_DNRUR_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "des_res_use_rt_DNRUR", String(4848000000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "des_res_use_rt_DNRUR", String(4800000000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: food_short_perc_del
+  file_name_i := "food_short_perc_del_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "food_short_perc_del", String(2.02) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "food_short_perc_del", String(2.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: fr_agr_inp_pers_mtl
+  file_name_i := "fr_agr_inp_pers_mtl_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "fr_agr_inp_pers_mtl", String(0.00101) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "fr_agr_inp_pers_mtl", String(0.001) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: frac_res_pers_mtl
+  file_name_i := "frac_res_pers_mtl_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "frac_res_pers_mtl", String(0.0202) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "frac_res_pers_mtl", String(0.02) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: hlth_serv_impact_del
+  file_name_i := "hlth_serv_impact_del_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "hlth_serv_impact_del", String(20.2) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "hlth_serv_impact_del", String(20.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: income_expect_avg_time
+  file_name_i := "income_expect_avg_time_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "income_expect_avg_time", String(3.03) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "income_expect_avg_time", String(3.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: ind_mtl_emiss_fact
+  file_name_i := "ind_mtl_emiss_fact_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "ind_mtl_emiss_fact", String(0.101) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "ind_mtl_emiss_fact", String(0.1) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: ind_mtl_toxic_index
+  file_name_i := "ind_mtl_toxic_index_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "ind_mtl_toxic_index", String(10.1) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "ind_mtl_toxic_index", String(10.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: ind_out_in_1970
+  file_name_i := "ind_out_in_1970_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "ind_out_in_1970", String(797900000000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "ind_out_in_1970", String(790000000000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: ind_out_pc_des
+  file_name_i := "ind_out_pc_des_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "ind_out_pc_des", String(404.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "ind_out_pc_des", String(400.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: industrial_capital_init
+  file_name_i := "industrial_capital_init_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "industrial_capital_init", String(212100000000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "industrial_capital_init", String(210000000000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: inherent_land_fert
+  file_name_i := "inherent_land_fert_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "inherent_land_fert", String(606.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "inherent_land_fert", String(600.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: labor_force_partic
+  file_name_i := "labor_force_partic_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "labor_force_partic", String(0.7575) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "labor_force_partic", String(0.75) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: labor_util_fr_del_init
+  file_name_i := "labor_util_fr_del_init_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "labor_util_fr_del_init", String(1.01) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "labor_util_fr_del_init", String(1.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: labor_util_fr_del_time
+  file_name_i := "labor_util_fr_del_time_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "labor_util_fr_del_time", String(2.02) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "labor_util_fr_del_time", String(2.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: land_fertility_init
+  file_name_i := "land_fertility_init_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "land_fertility_init", String(606.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "land_fertility_init", String(600.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: land_fr_harvested
+  file_name_i := "land_fr_harvested_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "land_fr_harvested", String(0.707) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "land_fr_harvested", String(0.7) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: life_expect_norm
+  file_name_i := "life_expect_norm_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "life_expect_norm", String(28.28) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "life_expect_norm", String(28.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: lifet_perc_del
+  file_name_i := "lifet_perc_del_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "lifet_perc_del", String(20.2) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "lifet_perc_del", String(20.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: max_tot_fert_norm
+  file_name_i := "max_tot_fert_norm_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "max_tot_fert_norm", String(12.12) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "max_tot_fert_norm", String(12.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: nr_resources_init
+  file_name_i := "nr_resources_init_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "nr_resources_init", String(1010000000000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "nr_resources_init", String(1000000000000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: p_avg_life_agr_inp_1
+  file_name_i := "p_avg_life_agr_inp_1_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_avg_life_agr_inp_1", String(2.02) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_avg_life_agr_inp_1", String(2.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: p_avg_life_agr_inp_2
+  file_name_i := "p_avg_life_agr_inp_2_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_avg_life_agr_inp_2", String(2.02) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_avg_life_agr_inp_2", String(2.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: p_avg_life_ind_cap_1
+  file_name_i := "p_avg_life_ind_cap_1_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_avg_life_ind_cap_1", String(14.14) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_avg_life_ind_cap_1", String(14.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: p_avg_life_ind_cap_2
+  file_name_i := "p_avg_life_ind_cap_2_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_avg_life_ind_cap_2", String(14.14) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_avg_life_ind_cap_2", String(14.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: p_avg_life_serv_cap_1
+  file_name_i := "p_avg_life_serv_cap_1_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_avg_life_serv_cap_1", String(20.2) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_avg_life_serv_cap_1", String(20.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: p_avg_life_serv_cap_2
+  file_name_i := "p_avg_life_serv_cap_2_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_avg_life_serv_cap_2", String(20.2) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_avg_life_serv_cap_2", String(20.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: p_fioa_cons_const_1
+  file_name_i := "p_fioa_cons_const_1_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_fioa_cons_const_1", String(0.4343) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_fioa_cons_const_1", String(0.43) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: p_fioa_cons_const_2
+  file_name_i := "p_fioa_cons_const_2_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_fioa_cons_const_2", String(0.4343) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_fioa_cons_const_2", String(0.43) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: p_fr_cap_al_obt_res_2[1]
+  file_name_i := "p_fr_cap_al_obt_res_2_bracket_1_bracket_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_fr_cap_al_obt_res_2[1]", String(1.01) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_fr_cap_al_obt_res_2[1]", String(1.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: p_fr_cap_al_obt_res_2[2]
+  file_name_i := "p_fr_cap_al_obt_res_2_bracket_2_bracket_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_fr_cap_al_obt_res_2[2]", String(0.202) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_fr_cap_al_obt_res_2[2]", String(0.2) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: p_fr_cap_al_obt_res_2[3]
+  file_name_i := "p_fr_cap_al_obt_res_2_bracket_3_bracket_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_fr_cap_al_obt_res_2[3]", String(0.101) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_fr_cap_al_obt_res_2[3]", String(0.1) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: p_fr_cap_al_obt_res_2[4]
+  file_name_i := "p_fr_cap_al_obt_res_2_bracket_4_bracket_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_fr_cap_al_obt_res_2[4]", String(0.0505) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_fr_cap_al_obt_res_2[4]", String(0.05) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: p_fr_cap_al_obt_res_2[5]
+  file_name_i := "p_fr_cap_al_obt_res_2_bracket_5_bracket_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_fr_cap_al_obt_res_2[5]", String(0.0505) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_fr_cap_al_obt_res_2[5]", String(0.05) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: p_fr_cap_al_obt_res_2[6]
+  file_name_i := "p_fr_cap_al_obt_res_2_bracket_6_bracket_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_fr_cap_al_obt_res_2[6]", String(0.0505) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_fr_cap_al_obt_res_2[6]", String(0.05) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: p_fr_cap_al_obt_res_2[7]
+  file_name_i := "p_fr_cap_al_obt_res_2_bracket_7_bracket_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_fr_cap_al_obt_res_2[7]", String(0.0505) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_fr_cap_al_obt_res_2[7]", String(0.05) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: p_fr_cap_al_obt_res_2[8]
+  file_name_i := "p_fr_cap_al_obt_res_2_bracket_8_bracket_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_fr_cap_al_obt_res_2[8]", String(0.0505) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_fr_cap_al_obt_res_2[8]", String(0.05) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: p_fr_cap_al_obt_res_2[9]
+  file_name_i := "p_fr_cap_al_obt_res_2_bracket_9_bracket_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_fr_cap_al_obt_res_2[9]", String(0.0505) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_fr_cap_al_obt_res_2[9]", String(0.05) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: p_fr_cap_al_obt_res_2[10]
+  file_name_i := "p_fr_cap_al_obt_res_2_bracket_10_bracket_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_fr_cap_al_obt_res_2[10]", String(0.0505) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_fr_cap_al_obt_res_2[10]", String(0.05) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: p_fr_cap_al_obt_res_2[11]
+  file_name_i := "p_fr_cap_al_obt_res_2_bracket_11_bracket_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_fr_cap_al_obt_res_2[11]", String(0.0505) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_fr_cap_al_obt_res_2[11]", String(0.05) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: p_ind_cap_out_ratio_1
+  file_name_i := "p_ind_cap_out_ratio_1_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_ind_cap_out_ratio_1", String(3.03) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_ind_cap_out_ratio_1", String(3.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: p_land_yield_fact_1
+  file_name_i := "p_land_yield_fact_1_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_land_yield_fact_1", String(1.01) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_land_yield_fact_1", String(1.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: p_nr_res_use_fact_1
+  file_name_i := "p_nr_res_use_fact_1_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_nr_res_use_fact_1", String(1.01) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_nr_res_use_fact_1", String(1.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: p_ppoll_gen_fact_1
+  file_name_i := "p_ppoll_gen_fact_1_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_ppoll_gen_fact_1", String(1.01) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_ppoll_gen_fact_1", String(1.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: p_ppoll_tech_chg_mlt[1]
+  file_name_i := "p_ppoll_tech_chg_mlt_bracket_1_bracket_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_ppoll_tech_chg_mlt[1]", String(0.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_ppoll_tech_chg_mlt[1]", String(0.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: p_ppoll_tech_chg_mlt[2]
+  file_name_i := "p_ppoll_tech_chg_mlt_bracket_2_bracket_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_ppoll_tech_chg_mlt[2]", String(0.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_ppoll_tech_chg_mlt[2]", String(0.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: p_ppoll_tech_chg_mlt[3]
+  file_name_i := "p_ppoll_tech_chg_mlt_bracket_3_bracket_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_ppoll_tech_chg_mlt[3]", String(0.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_ppoll_tech_chg_mlt[3]", String(0.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: p_ppoll_tech_chg_mlt[4]
+  file_name_i := "p_ppoll_tech_chg_mlt_bracket_4_bracket_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_ppoll_tech_chg_mlt[4]", String(0.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_ppoll_tech_chg_mlt[4]", String(0.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: p_res_tech_chg_mlt[1]
+  file_name_i := "p_res_tech_chg_mlt_bracket_1_bracket_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_res_tech_chg_mlt[1]", String(0.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_res_tech_chg_mlt[1]", String(0.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: p_res_tech_chg_mlt[2]
+  file_name_i := "p_res_tech_chg_mlt_bracket_2_bracket_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_res_tech_chg_mlt[2]", String(0.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_res_tech_chg_mlt[2]", String(0.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: p_res_tech_chg_mlt[3]
+  file_name_i := "p_res_tech_chg_mlt_bracket_3_bracket_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_res_tech_chg_mlt[3]", String(0.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_res_tech_chg_mlt[3]", String(0.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: p_res_tech_chg_mlt[4]
+  file_name_i := "p_res_tech_chg_mlt_bracket_4_bracket_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_res_tech_chg_mlt[4]", String(0.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_res_tech_chg_mlt[4]", String(0.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: p_serv_cap_out_ratio_1
+  file_name_i := "p_serv_cap_out_ratio_1_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_serv_cap_out_ratio_1", String(1.01) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_serv_cap_out_ratio_1", String(1.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: p_serv_cap_out_ratio_2
+  file_name_i := "p_serv_cap_out_ratio_2_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_serv_cap_out_ratio_2", String(1.01) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_serv_cap_out_ratio_2", String(1.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: p_yield_tech_chg_mlt[1]
+  file_name_i := "p_yield_tech_chg_mlt_bracket_1_bracket_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_yield_tech_chg_mlt[1]", String(0.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_yield_tech_chg_mlt[1]", String(0.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: p_yield_tech_chg_mlt[2]
+  file_name_i := "p_yield_tech_chg_mlt_bracket_2_bracket_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_yield_tech_chg_mlt[2]", String(0.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_yield_tech_chg_mlt[2]", String(0.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: p_yield_tech_chg_mlt[3]
+  file_name_i := "p_yield_tech_chg_mlt_bracket_3_bracket_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_yield_tech_chg_mlt[3]", String(0.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_yield_tech_chg_mlt[3]", String(0.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: p_yield_tech_chg_mlt[4]
+  file_name_i := "p_yield_tech_chg_mlt_bracket_4_bracket_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_yield_tech_chg_mlt[4]", String(0.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_yield_tech_chg_mlt[4]", String(0.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: perc_food_ratio_init
+  file_name_i := "perc_food_ratio_init_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "perc_food_ratio_init", String(1.01) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "perc_food_ratio_init", String(1.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: pers_pollution_init
+  file_name_i := "pers_pollution_init_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "pers_pollution_init", String(25250000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "pers_pollution_init", String(25000000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: pop1_init
+  file_name_i := "pop1_init_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "pop1_init", String(656500000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "pop1_init", String(650000000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: pop2_init
+  file_name_i := "pop2_init_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "pop2_init", String(707000000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "pop2_init", String(700000000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: pop3_init
+  file_name_i := "pop3_init_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "pop3_init", String(191900000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "pop3_init", String(190000000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: pop4_init
+  file_name_i := "pop4_init_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "pop4_init", String(60600000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "pop4_init", String(60000000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: pot_arable_land_init
+  file_name_i := "pot_arable_land_init_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "pot_arable_land_init", String(2323000000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "pot_arable_land_init", String(2300000000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: pot_arable_land_tot
+  file_name_i := "pot_arable_land_tot_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "pot_arable_land_tot", String(3232000000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "pot_arable_land_tot", String(3200000000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: ppoll_in_1970
+  file_name_i := "ppoll_in_1970_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "ppoll_in_1970", String(137360000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "ppoll_in_1970", String(136000000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: ppoll_tech_init
+  file_name_i := "ppoll_tech_init_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "ppoll_tech_init", String(1.01) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "ppoll_tech_init", String(1.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: ppoll_trans_del
+  file_name_i := "ppoll_trans_del_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "ppoll_trans_del", String(20.2) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "ppoll_trans_del", String(20.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: processing_loss
+  file_name_i := "processing_loss_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "processing_loss", String(0.101) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "processing_loss", String(0.1) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: reproductive_lifetime
+  file_name_i := "reproductive_lifetime_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "reproductive_lifetime", String(30.3) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "reproductive_lifetime", String(30.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: res_tech_init
+  file_name_i := "res_tech_init_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "res_tech_init", String(1.01) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "res_tech_init", String(1.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: service_capital_init
+  file_name_i := "service_capital_init_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "service_capital_init", String(145440000000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "service_capital_init", String(144000000000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: social_adj_del
+  file_name_i := "social_adj_del_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "social_adj_del", String(20.2) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "social_adj_del", String(20.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: social_discount
+  file_name_i := "social_discount_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "social_discount", String(0.07070000000000001) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "social_discount", String(0.07) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: subsist_food_pc
+  file_name_i := "subsist_food_pc_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "subsist_food_pc", String(232.3) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "subsist_food_pc", String(230.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: t_air_poll_time
+  file_name_i := "t_air_poll_time_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "t_air_poll_time", String(4040.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "t_air_poll_time", String(4000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: t_fcaor_time
+  file_name_i := "t_fcaor_time_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "t_fcaor_time", String(4040.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "t_fcaor_time", String(4000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: t_fert_cont_eff_time
+  file_name_i := "t_fert_cont_eff_time_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "t_fert_cont_eff_time", String(4040.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "t_fert_cont_eff_time", String(4000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: t_ind_equil_time
+  file_name_i := "t_ind_equil_time_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "t_ind_equil_time", String(4040.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "t_ind_equil_time", String(4000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: t_land_life_time
+  file_name_i := "t_land_life_time_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "t_land_life_time", String(4040.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "t_land_life_time", String(4000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: t_policy_year
+  file_name_i := "t_policy_year_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "t_policy_year", String(4040.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "t_policy_year", String(4000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: t_pop_equil_time
+  file_name_i := "t_pop_equil_time_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "t_pop_equil_time", String(4040.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "t_pop_equil_time", String(4000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: t_zero_pop_grow_time
+  file_name_i := "t_zero_pop_grow_time_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "t_zero_pop_grow_time", String(4040.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "t_zero_pop_grow_time", String(4000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: tech_dev_del_TDD
+  file_name_i := "tech_dev_del_TDD_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "tech_dev_del_TDD", String(20.2) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "tech_dev_del_TDD", String(20.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: urb_ind_land_dev_time
+  file_name_i := "urb_ind_land_dev_time_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "urb_ind_land_dev_time", String(10.1) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "urb_ind_land_dev_time", String(10.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: urban_ind_land_init
+  file_name_i := "urban_ind_land_init_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "urban_ind_land_init", String(8282000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "urban_ind_land_init", String(8200000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+// Perturbing parameter: yield_tech_init
+  file_name_i := "yield_tech_init_perturbed.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "yield_tech_init", String(1.01) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "yield_tech_init", String(1.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
