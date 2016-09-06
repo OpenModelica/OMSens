@@ -16,7 +16,7 @@ def main():
     # analyzeSensitivitiesFromVariableToParametersFromCSVs(**kwargs)
     pass
 def analyzeSensitivitiesFromVariableToParametersFromCSVs(perturbed_csvs_path_and_info_pairs,target_var,percentage_perturbed,year,std_run_csv_path,output_analysis_path):
-    # The column order has been hardcoded for now.
+    # The column order is hardcoded for now.
     headers = "parameter,parameter_default,parameter_perturbed_{percentage}_percent,{var_name}_{year}_std,{var_name}_{year}_new,std/new,(new-std)/std,ABS((new-std)/std),perturbed_param_csv_path".format(percentage=percentage_perturbed,var_name=target_var,year=year)
     rows_strs = [headers]
     for csv_path,param_info in perturbed_csvs_path_and_info_pairs:
