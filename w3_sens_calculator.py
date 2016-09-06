@@ -67,6 +67,8 @@ def setUpSensitivitiesCalculationAndRun(target_vars,percentage, startTime, stopT
         "percentage_perturbed":percentage,
         "year":stopTime,
         "output_analysis_path": os.path.join(output_folder_path,"sens_analysis.csv"),
+        "rms_first_year": startTime,
+        "rms_last_year": stopTime,
     }
     analysis.sensitivities_to_parameters_analysis_from_csv.analyzeSensitivitiesFromVariableToParametersFromCSVs(**kwargs)
 # def analyzeSensitivitiesFromVariableToParametersFromCSVs(perturbed_csvs_path_and_info_pairs,target_var,percentage_perturbed,year,std_run_csv_path,output_analysis_path):
