@@ -51,14 +51,14 @@ def rootMeanSquareForCsvAndYearsAndStateVarAndStdCSV(data_perturbed_parameter,fi
     logger.debug("Writing Root Mean Squares")
     # We don't know if both datas have same years range. We have to get the correct range for this RMS calculation for both
     std_run_first_year_index = yearIndexForNdarray(data_std_run,first_year)# get year index for first year in rms for std run
-    std_run_last_year_index = yearIndexForNdarray(data_std_run,first_year) #get year index for last year in rms for std run
+    std_run_last_year_index = yearIndexForNdarray(data_std_run,last_year) #get year index for last year in rms for std run
     std_run_target_var_values_list = data_std_run[state_var][std_run_first_year_index:std_run_last_year_index] # get the list of values for the state_var corresponding the that the years range for this RMS
 
-    perturbed_parameter_first_year_index = yearIndexForNdarray(data_perturbed_parameter,first_year)  # get year index for first year in rms for std run
-    perturbed_parameter_last_year_index = yearIndexForNdarray(data_perturbed_parameter,first_year)   # get year index for last year in rms for std run
+    perturbed_parameter_first_year_index = yearIndexForNdarray(data_perturbed_parameter,first_year)  # get year index for first year in rms for perturbed run
+    perturbed_parameter_last_year_index = yearIndexForNdarray(data_perturbed_parameter,last_year)   # get year index for last year in rms for perturbed run
     perturbed_parameter_target_var_values_list = data_perturbed_parameter[state_var][perturbed_parameter_first_year_index:perturbed_parameter_last_year_index] # get the list of values for the state_var corresponding the that the years range for this RMS
 
-    rms = math.sqrt(sum((std_run_target_var_values_list-perturbed_parameter_target_var_values_list)**2)/n)
+    rms = math.sqrt(1/n*sum((std_run_target_var_values_list-perturbed_parameter_target_var_values_list)**2))
 
     return rms
 
