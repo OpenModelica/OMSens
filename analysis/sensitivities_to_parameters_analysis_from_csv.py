@@ -1,20 +1,24 @@
 #Std
+import sys #for logging stdout
 import math #for sqrt
 import numpy as np
 import logging
-logger = logging.getLogger("--Sensitivities mos writer--") #un logger especifico para este modulo
+logger = logging.getLogger("--Sensitivities To parameters analysis--") #un logger especifico para este modulo
 #Mine
 import filesystem.files_aux
 def main():
-    # kwargs = {
-    #     "perturbed_csvs_path_and_info_pairs": [("tmp/modelica_outputs/2016-08-25/10_39_00/agr_inp_init_perturbated.csv","agr_inp_init_perturbed")],
-    #     "std_run_csv_path": "resource/standard_run.csv",
-    #     "target_var": "population",
-    #     "percentage_perturbed":"10",
-    #     "specific_year":1950,
-    #     "output_analysis_path": "tmp/asd.txt",
-    # }
-    # analyzeSensitivitiesFromVariableToParametersFromCSVs(**kwargs)
+    logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+    kwargs = {
+        "perturbed_csvs_path_and_info_pairs": [("tmp/modelica_outputs/2016-08-25/17_39_19/agr_inp_init_perturbed.csv","agr_inp_init_perturbed")],
+        "std_run_csv_path": "resource/standard_run.csv",
+        "target_var": "population",
+        "percentage_perturbed":"10",
+        "specific_year":1950,
+        "output_analysis_path": "tmp/asd_2.txt",
+        "rms_first_year": 1900,
+        "rms_last_year": 2100,
+    }
+    analyzeSensitivitiesFromVariableToParametersFromCSVs(**kwargs)
     pass
 def analyzeSensitivitiesFromVariableToParametersFromCSVs(perturbed_csvs_path_and_info_pairs,target_var,percentage_perturbed,specific_year,rms_first_year,rms_last_year,std_run_csv_path,output_analysis_path):
     # The column order is hardcoded for now.
@@ -43,11 +47,14 @@ def rootMeanSquareForCsvAndYearsAndStateVarAndStdCSV(perturbed_csv_path,first_ye
     years_list = range(first_year,last_year+1)
     n = len(years_list)
     accum_squares_sum = 0
+    logger.debug("Writing Root Mean Squares")
     for year in years_list:
         std_run_var_value = varValueForYear(state_var,year,std_run_csv_path)
         perturbed_var_value = varValueForYear(state_var,year,perturbed_csv_path)
         x_i = std_run_var_value-perturbed_var_value
-        accum_squares_sum = accum_squares_sum + x_i^2
+        x_i_squared = x_i**2
+        accum_squares_sum = accum_squares_sum + x_i_squared
+        logger.debug("\n RMS. Year:{year}, Std: {std_run_var_value}, Perturbed: {perturbed_var_value}, x_i: {x_i}, x_i^2: {x_i_squared}".format(year=year,std_run_var_value=std_run_var_value,perturbed_var_value=perturbed_var_value,x_i=x_i,x_i_squared=x_i_squared))
     rms = math.sqrt(accum_squares_sum)
     return rms
 
