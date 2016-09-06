@@ -65,7 +65,7 @@ def setUpSensitivitiesCalculationAndRun(target_vars,percentage, startTime, stopT
         "std_run_csv_path": "resource/standard_run.csv",
         "target_var": "population",
         "percentage_perturbed":percentage,
-        "year":stopTime,
+        "specific_year":stopTime,
         "output_analysis_path": os.path.join(output_folder_path,"sens_analysis.csv"),
         "rms_first_year": startTime,
         "rms_last_year": stopTime,
