@@ -34,6 +34,7 @@ def main():
 def simpleSensitivitiesCalculator(percentage,var_target,year_target):
     # Reads parameters info from resource/standard_run_params_defaults.py
     # Calculate parameters_to_perturbate_tuples
+    logger.info("Calculating empirical parameter sensitivities for percentage {perc}, target variable {var_target} and target year {year_target}".format(perc=percentage,var_target=var_target,year_target=year_target))
     parameters_to_perturbate_tuples = []
     params_info_list = resource.standard_run_params_defaults.w3_params_info_list
     for param_name,param_val in params_info_list:
@@ -57,6 +58,7 @@ def setUpSensitivitiesCalculationAndRun(target_vars,percentage, startTime, stopT
     assert len(scens_to_run)==1, "Only one scenario for now"
     model_name = world3_settings._world3_scenario_model_skeleton.format(scen_num=scen_num) #global
     mos_writer.calculate_sensitivities_mos_writer.createMos(mo_file,model_name,parameters_to_perturbate_tuples,output_mos_path,startTime,stopTime, world3_settings.calc_sens_csv_file_name_function)
+    logger.info("Running Modelica with specified information")
     running.run_omc.runMosScript(output_mos_path)
     perturbed_csvs_path_and_info_pairs = csvPathAndParameterNameForFolderAndParametersInfo(output_folder_path,parameters_to_perturbate_tuples)
 
