@@ -24,9 +24,12 @@ _sys_dyn_package_path = os.path.join(os.path.join(_resource_path,"SystemDynamics
 _sys_dyn_package_vanilla_path = os.path.join(os.path.join(os.path.join(os.path.join(_resource_path,"sys_dyn"),"vanilla"),"SystemDynamics"),"package.mo") # The System Dynamics package without modifications
 _sys_dyn_package_pw_fix_path = os.path.join(os.path.join(os.path.join(os.path.join(_resource_path,"sys_dyn"),"pw_fix"),"SystemDynamics"),"package.mo") # Piecewise function modified to accept queries for values outside of range. Interpolate linearly using closest 2 values
 _sys_dyn_package_pop_state_var_new = os.path.join(os.path.join(os.path.join(os.path.join(_resource_path,"sys_dyn"),"pop_state_var_new"),"SystemDynamics"),"package.mo") # Added a new "population" var that includes an integrator. Numerically it's the same as "population" but with the advantage that now we can calculate sensitivities for it
-
+    # V&J paths
 _sys_dyn_package_v_and_j_run_2 = os.path.join(os.path.join(os.path.join(os.path.join(_resource_path,"sys_dyn"),"vermeulen_and_jongh_run_2"),"SystemDynamics"),"package.mo")
 _sys_dyn_package_v_and_j_run_3 = os.path.join(os.path.join(os.path.join(os.path.join(_resource_path,"sys_dyn"),"vermeulen_and_jongh_run_3"),"SystemDynamics"),"package.mo")
+    # Pseudo ffw param and var paths:
+_sys_dyn_package_pseudo_ffw_param_path = os.path.join(os.path.join(os.path.join(os.path.join(_resource_path,"sys_dyn"),"pseudo_ffw_param"),"SystemDynamics"),"package.mo")
+_sys_dyn_package_pseudo_ffw_var_path = os.path.join(os.path.join(os.path.join(os.path.join(_resource_path,"sys_dyn"),"pseudo_ffw_var"),"SystemDynamics"),"package.mo")
 
 
 

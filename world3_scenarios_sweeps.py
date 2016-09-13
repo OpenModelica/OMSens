@@ -27,6 +27,7 @@ piecewiseMod_SysDyn_mo_path =  world3_settings._sys_dyn_package_pw_fix_path.repl
 populationTankNewVar_SysDyn_mo_path = world3_settings._sys_dyn_package_pop_state_var_new.replace("\\","/") # Added a new "population" var that includes an integrator. Numerically it's the same as "population" but with the advantage that now we can calculate sensitivities for it
 Run2vermeulenAndJongh_SysDyn_mo_path= world3_settings._sys_dyn_package_v_and_j_run_2.replace("\\","/") # Added a new "population" var that includes an integrator. Numerically it's the same as "population" but with the advantage that now we can calculate sensitivities for it
 Run3vermeulenAndJongh_SysDyn_mo_path= world3_settings._sys_dyn_package_v_and_j_run_3.replace("\\","/") # Added a new "population" var that includes an integrator. Numerically it's the same as "population" but with the advantage that now we can calculate sensitivities for it
+pseudoffwparam_SysDyn_mo_path = world3_settings._sys_dyn_package_pseudo_ffw_param_path.replace("\\","/") # Added a new "population" var that includes an integrator. Numerically it's the same as "population" but with the advantage that now we can calculate sensitivities for it
 
 def main():
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
@@ -34,7 +35,7 @@ def main():
     # testDeltaNRResources()
     # testFertility()
     # testFertility2()
-    standardRun()
+    # standardRun()
 # The vermeulen tests need a modified SystemDynamics .mo!
     # testVermeulenAndJonghRun2() #Run1 is Meadows' std run
     # testVermeulenAndJonghRun3()
@@ -50,8 +51,29 @@ def main():
     # testMultiTest1901Top20ParamVar()
   # Dynamics to Growth tests:
     # testDeltaICOR()
+    testDeltaPseudoFFWParam()
 
 ## Predefined tests
+def testDeltaPseudoFFWParam():
+    # Added a parameter called "pseudo_ffw_param" to Scenario_1, Population_Dynamics and
+    # BIrths_factors. It's used in Births_factors to calculate the birth rate using the formula of
+    # World3-v01 instead of World3-v03 (equivalent to W3-Mod)
+
+    iterations = 10;
+    kwargs = {
+    "plot_vars":["population"],
+    "startTime": 1900 ,# year to start the simulation (1900 example)
+    "stopTime": 2500  ,# year to end the simulation (2100 for example)
+    "scens_to_run" : [1], #The standard run corresponds to the first scenario
+    "iterations" : iterations,
+    "sweep_vars":  ["pseudo_ffw_param"], # Examples: SPECIAL_policy_years, ["nr_resources_init"]
+    "sweep_value_formula_str" : deltaBeforeAndAfter(p=0.22,delta=0.02,iterations=iterations), # Sweep floor(iterations/2) times before and after p changing by a percentage of delta*100
+    "fixed_params" : [],  # No fixed parameter changes. Example: [("nr_resources_init",6.3e9),("des_compl_fam_size_norm",2),...]
+    "mo_file" : pseudoffwparam_SysDyn_mo_path, # mo that has pseudo_ffw_param as param
+    "plot_std_run": True, #Choose to plot std run alognside this test results
+    }
+    setUpSweepsAndRun(**kwargs)
+
 def testDeltaICOR():
     ## According to Dynamics To Growth:
     # Run 3-3 (Figure 3-39) DECREASED ICOR BY 33%: ICOR1=2
