@@ -1,0 +1,9 @@
+*) Mod of Vanilla
+*) Changed Population dynamics:
+   1) added a connection from Population.y to births.u4
+*) Changed Birth_Factors:
+   1) Now receives 4 inputs instead of 3
+   2) Added population as input u4 and output "population"
+   3) Added "pseudo_ffw_var" as output
+   4) defined "pseudo_ffw_var" as 0.5 * pop_15_44 / population (from an equation
+      equating birth_rates in world3-v1 and birth_rates in world3-v3)
