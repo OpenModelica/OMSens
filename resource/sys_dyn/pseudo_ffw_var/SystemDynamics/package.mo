@@ -4423,6 +4423,9 @@ Pollutants can take many forms.  For this reason, the <font color=red><b>WORLD3<
         connect(Deaths.y,births.u2) annotation(Line(points = {{99.0,94.0},{92.0,94.0},{92.0,70.0},{-60.0,70.0},{-60.0,36.0},{-156.0,36.0},{-156.0,-60.0},{-140.0,-60.0},{-140.0,-38.0}}, color = {0,0,191}, visible = true));
         connect(births.u1,total_fertility) annotation(Line(points = {{-146.6,-38.0},{-146.6,-48.0},{-188.0,-48.0},{-188.0,60.0},{-210.0,60.0}}, color = {0,0,191}, visible = true));
         connect(Population.y,population) annotation(Line(points = {{-101.0,94.0},{-94.0,94.0},{-94.0,74.0},{120.0,74.0},{120.0,60.0},{210.0,60.0}}, color = {0,0,191}, visible = true));
+        // NEW CONNECTION:
+        connect(Population.y,births.u4);
+        // ^ NEW CONNECTION
         annotation(Icon(coordinateSystem(extent = {{-100.0,-100.0},{100.0,100.0}}, preserveAspectRatio = true, initialScale = 0.1, grid = {10,10}), graphics = {Rectangle(visible = true, fillColor = {170,255,170}, fillPattern = FillPattern.Solid, lineThickness = 1.0, extent = {{-100.0,-100.0},{100.0,100.0}}, radius = 0.5),Text(visible = true, origin = {-0.5365,30.0}, fillPattern = FillPattern.Solid, extent = {{-89.4635,-36.6918},{89.4635,36.6918}}, textString = "Population", fontSize = 102.0, fontName = "Arial"),Text(visible = true, origin = {0.0,-30.0}, fillPattern = FillPattern.Solid, extent = {{-81.6353,-36.6918},{81.6353,36.6918}}, textString = "Dynamics", fontSize = 102.0, fontName = "Arial")}), Diagram(coordinateSystem(extent = {{-200.0,-160.0},{200.0,140.0}}, preserveAspectRatio = true, initialScale = 0.1, grid = {10,10}), graphics = {Ellipse(visible = true, lineColor = {0,0,191}, fillColor = {0,0,191}, fillPattern = FillPattern.Solid, extent = {{-71.0,-105.0},{-69.0,-103.0}}),Ellipse(visible = true, lineColor = {0,0,191}, fillColor = {0,0,191}, fillPattern = FillPattern.Solid, extent = {{-1.0,-105.0},{1.0,-103.0}}),Ellipse(visible = true, lineColor = {0,0,191}, fillColor = {0,0,191}, fillPattern = FillPattern.Solid, extent = {{69.0,-105.0},{71.0,-103.0}}),Ellipse(visible = true, lineColor = {0,0,191}, fillColor = {0,0,191}, fillPattern = FillPattern.Solid, extent = {{-71.0,-141.0},{-69.0,-139.0}}),Ellipse(visible = true, lineColor = {0,0,191}, fillColor = {0,0,191}, fillPattern = FillPattern.Solid, extent = {{-1.0,-141.0},{1.0,-139.0}}),Ellipse(visible = true, lineColor = {0,0,191}, fillColor = {0,0,191}, fillPattern = FillPattern.Solid, extent = {{69.0,-141.0},{71.0,-139.0}}),Ellipse(visible = true, lineColor = {0,0,191}, fillColor = {0,0,191}, fillPattern = FillPattern.Solid, extent = {{29.0,-61.0},{31.0,-59.0}}),Ellipse(visible = true, lineColor = {0,0,191}, fillColor = {0,0,191}, fillPattern = FillPattern.Solid, extent = {{-41.0,-61.0},{-39.0,-59.0}}),Ellipse(visible = true, lineColor = {0,0,191}, fillColor = {0,0,191}, fillPattern = FillPattern.Solid, extent = {{-111.0,-61.0},{-109.0,-59.0}}),Ellipse(visible = true, lineColor = {0,0,191}, fillColor = {0,0,191}, fillPattern = FillPattern.Solid, extent = {{131.0,-5.0},{133.0,-3.0}}),Ellipse(visible = true, lineColor = {0,0,191}, fillColor = {0,0,191}, fillPattern = FillPattern.Solid, extent = {{13.0,27.0},{15.0,29.0}}),Ellipse(visible = true, lineColor = {0,0,191}, fillColor = {0,0,191}, fillPattern = FillPattern.Solid, extent = {{-57.0,23.0},{-55.0,25.0}}),Ellipse(visible = true, lineColor = {0,0,191}, fillColor = {0,0,191}, fillPattern = FillPattern.Solid, extent = {{-141.0,-17.0},{-139.0,-15.0}}),Ellipse(visible = true, lineColor = {0,0,191}, fillColor = {0,0,191}, fillPattern = FillPattern.Solid, extent = {{-95.0,93.0},{-93.0,95.0}}),Ellipse(visible = true, lineColor = {0,0,191}, fillColor = {0,0,191}, fillPattern = FillPattern.Solid, extent = {{91.0,93.0},{93.0,95.0}}),Ellipse(visible = true, lineColor = {0,0,191}, fillColor = {0,0,191}, fillPattern = FillPattern.Solid, extent = {{85.0,73.0},{87.0,75.0}})}), Documentation(info = "<html>
 This model describes the population dynamics of the <font color=red><b>WORLD3</b></font> model.  Whereas the earlier <font color=red><b>WORLD2</b></font> model had lumped all of the population together into a single state variable, <font color=red><b>WORLD3</b></font> offers a demographic model that distinguishes between four age groups, those of the children, those of the younger adults representing the child-bearing population, those of the older adults who are still in the work force, and finally, those of the retired population. <p>
  
@@ -6951,25 +6954,29 @@ This function is described on p.140 of <a href=\"http://www.pegasuscom.com/BookD
 </html>"));
         end BD_Rates;
         block Birth_Factors "Birth factors of WORLD3 model"
-          extends Interfaces.Nonlin_3;
+        //ORIGINAL:
+          //extends Interfaces.Nonlin_3;
+        //New:
+          extends Interfaces.Nonlin_4; // now receives 4 inputs: added population
           parameter Real Repro_Life(unit = "yr") = 30 "Reproductive lifetime";
           parameter Real t_pop_equil_time(unit = "yr") = 4000 "Population equilibrium time";
           output Real tot_fert "Total fertility";
           output Real deaths "Total deaths";
           output Real pop_15_44 "Population between the ages of 15 and 44";
           output Real births "Total births";
-          // NEW VAR: (not original and not used)
+          // NEW VARs:
           output Real pseudo_ffw_var "Var that is aproximately the same as FFW from previous World3 versions";
+          output Real population "Equivalent to population in root";
+          // ^ NEW VARs
         equation
           tot_fert = u1;
           deaths = u2;
           pop_15_44 = u3;
+          population = u4;
           births = if time > t_pop_equil_time then deaths else 0.5 * tot_fert * pop_15_44 / Repro_Life;
           y = births;
           //New equation: (not original and not used)
-          // ESTA MAL! Hay que buscar el equivalente entre "population" y "pop_15_44" para poder
-          // definir a FFW como las otras variables.
-          pseudo_ffw_var = 0.5 * pop_15_44
+          pseudo_ffw_var = 0.5 * pop_15_44 / population;
           annotation(Documentation(info = "<html>
 This function is described on p.96 of <a href=\"http://www.pegasuscom.com/BookDetail.asp?BookQuery_Action=Find('ISBN','XDYGO')\">Dynamics of Growth in a Finite World</a>.
 </html>"));
