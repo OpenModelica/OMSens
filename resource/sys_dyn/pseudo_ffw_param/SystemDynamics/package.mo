@@ -503,7 +503,12 @@ The initial values of the outputs of each of the three first-order filters can b
       Modelica.Blocks.Interfaces.RealInput u "Input variable" annotation(Placement(visible = true, transformation(origin = {-80.0,0.0}, extent = {{-10.0,-10.0},{10.0,10.0}}, rotation = 0), iconTransformation(origin = {-80.0,0.0}, extent = {{-10.0,-10.0},{10.0,10.0}}, rotation = 0)));
       Modelica.Blocks.Interfaces.RealOutput y "Output variable" annotation(Placement(visible = true, transformation(origin = {110.0,0.0}, extent = {{-10.0,-10.0},{10.0,10.0}}, rotation = 0), iconTransformation(origin = {110.0,0.0}, extent = {{-10.0,-10.0},{10.0,10.0}}, rotation = 0)));
     equation
-      y = Functions.Utilities.Piecewise(x = u, x_grid = x_vals, y_grid = y_vals);
+      // New: (pass time as time_)
+      y = Functions.Utilities.Piecewise(x = u, x_grid = x_vals, y_grid = y_vals, time_=time);
+      // New ^
+      // ORIGINAL:
+      //y = Functions.Utilities.Piecewise(x = u, x_grid = x_vals, y_grid = y_vals);
+      // ORIGINAL ^
       annotation(Diagram(coordinateSystem(extent = {{-100.0,-100.0},{100.0,100.0}}, preserveAspectRatio = true, initialScale = 0.1, grid = {10,10}), graphics = {Line(visible = true, points = {{-70.0,0.0},{-44.0,0.0}}, color = {160,160,160}),Line(visible = true, points = {{28.0,0.0},{100.0,0.0}}, color = {160,160,160}),Text(visible = true, lineColor = {0,0,255}, fillColor = {160,160,160}, extent = {{-72.0,2.0},{-46.0,20.0}}, textString = "u", fontName = "Arial"),Text(visible = true, lineColor = {0,0,255}, fillColor = {160,160,160}, extent = {{52.0,2.0},{78.0,20.0}}, textString = "y", fontName = "Arial"),Rectangle(visible = true, fillColor = {255,255,0}, fillPattern = FillPattern.Solid, extent = {{-44.0,40.0},{-8.0,60.0}}),Rectangle(visible = true, fillColor = {255,255,0}, fillPattern = FillPattern.Solid, extent = {{-44.0,20.0},{-8.0,40.0}}),Rectangle(visible = true, fillColor = {255,255,0}, fillPattern = FillPattern.Solid, extent = {{-44.0,-2.0},{-8.0,20.0}}),Rectangle(visible = true, fillColor = {255,255,0}, fillPattern = FillPattern.Solid, extent = {{-44.0,-22.0},{-8.0,0.0}}),Rectangle(visible = true, fillColor = {255,255,0}, fillPattern = FillPattern.Solid, extent = {{-44.0,-42.0},{-8.0,-20.0}}),Rectangle(visible = true, fillColor = {255,255,0}, fillPattern = FillPattern.Solid, extent = {{-44.0,-60.0},{-8.0,-40.0}}),Rectangle(visible = true, fillColor = {255,255,255}, fillPattern = FillPattern.Solid, extent = {{-8.0,40.0},{28.0,60.0}}),Rectangle(visible = true, fillColor = {255,255,255}, fillPattern = FillPattern.Solid, extent = {{-8.0,20.0},{28.0,40.0}}),Rectangle(visible = true, fillColor = {255,255,255}, fillPattern = FillPattern.Solid, extent = {{-8.0,-2.0},{28.0,20.0}}),Rectangle(visible = true, fillColor = {255,255,255}, fillPattern = FillPattern.Solid, extent = {{-8.0,-20.0},{28.0,0.0}}),Rectangle(visible = true, fillColor = {255,255,255}, fillPattern = FillPattern.Solid, extent = {{-8.0,-40.0},{28.0,-20.0}}),Rectangle(visible = true, fillColor = {255,255,255}, fillPattern = FillPattern.Solid, extent = {{-8.0,-60.0},{28.0,-40.0}})}), Icon(coordinateSystem(extent = {{-100.0,-100.0},{100.0,100.0}}, preserveAspectRatio = true, initialScale = 0.1, grid = {10,10}), graphics = {Rectangle(visible = true, fillColor = {255,255,0}, fillPattern = FillPattern.Solid, extent = {{-44.0,40.0},{-8.0,60.0}}),Rectangle(visible = true, fillColor = {255,255,0}, fillPattern = FillPattern.Solid, extent = {{-44.0,20.0},{-8.0,40.0}}),Rectangle(visible = true, fillColor = {255,255,0}, fillPattern = FillPattern.Solid, extent = {{-44.0,-2.0},{-8.0,20.0}}),Rectangle(visible = true, fillColor = {255,255,0}, fillPattern = FillPattern.Solid, extent = {{-44.0,-22.0},{-8.0,0.0}}),Rectangle(visible = true, fillColor = {255,255,0}, fillPattern = FillPattern.Solid, extent = {{-44.0,-42.0},{-8.0,-20.0}}),Rectangle(visible = true, fillColor = {255,255,0}, fillPattern = FillPattern.Solid, extent = {{-44.0,-60.0},{-8.0,-40.0}}),Rectangle(visible = true, fillColor = {255,255,255}, fillPattern = FillPattern.Solid, extent = {{-8.0,40.0},{28.0,60.0}}),Rectangle(visible = true, fillColor = {255,255,255}, fillPattern = FillPattern.Solid, extent = {{-8.0,20.0},{28.0,40.0}}),Rectangle(visible = true, fillColor = {255,255,255}, fillPattern = FillPattern.Solid, extent = {{-8.0,-2.0},{28.0,20.0}}),Rectangle(visible = true, fillColor = {255,255,255}, fillPattern = FillPattern.Solid, extent = {{-8.0,-20.0},{28.0,0.0}}),Rectangle(visible = true, fillColor = {255,255,255}, fillPattern = FillPattern.Solid, extent = {{-8.0,-40.0},{28.0,-20.0}}),Rectangle(visible = true, fillColor = {255,255,255}, fillPattern = FillPattern.Solid, extent = {{-8.0,-60.0},{28.0,-40.0}}),Line(visible = true, points = {{-70.0,80.0},{-70.0,-80.0},{40.0,-80.0},{100.0,0.0},{40.0,80.0},{-70.0,80.0}}, color = {0,0,255}, thickness = 0.5),Text(visible = true, lineColor = {0,0,255}, extent = {{-100.0,80.0},{100.0,122.0}}, textString = "%name", fontName = "Arial")}), Documentation(info = "<html>
 This is a tabular function, as it is frequently used in System Dynamics to represent measured or estimated non-linear relationships.
 </html>"));
@@ -543,20 +548,49 @@ Utility models of the set of functions.
         input Real x "Independent variable";
         input Real x_grid[:] "Independent variable data points";
         input Real y_grid[:] "Dependent variable data points";
+        //New: time_ is an input so we can use it inside
+        input Real time_;
         output Real y "Interpolated result";
+        //Nuevo: para no repetir tanto codigo:
+        protected String info_debug_base;
       protected
         Integer n;
       algorithm
         n:=size(x_grid, 1);
+        // Adaptation to allow out of range values
         assert(size(x_grid, 1) == size(y_grid, 1), "Size mismatch");
-        assert(x >= x_grid[1] and x <= x_grid[n], "Out of range");
-        for i in 1:n - 1 loop
-                  if x >= x_grid[i] and x <= x_grid[i + 1] then 
-            y:=y_grid[i] + (y_grid[i + 1] - y_grid[i]) * (x - x_grid[i]) / (x_grid[i + 1] - x_grid[i]);
-          else
+        //assert(x >= x_grid[1] and x <= x_grid[n], "Out of range.");
+        assert(x >= x_grid[1] and x <= x_grid[n], "Out of range. Accuracy low.  time:"+String(time_)+" x: "+String(x)+" x_grid[1]: "+String(x_grid[1])+" x_grid[n]: "+String(x_grid[n]), AssertionLevel.warning);
+        info_debug_base := " time:"+String(time_)+" x: "+String(x)+" x_grid[1]: "+String(x_grid[1])+" x_grid[n]: "+String(x_grid[n]);
+        if x<x_grid[1] then
+            //y:=y_grid[1]; // Uses constant value for values outside of range
+            y := y_grid[1] + (y_grid[2] - y_grid[1])  *((x - x_grid[1]) / (x_grid[2] - x_grid[1]));   // Extrapolates backwards using the first interval
+            // Uncomment the following line to log to file (SLOWS DOWN EXECUTION CONSIDERABLY!)
+            //Modelica.Utilities.Streams.print("x<x_grid[1] " +info_debug_base + " y: " + String(y) , "out_of_range_cases.txt");
+        elseif x>x_grid[n] then
+            //y:=y_grid[n]; // Uses constant value for values outside of range
+            y := y_grid[n] + (y_grid[n] - y_grid[n-1])*((x - x_grid[n]) / (x_grid[n] - x_grid[n-1])); // Extrapolates forward using the last interval
+            // Uncomment the following line to log to file (SLOWS DOWN EXECUTION CONSIDERABLY!)
+            //Modelica.Utilities.Streams.print("x>x_grid[n] " +info_debug_base + " y: " + String(y) , "out_of_range_cases.txt");
+        else
+            for i in 1:n - 1 loop
+              if x >= x_grid[i] and x <= x_grid[i + 1] then 
+                y:=y_grid[i] + (y_grid[i + 1] - y_grid[i]) * (x - x_grid[i]) / (x_grid[i + 1] - x_grid[i]);
+              else
+              end if;
+            end for;
+        end if;
 
-          end if;
-        end for;
+        // ORIGINAL:
+        //assert(size(x_grid, 1) == size(y_grid, 1), "Size mismatch");
+        //assert(x >= x_grid[1] and x <= x_grid[n], "Out of range");
+        //for i in 1:n - 1 loop
+        //          if x >= x_grid[i] and x <= x_grid[i + 1] then 
+        //    y:=y_grid[i] + (y_grid[i + 1] - y_grid[i]) * (x - x_grid[i]) / (x_grid[i + 1] - x_grid[i]);
+        //  else
+
+        //  end if;
+        //end for;
         annotation(Diagram(coordinateSystem(extent = {{-100,-100},{100,100}}), graphics = {Rectangle(extent = {{-44,60},{-8,40}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,0}),Rectangle(extent = {{-44,40},{-8,20}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,0}),Rectangle(extent = {{-44,20},{-8,-2}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,0}),Rectangle(extent = {{-44,0},{-8,-22}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,0}),Rectangle(extent = {{-44,-20},{-8,-42}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,0}),Rectangle(extent = {{-44,-40},{-8,-60}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,0}),Rectangle(extent = {{-8,60},{28,40}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,255}),Rectangle(extent = {{-8,40},{28,20}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,255}),Rectangle(extent = {{-8,20},{28,-2}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,255}),Rectangle(extent = {{-8,0},{28,-20}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,255}),Rectangle(extent = {{-8,-20},{28,-40}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,255}),Rectangle(extent = {{-8,-40},{28,-60}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,255}),Text(lineColor = {0,0,255}, extent = {{-96,94},{98,70}}, textString = "Linear interpolation")}), Icon(coordinateSystem(extent = {{-100,-100},{100,100}}), graphics = {Rectangle(extent = {{-44,60},{-8,40}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,0}),Rectangle(extent = {{-44,40},{-8,20}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,0}),Rectangle(extent = {{-44,20},{-8,-2}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,0}),Rectangle(extent = {{-44,0},{-8,-22}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,0}),Rectangle(extent = {{-44,-20},{-8,-42}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,0}),Rectangle(extent = {{-44,-40},{-8,-60}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,0}),Rectangle(extent = {{-8,60},{28,40}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,255}),Rectangle(extent = {{-8,40},{28,20}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,255}),Rectangle(extent = {{-8,20},{28,-2}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,255}),Rectangle(extent = {{-8,0},{28,-20}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,255}),Rectangle(extent = {{-8,-20},{28,-40}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,255}),Rectangle(extent = {{-8,-40},{28,-60}}, fillPattern = FillPattern.Solid, lineColor = {0,0,0}, fillColor = {255,255,255})}));
       end Piecewise;
     end Utilities;

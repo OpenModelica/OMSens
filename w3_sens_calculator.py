@@ -8,7 +8,7 @@ import sweeping.run_and_plot_model as run_and_plot_model
 import filesystem.files_aux as files_aux
 import settings.settings_world3_sweep as world3_settings
 import settings.gral_settings as gral_settings
-import resource.standard_run_params_defaults
+import world3_specific.standard_run_params_defaults
 
 import mos_writer.calculate_sensitivities_mos_writer
 import running.run_omc
@@ -36,7 +36,7 @@ def simpleSensitivitiesCalculator(percentage,var_target,year_target):
     # Calculate parameters_to_perturbate_tuples
     logger.info("Calculating empirical parameter sensitivities for percentage {perc}, target variable {var_target} and target year {year_target}".format(perc=percentage,var_target=var_target,year_target=year_target))
     parameters_to_perturbate_tuples = []
-    params_info_list = resource.standard_run_params_defaults.w3_params_info_list
+    params_info_list = world3_specific.standard_run_params_defaults.w3_params_info_list
     for param_name,param_val in params_info_list:
         new_value = param_val+param_val*percentage/100 #for now, we just want the value + a percentage
         parameters_to_perturbate_tuples.append((param_name,param_val,new_value))

@@ -101,11 +101,11 @@ def multipleCSVsAndVarsSimplePlot(vars_list,csvs_path_label_pair_list,plot_title
         plot_path_without_extension = os.path.join(output_folder_path,var_name)
         saveAndClearPlt(plot_path_without_extension,lgd,footer_artist)
 
-def plotVarsFromSweepingInfo(plot_vars,model_name,sweeping_info,plots_folder_path,plot_std_run):
+def plotVarsFromSweepingInfo(plot_vars,model_name,sweeping_info,plots_folder_path,plot_std_run,fixed_params_str):
     for var_name in plot_vars:
-        plotVarFromSweepingInfo(var_name,model_name,sweeping_info,plots_folder_path,plot_std_run)
+        plotVarFromSweepingInfo(var_name,model_name,sweeping_info,plots_folder_path,plot_std_run,fixed_params_str)
 
-def plotVarFromSweepingInfo(var_name,model_name,sweeping_info,plots_folder_path,plot_std_run):
+def plotVarFromSweepingInfo(var_name,model_name,sweeping_info,plots_folder_path,plot_std_run,fixed_params_str):
     # print(str(sweeping_info))
     plot_path_without_extension = os.path.join(plots_folder_path,var_name)
     logger_plot_str = "Plotting:\n  plotvar:{var_name}\n path:{plot_path_without_extension}".format(var_name=var_name,plot_path_without_extension=plot_path_without_extension)
@@ -114,7 +114,8 @@ def plotVarFromSweepingInfo(var_name,model_name,sweeping_info,plots_folder_path,
     fixed_params       = sweeping_info["fixed_params"]
     sweep_vars_str = ", ".join(sweep_vars)
     fixed_params_to_strs = [str(x) for x in fixed_params]
-    fixed_params_str = ", ".join(fixed_params_to_strs)
+    if fixed_params_str == False:
+        fixed_params_str = ", ".join(fixed_params_to_strs)
     title,subtitle,footer = sweepingPlotTexts(model_name,var_name,sweep_vars_str,fixed_params_str)
     per_iter_info_dict = sweeping_info["per_iter_info_dict"]
     footer_artist = setupPlt("Time",var_name,title,subtitle,footer)
@@ -139,9 +140,9 @@ def plotVarFromSweepingInfo(var_name,model_name,sweeping_info,plots_folder_path,
 def sweepingPlotTexts(model_name,var_name,sweep_vars_str,fixed_params_str):
     title = "Sweeping Plot for model: {model_name}".format(model_name=model_name)
     subtitle ="Plotting var: {var_name}".format(var_name=var_name)
-    swept_vars_full_str = "Swept parameters:\n {sweep_vars_str}".format(sweep_vars_str=sweep_vars_str)
-    fixed_params_full_str = "Fixed params:\n {fixed_params_str}".format(fixed_params_str=fixed_params_str)
-    footer = swept_vars_full_str+"\n"+fixed_params_str
+    swept_vars_full_str = "Swept parameters:  \n {sweep_vars_str}".format(sweep_vars_str=sweep_vars_str)
+    fixed_params_full_str = "Fixed params:  \n {fixed_params_str}".format(fixed_params_str=fixed_params_str)
+    footer = swept_vars_full_str+"\n"+fixed_params_full_str
     return (title,subtitle,footer)
 def plotStandardRun(var_name,color="black"):
         data = readFromCSV(_std_run_csv)

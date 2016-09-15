@@ -10,3 +10,6 @@
    1) Added "pseudo_ffw_param" as a new parameter
 *) Scenario_1
    1) Added "pseudo_ffw_param" as a new parameter
+
+##### IMPORTANT #####
+For now, it has the modification of the "Piecewise function" so it can interpolate values falling outside its range.

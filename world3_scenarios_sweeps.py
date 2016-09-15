@@ -7,6 +7,8 @@ import mos_writer.mos_script_factory as mos_script_factory
 import sweeping.run_and_plot_model as run_and_plot_model
 import filesystem.files_aux as files_aux
 import settings.settings_world3_sweep as world3_settings
+import world3_specific.standard_run_params_defaults
+import world3_specific.params_perturber
 
 #Aux for GLOBALS:
 ## Skeletons of sweep_value_formula_str. Free variable: i (goes from 0 to (iterations-1) ):
@@ -31,9 +33,9 @@ pseudoffwparam_SysDyn_mo_path = world3_settings._sys_dyn_package_pseudo_ffw_para
 
 def main():
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+#### WORK PACKAGE 1 ####
     # testPolicyYears()
     # testDeltaNRResources()
-    # testFertility()
     # testFertility2()
     # standardRun()
 # The vermeulen tests need a modified SystemDynamics .mo!
@@ -51,7 +53,9 @@ def main():
     # testMultiTest1901Top20ParamVar()
   # Dynamics to Growth tests:
     # testDeltaICOR()
-    testDeltaPseudoFFWParam()
+    # testDeltaPseudoFFWParam()
+#### WORK PACKAGE 2 ####
+    testHugoScolnikRuns()
 
 ## Predefined tests
 def testDeltaPseudoFFWParam():
@@ -81,7 +85,7 @@ def testDeltaICOR():
     # ICOR is also modified in Vermeulen but not at the start (in Verm is modified in 1975)
     #   and this is a sweep of only this var
     # ICOR is "p_ind_cap_out_ratio_1", Default: ICOR=3
-    # Plots: 
+    # Plots:
     #      "industrial output"                                   --> output Real industrial_output(unit = "dollar/yr") "Total annual world industrial output";
     #      "service output per capita"                           --> output Real serv_out_pc(unit = "dollar/yr") "Total annual services per person";
     #      "capital utilization fraction"                        --> Industrial_Investment1.Industrial_Output.capital_util_fr (there's no var at the top)
@@ -217,26 +221,65 @@ def testFertility2():
     }
     setUpSweepsAndRun(**kwargs)
 
-def testFertility():
-    kwargs = {
-    "plot_vars":[],
-    "startTime": 1900 ,# year to start the simulation (1900 example)
-    "stopTime": 2100  ,# year to end the simulation (2100 for example)
-    "scens_to_run" : [1], #The standard run corresponds to the first scenario
-    "iterations" : 12,
-    "sweep_vars":  ["max_tot_fert_norm"], #NOT ORIGINAL PARAMETER! ADDED ONLY TO SCENARIO 1
-    "sweep_value_formula_str" : deltaBeforeAndAfter(p=12,delta=0.1,iterations=iterations), #Has to be a string with only free variable "i"
-    "fixed_params" : [
+def testHugoScolnikRuns():
+# Hugo Scolnik article: "Crítica metodológica al modelo WORLD 3" (Methodological criticisim to the World3 model)
+#   Perturbed 5 params by 5%
+      # ICOR= 3.15, Default: ICOR=3
+      # ALIC= 13.3, Default: ALIC=14
+      # ALSC= 17.1, Default: ALSC=20
+      # SCOR= 1.05, Default: SCOR=1
+      # Run "Perturbed": FFW= 0.231, Default: FFW=0.22
+      # Run "Perturbed Increasing FFW": FFW= 0.242, Default: FFW=0.22
+#   Perturbed rest of the params by a scalar of 0.24172080E-12
+# This function:
+#   Perturbed 4 params by 5%: (not FFW)
+      # ICOR= 3.15, Default: ICOR=3
+      # ALIC= 13.3, Default: ALIC=14
+      # ALSC= 17.1, Default: ALSC=20
+      # SCOR= 1.05, Default: SCOR=1
+#   Perturbed rest of the params by a scalar of 0.24172080E-12 (not including FFW)
+#   Uses modified W3 version that has the births function from W3-v03 (corresponding to W3-Modelica) with the "old" births function from W3-v01 that included the parameter ffw. We call it "pseudo_ffw_param".
+#   Swept pseudo_ffw_param by 10% up and down with a granularity of 2% to include both Runs from paper in same plot
+    perturbing_scalar = 0.24172080E-12
+
+    # Get full list of params
+    default_params_info_list   = world3_specific.standard_run_params_defaults.w3_params_info_list
+    # set 4 params perturbed values manually
+    special_params = ["pseudo_ffw_param","p_ind_cap_out_ratio_1", "p_avg_life_ind_cap_1", "p_avg_life_serv_cap_1", "p_serv_cap_out_ratio_1",]
+    special_params_perturbed_info_list = [
        ("p_ind_cap_out_ratio_1",3.15),   #Hugo: ICOR= 3.15, Default: ICOR=3
        ("p_avg_life_ind_cap_1", 13.3),   #Hugo: ALIC= 13.3, Default: ALIC=14
        ("p_avg_life_serv_cap_1", 17.1),  #Hugo: ALSC= 17.1, Default: ALSC=20
-       ("p_serv_cap_out_ratio_1", 1.05)  #Hugo: SCOR= 1.05, Default: SCOR=1
-        ],
-    "mo_file" : vanilla_SysDyn_mo_path, # Mo without modifications
-    "plot_std_run": False, #Choose to plot std run alognside this test results
+       ("p_serv_cap_out_ratio_1", 1.05),  #Hugo: SCOR= 1.05, Default: SCOR=1
+        ]
+    #   remove 5 params from list
+    rest_of_params = [x[0] for x in default_params_info_list if x[0] not in special_params]
+    # set rest of params perturbed values by adding a scalar
+    rest_of_params_perturbed_info_list = world3_specific.params_perturber.perturbeParameterByScalar(rest_of_params,perturbing_scalar)
+    fixed_params = special_params_perturbed_info_list + rest_of_params_perturbed_info_list
+    iterations = 11
+    kwargs = {
+    "plot_vars":["population"],
+    "startTime": 1900 ,# year to start the simulation (1900 example)
+    "stopTime": 2300  ,# year to end the simulation (2100 for example)
+    "scens_to_run" : [1], #The standard run corresponds to the first scenario
+    "iterations" : iterations,
+    "sweep_vars":  ["pseudo_ffw_param"], #NOT ORIGINAL PARAMETER! ADDED ONLY TO SCENARIO 1
+    "sweep_value_formula_str" : deltaBeforeAndAfter(p=0.22,delta=0.02,iterations=iterations),
+    "fixed_params" : fixed_params,
+    "mo_file" : pseudoffwparam_SysDyn_mo_path,
+    "plot_std_run": True, #Choose to plot std run alognside this test results
+    "fixed_params_str": "By +5%: \np_ind_cap_out_ratio_1, p_avg_life_ind_cap_1, p_avg_life_serv_cap_1, p_serv_cap_out_ratio_1.\nBy increase of small scalar: \nThe rest.",
     }
 
     setUpSweepsAndRun(**kwargs)
+
+    ### BORRAR DESDE ACA HASTA EL FIN DE LA FUNCIÓN
+    # print(len(default_params_info_list))
+    # print(len(special_params_perturbed_info_list))
+    # print(len(rest_of_params_perturbed_info_list))
+    # print(len(fixed_params))
+    # print(fixed_params)
 
 def testDeltaIndMtlEmissFact():
     iterations = 10;
@@ -374,7 +417,7 @@ def testPolicyYears():
     setUpSweepsAndRun(**kwargs)
 
 #World3 specific:
-def setUpSweepsAndRun(iterations,sweep_vars,sweep_value_formula_str,fixed_params,plot_vars,startTime,stopTime,scens_to_run,mo_file,plot_std_run=False):
+def setUpSweepsAndRun(iterations,sweep_vars,sweep_value_formula_str,fixed_params,plot_vars,startTime,stopTime,scens_to_run,mo_file,plot_std_run=False,fixed_params_str=False):
     #The "root" output folder path.
     output_path = files_aux.makeOutputPath()
     #Create scenarios from factory
@@ -383,12 +426,12 @@ def setUpSweepsAndRun(iterations,sweep_vars,sweep_value_formula_str,fixed_params
         initial_factory_for_scen_i = initialFactoryForWorld3Scenario(scen_num=i,start_time=startTime,stop_time=stopTime,mo_file=mo_file,fixed_params=fixed_params,sweep_vars=sweep_vars)
         scenario_tuple =("scenario_"+str(i),initial_factory_for_scen_i)
         scenarios.append(scenario_tuple)
-    doScenariosSet(scenarios, plot_vars=plot_vars,iterations=iterations,output_root_path=output_path, sweep_value_formula_str=sweep_value_formula_str,plot_std_run=plot_std_run)
-def doScenariosSet(scenarios,plot_vars,iterations,output_root_path,sweep_value_formula_str,plot_std_run):
+    doScenariosSet(scenarios, plot_vars=plot_vars,iterations=iterations,output_root_path=output_path, sweep_value_formula_str=sweep_value_formula_str,plot_std_run=plot_std_run,fixed_params_str=fixed_params_str)
+def doScenariosSet(scenarios,plot_vars,iterations,output_root_path,sweep_value_formula_str,plot_std_run,fixed_params_str):
     for folder_name,initial_scen_factory in scenarios:
-        logger.debug("Running scenario {folder_name}".format(folder_name=folder_name))
+        logger.info("Running scenario {folder_name}".format(folder_name=folder_name))
         os.makedirs(os.path.join(output_root_path,folder_name))
-        run_and_plot_model.createSweepRunAndPlotForModelInfo(initial_scen_factory,plot_vars=plot_vars,iterations=iterations,output_folder_path=os.path.join(output_root_path,folder_name),sweep_value_formula_str=sweep_value_formula_str,csv_file_name_modelica_skeleton=world3_settings.sweeping_csv_file_name_modelica_skeleton,csv_file_name_python_skeleton=world3_settings.sweeping_csv_file_name_python_skeleton,plot_std_run=plot_std_run)
+        run_and_plot_model.createSweepRunAndPlotForModelInfo(initial_scen_factory,plot_vars=plot_vars,iterations=iterations,output_folder_path=os.path.join(output_root_path,folder_name),sweep_value_formula_str=sweep_value_formula_str,csv_file_name_modelica_skeleton=world3_settings.sweeping_csv_file_name_modelica_skeleton,csv_file_name_python_skeleton=world3_settings.sweeping_csv_file_name_python_skeleton,plot_std_run=plot_std_run,fixed_params_str=fixed_params_str)
 def initialFactoryForWorld3Scenario(scen_num,start_time,stop_time,mo_file,sweep_vars=None,fixed_params=[]):
     initial_factory_for_scen_1 = initialFactoryForWorld3Scenario
     #Get the mos script factory for a scenario number (valid from 1 to 11)
