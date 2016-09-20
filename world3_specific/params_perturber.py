@@ -34,10 +34,10 @@ def main():
 
     print(perturbeParameterByPercentage(minus_5_percent,-5))
     print(perturbeParameterByPercentage(plus_5_percent,5))
-    print(perturbeParameterByScalar(by_scalar,0.01))
+    print(perturbeParameterByAddingScalar(by_scalar,0.01))
 
 ## Predefined sensitivities calculators
-def perturbeParameterByScalar(parameters,scalar):
+def perturbeParameterByAddingScalar(parameters,scalar):
     logger.info(" Calculating perturbed values by scalar "+str(scalar)+".")
     return perturbeParameterByLambda(parameters,lambda param_val: param_val+scalar)
 

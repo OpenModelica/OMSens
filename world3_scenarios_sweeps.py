@@ -241,6 +241,7 @@ def testHugoScolnikRuns():
 #   Uses modified W3 version that has the births function from W3-v03 (corresponding to W3-Modelica) with the "old" births function from W3-v01 that included the parameter ffw. We call it "pseudo_ffw_param".
 #   Swept pseudo_ffw_param by 10% up and down with a granularity of 2% to include both Runs from paper in same plot
     perturbing_scalar = 0.24172080E-12
+    percentage_to_perturb = perturbing_scalar*100
 
     # Get full list of params
     default_params_info_list   = world3_specific.standard_run_params_defaults.w3_params_info_list
@@ -255,7 +256,7 @@ def testHugoScolnikRuns():
     #   remove 5 params from list
     rest_of_params = [x[0] for x in default_params_info_list if x[0] not in special_params]
     # set rest of params perturbed values by adding a scalar
-    rest_of_params_perturbed_info_list = world3_specific.params_perturber.perturbeParameterByScalar(rest_of_params,perturbing_scalar)
+    rest_of_params_perturbed_info_list = world3_specific.params_perturber.perturbeParameterByPercentage(rest_of_params,percentage_to_perturb)
     fixed_params = special_params_perturbed_info_list + rest_of_params_perturbed_info_list
     iterations = 11
     kwargs = {
@@ -269,7 +270,7 @@ def testHugoScolnikRuns():
     "fixed_params" : fixed_params,
     "mo_file" : pseudoffwparam_SysDyn_mo_path,
     "plot_std_run": True, #Choose to plot std run alognside this test results
-    "fixed_params_str": "By +5%: \np_ind_cap_out_ratio_1, p_avg_life_ind_cap_1, p_avg_life_serv_cap_1, p_serv_cap_out_ratio_1.\nBy increase of small scalar: \nThe rest.",
+    "fixed_params_str": "By +5%: \np_ind_cap_out_ratio_1, p_avg_life_ind_cap_1, p_avg_life_serv_cap_1, p_serv_cap_out_ratio_1.\nBy increase of small percentage: \nThe rest.",
     }
 
     setUpSweepsAndRun(**kwargs)
