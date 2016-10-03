@@ -54,6 +54,9 @@ class TestsW3TheoSensToMatrixProccessing(unittest.TestCase):
     def test_2_params_2_vars_one_year_but_repeated_param_and_var(self):
         w3TheoSens_str = w3TheoSens_2Params2VarsOneYearButRepeatedParamAndVar_str
         self.assertRaises(to_matrix.RepeatedParamVarPairException,to_matrix.W3TheoSensToMatrixRowsListFromYear,w3TheoSens_str,1901)
+    def test_2_params_3_vars_one_year(self):
+        w3TheoSens_str = w3TheoSens_2Params3VarsOneYear_str
+        self.assertRaises(to_matrix.DifferentInfluencedVariablesException,to_matrix.W3TheoSensToMatrixRowsListFromYear,w3TheoSens_str,1901)
 
 ###########
 # Globals #
@@ -80,3 +83,7 @@ w3TheoSens_oneParam2VarsOneYearOneValue_str = \
 w3TheoSens_2Params2VarsOneYearButRepeatedParamAndVar_str = \
 """time,$Sensitivities.agr_inp_init.Arable_Land_Dynamics1.Arable_Land.Integrator1.y,$Sensitivities.agr_inp_init.Arable_Land_Dynamics1.Arable_Land.Integrator1.y
 1901,43,33"""
+
+w3TheoSens_2Params3VarsOneYear_str = \
+"""time,$Sensitivities.agr_inp_init.Arable_Land_Dynamics1.Arable_Land.Integrator1.y,$Sensitivities.agr_inp_init_2.Arable_Land_Dynamics1.Arable_Land.Integrator1.y,$Sensitivities.agr_inp_init_2.Arable_Land_Dynamics1.Arable_Land.Integrator2.y
+1901,43,33,53"""

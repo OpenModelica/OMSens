@@ -7,7 +7,7 @@ def W3TheoSensToMatrixRowsListFromYear(w3theosens_csv_str,year):
     w3theosens_header_row = str_lines_list[0]
     for row_str in str_lines_list:
         year_str = str(year)
-        # Assuming that the year is first in the row (the variable Time is the first variable in OpenModelica outputs)
+        # Assuming that the year is first in the column (the variable Time is the first variable in OpenModelica outputs)
         first_chars_from_row_str = row_str[0:len(year_str)]
         if first_chars_from_row_str == year_str:
             w3theosens_year_row = row_str
