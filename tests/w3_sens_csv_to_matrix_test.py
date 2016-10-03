@@ -29,7 +29,7 @@ class TestsW3SensToMatrixInputOutput(unittest.TestCase):
         # self.assertRaises(EmptyCSVException,CSVData,file_path)
 
 class TestsW3TheoSensToMatrixProccessing(unittest.TestCase):
-    def test_one_param_one_var(self):
+    def test_one_param_one_var_one_year(self):
         w3TheoSens_str = w3TheoSens_oneParamOneVarOneYear_str
         rows_str_list = to_matrix.W3TheoSensToMatrixRowsListFromYear(w3TheoSens_str,1901)
         # Assert that the header row has the correct variable name
@@ -37,6 +37,14 @@ class TestsW3TheoSensToMatrixProccessing(unittest.TestCase):
         # Assert that the value row has the correct param and value
         self.assertEqual(rows_str_list[1].split(",")[0],"agr_inp_init")
         self.assertEqual(rows_str_list[1].split(",")[1],"43")
+    def test_one_param_one_var_5_years(self):
+        w3TheoSens_str = w3TheoSens_oneParamOneVar5Years_str
+        rows_str_list = to_matrix.W3TheoSensToMatrixRowsListFromYear(w3TheoSens_str,1903)
+        # Assert that the header row has the correct variable name
+        self.assertEqual(rows_str_list[0].split(",")[1],"Arable_Land_Dynamics1.Arable_Land.Integrator1.y")
+        # Assert that the value row has the correct param and value
+        self.assertEqual(rows_str_list[1].split(",")[0],"agr_inp_init")
+        self.assertEqual(rows_str_list[1].split(",")[1],"33")
 
 ###########
 # Globals #
@@ -44,3 +52,11 @@ class TestsW3TheoSensToMatrixProccessing(unittest.TestCase):
 w3TheoSens_oneParamOneVarOneYear_str = \
 """time,$Sensitivities.agr_inp_init.Arable_Land_Dynamics1.Arable_Land.Integrator1.y
 1901,43"""
+
+w3TheoSens_oneParamOneVar5Years_str = \
+"""time,$Sensitivities.agr_inp_init.Arable_Land_Dynamics1.Arable_Land.Integrator1.y
+1901,43
+1902,23
+1903,33
+1904,53
+1905,63"""
