@@ -45,6 +45,9 @@ class TestsW3TheoSensToMatrixProccessing(unittest.TestCase):
         # Assert that the value row has the correct param and value
         self.assertEqual(rows_str_list[1].split(",")[0],"agr_inp_init")
         self.assertEqual(rows_str_list[1].split(",")[1],"33")
+    def test_one_param_one_var_one_year_3_values(self):
+        w3TheoSens_str = w3TheoSens_oneParamOneVarOneYear2Values_str
+        self.assertRaises(to_matrix.InvalidW3TheoSensCSVException,to_matrix.W3TheoSensToMatrixRowsListFromYear,w3TheoSens_str,1901)
 
 ###########
 # Globals #
@@ -60,3 +63,7 @@ w3TheoSens_oneParamOneVar5Years_str = \
 1903,33
 1904,53
 1905,63"""
+
+w3TheoSens_oneParamOneVarOneYear2Values_str = \
+"""time,$Sensitivities.agr_inp_init.Arable_Land_Dynamics1.Arable_Land.Integrator1.y
+1901,43,44"""

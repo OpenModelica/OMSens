@@ -21,7 +21,7 @@ def W3TheoSensToMatrixRowsListFromHeadersAndYearRow(header_row,year_row):
     header_row_list = header_row.split(",")
     year_row_list   = year_row.split(",")
     if(len(header_row_list)!=len(year_row_list)):
-        raise InvalidW3TheoSensCSVException("There are "+str(len(header_row_list))+" variables and "+str(len(year_row_list))+" values. The amount should be equal.")
+        raise InvalidW3TheoSensCSVException("There are "+str(len(header_row_list))+" 'sens-variables' and "+str(len(year_row_list))+" values. The amount should be equal.")
     param_influences_dict = {} # dict that will be filled with {"param_1":{"var_1":43,"var_2",41},...}
     # Iterate variables
     for i in range(0,len(header_row_list)):
