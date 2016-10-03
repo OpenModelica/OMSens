@@ -30,13 +30,8 @@ class TestsW3SensToMatrixInputOutput(unittest.TestCase):
 
 class TestsW3TheoSensToMatrixProccessing(unittest.TestCase):
     def test_one_param_one_var(self):
-        w3TheoSens_str = w3TheoSens_oneParamOneVar_str
-        # DESDE ACA PROBABLEMENTE EN UNA NUEVA FUNCION
-        str_lines_list = w3TheoSens_str.split("\n")
-        w3theosens_header_row = str_lines_list[0]
-        w3theosens_year_row = str_lines_list[1]
-        # HASTA ACA PROBABLEMENTE EN UNA NUEVA FUNCION
-        rows_str_list = to_matrix.W3TheoSensToMatrixFromHeadersAndYearRow(w3theosens_header_row,w3theosens_year_row)
+        w3TheoSens_str = w3TheoSens_oneParamOneVarOneYear_str
+        rows_str_list = to_matrix.W3TheoSensToMatrixRowsListFromYear(w3TheoSens_str,1901)
         # Assert that the header row has the correct variable name
         self.assertEqual(rows_str_list[0].split(",")[1],"Arable_Land_Dynamics1.Arable_Land.Integrator1.y")
         # Assert that the value row has the correct param and value
@@ -46,6 +41,6 @@ class TestsW3TheoSensToMatrixProccessing(unittest.TestCase):
 ###########
 # Globals #
 ###########
-w3TheoSens_oneParamOneVar_str = \
+w3TheoSens_oneParamOneVarOneYear_str = \
 """time,$Sensitivities.agr_inp_init.Arable_Land_Dynamics1.Arable_Land.Integrator1.y
 1901,43"""

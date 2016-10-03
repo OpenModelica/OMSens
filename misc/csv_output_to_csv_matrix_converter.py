@@ -2,7 +2,23 @@ import re #regex
 import logging #en reemplazo de los prints
 logger = logging.getLogger("--CSV output to CSV Matrix converter--") #un logger especifico para este modulo
 
-def W3TheoSensToMatrixFromHeadersAndYearRow(header_row,year_row):
+def W3TheoSensToMatrixRowsListFromYear(w3theosens_csv_str,year):
+    str_lines_list = w3theosens_csv_str.split("\n")
+    w3theosens_header_row = str_lines_list[0]
+    for row_str in str_lines_list:
+        year_str = str(year)
+        # Assuming that the year is first in the row (the variable Time is the first variable in OpenModelica outputs)
+        first_chars_from_row_str = row_str[0:len(year_str)]
+        print(year_str)
+        print(first_chars_from_row_str)
+        if first_chars_from_row_str == year_str:
+            w3theosens_year_row = row_str
+            break
+
+    rows_str_list = W3TheoSensToMatrixRowsListFromHeadersAndYearRow(w3theosens_header_row,w3theosens_year_row)
+    return rows_str_list
+
+def W3TheoSensToMatrixRowsListFromHeadersAndYearRow(header_row,year_row):
     # For each "$Sensitivities.param.var" in header_row get its value for the year in year_row
     header_row_list = header_row.split(",")
     year_row_list   = year_row.split(",")
