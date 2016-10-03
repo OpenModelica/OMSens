@@ -46,3 +46,8 @@ def removeFilesWithRegexAndPath(regex,folder_path):
     for x in os.listdir(folder_path):
         if re.match(regex, x):
             os.remove(os.path.join(folder_path,x))
+
+def readStrFromFile(file_path):
+    with open(file_path, 'r') as myfile:
+        data = myfile.read()
+    return data
