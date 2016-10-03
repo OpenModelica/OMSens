@@ -42,7 +42,7 @@ def W3TheoSensToMatrixRowsListFromHeadersAndYearRow(header_row,year_row):
             # Check if the variable sensitivity to his param has already been set
             if var_name in influenced_vars_by_param:
                 # Raise exception because this means that we have 2 sensitivities of a variable to the same param (invalid data)
-                raise MoreThanOneVarSensitivityPerParamException("The parameter "+param_name+" has 2 influences to variable "+var_name+".")
+                raise RepeatedParamVarPairException("The parameter "+param_name+" has 2 influences to variable "+var_name+".")
             else:
                 # Get the value for this "param/var" pair from the year_row_list
                 param_influence_to_variable = year_row_list[i]
@@ -89,7 +89,7 @@ def extractParamNameAndVarNameFromComplexVarName(complex_var_name):
 # Exception classes:
 class InvalidW3TheoSensCSVException(Exception):
     pass
-class MoreThanOneVarSensitivityPerParamException(Exception):
+class RepeatedParamVarPairException(Exception):
     pass
 class DifferentInfluencedVariablesException(Exception):
     pass
