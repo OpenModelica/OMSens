@@ -5,6 +5,7 @@ logger = logging.getLogger("--CSV output to CSV Matrix converter--") #un logger 
 def W3TheoSensToMatrixRowsListFromYear(w3theosens_csv_str,year):
     str_lines_list = w3theosens_csv_str.split("\n")
     w3theosens_header_row = str_lines_list[0]
+    w3theosens_year_row = None
     for row_str in str_lines_list:
         year_str = str(year)
         # Assuming that the year is first in the column (the variable Time is the first variable in OpenModelica outputs)
@@ -13,6 +14,8 @@ def W3TheoSensToMatrixRowsListFromYear(w3theosens_csv_str,year):
             w3theosens_year_row = row_str
             break
 
+    if not w3theosens_year_row:
+        raise InvalidYearException("The year "+str(year)+" has no associated row in the file")
     rows_str_list = W3TheoSensToMatrixRowsListFromHeadersAndYearRow(w3theosens_header_row,w3theosens_year_row)
     return rows_str_list
 
@@ -92,4 +95,6 @@ class InvalidW3TheoSensCSVException(Exception):
 class RepeatedParamVarPairException(Exception):
     pass
 class DifferentInfluencedVariablesException(Exception):
+    pass
+class InvalidYearException(Exception):
     pass

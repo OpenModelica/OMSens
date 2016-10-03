@@ -57,6 +57,9 @@ class TestsW3TheoSensToMatrixProccessing(unittest.TestCase):
     def test_2_params_3_vars_one_year(self):
         w3TheoSens_str = w3TheoSens_2Params3VarsOneYear_str
         self.assertRaises(to_matrix.DifferentInfluencedVariablesException,to_matrix.W3TheoSensToMatrixRowsListFromYear,w3TheoSens_str,1901)
+    def test_one_param_one_var_one_year_but_invalid_year(self):
+        w3TheoSens_str = w3TheoSens_oneParamOneVarOneYear_str
+        self.assertRaises(to_matrix.InvalidYearException,to_matrix.W3TheoSensToMatrixRowsListFromYear,w3TheoSens_str,1902)
 
 ###########
 # Globals #
