@@ -1,6 +1,22 @@
+import csv
 import re #regex
 import logging #en reemplazo de los prints
 logger = logging.getLogger("--CSV output to CSV Matrix converter--") #un logger especifico para este modulo
+
+# Mine
+import filesystem.files_aux
+
+def W3TheoSensCSVToMatrixCSVFromYear(w3theosens_csv_file_path,output_matrix_path,year):
+    # As we only use 2 rows of the whole file, it would be smarter to just get those lines instead of the whole file.
+    # TO DO: read only the 2 needed lines instead of the whole file
+
+    # Read the file into memory
+    w3TheoSens_str = filesystem.files_aux.readStrFromFile(w3theosens_csv_file_path)
+    # Process the string
+    rows_str_list = W3TheoSensToMatrixRowsListFromYear(w3TheoSens_str,year)
+    output_matrix_str = "\n".join(rows_str_list)
+    # Write the resulting matrix to file
+    filesystem.files_aux.writeStrToFile(output_matrix_str,output_matrix_path)
 
 def W3TheoSensToMatrixRowsListFromYear(w3theosens_csv_str,year):
     str_lines_list = w3theosens_csv_str.split("\n")
