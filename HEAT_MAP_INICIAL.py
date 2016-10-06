@@ -20,11 +20,9 @@ data = pd.read_csv(input_matrix_path, index_col=0)
 # inplace=False (default) ->thanks SO user d1337
 
 # Plot it out
-print(str(data.min()))
-print(str(data.max()))
 fig, ax = plt.subplots()
 min_of_all = data.min().min()   # the first min returns a series of all the mins. The second min returns the min of the mins
-max_of_all = data.max().max()   # the first max returns a series of all the max. The second max returns the max of the max
+max_of_all = data.max().max()   # the first max returns a series of all the maxs. The second max returns the max of the max
 heatmap = plt.pcolor(data, norm=SymLogNorm(vmin=min_of_all, vmax=max_of_all,linthresh=linthresh))
 
 plt.colorbar()
