@@ -47,11 +47,6 @@ def exponentialRangeFromMinAndMax(min_num,max_num):
         else:
             # number <= -1 or 1 <= number
             smallest_power_of_ten_larger_than_max = math.copysign(10**max_SymLog,max_num)
-
-    print("min_num"+str(min_num))
-    print("max_num"+str(max_num))
-    print("largest_positive_power_of_ten_smaller_than_min"+str(largest_positive_power_of_ten_smaller_than_min))
-    print("smallest_power_of_ten_larger_than_max"+str(smallest_power_of_ten_larger_than_max))
     accum = largest_positive_power_of_ten_smaller_than_min
     while accum <= smallest_power_of_ten_larger_than_max:
         while accum <= -1:
