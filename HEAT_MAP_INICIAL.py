@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 from matplotlib.colors import SymLogNorm   # for logarithmic scale
+import matplotlib.ticker                   # to set a special formatter for the ticks in the colorbar (10^1 instead of 0.000(...)*10^11)
 import pandas as pd
 import numpy as np
 import math
@@ -69,7 +70,7 @@ max_of_all = data.max().max()   # the first max returns a series of all the maxs
 heatmap = plt.pcolor(data, norm=SymLogNorm(vmin=min_of_all, vmax=max_of_all,linthresh=linthresh))
 colorbar_ticks = exponentialRangeFromMinAndMax(min_of_all,max_of_all)
 
-cbar = plt.colorbar(ticks=colorbar_ticks)
+cbar = plt.colorbar(ticks=colorbar_ticks,format=matplotlib.ticker.FuncFormatter(lambda x, p: "%.0e" % x))
 
 # Format
 fig = plt.gcf()
