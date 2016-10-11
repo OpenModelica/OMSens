@@ -6,11 +6,10 @@ import numpy as np
 import math
 
 # GLOBALS
-input_matrix_path = "resource/w3_only1992_time_fix_paramvarmatrix.csv"
-### Choose one of the following. The first is for Logarithmic scale and the second for linear scale
-heatmap_norm_function = lambda vmin, vmax, linthresh: SymLogNorm(vmin=vmin, vmax=vmax,linthresh=linthresh)
-### Uncomment the following if you want to run with LOGARITHMIC SCALE
-heatmap_norm_function = lambda vmin, vmax, linthresh: SymLogNorm(vmin=vmin, vmax=vmax,linthresh=linthresh)
+# input_matrix_path = "resource/w3_only1992_time_fix_paramvarmatrix.csv"
+input_matrix_path = "resource/w3_only1901_time_fix_paramvarmatrix.csv"
+# plot_path = "tmp/asd_sin_sort.png"
+plot_path = "tmp/asd_con_sort.png"
 
 linthresh = 1.0 #Since the logarithm of values close to zero tends toward infinity, a small range around zero needs to be mapped linearly. The parameter linthresh allows the user to specify the size of this range (-linthresh, linthresh). The size of this range in the colormap is set by linscale. When linscale == 1.0 (the default), the space used for the positive and negative halves of the linear range will be equal to one decade in the logarithmic range.
 
@@ -63,6 +62,11 @@ def exponentialRangeFromMinAndMax(min_num,max_num):
 # Start of code
 data = pd.read_csv(input_matrix_path, index_col=0)
 
+# Sort data's indices
+data.sort_index(inplace=True)
+# Sort data's columns
+data.sort_index(axis=1,inplace=True)
+
 # Plot it out
 fig, ax = plt.subplots()
 min_of_all = data.min().min()   # the first min returns a series of all the mins. The second min returns the min of the mins
@@ -105,4 +109,5 @@ for t in ax.yaxis.get_major_ticks():
     t.tick1On = False
     t.tick2On = False
 
-plt.show()
+# plt.show()
+plt.savefig(plot_path)
