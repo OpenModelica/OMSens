@@ -132,7 +132,8 @@ def readCSVMatrixAndPlotHeatmap(input_matrix_path,plot_folder_path,plot_title,co
     fig, ax = plt.subplots()
     min_of_all = data.min().min()   # the first min returns a series of all the mins. The second min returns the min of the mins
     max_of_all = data.max().max()   # the first max returns a series of all the maxs. The second max returns the max of the max
-    heatmap = plt.pcolor(data, cmap=plt.cm.Blues, norm=SymLogNorm(vmin=min_of_all, vmax=max_of_all,linthresh=linthresh))
+    heatmap = plt.pcolor(data,  norm=SymLogNorm(vmin=min_of_all, vmax=max_of_all,linthresh=linthresh))
+    # heatmap = plt.pcolor(data, cmap=plt.cm.Blues, norm=SymLogNorm(vmin=min_of_all, vmax=max_of_all,linthresh=linthresh))
     colorbar_ticks = exponentialRangeFromMinAndMax(min_of_all,max_of_all)
 
     cbar = plt.colorbar(ticks=colorbar_ticks,format=matplotlib.ticker.FuncFormatter(lambda x, p: "%.0e" % x))
