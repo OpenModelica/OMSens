@@ -7,18 +7,18 @@ logger = logging.getLogger("--Sensitivities To parameters analysis--") #un logge
 #Mine
 import filesystem.files_aux
 def main():
-    logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
-    kwargs = {
-        "perturbed_csvs_path_and_info_pairs": [("resource/standard_run.csv","std_run_2")],
-        "std_run_csv_path": "resource/standard_run.csv",
-        "target_var": "population",
-        "percentage_perturbed":"10",
-        "specific_year":1950,
-        "output_analysis_path": "tmp/asd_2.txt",
-        "rms_first_year": 1900,
-        "rms_last_year": 2100,
-    }
-    analyzeSensitivitiesFromVariableToParametersFromCSVs(**kwargs)
+    # logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+    # kwargs = {
+    #     "perturbed_csvs_path_and_info_pairs": [("resource/standard_run.csv","std_run_2")],
+    #     "std_run_csv_path": "resource/standard_run.csv",
+    #     "target_var": "population",
+    #     "percentage_perturbed":"10",
+    #     "specific_year":1950,
+    #     "output_analysis_path": "tmp/asd_2.txt",
+    #     "rms_first_year": 1900,
+    #     "rms_last_year": 2100,
+    # }
+    # analyzeSensitivitiesFromVariableToParametersFromCSVs(**kwargs)
     pass
 def analyzeSensitivitiesFromVariableToParametersFromCSVs(perturbed_csvs_path_and_info_pairs,target_var,percentage_perturbed,specific_year,rms_first_year,rms_last_year,std_run_csv_path,output_analysis_path):
     # The column order is hardcoded for now.
