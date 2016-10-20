@@ -21,7 +21,7 @@ linthresh = 1.0 #Since the logarithm of values close to zero tends toward infini
 def main():
     base_path = filesystem.files_aux.makeOutputPath("heatmaps")
     omTheoParamSens_1901_all_Heatmap(base_path)
-    omTheoParamSens_1901_onlyWorkPackage1ParamsAndVars_Heatmap(base_path)
+    # omTheoParamSens_1901_onlyWorkPackage1ParamsAndVars_Heatmap(base_path)
 
 ### Special Heatmaps
 # All params and vars for 1901 sens
@@ -119,9 +119,15 @@ def readCSVMatrixAndPlotHeatmap(input_matrix_path,plot_folder_path,plot_title,co
         # Only plot a subindex of the rows
         data = data.ix[rows_to_plot]
 
-    # Sort data's indices
-    data.sort_index(inplace=True)
-    # Sort data's columns
+    ### Sort indices by sum of absolute values:
+      # Create a new column with the sum of the absolute values
+    data["abs_sum"] = data.apply(lambda x: sum([abs(x[col]) for col in data.columns]),axis=1)
+      # Sort by that column and delete the column (both sort and drop return a new dataframe, so to minimize code lines i put them together)
+    data = data.sort_values("abs_sum",ascending=False).drop("abs_sum",axis=1)
+
+    ### Sort data's indices by alphabetical order
+    # data.sort_index(inplace=True)
+    ### Sort data's columns by alphabetical order
     data.sort_index(axis=1,inplace=True)
 
     ### Abbreviate parameters and vars to their IDs from world3_specific/(?).py so the info fits better in the heatmap
