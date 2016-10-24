@@ -41,7 +41,7 @@ def simpleSensitivitiesCalculator(percentage,var_target,year_target):
         new_value = param_val+param_val*percentage/100 #for now, we just want the value + a percentage
         parameters_to_perturbate_tuples.append((param_name,param_val,new_value))
     kwargs = {
-        "target_vars":["population"],
+        "target_var":"population",
         "percentage": percentage,
         "startTime": 1900 ,# DONT CHANGE! W3-Modelica can't be started on an arbitrary year
         "stopTime": year_target  ,# year to calculate sensitivities from target_vars to parameters
@@ -51,7 +51,7 @@ def simpleSensitivitiesCalculator(percentage,var_target,year_target):
         "parameters_to_perturbate_tuples": parameters_to_perturbate_tuples,
     }
     setUpSensitivitiesCalculationAndRun(**kwargs)
-def setUpSensitivitiesCalculationAndRun(target_vars,percentage, startTime, stopTime, scens_to_run , mo_file , plot_std_run, parameters_to_perturbate_tuples):
+def setUpSensitivitiesCalculationAndRun(target_var,percentage, startTime, stopTime, scens_to_run , mo_file , plot_std_run, parameters_to_perturbate_tuples):
     output_folder_path = files_aux.makeOutputPath()
     output_mos_path = os.path.join(output_folder_path,gral_settings.mos_script_filename)
     scen_num = scens_to_run[0] # only one scenario for now
@@ -65,7 +65,7 @@ def setUpSensitivitiesCalculationAndRun(target_vars,percentage, startTime, stopT
     kwargs = {
         "perturbed_csvs_path_and_info_pairs": perturbed_csvs_path_and_info_pairs,
         "std_run_csv_path": "resource/standard_run.csv",
-        "target_var": "population",
+        "target_var": target_var,
         "percentage_perturbed":percentage,
         "specific_year":stopTime,
         "output_analysis_path": os.path.join(output_folder_path,"sens_analysis.csv"),
