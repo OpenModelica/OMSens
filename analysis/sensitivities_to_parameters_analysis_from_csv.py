@@ -21,7 +21,7 @@ def main():
     # analyzeSensitivitiesFromVariableToParametersFromCSVs(**kwargs)
     pass
 def analyzeSensitivitiesFromVariableToParametersFromCSVs(perturbed_csvs_path_and_info_pairs,target_var,percentage_perturbed,specific_year,rms_first_year,rms_last_year,std_run_csv_path,output_analysis_path):
-    # The column order is hardcoded for now.
+    # CAREFUL! The order is hardcoded for now
     headers = "parameter,parameter_default,parameter_perturbed_{percentage}_percent,{var_name}_{specific_year}_std,{var_name}_{specific_year}_new,std/new,(new-std)/std,ABS((new-std)/std),root_mean_square_{rms_first_year}_to_{rms_last_year},perturbed_param_csv_path".format(percentage=percentage_perturbed,var_name=target_var,specific_year=specific_year,rms_first_year=rms_first_year,rms_last_year=rms_last_year)
     rows_strs = [headers]
     data_std_run = np.genfromtxt(std_run_csv_path, delimiter=',', names=True)
@@ -37,6 +37,7 @@ def analyzeSensitivitiesFromVariableToParametersFromCSVs(perturbed_csvs_path_and
         perturbation_proportion_abs = abs(perturbation_proportion)
         rootMeanSquare = rootMeanSquareForCsvAndYearsAndStateVarAndStdCSV(data_perturbed_parameter,rms_first_year,rms_last_year,target_var,data_std_run)
 
+        # CAREFUL! The order is hardcoded for now
         param_row_str = "{param_name},{param_default},{param_new_value},{var_std_value_for_year:.4f},{var_new_value_for_year:.4f},{std_div_new:.4f},{perturbation_proportion},{perturbation_proportion_abs},{rootMeanSquare},{perturbed_param_csv_path}".format(param_name=param_name,param_default=param_default,param_new_value=param_new_value,var_std_value_for_year = var_std_value_for_year, var_new_value_for_year = var_new_value_for_year, std_div_new = std_div_new,perturbation_proportion=perturbation_proportion,perturbation_proportion_abs=perturbation_proportion_abs,rootMeanSquare=rootMeanSquare,perturbed_param_csv_path=csv_path)
         rows_strs.append(param_row_str)
     final_str = "\n".join(rows_strs)
