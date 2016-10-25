@@ -26,33 +26,59 @@ Run3vermeulenAndJongh_SysDyn_mo_path= world3_settings._sys_dyn_package_v_and_j_r
 
 def main():
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
-    simpleSensitivitiesCalculator(percentage=2,var_target="population",year_target=2100)
-    simpleSensitivitiesCalculator(percentage=5,var_target="population",year_target=2100)
-    simpleSensitivitiesCalculator(percentage=10,var_target="population",year_target=2100)
+    # simpleSensitivitiesCalculator(percentage=2,target_var="population",year_target=2100)
+    # simpleSensitivitiesCalculator(percentage=5,target_var="population",year_target=2100)
+    # simpleSensitivitiesCalculator(percentage=10,target_var="population",year_target=2100)
+
+    allOfDifferentiableVariablesSensitivitiesCalculator(percentage=5,year_target=1901)
+    allOfDifferentiableVariablesSensitivitiesCalculator(percentage=5,year_target=2100)
+    return 0
 
 ## Predefined sensitivities calculators
-def simpleSensitivitiesCalculator(percentage,var_target,year_target):
-    # Reads parameters info from resource/standard_run_params_defaults.py
-    # Calculate parameters_to_perturbate_tuples
-    logger.info("Calculating empirical parameter sensitivities for percentage {perc}, target variable {var_target} and target year {year_target}".format(perc=percentage,var_target=var_target,year_target=year_target))
-    parameters_to_perturbate_tuples = []
-    params_info_list = world3_specific.standard_run_params_defaults.w3_params_info_list
-    for param_name,param_val in params_info_list:
-        new_value = param_val+param_val*percentage/100 #for now, we just want the value + a percentage
-        parameters_to_perturbate_tuples.append((param_name,param_val,new_value))
-    kwargs = {
-        "target_var":"population",
-        "percentage": percentage,
-        "startTime": 1900 ,# DONT CHANGE! W3-Modelica can't be started on an arbitrary year
-        "stopTime": year_target  ,# year to calculate sensitivities from target_vars to parameters
-        "scens_to_run" : [1], #The standard run corresponds to the first scenario
-        "mo_file" : piecewiseMod_SysDyn_mo_path, # mo that interpolates outwards with values that lie outside of range
-        "plot_std_run": True, #Choose to plot std run alognside this test results
-        "parameters_to_perturbate_tuples": parameters_to_perturbate_tuples,
-    }
-    setUpSensitivitiesCalculationAndRun(**kwargs)
-def setUpSensitivitiesCalculationAndRun(target_var,percentage, startTime, stopTime, scens_to_run , mo_file , plot_std_run, parameters_to_perturbate_tuples):
+def simpleSensitivitiesCalculator(percentage,target_var,year_target):
+    logger.info("Calculating simple empirical parameter sensitivities for percentage {perc}, target variable {target_var} and target year {year_target}".format(perc=percentage,target_var=target_var,year_target=year_target))
     output_folder_path = files_aux.makeOutputPath()
+    perturbed_csvs_path_and_info_pairs = runModelicaSweepingAllOfW3Params(percentage,year_target,output_folder_path)
+    logger.info("Finished running Modelica.")
+    # Prepare arguments for "analyze csvs and compare the new value for the variable in the CSV with respect of its value in the standard run"
+    analyze_csvs_kwargs = {
+        "perturbed_csvs_path_and_info_pairs": perturbed_csvs_path_and_info_pairs,
+        "std_run_csv_path": "resource/standard_run.csv",
+        "target_var": target_var,
+        "percentage_perturbed":percentage,
+        "specific_year":year_target,
+        "output_analysis_path": os.path.join(output_folder_path,"sens_analysis.csv"),
+        "rms_first_year": 1900 ,# DONT CHANGE! W3-Modelica can't be started on an arbitrary year
+        "rms_last_year": year_target,
+    }
+    logger.info("Analyzing variable sensitivities to parameters from CSVs")
+    analysis.sensitivities_to_parameters_analysis_from_csv.analyzeSensitivitiesFromVariableToParametersFromCSVs(**analyze_csvs_kwargs)
+    return 0
+
+def allOfDifferentiableVariablesSensitivitiesCalculator(percentage,year_target):
+    logger.info("Calculating empirical parameter sensitivities for percentage {perc}, for all of the differentiable variables in W3 and target year {year_target}".format(perc=percentage,year_target=year_target))
+    output_folder_path = files_aux.makeOutputPath()
+    perturbed_csvs_path_and_info_pairs = runModelicaSweepingAllOfW3Params(percentage,year_target,output_folder_path)
+    logger.info("Finished running Modelica.")
+    # Prepare arguments for "analyze csvs and compare the new value for the variable in the CSV with respect of its value in the standard run"
+    ## Get the differentiable vars from World3, according to OpenModelica Sensitivity Analysis
+    differentiable_vars = list(world3_specific.standard_run_params_defaults.om_TheoParamSensitivity_differentiableVariables_dict.keys())  # transform to list because it's a instance of "dict_keys"
+    target_vars_list = differentiable_vars
+    analyze_csvs_kwargs = {
+        "perturbed_csvs_path_and_info_pairs": perturbed_csvs_path_and_info_pairs,
+        "std_run_csv_path": "resource/standard_run.csv",
+        "target_vars_list": target_vars_list,
+        "percentage_perturbed":percentage,
+        "specific_year":year_target,
+        "output_folder_analyses_path": output_folder_path,
+        "rms_first_year": 1900 ,# DONT CHANGE! W3-Modelica can't be started on an arbitrary year
+        "rms_last_year": year_target,
+    }
+    logger.info("Analyzing variable sensitivities to parameters from CSVs")
+    analysis.sensitivities_to_parameters_analysis_from_csv.analyzeSensitivitiesFromManyVariablesToParametersAndCreateParamVarMatrices(**analyze_csvs_kwargs)
+    return 0
+# Aux funcs
+def runModelSweepingParametersInIsolation(percentage, startTime, stopTime, scens_to_run,mo_file,parameters_to_perturbate_tuples,output_folder_path):
     output_mos_path = os.path.join(output_folder_path,gral_settings.mos_script_filename)
     scen_num = scens_to_run[0] # only one scenario for now
     assert len(scens_to_run)==1, "Only one scenario for now"
@@ -61,21 +87,32 @@ def setUpSensitivitiesCalculationAndRun(target_var,percentage, startTime, stopTi
     logger.info("Running Modelica with specified information")
     running.run_omc.runMosScript(output_mos_path)
     perturbed_csvs_path_and_info_pairs = csvPathAndParameterNameForFolderAndParametersInfo(output_folder_path,parameters_to_perturbate_tuples)
+    return perturbed_csvs_path_and_info_pairs
 
-    kwargs = {
-        "perturbed_csvs_path_and_info_pairs": perturbed_csvs_path_and_info_pairs,
-        "std_run_csv_path": "resource/standard_run.csv",
-        "target_var": target_var,
-        "percentage_perturbed":percentage,
-        "specific_year":stopTime,
-        "output_analysis_path": os.path.join(output_folder_path,"sens_analysis.csv"),
-        "rms_first_year": startTime,
-        "rms_last_year": stopTime,
+def runModelicaSweepingAllOfW3Params(percentage,year_target,output_folder_path):
+    # Reads parameters info from resource/standard_run_params_defaults.py
+    params_info_list = world3_specific.standard_run_params_defaults.w3_params_info_list
+    # Calculate parameters_to_perturbate_tuples
+    parameters_to_perturbate_tuples = calculateParametersPerturbedValueByPercentage(params_info_list,percentage)
+    # Prepare arguments for "run model sweeping a list of parameters with a percentage of change, but make each change isolated"
+    run_model_kwargs = {
+        "percentage": percentage,
+        "startTime": 1900 ,# DONT CHANGE! W3-Modelica can't be started on an arbitrary year
+        "stopTime": year_target  ,# year to calculate sensitivities from target_vars to parameters
+        "scens_to_run" : [1], #The standard run corresponds to the first scenario
+        "mo_file" : piecewiseMod_SysDyn_mo_path, # mo that interpolates outwards with values that lie outside of range
+        "parameters_to_perturbate_tuples": parameters_to_perturbate_tuples,
+        "output_folder_path":output_folder_path,
     }
-    logger.info("Finished running Modelica.")
-    logger.info("Analyzing variable sensitivities to parameters from CSVs")
-    analysis.sensitivities_to_parameters_analysis_from_csv.analyzeSensitivitiesFromVariableToParametersFromCSVs(**kwargs)
-# def analyzeSensitivitiesFromVariableToParametersFromCSVs(perturbed_csvs_path_and_info_pairs,target_var,percentage_perturbed,year,std_run_csv_path,output_analysis_path):
+    perturbed_csvs_path_and_info_pairs = runModelSweepingParametersInIsolation(**run_model_kwargs)
+    return perturbed_csvs_path_and_info_pairs
+
+def calculateParametersPerturbedValueByPercentage(params_info_list,percentage):
+    parameters_to_perturbate_tuples = []
+    for param_name,param_val in params_info_list:
+        new_value = param_val+param_val*percentage/100 #for now, we just want the value + a percentage
+        parameters_to_perturbate_tuples.append((param_name,param_val,new_value))
+    return parameters_to_perturbate_tuples
 def csvPathAndParameterNameForFolderAndParametersInfo(output_folder_path,parameters_info):
     perturbed_csvs_path_and_info_pairs = []
     for param_info in parameters_info:
