@@ -13,42 +13,67 @@ import filesystem.files_aux
 linthresh = 1.0 #Since the logarithm of values close to zero tends toward infinity, a small range around zero needs to be mapped linearly. The parameter linthresh allows the user to specify the size of this range (-linthresh, linthresh). The size of this range in the colormap is set by linscale. When linscale == 1.0 (the default), the space used for the positive and negative halves of the linear range will be equal to one decade in the logarithmic range.
 
 def main():
-    base_path = filesystem.files_aux.makeOutputPath("heatmaps")
-    # omTheoParamSens_1901_all_Heatmap(base_path)
-    # omTheoParamSens_1901_onlyWorkPackage1ParamsAndVars_Heatmap(base_path)
-    asd(base_path)
-
-### Special Heatmaps
-### BORRAME O ADAPTAME:
-def asd(base_path):
-    input_matrix_path = "resource/paramVarSensMatrix/1901/new_minus_std_div_std_perturbed_5_percent_1901yr.csv"
-    # input_matrix_path = "resource/w3_only1901_time_fix_paramvarmatrix.csv"
-    plot_title = "OpenModelica Theoretical Parameter Sensitivity for 1901 for World3-Modelica\nAll variables and parameters from Sensitivity Analysis"
-    plot_folder_path = os.path.join(base_path,"omTheoParamSens_1901_all_Heatmap")
-    os.makedirs(plot_folder_path)
-    readCSVMatrixAndPlotHeatmap(input_matrix_path,plot_folder_path,plot_title)
-### BORRAME O ADAPTAME^
-
-# All params and vars for 1901 sens
-def omTheoParamSens_1901_all_Heatmap(base_path):
-    input_matrix_path = "resource/w3_only1901_time_fix_paramvarmatrix.csv"
-    plot_title = "OpenModelica Theoretical Parameter Sensitivity for 1901 for World3-Modelica\nAll variables and parameters from Sensitivity Analysis"
-    plot_folder_path = os.path.join(base_path,"omTheoParamSens_1901_all_Heatmap")
-    os.makedirs(plot_folder_path)
-    readCSVMatrixAndPlotHeatmap(input_matrix_path,plot_folder_path,plot_title)
-
-# Workpackage1 params and vars for 1901 sens
-def omTheoParamSens_1901_onlyWorkPackage1ParamsAndVars_Heatmap(base_path):
-    workpackage1_params = ["agr_mtl_toxic_index", "assim_half_life_1970", "ind_mtl_emiss_fact", "ind_mtl_toxic_index", "life_expect_norm", "p_avg_life_agr_inp_2", "p_avg_life_ind_cap_1", "p_fr_cap_al_obt_res_2[3]", "p_fr_cap_al_obt_res_2[4]"]
-    workpackage1_vars = [ "Arable_Land_Dynamics1.Arable_Land.Integrator1.y", "Arable_Land_Dynamics1.Pot_Arable_Land.Integrator1.y", "Food_Production1.Agr_Inp.Integrator1.y"]
-    input_matrix_path = "resource/w3_only1901_time_fix_paramvarmatrix.csv"
-    plot_title = "OpenModelica Theoretical Parameter Sensitivity for 1901 for World3-Modelica\nOnly the variables and parameters studied in WorkPackage 1"
-    plot_folder_path = os.path.join(base_path,"omTheoParamSens_1901_onlyWorkPackage1ParamsAndVars_Heatmap")
-    os.makedirs(plot_folder_path)
-    readCSVMatrixAndPlotHeatmap(input_matrix_path,plot_folder_path,plot_title,columns_to_plot=workpackage1_vars,rows_to_plot=workpackage1_params)
-
+    pass
+# Central function
+def readCSVMatrixAndPlotHeatmap(input_matrix_path,plot_folder_path,plot_title,columns_to_plot=False,rows_to_plot=False):
+    linthresh = 1.0 #Since the logarithm of values close to zero tends toward infinity, a small range around zero needs to be mapped linearly. The parameter linthresh allows the user to specify the size of this range (-linthresh, linthresh). The size of this range in the colormap is set by linscale. When linscale == 1.0 (the default), the space used for the positive and negative halves of the linear range will be equal to one decade in the logarithmic range.
+    # Start of code
+    data = readCSVAndPreprocessData(input_matrix_path,columns_to_plot,rows_to_plot)
+    plotHeatmapFromData(data,plot_folder_path,plot_title,linthresh)
+    writeRowsAndColumnsIDs(data,plot_folder_path)
 
 # Aux:
+def readCSVAndPreprocessData(input_matrix_path,columns_to_plot,rows_to_plot):
+    data = pd.read_csv(input_matrix_path, index_col=0)
+    if columns_to_plot:
+        # Only plot a subindex of the columns
+        data = data[columns_to_plot]
+    if rows_to_plot:
+        # Only plot a subindex of the rows
+        data = data.ix[rows_to_plot]
+    # Sort by alphabetical order and/or sum of cells
+    data = sortIndicesAndOrColumns(data)
+    return data
+def plotHeatmapFromData(data,plot_folder_path,plot_title,linthresh):
+    ### Abbreviate parameters and vars to their IDs from world3_specific/(?).py so the info fits better in the heatmap
+    abbreviated_columns = abbreviateStringsUsingDict(data.columns,world3_specific.standard_run_params_defaults.om_TheoParamSensitivity_differentiableVariables_dict)
+    abbreviated_indices = abbreviateStringsUsingDict(data.index,world3_specific.standard_run_params_defaults.om_TheoParamSensitivity_params_dict)
+    min_of_all = data.min().min()   # the first min returns a series of all the mins. The second min returns the min of the mins
+    max_of_all = data.max().max()   # the first max returns a series of all the maxs. The second max returns the max of the max
+    ###### CONVERT TO NUMPY TO MASK INVALID DATA (COULND'T FIND OUT HOW TO MASK IN PANDAS)
+    np_data = data.as_matrix()
+    np_data = np.ma.masked_invalid(np_data)
+
+
+    ### Plot using logarithmic scale
+    plot_name ="heatmap_logscale.png"
+    fig,ax = initializeFigAndAx(data,abbreviated_indices,abbreviated_columns)
+    plotHeatmapInLogarithmicScaleFromFigAxAndData(fig,ax,np_data,min_of_all,max_of_all,linthresh)
+    configurePlotTicks()
+    postProcessingSettings(plot_title)
+    saveAndClearPlot(plot_name,plot_folder_path)
+
+    ### Plot using linear scale
+    plot_name ="heatmap_linscale.png"
+    fig,ax = initializeFigAndAx(data,abbreviated_indices,abbreviated_columns)
+    plotHeatmapInLinearScaleFromFigAxAndData(fig,ax,np_data,min_of_all,max_of_all)
+    configurePlotTicks()
+    postProcessingSettings(plot_title)
+    saveAndClearPlot(plot_name,plot_folder_path)
+def writeRowsAndColumnsIDs(data,plot_folder_path):
+    # Write Rows IDs to file
+    ids_dict = world3_specific.standard_run_params_defaults.om_TheoParamSensitivity_params_dict
+    names_list = data.index
+    first_line_str = "Rows IDs:"
+    rows_ids_references = os.path.join(plot_folder_path,"rows_ids.txt")
+    writeIDsToFile(first_line_str,names_list,ids_dict,rows_ids_references)
+
+    # Write Columns IDs to file
+    ids_dict = world3_specific.standard_run_params_defaults.om_TheoParamSensitivity_differentiableVariables_dict
+    names_list = data.columns
+    first_line_str = "Columns IDs:"
+    columns_ids_references = os.path.join(plot_folder_path,"columns_ids.txt")
+    writeIDsToFile(first_line_str,names_list,ids_dict,columns_ids_references)
 # Function to rotate ticks labels and hide ticks
 def configurePlotTicks():
     # Rotate the ticks labels in the x and y axis
@@ -128,40 +153,6 @@ def exponentialRangeFromMinAndMax(min_num,max_num):
                 accum = accum*10
     return res_range
 
-# Central function
-def readCSVMatrixAndPlotHeatmap(input_matrix_path,plot_folder_path,plot_title,columns_to_plot=False,rows_to_plot=False):
-    linthresh = 1.0 #Since the logarithm of values close to zero tends toward infinity, a small range around zero needs to be mapped linearly. The parameter linthresh allows the user to specify the size of this range (-linthresh, linthresh). The size of this range in the colormap is set by linscale. When linscale == 1.0 (the default), the space used for the positive and negative halves of the linear range will be equal to one decade in the logarithmic range.
-    # Start of code
-    data = readCSVAndPreprocessData(input_matrix_path,columns_to_plot,rows_to_plot)
-    plotHeatmapFromData(data,plot_folder_path,plot_title,linthresh)
-    writeRowsAndColumnsIDs(data,plot_folder_path)
-# Aux:
-def readCSVAndPreprocessData(input_matrix_path,columns_to_plot,rows_to_plot):
-    data = pd.read_csv(input_matrix_path, index_col=0)
-    if columns_to_plot:
-        # Only plot a subindex of the columns
-        data = data[columns_to_plot]
-    if rows_to_plot:
-        # Only plot a subindex of the rows
-        data = data.ix[rows_to_plot]
-    # Sort by alphabetical order and/or sum of cells
-    data = sortIndicesAndOrColumns(data)
-    return data
-def writeRowsAndColumnsIDs(data,plot_folder_path):
-    # Write Rows IDs to file
-    ids_dict = world3_specific.standard_run_params_defaults.om_TheoParamSensitivity_params_dict
-    names_list = data.index
-    first_line_str = "Rows IDs:"
-    rows_ids_references = os.path.join(plot_folder_path,"rows_ids.txt")
-    writeIDsToFile(first_line_str,names_list,ids_dict,rows_ids_references)
-
-    # Write Columns IDs to file
-    ids_dict = world3_specific.standard_run_params_defaults.om_TheoParamSensitivity_differentiableVariables_dict
-    names_list = data.columns
-    first_line_str = "Columns IDs:"
-    columns_ids_references = os.path.join(plot_folder_path,"columns_ids.txt")
-    writeIDsToFile(first_line_str,names_list,ids_dict,columns_ids_references)
-
 def absForPossibleNaNs(number):
     abs_res = 0 if np.isnan(number) else abs(number)
     return abs_res
@@ -179,32 +170,6 @@ def sortIndicesAndOrColumns(data):
     data.sort_index(axis=1,inplace=True)
     return data
 
-def plotHeatmapFromData(data,plot_folder_path,plot_title,linthresh):
-    ### Abbreviate parameters and vars to their IDs from world3_specific/(?).py so the info fits better in the heatmap
-    abbreviated_columns = abbreviateStringsUsingDict(data.columns,world3_specific.standard_run_params_defaults.om_TheoParamSensitivity_differentiableVariables_dict)
-    abbreviated_indices = abbreviateStringsUsingDict(data.index,world3_specific.standard_run_params_defaults.om_TheoParamSensitivity_params_dict)
-    min_of_all = data.min().min()   # the first min returns a series of all the mins. The second min returns the min of the mins
-    max_of_all = data.max().max()   # the first max returns a series of all the maxs. The second max returns the max of the max
-    ###### CONVERT TO NUMPY TO MASK INVALID DATA (COULND'T FIND OUT HOW TO MASK IN PANDAS)
-    np_data = data.as_matrix()
-    np_data = np.ma.masked_invalid(np_data)
-
-
-    ### Plot using logarithmic scale
-    plot_name ="heatmap_logscale.png"
-    fig,ax = initializeFigAndAx(data,abbreviated_indices,abbreviated_columns)
-    plotHeatmapInLogarithmicScaleFromFigAxAndData(fig,ax,np_data,min_of_all,max_of_all,linthresh)
-    configurePlotTicks()
-    postProcessingSettings(plot_title)
-    saveAndClearPlot(plot_name,plot_folder_path)
-
-    ### Plot using linear scale
-    plot_name ="heatmap_linscale.png"
-    fig,ax = initializeFigAndAx(data,abbreviated_indices,abbreviated_columns)
-    plotHeatmapInLinearScaleFromFigAxAndData(fig,ax,np_data,min_of_all,max_of_all)
-    configurePlotTicks()
-    postProcessingSettings(plot_title)
-    saveAndClearPlot(plot_name,plot_folder_path)
 
 def saveAndClearPlot(plot_name,plot_folder_path):
     # plt.show()
