@@ -119,9 +119,13 @@ def exponentialRangeFromMinAndMax(min_num,max_num):
 # Central function
 def readCSVMatrixAndPlotHeatmap(input_matrix_path,plot_folder_path,plot_title,columns_to_plot=False,rows_to_plot=False):
     plot_name = "heatmap.png"
-    plot_IDs_reference_file_name = "IDs_references.txt"
     linthresh = 1.0 #Since the logarithm of values close to zero tends toward infinity, a small range around zero needs to be mapped linearly. The parameter linthresh allows the user to specify the size of this range (-linthresh, linthresh). The size of this range in the colormap is set by linscale. When linscale == 1.0 (the default), the space used for the positive and negative halves of the linear range will be equal to one decade in the logarithmic range.
     # Start of code
+    data = readCSVAndPreprocessData(input_matrix_path,columns_to_plot,rows_to_plot)
+    plotHeatmapFromData(data,plot_folder_path,plot_title,plot_name)
+    writeRowsAndColumnsIDs(data,plot_folder_path)
+# Aux:
+def readCSVAndPreprocessData(input_matrix_path,columns_to_plot,rows_to_plot):
     data = pd.read_csv(input_matrix_path, index_col=0)
     if columns_to_plot:
         # Only plot a subindex of the columns
@@ -131,13 +135,8 @@ def readCSVMatrixAndPlotHeatmap(input_matrix_path,plot_folder_path,plot_title,co
         data = data.ix[rows_to_plot]
     # Sort by alphabetical order and/or sum of cells
     data = sortIndicesAndOrColumns(data)
-
-
-    plotHeatmapFromData(data,plot_folder_path,plot_title)
-    writeRowsAndColumnsIDs(data,plot_folder_path)
-# Aux:
+    return data
 def writeRowsAndColumnsIDs(data,plot_folder_path):
-
     # Write Rows IDs to file
     ids_dict = world3_specific.standard_run_params_defaults.om_TheoParamSensitivity_params_dict
     names_list = data.index
@@ -169,7 +168,7 @@ def sortIndicesAndOrColumns(data):
     data.sort_index(axis=1,inplace=True)
     return data
 
-def plotHeatmapFromData(data,plot_folder_path,plot_title):
+def plotHeatmapFromData(data,plot_folder_path,plot_title,plot_name):
     ### Abbreviate parameters and vars to their IDs from world3_specific/(?).py so the info fits better in the heatmap
     abbreviated_columns = abbreviateStringsUsingDict(data.columns,world3_specific.standard_run_params_defaults.om_TheoParamSensitivity_differentiableVariables_dict)
     abbreviated_indices = abbreviateStringsUsingDict(data.index,world3_specific.standard_run_params_defaults.om_TheoParamSensitivity_params_dict)
@@ -246,9 +245,9 @@ def plotHeatmapFromData(data,plot_folder_path,plot_title):
     plt.tight_layout()
     # plt.tight_layout(rect= [0, 0.03, 1, 0.95])
 
-    plt.show()
-    # plot_path = os.path.join(plot_folder_path,plot_name)
-    # plt.savefig(plot_path)
+    # plt.show()
+    plot_path = os.path.join(plot_folder_path,plot_name)
+    plt.savefig(plot_path)
 
 # FIRST EXECUTABLE CODE:
 if __name__ == "__main__":
