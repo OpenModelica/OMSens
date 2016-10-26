@@ -91,7 +91,7 @@ def analyzeSensitivitiesFromManyVariablesToParametersAndCreateParamVarMatrices(p
 
     #Write matrices to file
     # For Root Mean Squares
-    file_name = "root_mean_squares"+"_perturbed_{percentage_perturbed}.csv".format(percentage_perturbed=percentage_perturbed)
+    file_name = "root_mean_squares"+"_perturbed_{percentage_perturbed}percent_From{rms_first_year}To{rms_last_year}.csv".format(percentage_perturbed=percentage_perturbed,rms_first_year=rms_first_year,rms_last_year=rms_last_year)
     output_analysis_path = os.path.join(output_folder_analyses_path,file_name)
     filesystem.files_aux.writeStrToFile(root_mean_square_matrix_rows_str,output_analysis_path)
     logger.debug("Wrote analysis for sensitivities to param to path:{path}".format(path=output_analysis_path))
@@ -99,7 +99,7 @@ def analyzeSensitivitiesFromManyVariablesToParametersAndCreateParamVarMatrices(p
     #The matrices std_div_new and new_minus_std_div_std matrices are for a given year, so they will have that year in the file name
     matrix_name_and_fullStr_pairs = [("std_div_new",std_div_new_matrix_rows_str),("new_minus_std_div_std",new_minus_std_div_std_matrix_rows_str)]
     for matrix_name,fullStr in matrix_name_and_fullStr_pairs:
-        file_name = matrix_name+"_perturbed_{percentage_perturbed}_percent_{specific_year}yr.csv".format(percentage_perturbed=percentage_perturbed,specific_year=specific_year)
+        file_name = matrix_name+"_perturbed_{percentage_perturbed}percent_{specific_year}yr.csv".format(percentage_perturbed=percentage_perturbed,specific_year=specific_year)
         output_analysis_path = os.path.join(output_folder_analyses_path,file_name)
         filesystem.files_aux.writeStrToFile(fullStr,output_analysis_path)
         logger.debug("Wrote analysis for sensitivities to param to path:{path}".format(path=output_analysis_path))
