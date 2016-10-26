@@ -10,12 +10,6 @@ import os
 import world3_specific.standard_run_params_defaults
 import filesystem.files_aux
 
-##### THIS MODULE WAS MADE ON A RUSH AND NEEDS BEAUTIFICATION      ################
-
-# GLOBALS
-# input_matrix_path = "resource/w3_only1992_time_fix_paramvarmatrix.csv"
-# plot_name = "asd_sin_sort.png"
-
 linthresh = 1.0 #Since the logarithm of values close to zero tends toward infinity, a small range around zero needs to be mapped linearly. The parameter linthresh allows the user to specify the size of this range (-linthresh, linthresh). The size of this range in the colormap is set by linscale. When linscale == 1.0 (the default), the space used for the positive and negative halves of the linear range will be equal to one decade in the logarithmic range.
 
 def main():
@@ -55,6 +49,24 @@ def omTheoParamSens_1901_onlyWorkPackage1ParamsAndVars_Heatmap(base_path):
 
 
 # Aux:
+# Function to rotate ticks labels and hide ticks
+def configurePlotTicks():
+    # Rotate the ticks labels in the x and y axis
+    # plt.xticks(rotation=80)
+    plt.xticks(rotation=90)
+    # plt.yticks(rotation=-15)
+    plt.yticks(rotation=0)
+
+
+    # Turn off all the ticks
+    ax = plt.gca()
+
+    for t in ax.xaxis.get_major_ticks():
+        t.tick1On = False
+        t.tick2On = False
+    for t in ax.yaxis.get_major_ticks():
+        t.tick1On = False
+        t.tick2On = False
 # Function to write txts with "ID & Name" lines for the columns and indices of the heatmap
 def writeIDsToFile(first_line_str,names_list,ids_dict,file_path):
     strs_list = [first_line_str]
@@ -118,11 +130,10 @@ def exponentialRangeFromMinAndMax(min_num,max_num):
 
 # Central function
 def readCSVMatrixAndPlotHeatmap(input_matrix_path,plot_folder_path,plot_title,columns_to_plot=False,rows_to_plot=False):
-    plot_name = "heatmap.png"
     linthresh = 1.0 #Since the logarithm of values close to zero tends toward infinity, a small range around zero needs to be mapped linearly. The parameter linthresh allows the user to specify the size of this range (-linthresh, linthresh). The size of this range in the colormap is set by linscale. When linscale == 1.0 (the default), the space used for the positive and negative halves of the linear range will be equal to one decade in the logarithmic range.
     # Start of code
     data = readCSVAndPreprocessData(input_matrix_path,columns_to_plot,rows_to_plot)
-    plotHeatmapFromData(data,plot_folder_path,plot_title,plot_name)
+    plotHeatmapFromData(data,plot_folder_path,plot_title,linthresh)
     writeRowsAndColumnsIDs(data,plot_folder_path)
 # Aux:
 def readCSVAndPreprocessData(input_matrix_path,columns_to_plot,rows_to_plot):
@@ -168,46 +179,58 @@ def sortIndicesAndOrColumns(data):
     data.sort_index(axis=1,inplace=True)
     return data
 
-def plotHeatmapFromData(data,plot_folder_path,plot_title,plot_name):
+def plotHeatmapFromData(data,plot_folder_path,plot_title,linthresh):
     ### Abbreviate parameters and vars to their IDs from world3_specific/(?).py so the info fits better in the heatmap
     abbreviated_columns = abbreviateStringsUsingDict(data.columns,world3_specific.standard_run_params_defaults.om_TheoParamSensitivity_differentiableVariables_dict)
     abbreviated_indices = abbreviateStringsUsingDict(data.index,world3_specific.standard_run_params_defaults.om_TheoParamSensitivity_params_dict)
+    min_of_all = data.min().min()   # the first min returns a series of all the mins. The second min returns the min of the mins
+    max_of_all = data.max().max()   # the first max returns a series of all the maxs. The second max returns the max of the max
+    ###### CONVERT TO NUMPY TO MASK INVALID DATA (COULND'T FIND OUT HOW TO MASK IN PANDAS)
+    np_data = data.as_matrix()
+    np_data = np.ma.masked_invalid(np_data)
 
+
+    ### Plot using logarithmic scale
+    plot_name ="heatmap_logscale.png"
+    fig,ax = initializeFigAndAx(data,abbreviated_indices,abbreviated_columns)
+    plotHeatmapInLogarithmicScaleFromFigAxAndData(fig,ax,np_data,min_of_all,max_of_all,linthresh)
+    configurePlotTicks()
+    postProcessingSettings(plot_title)
+    saveAndClearPlot(plot_name,plot_folder_path)
+
+    ### Plot using linear scale
+    plot_name ="heatmap_linscale.png"
+    fig,ax = initializeFigAndAx(data,abbreviated_indices,abbreviated_columns)
+    plotHeatmapInLinearScaleFromFigAxAndData(fig,ax,np_data,min_of_all,max_of_all)
+    configurePlotTicks()
+    postProcessingSettings(plot_title)
+    saveAndClearPlot(plot_name,plot_folder_path)
+
+def saveAndClearPlot(plot_name,plot_folder_path):
+    # plt.show()
+    plot_path = os.path.join(plot_folder_path,plot_name)
+    plt.savefig(plot_path)
+    plt.clf()
+
+def initializeFigAndAx(data,abbreviated_indices,abbreviated_columns):
     # Plot it out
     fig, ax = plt.subplots()
 
     # Set xlim and ylim manually because matplotlib has an internal bug that adds empty columns and rows because it thinks (wrongly) that there are n+1 rows and m+1 columns
     ax.set_ylim(0,len(data.index))
     ax.set_xlim(0,len(data.columns))
-    min_of_all = data.min().min()   # the first min returns a series of all the mins. The second min returns the min of the mins
-    max_of_all = data.max().max()   # the first max returns a series of all the maxs. The second max returns the max of the max
-    ###### CONVERT TO NUMPY TO MASK INVALID DATA (COULND'T FIND OUT HOW TO MASK IN PANDAS)
-    np_data = data.as_matrix()
-    np_data = np.ma.masked_invalid(np_data)
-    # Logarithmic scale
-    # heatmap = ax.pcolor(np_data, cmap=plt.cm.Blues, norm=SymLogNorm(vmin=min_of_all, vmax=max_of_all,linthresh=linthresh))
-    # heatmap = ax.pcolor(np_data,vmin=min_of_all, vmax=max_of_all,  norm=SymLogNorm(vmin=min_of_all, vmax=max_of_all,linthresh=linthresh))
-    heatmap = ax.pcolor(np_data,  norm=SymLogNorm(vmin=min_of_all, vmax=max_of_all,linthresh=linthresh))
-    colorbar_ticks = exponentialRangeFromMinAndMax(min_of_all,max_of_all)
-    cbar = fig.colorbar(heatmap,ticks=colorbar_ticks,format=matplotlib.ticker.FuncFormatter(lambda x, p: "%.0e" % x))
 
-    # Linear scale:
-    # heatmap = ax.pcolor(np_data, cmap=plt.cm.seismic, vmin=np.nanmin(np_data), vmax=np.nanmax(np_data))
-    # cbar = fig.colorbar(heatmap)
-
-    # Change font size in color bar
-    cbar.ax.tick_params(labelsize=10)
 
     ### Draw an "X" on invalid values (need to be masked so pcolor makes them transparent and the frame has to be set)
     ax.patch.set(hatch='x', edgecolor='blue')
 
     # Format
-    fig = plt.gcf()
     fig.set_size_inches(8, 11)
 
     # put the major ticks at the middle of each cell
     ax.set_yticks(np.arange(data.shape[0]) + 0.5, minor=False)
     ax.set_xticks(np.arange(data.shape[1]) + 0.5, minor=False)
+
 
     # want a more natural, table-like display
     ax.invert_yaxis()
@@ -220,34 +243,34 @@ def plotHeatmapFromData(data,plot_folder_path,plot_title,plot_name):
     ax.set_xticklabels(abbreviated_columns, minor=False, fontsize=8)
     ax.set_yticklabels(abbreviated_indices, minor=False, fontsize=6)
 
-    # Rotate the ticks labels in the x and y axis
-    # plt.xticks(rotation=80)
-    plt.xticks(rotation=90)
-    # plt.yticks(rotation=-15)
-    plt.yticks(rotation=0)
-
     ax.grid(False)
+    return fig,ax
+def plotHeatmapInLogarithmicScaleFromFigAxAndData(fig,ax,np_data,min_of_all,max_of_all,linthresh):
+    # Logarithmic scale
+    # heatmap = ax.pcolor(np_data, cmap=plt.cm.Blues, norm=SymLogNorm(vmin=min_of_all, vmax=max_of_all,linthresh=linthresh))
+    # heatmap = ax.pcolor(np_data,vmin=min_of_all, vmax=max_of_all,  norm=SymLogNorm(vmin=min_of_all, vmax=max_of_all,linthresh=linthresh))
+    heatmap = ax.pcolor(np_data,  norm=SymLogNorm(vmin=min_of_all, vmax=max_of_all,linthresh=linthresh))
+    colorbar_ticks = exponentialRangeFromMinAndMax(min_of_all,max_of_all)
+    cbar = fig.colorbar(heatmap,ticks=colorbar_ticks,format=matplotlib.ticker.FuncFormatter(lambda x, p: "%.0e" % x))
 
-    # Turn off all the ticks
-    ax = plt.gca()
+    # Change font size in color bar
+    cbar.ax.tick_params(labelsize=10)
 
-    for t in ax.xaxis.get_major_ticks():
-        t.tick1On = False
-        t.tick2On = False
-    for t in ax.yaxis.get_major_ticks():
-        t.tick1On = False
-        t.tick2On = False
+def plotHeatmapInLinearScaleFromFigAxAndData(fig,ax,np_data,min_of_all,max_of_all):
+    # Linear scale:
+    heatmap = ax.pcolor(np_data, cmap=plt.cm.seismic, vmin=np.nanmin(np_data), vmax=np.nanmax(np_data))
+    cbar = fig.colorbar(heatmap)
 
+    # Change font size in color bar
+    cbar.ax.tick_params(labelsize=10)
+def postProcessingSettings(plot_title):
     # Plot title
-    plt.title(plot_title,y=1.05)
+    plt.title(plot_title,y=1.05) # change y=... Because the inverted tick labels bug matplotlib and the title and the tick labels are superimposed
 
     # Tight layout to maximize usage of space
     plt.tight_layout()
     # plt.tight_layout(rect= [0, 0.03, 1, 0.95])
 
-    # plt.show()
-    plot_path = os.path.join(plot_folder_path,plot_name)
-    plt.savefig(plot_path)
 
 # FIRST EXECUTABLE CODE:
 if __name__ == "__main__":
