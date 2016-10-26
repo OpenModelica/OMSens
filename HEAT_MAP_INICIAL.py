@@ -25,6 +25,16 @@ def main():
     asd(base_path)
 
 ### Special Heatmaps
+### BORRAME O ADAPTAME:
+def asd(base_path):
+    input_matrix_path = "resource/paramVarSensMatrix/1901/new_minus_std_div_std_perturbed_5_percent_1901yr.csv"
+    # input_matrix_path = "resource/w3_only1901_time_fix_paramvarmatrix.csv"
+    plot_title = "OpenModelica Theoretical Parameter Sensitivity for 1901 for World3-Modelica\nAll variables and parameters from Sensitivity Analysis"
+    plot_folder_path = os.path.join(base_path,"omTheoParamSens_1901_all_Heatmap")
+    os.makedirs(plot_folder_path)
+    readCSVMatrixAndPlotHeatmap(input_matrix_path,plot_folder_path,plot_title)
+### BORRAME O ADAPTAME^
+
 # All params and vars for 1901 sens
 def omTheoParamSens_1901_all_Heatmap(base_path):
     input_matrix_path = "resource/w3_only1901_time_fix_paramvarmatrix.csv"
@@ -119,7 +129,34 @@ def readCSVMatrixAndPlotHeatmap(input_matrix_path,plot_folder_path,plot_title,co
     if rows_to_plot:
         # Only plot a subindex of the rows
         data = data.ix[rows_to_plot]
+    # Sort by alphabetical order and/or sum of cells
+    data = sortIndicesAndOrColumns(data)
 
+
+    plotHeatmapFromData(data,plot_folder_path,plot_title)
+    writeRowsAndColumnsIDs(data,plot_folder_path)
+# Aux:
+def writeRowsAndColumnsIDs(data,plot_folder_path):
+
+    # Write Rows IDs to file
+    ids_dict = world3_specific.standard_run_params_defaults.om_TheoParamSensitivity_params_dict
+    names_list = data.index
+    first_line_str = "Rows IDs:"
+    rows_ids_references = os.path.join(plot_folder_path,"rows_ids.txt")
+    writeIDsToFile(first_line_str,names_list,ids_dict,rows_ids_references)
+
+    # Write Columns IDs to file
+    ids_dict = world3_specific.standard_run_params_defaults.om_TheoParamSensitivity_differentiableVariables_dict
+    names_list = data.columns
+    first_line_str = "Columns IDs:"
+    columns_ids_references = os.path.join(plot_folder_path,"columns_ids.txt")
+    writeIDsToFile(first_line_str,names_list,ids_dict,columns_ids_references)
+
+def absForPossibleNaNs(number):
+    abs_res = 0 if np.isnan(number) else abs(number)
+    return abs_res
+
+def sortIndicesAndOrColumns(data):
     ### Sort indices by sum of absolute values:
       # Create a new column with the sum of the absolute values
     data["abs_sum"] = data.apply(lambda x: sum([absForPossibleNaNs(x[col]) for col in data.columns]),axis=1)
@@ -130,7 +167,9 @@ def readCSVMatrixAndPlotHeatmap(input_matrix_path,plot_folder_path,plot_title,co
     # data.sort_index(inplace=True)
     ### Sort data's columns by alphabetical order
     data.sort_index(axis=1,inplace=True)
+    return data
 
+def plotHeatmapFromData(data,plot_folder_path,plot_title):
     ### Abbreviate parameters and vars to their IDs from world3_specific/(?).py so the info fits better in the heatmap
     abbreviated_columns = abbreviateStringsUsingDict(data.columns,world3_specific.standard_run_params_defaults.om_TheoParamSensitivity_differentiableVariables_dict)
     abbreviated_indices = abbreviateStringsUsingDict(data.index,world3_specific.standard_run_params_defaults.om_TheoParamSensitivity_params_dict)
@@ -210,25 +249,6 @@ def readCSVMatrixAndPlotHeatmap(input_matrix_path,plot_folder_path,plot_title,co
     plt.show()
     # plot_path = os.path.join(plot_folder_path,plot_name)
     # plt.savefig(plot_path)
-
-    # Write Rows IDs to file
-    ids_dict = world3_specific.standard_run_params_defaults.om_TheoParamSensitivity_params_dict
-    names_list = data.index
-    first_line_str = "Rows IDs:"
-    rows_ids_references = os.path.join(plot_folder_path,"rows_ids.txt")
-    writeIDsToFile(first_line_str,names_list,ids_dict,rows_ids_references)
-
-    # Write Columns IDs to file
-    ids_dict = world3_specific.standard_run_params_defaults.om_TheoParamSensitivity_differentiableVariables_dict
-    names_list = data.columns
-    first_line_str = "Columns IDs:"
-    columns_ids_references = os.path.join(plot_folder_path,"columns_ids.txt")
-    writeIDsToFile(first_line_str,names_list,ids_dict,columns_ids_references)
-
-def absForPossibleNaNs(number):
-    abs_res = 0 if np.isnan(number) else abs(number)
-    return abs_res
-
 
 # FIRST EXECUTABLE CODE:
 if __name__ == "__main__":
