@@ -60,6 +60,7 @@ def plotHeatmapFromData(data,plot_folder_path,plot_title,linthresh):
     configurePlotTicks()
     postProcessingSettings(plot_title)
     saveAndClearPlot(plot_name,plot_folder_path)
+
 def writeRowsAndColumnsIDs(data,plot_folder_path):
     # Write Rows IDs to file
     ids_dict = world3_specific.standard_run_params_defaults.om_TheoParamSensitivity_params_dict
@@ -216,14 +217,13 @@ def plotHeatmapInLogarithmicScaleFromFigAxAndData(fig,ax,np_data,min_of_all,max_
     # heatmap = ax.pcolor(np_data,vmin=min_of_all, vmax=max_of_all,  norm=SymLogNorm(vmin=min_of_all, vmax=max_of_all,linthresh=linthresh))
     heatmap = ax.pcolor(np_data,  norm=SymLogNorm(vmin=min_of_all, vmax=max_of_all,linthresh=linthresh))
     colorbar_ticks = exponentialRangeFromMinAndMax(min_of_all,max_of_all)
-    cbar = fig.colorbar(heatmap,ticks=colorbar_ticks,format=matplotlib.ticker.FuncFormatter(lambda x, p: "%.0e" % x))
-
+    cbar = fig.colorbar(heatmap,ticks=colorbar_ticks,format=matplotlib.ticker.FuncFormatter(lambda x,p: logTickerToString(x,p))) # I create a lambda instead of just putting the function name so it's more explicit that it's a function and that it receives x and p
     # Change font size in color bar
     cbar.ax.tick_params(labelsize=10)
 
 def plotHeatmapInLinearScaleFromFigAxAndData(fig,ax,np_data,min_of_all,max_of_all):
     # Linear scale:
-    heatmap = ax.pcolor(np_data, cmap=plt.cm.seismic, vmin=np.nanmin(np_data), vmax=np.nanmax(np_data))
+    heatmap = ax.pcolor(np_data, vmin=np.nanmin(np_data), vmax=np.nanmax(np_data))
     cbar = fig.colorbar(heatmap)
 
     # Change font size in color bar
@@ -235,7 +235,11 @@ def postProcessingSettings(plot_title):
     # Tight layout to maximize usage of space
     plt.tight_layout()
     # plt.tight_layout(rect= [0, 0.03, 1, 0.95])
-
+def logTickerToString(x,p):
+    if x==0:
+        return "    0"
+    else:
+        return "%.0e" % x
 
 # FIRST EXECUTABLE CODE:
 if __name__ == "__main__":
