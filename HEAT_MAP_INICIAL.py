@@ -105,7 +105,7 @@ def exponentialRangeFromMinAndMax(min_num,max_num):
                 accum = accum*10
     return res_range
 
-# Principal function
+# Central function
 def readCSVMatrixAndPlotHeatmap(input_matrix_path,plot_folder_path,plot_title,columns_to_plot=False,rows_to_plot=False):
     plot_name = "heatmap.png"
     plot_IDs_reference_file_name = "IDs_references.txt"
@@ -136,21 +136,35 @@ def readCSVMatrixAndPlotHeatmap(input_matrix_path,plot_folder_path,plot_title,co
 
     # Plot it out
     fig, ax = plt.subplots()
+
+    # Set xlim and ylim manually because matplotlib has an internal bug that adds empty columns and rows because it thinks (wrongly) that there are n+1 rows and m+1 columns
+    ax.set_ylim(0,len(data.index))
+    ax.set_xlim(0,len(data.columns))
     min_of_all = data.min().min()   # the first min returns a series of all the mins. The second min returns the min of the mins
     max_of_all = data.max().max()   # the first max returns a series of all the maxs. The second max returns the max of the max
-    heatmap = plt.pcolor(data,  norm=SymLogNorm(vmin=min_of_all, vmax=max_of_all,linthresh=linthresh))
-    # heatmap = plt.pcolor(data, cmap=plt.cm.Blues, norm=SymLogNorm(vmin=min_of_all, vmax=max_of_all,linthresh=linthresh))
+    ###### CONVERT TO NUMPY TO MASK INVALID DATA (COULND'T FIND OUT HOW TO MASK IN PANDAS)
+    np_data = data.as_matrix()
+    np_data = np.ma.masked_invalid(np_data)
+    # Logarithmic scale
+    # heatmap = ax.pcolor(np_data, cmap=plt.cm.Blues, norm=SymLogNorm(vmin=min_of_all, vmax=max_of_all,linthresh=linthresh))
+    # heatmap = ax.pcolor(np_data,vmin=min_of_all, vmax=max_of_all,  norm=SymLogNorm(vmin=min_of_all, vmax=max_of_all,linthresh=linthresh))
+    heatmap = ax.pcolor(np_data,  norm=SymLogNorm(vmin=min_of_all, vmax=max_of_all,linthresh=linthresh))
     colorbar_ticks = exponentialRangeFromMinAndMax(min_of_all,max_of_all)
+    cbar = fig.colorbar(heatmap,ticks=colorbar_ticks,format=matplotlib.ticker.FuncFormatter(lambda x, p: "%.0e" % x))
 
-    cbar = plt.colorbar(ticks=colorbar_ticks,format=matplotlib.ticker.FuncFormatter(lambda x, p: "%.0e" % x))
+    # Linear scale:
+    # heatmap = ax.pcolor(np_data, cmap=plt.cm.seismic, vmin=np.nanmin(np_data), vmax=np.nanmax(np_data))
+    # cbar = fig.colorbar(heatmap)
+
+    # Change font size in color bar
     cbar.ax.tick_params(labelsize=10)
+
+    ### Draw an "X" on invalid values (need to be masked so pcolor makes them transparent and the frame has to be set)
+    ax.patch.set(hatch='x', edgecolor='blue')
 
     # Format
     fig = plt.gcf()
     fig.set_size_inches(8, 11)
-
-    # turn off the frame
-    ax.set_frame_on(False)
 
     # put the major ticks at the middle of each cell
     ax.set_yticks(np.arange(data.shape[0]) + 0.5, minor=False)
@@ -192,9 +206,9 @@ def readCSVMatrixAndPlotHeatmap(input_matrix_path,plot_folder_path,plot_title,co
     plt.tight_layout()
     # plt.tight_layout(rect= [0, 0.03, 1, 0.95])
 
-    # plt.show()
-    plot_path = os.path.join(plot_folder_path,plot_name)
-    plt.savefig(plot_path)
+    plt.show()
+    # plot_path = os.path.join(plot_folder_path,plot_name)
+    # plt.savefig(plot_path)
 
     # Write Rows IDs to file
     ids_dict = world3_specific.standard_run_params_defaults.om_TheoParamSensitivity_params_dict
