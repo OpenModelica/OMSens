@@ -20,8 +20,9 @@ linthresh = 1.0 #Since the logarithm of values close to zero tends toward infini
 
 def main():
     base_path = filesystem.files_aux.makeOutputPath("heatmaps")
-    omTheoParamSens_1901_all_Heatmap(base_path)
+    # omTheoParamSens_1901_all_Heatmap(base_path)
     # omTheoParamSens_1901_onlyWorkPackage1ParamsAndVars_Heatmap(base_path)
+    asd(base_path)
 
 ### Special Heatmaps
 # All params and vars for 1901 sens
@@ -121,7 +122,7 @@ def readCSVMatrixAndPlotHeatmap(input_matrix_path,plot_folder_path,plot_title,co
 
     ### Sort indices by sum of absolute values:
       # Create a new column with the sum of the absolute values
-    data["abs_sum"] = data.apply(lambda x: sum([abs(x[col]) for col in data.columns]),axis=1)
+    data["abs_sum"] = data.apply(lambda x: sum([absForPossibleNaNs(x[col]) for col in data.columns]),axis=1)
       # Sort by that column and delete the column (both sort and drop return a new dataframe, so to minimize code lines i put them together)
     data = data.sort_values("abs_sum",ascending=False).drop("abs_sum",axis=1)
 
@@ -223,6 +224,11 @@ def readCSVMatrixAndPlotHeatmap(input_matrix_path,plot_folder_path,plot_title,co
     first_line_str = "Columns IDs:"
     columns_ids_references = os.path.join(plot_folder_path,"columns_ids.txt")
     writeIDsToFile(first_line_str,names_list,ids_dict,columns_ids_references)
+
+def absForPossibleNaNs(number):
+    abs_res = 0 if np.isnan(number) else abs(number)
+    return abs_res
+
 
 # FIRST EXECUTABLE CODE:
 if __name__ == "__main__":
