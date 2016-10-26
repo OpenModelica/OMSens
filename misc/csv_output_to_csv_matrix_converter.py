@@ -5,6 +5,8 @@ logger = logging.getLogger("--CSV output to CSV Matrix converter--") #un logger 
 
 # Mine
 import filesystem.files_aux
+def main():
+    assert False, "THIS MODULE HAS YET TO BE MADE A SCRIPT! For now, import from ipython and call the function from ipython"
 
 def W3TheoSensCSVToMatrixCSVFromYear(w3theosens_csv_file_path,output_matrix_path,year):
     # As we only use 2 rows of the whole file, it would be smarter to just get those lines instead of the whole file.
@@ -114,3 +116,7 @@ class DifferentInfluencedVariablesException(Exception):
     pass
 class InvalidYearException(Exception):
     pass
+
+# FIRST EXECUTABLE CODE:
+if __name__ == "__main__":
+    main()
