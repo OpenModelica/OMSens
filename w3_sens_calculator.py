@@ -30,8 +30,8 @@ def main():
     # simpleSensitivitiesCalculator(percentage=5,target_var="population",year_target=2100)
     # simpleSensitivitiesCalculator(percentage=10,target_var="population",year_target=2100)
 
-    allOfDifferentiableVariablesSensitivitiesCalculator(percentage=5,year_target=1901)
-    allOfDifferentiableVariablesSensitivitiesCalculator(percentage=5,year_target=2100)
+    allOfDifferentiableVariablesPlusExtraVarsSensitivitiesCalculator(percentage=5,year_target=1901)
+    allOfDifferentiableVariablesPlusExtraVarsSensitivitiesCalculator(percentage=5,year_target=2100)
     return 0
 
 ## Predefined sensitivities calculators
@@ -55,14 +55,14 @@ def simpleSensitivitiesCalculator(percentage,target_var,year_target):
     analysis.sensitivities_to_parameters_analysis_from_csv.analyzeSensitivitiesFromVariableToParametersFromCSVs(**analyze_csvs_kwargs)
     return 0
 
-def allOfDifferentiableVariablesSensitivitiesCalculator(percentage,year_target):
+def allOfDifferentiableVariablesPlusExtraVarsSensitivitiesCalculator(percentage,year_target):
     logger.info("Calculating empirical parameter sensitivities for percentage {perc}, for all of the differentiable variables in W3 and target year {year_target}".format(perc=percentage,year_target=year_target))
     output_folder_path = files_aux.makeOutputPath()
     perturbed_csvs_path_and_info_pairs = runModelicaSweepingAllOfW3Params(percentage,year_target,output_folder_path)
     logger.info("Finished running Modelica.")
     # Prepare arguments for "analyze csvs and compare the new value for the variable in the CSV with respect of its value in the standard run"
     ## Get the differentiable vars from World3, according to OpenModelica Sensitivity Analysis
-    differentiable_vars = list(world3_specific.standard_run_params_defaults.om_TheoParamSensitivity_differentiableVariables_dict.keys())  # transform to list because it's a instance of "dict_keys"
+    differentiable_vars = list(world3_specific.standard_run_params_defaults.om_TheoParamSensitivity_differentiableVariables_dict.keys()) +list(world3_specific.standard_run_params_defaults.om_TheoParamSensitivity_nonDiffVars_dict.keys()) # transform to list because it's a instance of "dict_keys"
     target_vars_list = differentiable_vars
     analyze_csvs_kwargs = {
         "perturbed_csvs_path_and_info_pairs": perturbed_csvs_path_and_info_pairs,

@@ -10,7 +10,6 @@ import os
 import world3_specific.standard_run_params_defaults
 import filesystem.files_aux
 
-linthresh = 1.0 #Since the logarithm of values close to zero tends toward infinity, a small range around zero needs to be mapped linearly. The parameter linthresh allows the user to specify the size of this range (-linthresh, linthresh). The size of this range in the colormap is set by linscale. When linscale == 1.0 (the default), the space used for the positive and negative halves of the linear range will be equal to one decade in the logarithmic range.
 
 def main():
     pass
@@ -18,9 +17,11 @@ def main():
 def readCSVMatrixAndPlotHeatmap(input_matrix_path,plot_folder_path,plot_title,columns_to_plot=False,rows_to_plot=False):
     linthresh = 1.0 #Since the logarithm of values close to zero tends toward infinity, a small range around zero needs to be mapped linearly. The parameter linthresh allows the user to specify the size of this range (-linthresh, linthresh). The size of this range in the colormap is set by linscale. When linscale == 1.0 (the default), the space used for the positive and negative halves of the linear range will be equal to one decade in the logarithmic range.
     # Start of code
+    vars_name_to_ID_dict, params_name_to_ID_dict = varsAndParamsNamesToIDsDicts()
+
     data = readCSVAndPreprocessData(input_matrix_path,columns_to_plot,rows_to_plot)
-    plotHeatmapFromData(data,plot_folder_path,plot_title,linthresh)
-    writeRowsAndColumnsIDs(data,plot_folder_path)
+    plotHeatmapFromData(data,plot_folder_path,plot_title,linthresh,vars_name_to_ID_dict,params_name_to_ID_dict)
+    writeRowsAndColumnsIDs(data,plot_folder_path,vars_name_to_ID_dict,params_name_to_ID_dict)
 
 # Aux:
 def readCSVAndPreprocessData(input_matrix_path,columns_to_plot,rows_to_plot):
@@ -34,10 +35,11 @@ def readCSVAndPreprocessData(input_matrix_path,columns_to_plot,rows_to_plot):
     # Sort by alphabetical order and/or sum of cells
     data = sortIndicesAndOrColumns(data)
     return data
-def plotHeatmapFromData(data,plot_folder_path,plot_title,linthresh):
+def plotHeatmapFromData(data,plot_folder_path,plot_title,linthresh,vars_name_to_ID_dict,params_name_to_ID_dict):
     ### Abbreviate parameters and vars to their IDs from world3_specific/(?).py so the info fits better in the heatmap
-    abbreviated_columns = abbreviateStringsUsingDict(data.columns,world3_specific.standard_run_params_defaults.om_TheoParamSensitivity_differentiableVariables_dict)
-    abbreviated_indices = abbreviateStringsUsingDict(data.index,world3_specific.standard_run_params_defaults.om_TheoParamSensitivity_params_dict)
+    # THere are many variables dicts (differentiable, not diferrentiable, differentiable extra, etc)
+    abbreviated_columns = abbreviateStringsUsingDict(data.columns,vars_name_to_ID_dict)
+    abbreviated_indices = abbreviateStringsUsingDict(data.index,params_name_to_ID_dict)
     min_of_all = data.min().min()   # the first min returns a series of all the mins. The second min returns the min of the mins
     max_of_all = data.max().max()   # the first max returns a series of all the maxs. The second max returns the max of the max
     ###### CONVERT TO NUMPY TO MASK INVALID DATA (COULND'T FIND OUT HOW TO MASK IN PANDAS)
@@ -61,20 +63,18 @@ def plotHeatmapFromData(data,plot_folder_path,plot_title,linthresh):
     postProcessingSettings(plot_title)
     saveAndClearPlot(plot_name,plot_folder_path)
 
-def writeRowsAndColumnsIDs(data,plot_folder_path):
+def writeRowsAndColumnsIDs(data,plot_folder_path,vars_name_to_ID_dict,params_name_to_ID_dict):
     # Write Rows IDs to file
-    ids_dict = world3_specific.standard_run_params_defaults.om_TheoParamSensitivity_params_dict
     names_list = data.index
     first_line_str = "Rows IDs:"
     rows_ids_references = os.path.join(plot_folder_path,"rows_ids.txt")
-    writeIDsToFile(first_line_str,names_list,ids_dict,rows_ids_references)
+    writeIDsToFile(first_line_str,names_list,params_name_to_ID_dict,rows_ids_references)
 
     # Write Columns IDs to file
-    ids_dict = world3_specific.standard_run_params_defaults.om_TheoParamSensitivity_differentiableVariables_dict
     names_list = data.columns
     first_line_str = "Columns IDs:"
     columns_ids_references = os.path.join(plot_folder_path,"columns_ids.txt")
-    writeIDsToFile(first_line_str,names_list,ids_dict,columns_ids_references)
+    writeIDsToFile(first_line_str,names_list,vars_name_to_ID_dict,columns_ids_references)
 # Function to rotate ticks labels and hide ticks
 def configurePlotTicks():
     # Rotate the ticks labels in the x and y axis
@@ -240,6 +240,16 @@ def logTickerToString(x,p):
         return "    0"
     else:
         return "%.0e" % x
+def varsAndParamsNamesToIDsDicts():
+    ### Variables dict
+    vars_dicts = [world3_specific.standard_run_params_defaults.om_TheoParamSensitivity_differentiableVariables_dict,world3_specific.standard_run_params_defaults.om_TheoParamSensitivity_nonDiffVars_dict,world3_specific.standard_run_params_defaults.om_TheoParamSensitivity_differentiableVariablesExtra_dict]
+    vars_name_to_ID_dict = {}
+    for d in vars_dicts:
+        for k, v in d.items():  # d.items() in Python 3+
+            vars_name_to_ID_dict[k] = v
+    # Params dict
+    params_name_to_ID_dict = world3_specific.standard_run_params_defaults.om_TheoParamSensitivity_params_dict
+    return vars_name_to_ID_dict, params_name_to_ID_dict
 
 # FIRST EXECUTABLE CODE:
 if __name__ == "__main__":
