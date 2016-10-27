@@ -238,7 +238,7 @@ def testHugoScolnikRuns():
       # ALSC= 17.1, Default: ALSC=20
       # SCOR= 1.05, Default: SCOR=1
 #   Perturbed rest of the params by a scalar of 0.24172080E-12 (not including FFW)
-#   Uses modified W3 version that has the births function from W3-v03 (corresponding to W3-Modelica) with the "old" births function from W3-v01 that included the parameter ffw. We call it "pseudo_ffw_param".
+#   We use a modified W3 version that replaces the births function from W3-v03 (corresponding to W3-Modelica) with the "old" births function from W3-v01 that included the parameter ffw. We call it "pseudo_ffw_param".
 #   Swept pseudo_ffw_param by 10% up and down with a granularity of 2% to include both Runs from paper in same plot
     perturbing_scalar = 0.24172080E-12
     percentage_to_perturb = perturbing_scalar*100
