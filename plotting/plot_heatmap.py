@@ -5,6 +5,8 @@ import pandas as pd
 import numpy as np
 import math
 import os
+import logging #en reemplazo de los prints
+logger = logging.getLogger("--Heatmap Plotter--") #un logger especifico para este modulo
 
 # Mine
 import world3_specific.standard_run_params_defaults
@@ -19,8 +21,11 @@ def readCSVMatrixAndPlotHeatmap(input_matrix_path,plot_folder_path,plot_title,co
     # Start of code
     vars_name_to_ID_dict, params_name_to_ID_dict = varsAndParamsNamesToIDsDicts()
 
+    logger.info("Reading matrix " +  input_matrix_path)
     data = readCSVAndPreprocessData(input_matrix_path,columns_to_plot,rows_to_plot)
+    logger.info("Plotting to path " + plot_folder_path)
     plotHeatmapFromData(data,plot_folder_path,plot_title,linthresh,vars_name_to_ID_dict,params_name_to_ID_dict)
+    logger.info("Writing rows and columns IDs ....")
     writeRowsAndColumnsIDs(data,plot_folder_path,vars_name_to_ID_dict,params_name_to_ID_dict)
 
 # Aux:

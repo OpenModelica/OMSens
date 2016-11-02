@@ -1,19 +1,27 @@
 #Standard
 import os
+import sys
+import logging #en reemplazo de los prints
+logger = logging.getLogger("--Heatmap Plotting script--") #un logger especifico para este modulo
 #Mine
 import filesystem.files_aux
 import plotting.plot_heatmap
 def main():
+    logging.basicConfig(stream=sys.stdout, level=logging.DEBUG) # to show logging info into STDOUT
     base_path = filesystem.files_aux.makeOutputPath("heatmaps")
     # Generate Theo Sens heatmaps:
+    # omTheoParamSens_1901_VanillaW3_all_heatmap(base_path)
     omTheoParamSens_1901_all_Heatmap(base_path)
-    omTheoParamSens_1901_onlyWorkPackage1ParamsAndVars_Heatmap(base_path)
-    # Generate Empirical heatmaps
-    omEmpiricalParamSens_newMinusStdDivStd_1901and2001_all_heatmap(base_path)
-    omEmpiricalParamSens_newMinusStdDivStd_1901and2100_onlyWorkPackage1ParamsAndVars_Heatmap(base_path)
-    omEmpiricalParamSens_rootMeanSquares_1901and2001_all_heatmap(base_path)
-    omEmpiricalParamSens_rootMeanSquares_1901and2100_onlyWorkPackage1ParamsAndVars_Heatmap(base_path)
-############## Special Heatmaps ######################3
+    # omTheoParamSens_1901_onlyWorkPackage1ParamsAndVars_Heatmap(base_path)
+    # # Generate Empirical heatmaps
+    # ## (new - std) /std
+    # omEmpiricalParamSens_newMinusStdDivStd_1901and2001_all_heatmap(base_path)
+    # omEmpiricalParamSens_newMinusStdDivStd_1901and2100_onlyWorkPackage1ParamsAndVars_Heatmap(base_path)
+    # ## RMS
+    # omEmpiricalParamSens_rootMeanSquares_1901and2001_all_heatmap(base_path)
+    # omEmpiricalParamSens_rootMeanSquares_1901and2100_onlyWorkPackage1ParamsAndVars_Heatmap(base_path)
+
+############## Predefined Heatmaps ######################3
 ###### EMPIRICAL SENS HEATMAPS ############
 ## (new-std)std for 1901 and 2100
 # All vars
@@ -55,6 +63,13 @@ def omEmpiricalParamSens_rootMeanSquares_1901and2100_onlyWorkPackage1ParamsAndVa
         plotting.plot_heatmap.readCSVMatrixAndPlotHeatmap(input_matrix_path,plot_folder_path,plot_title,columns_to_plot=workpackage1_vars,rows_to_plot=workpackage1_params)
 
 ###### THEO SENS HEATMAPS ############
+# Heatmap of all vars but using vanilla w3 instead of the version that includes a new state population variable
+def omTheoParamSens_1901_VanillaW3_all_heatmap(base_path):
+    input_matrix_path = "resource/paramVarSensMatrix/theoSens/1901/paramVarMatrix_TheoParamSens_1901_vanilla.csv"
+    plot_title = "OM Theo Param Sens 1901 Vanilla W3-Mod\nAll variables and parameters from IDAsens, NOT including extra differentiable population var"
+    plot_folder_path = os.path.join(base_path,"omTheoParamSens_1901_VanillaW3_all_heatmap")
+    os.makedirs(plot_folder_path)
+    plotting.plot_heatmap.readCSVMatrixAndPlotHeatmap(input_matrix_path,plot_folder_path,plot_title)
 # All params and vars for 1901 sens
 def omTheoParamSens_1901_all_Heatmap(base_path):
     input_matrix_path = "resource/paramVarSensMatrix/theoSens/1901/paramVarMatrix_TheoParamSens_1901_diffPopNewVar.csv"
