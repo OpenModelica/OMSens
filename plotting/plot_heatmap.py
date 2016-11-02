@@ -175,7 +175,7 @@ def sortIndicesAndOrColumns(data):
 def saveAndClearPlot(plot_name,plot_folder_path):
     # plt.show()
     plot_path = os.path.join(plot_folder_path,plot_name)
-    plt.savefig(plot_path)
+    plt.savefig(plot_path,bbox_inches='tight')
     plt.clf()
 
 def initializeFigAndAx(data,abbreviated_indices,abbreviated_columns):
@@ -191,7 +191,7 @@ def initializeFigAndAx(data,abbreviated_indices,abbreviated_columns):
     ax.patch.set(hatch='x', edgecolor='blue')
 
     # Format
-    fig.set_size_inches(8, 11)
+    fig.set_size_inches(9, 11)
 
     # put the major ticks at the middle of each cell
     ax.set_yticks(np.arange(data.shape[0]) + 0.5, minor=False)
@@ -230,7 +230,7 @@ def plotHeatmapInLinearScaleFromFigAxAndData(fig,ax,np_data,min_of_all,max_of_al
     cbar.ax.tick_params(labelsize=10)
 def postProcessingSettings(plot_title):
     # Plot title
-    plt.title(plot_title,y=1.05) # change y=... Because the inverted tick labels bug matplotlib and the title and the tick labels are superimposed
+    plt.title(plot_title,y=1.08) # change y=... Because the inverted tick labels bug matplotlib and the title and the tick labels are superimposed
 
     # Tight layout to maximize usage of space
     plt.tight_layout()
