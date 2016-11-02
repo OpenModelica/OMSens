@@ -29,16 +29,21 @@ buildModel(SystemDynamics.WorldDynamics.World3.Scenario_1, startTime=1900,stopTi
   system(cmd);
   getErrorString();
 
-//  Param name, param default, param val + or - 5
-//  industrial_capital_init,210000000000.0,199500000000.0
-//  p_land_yield_fact_1,1.0,0.95
-//  p_nr_res_use_fact_1,1.0,0.95
-//  reproductive_lifetime,30.0,28.5
-//  subsist_food_pc,230.0,218.5
-//  max_tot_fert_norm,12.0,12.600000000000001
-//  p_fioa_cons_const_1,0.43,0.4515
-//  p_ind_cap_out_ratio_1,3.0,3.1500000000000004
-//  p_serv_cap_out_ratio_1,1.0,1.05
-//  life_expect_norm,28.0,29.400000000000002
-//  des_compl_fam_size_norm,3.8,3.9899999999999998
-//  p_avg_life_ind_cap_1,14.0,13.299999999999999
+
+// +5%: 
+//  Param name, default value, perturbed value, description
+//  max_tot_fert_norm,12.0,12.60,"Normal maximal total fertility"
+//  p_fioa_cons_const_1,0.43,0.45,"Default fraction of industrial output allocated to consumption"
+//  p_ind_cap_out_ratio_1,3.0,3.15,"Default industrial capital output ratio"
+//  p_serv_cap_out_ratio_1,1.0,1.05,"Default fraction of service sector output ratio"
+//  life_expect_norm,28.0,29.40,"Normal life expectancy"
+//  des_compl_fam_size_norm,3.8,3.999,"Desired normal complete family size"
+
+// -5%: 
+//  Param name, default value, perturbed value, description
+//  industrial_capital_init,210000000000.0,199500000000.0,"Initial industrial investment"
+//  p_land_yield_fact_1,1.0,0.95,"Default land yield factor"
+//  p_nr_res_use_fact_1,1.0,0.95,"Default non-recoverable resource utilization factor"
+//  reproductive_lifetime,30.0,28.5,"Reproductive life time"
+//  subsist_food_pc,230.0,218.5,"Available per capita food"
+//  p_avg_life_ind_cap_1,14.0,13.29,"Default average life of industrial capital";
