@@ -196,7 +196,7 @@ def initializeFigAndAx(data,abbreviated_indices,abbreviated_columns):
     ax.patch.set(hatch='x', edgecolor='blue')
 
     # Format
-    fig.set_size_inches(9, 11)
+    fig.set_size_inches(10, 11)
 
     # put the major ticks at the middle of each cell
     ax.set_yticks(np.arange(data.shape[0]) + 0.5, minor=False)
