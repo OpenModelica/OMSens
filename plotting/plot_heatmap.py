@@ -226,7 +226,8 @@ def plotHeatmapInLogarithmicScaleFromFigAxAndData(fig,ax,np_data,min_of_all,max_
     # heatmap = ax.pcolor(np_data, cmap=plt.cm.Blues, norm=SymLogNorm(vmin=min_of_all, vmax=max_of_all,linthresh=linthresh))
     # heatmap = ax.pcolor(np_data,vmin=min_of_all, vmax=max_of_all,  norm=SymLogNorm(vmin=min_of_all, vmax=max_of_all,linthresh=linthresh))
     heatmap = ax.pcolor(np_data,  norm=SymLogNorm(vmin=min_of_all, vmax=max_of_all,linthresh=linthresh))
-    colorbar_ticks = exponentialRangeFromMinAndMax(min_of_all,max_of_all)
+    # The ticks of the colorbar are all powers of 10 and also the min and the max of the heatmap
+    colorbar_ticks = list(set(exponentialRangeFromMinAndMax(min_of_all,max_of_all) + [min_of_all,max_of_all])) # list(set(...)) so the duplicates are eliminated
     cbar = fig.colorbar(heatmap,ticks=colorbar_ticks,format=matplotlib.ticker.FuncFormatter(lambda x,p: logTickerToString(x,p))) # I create a lambda instead of just putting the function name so it's more explicit that it's a function and that it receives x and p
     # Change font size in color bar
     cbar.ax.tick_params(labelsize=10)
