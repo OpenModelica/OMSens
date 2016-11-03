@@ -45,11 +45,16 @@ def plotHeatmapFromData(data,plot_folder_path,plot_title,linthresh,vars_name_to_
     # THere are many variables dicts (differentiable, not diferrentiable, differentiable extra, etc)
     abbreviated_columns = abbreviateStringsUsingDict(data.columns,vars_name_to_ID_dict)
     abbreviated_indices = abbreviateStringsUsingDict(data.index,params_name_to_ID_dict)
-    min_of_all = data.min().min()   # the first min returns a series of all the mins. The second min returns the min of the mins
-    max_of_all = data.max().max()   # the first max returns a series of all the maxs. The second max returns the max of the max
+    # Pandas min and max
+    ## COMMENTED BECAUSE NUMPY HANDLES NaNs BETTER
+    # min_of_all = data.min().min()   # the first min returns a series of all the mins. The second min returns the min of the mins
+    # max_of_all = data.max().max()   # the first max returns a series of all the maxs. The second max returns the max of the max
     ###### CONVERT TO NUMPY TO MASK INVALID DATA (COULND'T FIND OUT HOW TO MASK IN PANDAS)
     np_data = data.as_matrix()
     np_data = np.ma.masked_invalid(np_data)
+    # Numpy's min and max
+    min_of_all = np.nanmin(np_data)
+    max_of_all = np.nanmax(np_data)
 
 
     ### Plot using logarithmic scale
@@ -228,8 +233,11 @@ def plotHeatmapInLogarithmicScaleFromFigAxAndData(fig,ax,np_data,min_of_all,max_
 
 def plotHeatmapInLinearScaleFromFigAxAndData(fig,ax,np_data,min_of_all,max_of_all):
     # Linear scale:
-    heatmap = ax.pcolor(np_data, vmin=np.nanmin(np_data), vmax=np.nanmax(np_data))
-    cbar = fig.colorbar(heatmap)
+    # BORRAR
+    heatmap = ax.pcolor(np_data)
+    increment = (max_of_all-min_of_all)/20  # 20 ticks
+    colorbar_ticks = [min_of_all+i*increment for i in range(0,21)] # range(0,21) because range doesn't include the upper limit in the range and we have 20 ticks
+    cbar = fig.colorbar(heatmap,ticks=colorbar_ticks)
 
     # Change font size in color bar
     cbar.ax.tick_params(labelsize=10)
