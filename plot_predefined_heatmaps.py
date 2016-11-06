@@ -12,22 +12,22 @@ def main():
     # Generate Theo Sens heatmaps:
     ## Vanilla
     omTheoParamSens_1901_VanillaW3_onlyParamsThatHaveInfluenceIn1901_heatmap(base_path)
-    omTheoParamSens_1901_VanillaW3_onlyParamsThatHaveNoInfluenceIn1901_heatmap(base_path)
-    omTheoParamSens_1901_VanillaW3_all_heatmap(base_path)
+    # omTheoParamSens_1901_VanillaW3_onlyParamsThatHaveNoInfluenceIn1901_heatmap(base_path)
+    # omTheoParamSens_1901_VanillaW3_all_heatmap(base_path)
     ## Population state var new
     omTheoParamSens_1901_PopStateVarNew_onlyParamsThatHaveInfluenceIn1901_heatmap(base_path)
-    omTheoParamSens_1901_PopStateVarNew_onlyParamsThatHaveNoInfluenceIn1901_heatmap(base_path)
-    omTheoParamSens_1901_all_Heatmap(base_path)
-    omTheoParamSens_1901_onlyWorkPackage1ParamsAndVars_Heatmap(base_path)
+    # omTheoParamSens_1901_PopStateVarNew_onlyParamsThatHaveNoInfluenceIn1901_heatmap(base_path)
+    # omTheoParamSens_1901_PopStateVarNew_all_Heatmap(base_path)
+    # omTheoParamSens_1901_PopStateVarNew_onlyWorkPackage1ParamsAndVars_Heatmap(base_path)
     # Generate Empirical heatmaps
     ## (new - std) /std
     omEmpiricalParamSens_newMinusStdDivStd_1901and2001_influencersAndNoninfluencers_heatmap(base_path)
-    omEmpiricalParamSens_newMinusStdDivStd_1901and2001_all_heatmap(base_path)
-    omEmpiricalParamSens_newMinusStdDivStd_1901and2100_onlyWorkPackage1ParamsAndVars_Heatmap(base_path)
+    # omEmpiricalParamSens_newMinusStdDivStd_1901and2001_all_heatmap(base_path)
+    # omEmpiricalParamSens_newMinusStdDivStd_1901and2100_onlyWorkPackage1ParamsAndVars_Heatmap(base_path)
     ## RMS
     omEmpiricalParamSens_rootMeanSquares_1901and2001_influencersAndNoninfluencers_heatmap(base_path)
-    omEmpiricalParamSens_rootMeanSquares_1901and2001_all_heatmap(base_path)
-    omEmpiricalParamSens_rootMeanSquares_1901and2100_onlyWorkPackage1ParamsAndVars_Heatmap(base_path)
+    # omEmpiricalParamSens_rootMeanSquares_1901and2001_all_heatmap(base_path)
+    # omEmpiricalParamSens_rootMeanSquares_1901and2100_onlyWorkPackage1ParamsAndVars_Heatmap(base_path)
 
 ############## Predefined Heatmaps ######################3
 ###### EMPIRICAL SENS HEATMAPS ############
@@ -179,7 +179,7 @@ def omTheoParamSens_1901_PopStateVarNew_onlyParamsThatHaveNoInfluenceIn1901_heat
     os.makedirs(plot_folder_path)
     plotting.plot_heatmap.readCSVMatrixAndPlotHeatmap(input_matrix_path,plot_folder_path,plot_title,rows_to_plot=nonInfluencers_params)
 # All params and vars for 1901 sens
-def omTheoParamSens_1901_all_Heatmap(base_path):
+def omTheoParamSens_1901_PopStateVarNew_all_Heatmap(base_path):
     input_matrix_path = "resource/paramVarSensMatrix/theoSens/1901/paramVarMatrix_TheoParamSens_1901_diffPopNewVar.csv"
     plot_title = "OpenModelica Theoretical Parameter Sensitivity for 1901 for Population New State Var World3-Modelica\nAll variables and parameters from Sensitivity Analysis, including new differentiable population var"
     plot_folder_path = os.path.join(base_path,"omTheoParamSens_1901_all_Heatmap")
@@ -187,7 +187,7 @@ def omTheoParamSens_1901_all_Heatmap(base_path):
     plotting.plot_heatmap.readCSVMatrixAndPlotHeatmap(input_matrix_path,plot_folder_path,plot_title)
 
 # Workpackage1 params and vars for 1901 sens
-def omTheoParamSens_1901_onlyWorkPackage1ParamsAndVars_Heatmap(base_path):
+def omTheoParamSens_1901_PopStateVarNew_onlyWorkPackage1ParamsAndVars_Heatmap(base_path):
     workpackage1_params = ["agr_mtl_toxic_index", "assim_half_life_1970", "ind_mtl_emiss_fact", "ind_mtl_toxic_index", "life_expect_norm", "p_avg_life_agr_inp_2", "p_avg_life_ind_cap_1", "p_fr_cap_al_obt_res_2[3]", "p_fr_cap_al_obt_res_2[4]"]
     workpackage1_vars = [ "Arable_Land_Dynamics1.Arable_Land.Integrator1.y", "Arable_Land_Dynamics1.Pot_Arable_Land.Integrator1.y", "Food_Production1.Agr_Inp.Integrator1.y"]
     input_matrix_path = "resource/paramVarSensMatrix/theoSens/1901/paramVarMatrix_TheoParamSens_1901_diffPopNewVar.csv"
