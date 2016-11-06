@@ -100,6 +100,7 @@ def runModelicaSweepingAllOfW3Params(percentage,year_target,output_folder_path):
         "startTime": 1900 ,# DONT CHANGE! W3-Modelica can't be started on an arbitrary year
         "stopTime": year_target  ,# year to calculate sensitivities from target_vars to parameters
         "scens_to_run" : [1], #The standard run corresponds to the first scenario
+        # "mo_file" : vanilla_SysDyn_mo_path, # w3-mod with no modification
         "mo_file" : piecewiseMod_SysDyn_mo_path, # mo that interpolates outwards with values that lie outside of range
         # "mo_file" : populationTankNewVar_SysDyn_mo_path, # mo that has a differentiable population variable added by us and that includes the changes from piecewise function modified
         "parameters_to_perturbate_tuples": parameters_to_perturbate_tuples,
