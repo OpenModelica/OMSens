@@ -26,7 +26,8 @@ Run3vermeulenAndJongh_SysDyn_mo_path= world3_settings._sys_dyn_package_v_and_j_r
 
 def main():
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
-    simpleSensitivitiesCalculator(percentage=2,target_var="population",year_target=2100)
+    simpleSensitivitiesCalculator(percentage=5,target_var="Human_Fertility1.Fert_Cont_Facil_PC.Smooth1.Integrator1.y",year_target=2100)
+    # simpleSensitivitiesCalculator(percentage=2,target_var="population",year_target=2100)
     # simpleSensitivitiesCalculator(percentage=5,target_var="population",year_target=2100)
     # simpleSensitivitiesCalculator(percentage=10,target_var="population",year_target=2100)
 
