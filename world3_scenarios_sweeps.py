@@ -37,7 +37,9 @@ def main():
     # testPolicyYears()
     # testDeltaNRResources()
     # testFertility2()
-    # standardRun()
+    standardRun(vanilla_SysDyn_mo_path)
+    standardRun(piecewiseMod_SysDyn_mo_path)
+    standardRun(populationTankNewVar_SysDyn_mo_path)
 # The vermeulen tests need a modified SystemDynamics .mo!
     # testVermeulenAndJonghRun2() #Run1 is Meadows' std run
     # testVermeulenAndJonghRun3()
@@ -55,7 +57,7 @@ def main():
     # testDeltaICOR()
     # testDeltaPseudoFFWParam()
 #### WORK PACKAGE 2 ####
-    testHugoScolnikRuns()
+    # testHugoScolnikRuns()
 
 ## Predefined tests
 def testDeltaPseudoFFWParam():
@@ -186,9 +188,9 @@ def testVermeulenAndJonghRun3():
 
     setUpSweepsAndRun(**kwargs)
 
-def standardRun(): #ONLY TO GET THE STANDARD CSV!
+def standardRun(mo_file): #ONLY TO GET THE STANDARD CSV!
     kwargs = {
-    "plot_vars":["population","Population_Dynamics1pop_state_var_new"],
+    "plot_vars":["population"],
     "startTime": 1900 ,# year to start the simulation (1900 example)
     "stopTime": 2500  ,# year to end the simulation (2100 for example)
     "scens_to_run" : [1], #The standard run corresponds to the first scenario
@@ -196,7 +198,7 @@ def standardRun(): #ONLY TO GET THE STANDARD CSV!
     "sweep_vars": [] ,#No sweeping done in std run
     "sweep_value_formula_str" : "i" ,#irrelevant formula (no sweeping)
     "fixed_params" : [], #We don't want to change any parameters
-    "mo_file" : vanilla_SysDyn_mo_path, # Mo without modifications
+    "mo_file" : mo_file,
     "plot_std_run": False, #Choose to plot std run alognside this test results
     }
     setUpSweepsAndRun(**kwargs)
