@@ -55,12 +55,19 @@ def plotHeatmapFromData(data,plot_folder_path,plot_title,linthresh,vars_name_to_
     # Numpy's min and max
     min_of_all = np.nanmin(np_data)
     max_of_all = np.nanmax(np_data)
+    # Calculate the upper and lower limits in the colorbar. This is to make both equals and in that way the middle of the colorbar, where the white color is located, is set to the value 0
+    if max_of_all > abs(min_of_all):
+        colorbar_limit_max = max_of_all
+        colorbar_limit_min = -max_of_all
+    else:
+        colorbar_limit_max = abs(min_of_all)
+        colorbar_limit_min = min_of_all
 
 
     ### Plot using logarithmic scale
     plot_name ="heatmap_logscale.png"
     fig,ax = initializeFigAndAx(data,abbreviated_indices,abbreviated_columns)
-    plotHeatmapInLogarithmicScaleFromFigAxAndData(fig,ax,np_data,min_of_all,max_of_all,linthresh)
+    plotHeatmapInLogarithmicScaleFromFigAxAndData(fig,ax,np_data,colorbar_limit_min,colorbar_limit_max,linthresh)
     configurePlotTicks()
     postProcessingSettings(plot_title)
     saveAndClearPlot(plot_name,plot_folder_path)
@@ -68,7 +75,7 @@ def plotHeatmapFromData(data,plot_folder_path,plot_title,linthresh,vars_name_to_
     ### Plot using linear scale
     plot_name ="heatmap_linscale.png"
     fig,ax = initializeFigAndAx(data,abbreviated_indices,abbreviated_columns)
-    plotHeatmapInLinearScaleFromFigAxAndData(fig,ax,np_data,min_of_all,max_of_all)
+    plotHeatmapInLinearScaleFromFigAxAndData(fig,ax,np_data,colorbar_limit_min,colorbar_limit_max)
     configurePlotTicks()
     postProcessingSettings(plot_title)
     saveAndClearPlot(plot_name,plot_folder_path)
@@ -221,23 +228,33 @@ def initializeFigAndAx(data,abbreviated_indices,abbreviated_columns):
 
     ax.grid(False)
     return fig,ax
-def plotHeatmapInLogarithmicScaleFromFigAxAndData(fig,ax,np_data,min_of_all,max_of_all,linthresh):
+def plotHeatmapInLogarithmicScaleFromFigAxAndData(fig,ax,np_data,colorbar_limit_min,colorbar_limit_max,linthresh):
     # Logarithmic scale
-    # heatmap = ax.pcolor(np_data, cmap=plt.cm.Blues, norm=SymLogNorm(vmin=min_of_all, vmax=max_of_all,linthresh=linthresh))
-    # heatmap = ax.pcolor(np_data,vmin=min_of_all, vmax=max_of_all,  norm=SymLogNorm(vmin=min_of_all, vmax=max_of_all,linthresh=linthresh))
-    heatmap = ax.pcolor(np_data,  norm=SymLogNorm(vmin=min_of_all, vmax=max_of_all,linthresh=linthresh))
+    # heatmap = ax.pcolor(np_data, cmap=plt.cm.Blues, norm=SymLogNorm(vmin=colorbar_limit_min, vmax=colorbar_limit_max,linthresh=linthresh))
+    # heatmap = ax.pcolor(np_data,vmin=colorbar_limit_min, vmax=colorbar_limit_max,  norm=SymLogNorm(vmin=colorbar_limit_min, vmax=colorbar_limit_max,linthresh=linthresh))
+    # heatmap = ax.pcolor(np_data, cmap=plt.cm.Blues, norm=SymLogNorm(vmin=colorbar_limit_min, vmax=colorbar_limit_max,linthresh=linthresh))
+    # heatmap = ax.pcolor(np_data, cmap=plt.cm.seismic, norm=SymLogNorm(vmin=colorbar_limit_min, vmax=colorbar_limit_max,linthresh=linthresh))
+    heatmap = ax.pcolor(np_data, cmap=plt.cm.bwr, norm=SymLogNorm(vmin=colorbar_limit_min, vmax=colorbar_limit_max,linthresh=linthresh))
+    # heatmap = ax.pcolor(np_data,  norm=SymLogNorm(vmin=colorbar_limit_min, vmax=colorbar_limit_max,linthresh=linthresh))
     # The ticks of the colorbar are all powers of 10 and also the min and the max of the heatmap
-    colorbar_ticks = list(set(exponentialRangeFromMinAndMax(min_of_all,max_of_all) + [min_of_all,max_of_all])) # list(set(...)) so the duplicates are eliminated
+    colorbar_ticks = list(set(exponentialRangeFromMinAndMax(colorbar_limit_min,colorbar_limit_max) + [colorbar_limit_min,colorbar_limit_max])) # list(set(...)) so the duplicates are eliminated
     cbar = fig.colorbar(heatmap,ticks=colorbar_ticks,format=matplotlib.ticker.FuncFormatter(lambda x,p: logTickerToString(x,p))) # I create a lambda instead of just putting the function name so it's more explicit that it's a function and that it receives x and p
     # Change font size in color bar
     cbar.ax.tick_params(labelsize=10)
 
-def plotHeatmapInLinearScaleFromFigAxAndData(fig,ax,np_data,min_of_all,max_of_all):
+def plotHeatmapInLinearScaleFromFigAxAndData(fig,ax,np_data,colorbar_limit_min,colorbar_limit_max):
     # Linear scale:
     # BORRAR
-    heatmap = ax.pcolor(np_data)
-    increment = (max_of_all-min_of_all)/20  # 20 ticks
-    colorbar_ticks = [min_of_all+i*increment for i in range(0,21)] # range(0,21) because range doesn't include the upper limit in the range and we have 20 ticks
+    # heatmap = ax.pcolor(np_data)
+    heatmap = ax.pcolor(np_data, cmap=plt.cm.bwr,vmin=colorbar_limit_min,vmax=colorbar_limit_max)
+    # increment = (colorbar_limit_max-colorbar_limit_min)/20  # 20 ticks
+    increment = (colorbar_limit_max-colorbar_limit_min)/20  # 20 ticks
+    # colorbar_ticks = [colorbar_limit_min+i*increment for i in range(0,21)] # range(0,21) because range doesn't include the upper limit in the range and we have 20 ticks
+    colorbar_ticks = [colorbar_limit_min+i*increment for i in range(0,21)] # range(0,21) because range doesn't include the upper limit in the range and we have 20 ticks
+    # if colorbar_limit_min < 0 and 0 < colorbar_limit_max:
+    #     colorbar_ticks = list(set(colorbar_ticks+[0]))   # list(set(...)) so the duplicates are eliminated
+
+
     cbar = fig.colorbar(heatmap,ticks=colorbar_ticks)
 
     # Change font size in color bar
