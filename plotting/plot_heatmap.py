@@ -56,12 +56,7 @@ def plotHeatmapFromData(data,plot_folder_path,plot_title,linthresh,vars_name_to_
     min_of_all = np.nanmin(np_data)
     max_of_all = np.nanmax(np_data)
     # Calculate the upper and lower limits in the colorbar. This is to make both equals and in that way the middle of the colorbar, where the white color is located, is set to the value 0
-    if max_of_all > abs(min_of_all):
-        colorbar_limit_max = max_of_all
-        colorbar_limit_min = -max_of_all
-    else:
-        colorbar_limit_max = abs(min_of_all)
-        colorbar_limit_min = min_of_all
+    colorbar_limit_min, colorbar_limit_max = colorbarLimitsFromMinAndMax(min_of_all,max_of_all)
 
 
     ### Plot using logarithmic scale
@@ -281,6 +276,15 @@ def varsAndParamsNamesToIDsDicts():
     # Params dict
     params_name_to_ID_dict = world3_specific.standard_run_params_defaults.om_TheoParamSensitivity_params_dict
     return vars_name_to_ID_dict, params_name_to_ID_dict
+def colorbarLimitsFromMinAndMax(min_of_all,max_of_all):
+    if max_of_all > abs(min_of_all):
+        colorbar_limit_max = max_of_all
+        colorbar_limit_min = -max_of_all
+    else:
+        colorbar_limit_max = abs(min_of_all)
+        colorbar_limit_min = min_of_all
+    return colorbar_limit_min, colorbar_limit_max
+
 
 # FIRST EXECUTABLE CODE:
 if __name__ == "__main__":
