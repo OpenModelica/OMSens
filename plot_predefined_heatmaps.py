@@ -11,7 +11,7 @@ def main():
     base_path = filesystem.files_aux.makeOutputPath("heatmaps")
     # Generate Theo Sens heatmaps:
     ## Vanilla
-    omTheoParamSens_1901_VanillaW3_onlyParamsThatHaveInfluenceIn1901_heatmap(base_path)
+    # omTheoParamSens_1901_VanillaW3_onlyParamsThatHaveInfluenceIn1901_heatmap(base_path)
     # omTheoParamSens_1901_VanillaW3_onlyParamsThatHaveNoInfluenceIn1901_heatmap(base_path)
     # omTheoParamSens_1901_VanillaW3_all_heatmap(base_path)
     ## Population state var new
@@ -21,11 +21,11 @@ def main():
     # omTheoParamSens_1901_PopStateVarNew_onlyWorkPackage1ParamsAndVars_Heatmap(base_path)
     # Generate Empirical heatmaps
     ## (new - std) /std
-    omEmpiricalParamSens_newMinusStdDivStd_1901and2001_influencersAndNoninfluencers_heatmap(base_path)
+    omEmpiricalParamSens_newMinusStdDivStd_1901and2001_influencers_heatmap(base_path)
     # omEmpiricalParamSens_newMinusStdDivStd_1901and2001_all_heatmap(base_path)
     # omEmpiricalParamSens_newMinusStdDivStd_1901and2100_onlyWorkPackage1ParamsAndVars_Heatmap(base_path)
     ## RMS
-    omEmpiricalParamSens_rootMeanSquares_1901and2001_influencersAndNoninfluencers_heatmap(base_path)
+    omEmpiricalParamSens_rootMeanSquares_1901and2001_influencers_heatmap(base_path)
     # omEmpiricalParamSens_rootMeanSquares_1901and2001_all_heatmap(base_path)
     # omEmpiricalParamSens_rootMeanSquares_1901and2100_onlyWorkPackage1ParamsAndVars_Heatmap(base_path)
 
@@ -33,7 +33,7 @@ def main():
 ###### EMPIRICAL SENS HEATMAPS ############
 ## (new-std)std for 1901 and 2100
 # Only noninfluencers for 1901 and 2100
-def omEmpiricalParamSens_newMinusStdDivStd_1901and2001_influencersAndNoninfluencers_heatmap(base_path):
+def omEmpiricalParamSens_newMinusStdDivStd_1901and2001_influencers_heatmap(base_path):
     # Only one parameter difference between influencers1901 and influencers2100
     influencer_2100_butNot1901_newMinusStdDivStd = ['des_compl_fam_size_norm']
     # First initialize the self contained lists and then add the conflicting parameter to the corresponding lists
@@ -60,10 +60,10 @@ def omEmpiricalParamSens_newMinusStdDivStd_1901and2001_influencersAndNoninfluenc
         os.makedirs(plot_folder_path)
         plotting.plot_heatmap.readCSVMatrixAndPlotHeatmap(input_matrix_path,plot_folder_path,plot_title,rows_to_plot=influencers)
         # Plot noninfluencers
-        plot_title = "Empirical Parameter Sensitivity for "+year+" for World3-Modelica\nSensitivity calculated using (std-new)/new formula for the year "+year+". Only parameters that have NO effect"
-        plot_folder_path = os.path.join(base_path,"omEmpiricalParamSens_newMinusStdDivStd_"+year+"_onlyNonnfluencers_heatmap")
-        os.makedirs(plot_folder_path)
-        plotting.plot_heatmap.readCSVMatrixAndPlotHeatmap(input_matrix_path,plot_folder_path,plot_title,rows_to_plot=noninfluencers)
+        # plot_title = "Empirical Parameter Sensitivity for "+year+" for World3-Modelica\nSensitivity calculated using (std-new)/new formula for the year "+year+". Only parameters that have NO effect"
+        # plot_folder_path = os.path.join(base_path,"omEmpiricalParamSens_newMinusStdDivStd_"+year+"_onlyNonnfluencers_heatmap")
+        # os.makedirs(plot_folder_path)
+        # plotting.plot_heatmap.readCSVMatrixAndPlotHeatmap(input_matrix_path,plot_folder_path,plot_title,rows_to_plot=noninfluencers)
 # All vars
 def omEmpiricalParamSens_newMinusStdDivStd_1901and2001_all_heatmap(base_path):
     for year in ["1901","2100"]:
@@ -84,7 +84,7 @@ def omEmpiricalParamSens_newMinusStdDivStd_1901and2100_onlyWorkPackage1ParamsAnd
         plotting.plot_heatmap.readCSVMatrixAndPlotHeatmap(input_matrix_path,plot_folder_path,plot_title,columns_to_plot=workpackage1_vars,rows_to_plot=workpackage1_params)
 ## Root mean squares for 1901 and 2100
 # Only noninfluencers for 1901 and 2100
-def omEmpiricalParamSens_rootMeanSquares_1901and2001_influencersAndNoninfluencers_heatmap(base_path):
+def omEmpiricalParamSens_rootMeanSquares_1901and2001_influencers_heatmap(base_path):
     # Parameters differences between influencers in 1901 and 2100 ( all of the ones in 1901 included in 2100)
     # influencers_2100_butNot1901_rms = ['p_fioa_cons_const_1', 'p_ind_cap_out_ratio_1', 'p_avg_life_ind_cap_1', 'life_expect_norm', 'reproductive_lifetime', 'p_serv_cap_out_ratio_1', 'land_fr_harvested', 'inherent_land_fert', 'p_land_yield_fact_1', 'des_compl_fam_size_norm', 'subsist_food_pc', 'max_tot_fert_norm', 'p_nr_res_use_fact_1', 'p_avg_life_serv_cap_1', 'pot_arable_land_tot', 'processing_loss', 'lifet_perc_del', 'income_expect_avg_time', 'p_ppoll_gen_fact_1', 'avg_life_land_norm', 'assim_half_life_1970', 'ppoll_in_1970', 'p_avg_life_agr_inp_1', 'social_discount', 'social_adj_del', 'ind_mtl_toxic_index', 'ind_mtl_emiss_fact', 'frac_res_pers_mtl', 'agr_mtl_toxic_index', 'fr_agr_inp_pers_mtl', 'ppoll_trans_del', 'hlth_serv_impact_del', 'labor_force_partic', 'urb_ind_land_dev_time', 'food_short_perc_del', 'labor_util_fr_del_time', 'tech_dev_del_TDD']
     # 1901
@@ -113,10 +113,10 @@ def omEmpiricalParamSens_rootMeanSquares_1901and2001_influencersAndNoninfluencer
         os.makedirs(plot_folder_path)
         plotting.plot_heatmap.readCSVMatrixAndPlotHeatmap(input_matrix_path,plot_folder_path,plot_title,rows_to_plot=influencers)
         # Plot noninfluencers
-        plot_title = "Empirical Parameter Sensitivity for "+year+" for World3-Modelica\nSensitivity calculated using Root Mean Square formula for the year "+year+". Only parameters that have NO effect"
-        plot_folder_path = os.path.join(base_path,"omEmpiricalParamSens_rootMeanSquares_"+year+"_onlyNonnfluencers_heatmap")
-        os.makedirs(plot_folder_path)
-        plotting.plot_heatmap.readCSVMatrixAndPlotHeatmap(input_matrix_path,plot_folder_path,plot_title,rows_to_plot=noninfluencers)
+        # plot_title = "Empirical Parameter Sensitivity for "+year+" for World3-Modelica\nSensitivity calculated using Root Mean Square formula for the year "+year+". Only parameters that have NO effect"
+        # plot_folder_path = os.path.join(base_path,"omEmpiricalParamSens_rootMeanSquares_"+year+"_onlyNonnfluencers_heatmap")
+        # os.makedirs(plot_folder_path)
+        # plotting.plot_heatmap.readCSVMatrixAndPlotHeatmap(input_matrix_path,plot_folder_path,plot_title,rows_to_plot=noninfluencers)
 # All vars
 def omEmpiricalParamSens_rootMeanSquares_1901and2001_all_heatmap(base_path):
     for year in ["1901","2100"]:
