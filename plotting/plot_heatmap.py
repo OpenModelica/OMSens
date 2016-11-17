@@ -277,12 +277,16 @@ def varsAndParamsNamesToIDsDicts():
     params_name_to_ID_dict = world3_specific.standard_run_params_defaults.om_TheoParamSensitivity_params_dict
     return vars_name_to_ID_dict, params_name_to_ID_dict
 def colorbarLimitsFromMinAndMax(min_of_all,max_of_all):
+    # Match the colorbar limits to the max of the absolute value of them
     if max_of_all > abs(min_of_all):
         colorbar_limit_max = max_of_all
         colorbar_limit_min = -max_of_all
     else:
         colorbar_limit_max = abs(min_of_all)
         colorbar_limit_min = min_of_all
+    # Set the colorbar limit min to 0 if there are no negative numbers
+    if min_of_all >= 0:
+        colorbar_limit_min = 0
     return colorbar_limit_min, colorbar_limit_max
 
 
