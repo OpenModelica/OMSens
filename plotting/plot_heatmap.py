@@ -281,15 +281,20 @@ def colorbarLimitsFromMinAndMax(min_of_all,max_of_all):
         colorbar_limit_min = 0
     return colorbar_limit_min, colorbar_limit_max
 def chooseColormapFromMin(min_of_all):
+    values = 80 # how many colors (we remove a few
     if min_of_all >= 0:
         # The following is to get the default colormap and manually set white as it starting value for 0
-        values = 15
         reds_cm = matplotlib.cm.get_cmap("Reds", values) #generate a predefined map with amount of  values
         red_vals = reds_cm(np.arange(values)) #extract those values as an array
-        red_vals[0] = [1, 1, 1, 1] #change the first value
+        red_vals = red_vals[int(values/3):] #remove the first 1/3 values so the transition from white to light red is closer to 0
+        red_vals = np.insert(red_vals,0,[1,1,1,1],axis=0)  # prepend to the list
         colormap = matplotlib.colors.LinearSegmentedColormap.from_list("newReds", red_vals) 
     else:
-        colormap =plt.cm.bwr
+        # The following is to get the default colormap and manually set white as it starting value for 0
+        reds_cm = matplotlib.cm.get_cmap("bwr", values) #generate a predefined map with amount of  values
+        red_vals = reds_cm(np.arange(values)) #extract those values as an array
+        red_vals = np.concatenate((np.concatenate((red_vals[0:math.ceil(4*values/10)],[[1,1,1,1]]),axis=0),red_vals[math.floor(6*values/10):]),axis=0) #remove 1/10 values from the middle and put a white in there
+        colormap = matplotlib.colors.LinearSegmentedColormap.from_list("newReds", red_vals) 
     return colormap
 
 
