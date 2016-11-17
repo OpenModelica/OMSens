@@ -61,12 +61,12 @@ def plotHeatmapFromData(data,plot_folder_path,plot_title,linthresh,vars_name_to_
     # Choose  the color scheme:
     #    . "blue-white-red"     if there are negative numbers
     #    . "white-red"   if there are NO negative numbers
-    colorscheme = chooseCholorSchemeFromMin(min_of_all)
+    colormap = chooseColormapFromMin(min_of_all)
 
     ### Plot using logarithmic scale
     plot_name ="heatmap_logscale.png"
     fig,ax = initializeFigAndAx(data,abbreviated_indices,abbreviated_columns)
-    plotHeatmapInLogarithmicScaleFromFigAxAndData(fig,ax,np_data,colorbar_limit_min,colorbar_limit_max,linthresh,colorscheme)
+    plotHeatmapInLogarithmicScaleFromFigAxAndData(fig,ax,np_data,colorbar_limit_min,colorbar_limit_max,linthresh,colormap)
     configurePlotTicks()
     postProcessingSettings(plot_title)
     saveAndClearPlot(plot_name,plot_folder_path)
@@ -74,7 +74,7 @@ def plotHeatmapFromData(data,plot_folder_path,plot_title,linthresh,vars_name_to_
     ### Plot using linear scale
     plot_name ="heatmap_linscale.png"
     fig,ax = initializeFigAndAx(data,abbreviated_indices,abbreviated_columns)
-    plotHeatmapInLinearScaleFromFigAxAndData(fig,ax,np_data,colorbar_limit_min,colorbar_limit_max,colorscheme)
+    plotHeatmapInLinearScaleFromFigAxAndData(fig,ax,np_data,colorbar_limit_min,colorbar_limit_max,colormap)
     configurePlotTicks()
     postProcessingSettings(plot_title)
     saveAndClearPlot(plot_name,plot_folder_path)
@@ -192,6 +192,7 @@ def saveAndClearPlot(plot_name,plot_folder_path):
     # plt.show()
     plot_path = os.path.join(plot_folder_path,plot_name)
     plt.savefig(plot_path,bbox_inches='tight')
+
     plt.clf()
 
 def initializeFigAndAx(data,abbreviated_indices,abbreviated_columns):
@@ -227,9 +228,9 @@ def initializeFigAndAx(data,abbreviated_indices,abbreviated_columns):
 
     ax.grid(False)
     return fig,ax
-def plotHeatmapInLogarithmicScaleFromFigAxAndData(fig,ax,np_data,colorbar_limit_min,colorbar_limit_max,linthresh,colorscheme):
+def plotHeatmapInLogarithmicScaleFromFigAxAndData(fig,ax,np_data,colorbar_limit_min,colorbar_limit_max,linthresh,colormap):
     # Logarithmic scale
-    heatmap = ax.pcolor(np_data, cmap=colorscheme, norm=SymLogNorm(vmin=colorbar_limit_min, vmax=colorbar_limit_max,linthresh=linthresh))
+    heatmap = ax.pcolor(np_data, cmap=colormap, norm=SymLogNorm(vmin=colorbar_limit_min, vmax=colorbar_limit_max,linthresh=linthresh))
     # heatmap = ax.pcolor(np_data,  norm=SymLogNorm(vmin=colorbar_limit_min, vmax=colorbar_limit_max,linthresh=linthresh))
     # The ticks of the colorbar are all powers of 10 and also the min and the max of the heatmap
     colorbar_ticks = list(set(exponentialRangeFromMinAndMax(colorbar_limit_min,colorbar_limit_max) + [colorbar_limit_min,colorbar_limit_max])) # list(set(...)) so the duplicates are eliminated
@@ -237,9 +238,9 @@ def plotHeatmapInLogarithmicScaleFromFigAxAndData(fig,ax,np_data,colorbar_limit_
     # Change font size in color bar
     cbar.ax.tick_params(labelsize=10)
 
-def plotHeatmapInLinearScaleFromFigAxAndData(fig,ax,np_data,colorbar_limit_min,colorbar_limit_max,colorscheme):
+def plotHeatmapInLinearScaleFromFigAxAndData(fig,ax,np_data,colorbar_limit_min,colorbar_limit_max,colormap):
     # Linear scale:
-    heatmap = ax.pcolor(np_data, cmap=colorscheme,vmin=colorbar_limit_min,vmax=colorbar_limit_max)
+    heatmap = ax.pcolor(np_data, cmap=colormap,vmin=colorbar_limit_min,vmax=colorbar_limit_max)
     increment = (colorbar_limit_max-colorbar_limit_min)/20  # 20 ticks
     colorbar_ticks = [colorbar_limit_min+i*increment for i in range(0,21)] # range(0,21) because range doesn't include the upper limit in the range and we have 20 ticks
     cbar = fig.colorbar(heatmap,ticks=colorbar_ticks)
@@ -279,12 +280,17 @@ def colorbarLimitsFromMinAndMax(min_of_all,max_of_all):
     if min_of_all >= 0:
         colorbar_limit_min = 0
     return colorbar_limit_min, colorbar_limit_max
-def chooseCholorSchemeFromMin(min_of_all):
+def chooseColormapFromMin(min_of_all):
     if min_of_all >= 0:
-        colorscheme =plt.cm.Reds
+        # The following is to get the default colormap and manually set white as it starting value for 0
+        values = 15
+        reds_cm = matplotlib.cm.get_cmap("Reds", values) #generate a predefined map with amount of  values
+        red_vals = reds_cm(np.arange(values)) #extract those values as an array
+        red_vals[0] = [1, 1, 1, 1] #change the first value
+        colormap = matplotlib.colors.LinearSegmentedColormap.from_list("newReds", red_vals) 
     else:
-        colorscheme =plt.cm.bwr
-    return colorscheme
+        colormap =plt.cm.bwr
+    return colormap
 
 
 # FIRST EXECUTABLE CODE:
