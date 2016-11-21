@@ -54,8 +54,10 @@ def plotHeatmapFromData(data,plot_folder_path,plot_title,linthresh,vars_name_to_
     np_data = data.as_matrix()
     # Get mask positions of 0 values before masking NaNs so NaN cells aren't included
     cells_with_0 = np_data == 0
+    cells_with_0_initialkwargs = {"width":1,"height":1,"fill":False, "edgecolor":(0,0,1,1), "snap":True, "linewidth":0.1, "hatch":'xx', "label": "Cells with 0s"}
     # Get mask positions of NaN values explicitly so it's easier to create a Rectangle patch with these values
     cells_with_nans = np.isnan(np_data)
+    cells_with_nans_initialkwargs = {"width":1,"height":1,"fill":True, "facecolor":(0.6,0.6,0.6,1), "edgecolor":'black', "linewidth":0.1, "hatch":'xx', "label": "Cells with NaNs"}
 
     # mask invalid data (NaNs) so the heatmap is not bugged
     np_data = np.ma.masked_invalid(np_data)
@@ -75,7 +77,7 @@ def plotHeatmapFromData(data,plot_folder_path,plot_title,linthresh,vars_name_to_
     fig,ax = initializeFigAndAx(data,abbreviated_indices,abbreviated_columns)
     plotHeatmapInLogarithmicScaleFromFigAxAndData(fig,ax,np_data,colorbar_limit_min,colorbar_limit_max,linthresh,colormap)
     configurePlotTicks()
-    addHatchesToEmphasizeCertainValues(ax,cells_with_0,cells_with_nans)
+    addHatchesToEmphasizeCertainValues(ax, cells_with_0, cells_with_0_initialkwargs, cells_with_nans, cells_with_nans_initialkwargs)
     postProcessingSettings(plot_title)
     saveAndClearPlot(plot_name,plot_folder_path)
 
@@ -84,7 +86,7 @@ def plotHeatmapFromData(data,plot_folder_path,plot_title,linthresh,vars_name_to_
     fig,ax = initializeFigAndAx(data,abbreviated_indices,abbreviated_columns)
     plotHeatmapInLinearScaleFromFigAxAndData(fig,ax,np_data,colorbar_limit_min,colorbar_limit_max,colormap)
     configurePlotTicks()
-    addHatchesToEmphasizeCertainValues(ax,cells_with_0,cells_with_nans)
+    addHatchesToEmphasizeCertainValues(ax, cells_with_0, cells_with_0_initialkwargs, cells_with_nans, cells_with_nans_initialkwargs)
     postProcessingSettings(plot_title)
     saveAndClearPlot(plot_name,plot_folder_path)
 
@@ -297,22 +299,17 @@ def chooseColormapFromMin(min_of_all):
         colormap = matplotlib.cm.get_cmap("bwr")
     return colormap
 
-def addHatchesToEmphasizeCertainValues(ax,cells_with_0,cells_with_nans):
+def addHatchesToEmphasizeCertainValues(ax, cells_with_0, cells_with_0_initialkwargs, cells_with_nans, cells_with_nans_initialkwargs):
     # Put an x over cells which have value NaN
     for j, i in np.column_stack(np.where(cells_with_nans)):
-      ax.add_patch(mpatches.Rectangle((i,j),1,1,fill=True, facecolor=(0.6,0.6,0.6,1), edgecolor='black', linewidth=0.1, hatch='xx', label= "Cells with NaNs"))
+        copy_of_dict = dict(cells_with_nans_initialkwargs)
+        copy_of_dict["xy"] = (i,j)
+        ax.add_patch(mpatches.Rectangle(**copy_of_dict))
+    # Put an x over cells which have value 0
     for j, i in np.column_stack(np.where(cells_with_0)):
-          ax.add_patch(
-              mpatches.Rectangle(
-                  (i, j),     # (x,y)
-                  1,          # width
-                  1,          # height
-                  fill=False, 
-                  edgecolor=(0,0,1,1), # color in hatch with format (r,g,b,transparency)
-                  snap=True,  # True so no thick borders (don't ask me why)
-                  linewidth=0.1, # very thin borders in the rectangles
-                  hatch='xx' # the more slashes, the denser the hash lines 
-              ))
+        copy_of_dict = dict(cells_with_0_initialkwargs)
+        copy_of_dict["xy"] = (i,j)
+        ax.add_patch(mpatches.Rectangle(**copy_of_dict))
 # FIRST EXECUTABLE CODE:
 if __name__ == "__main__":
     main()
