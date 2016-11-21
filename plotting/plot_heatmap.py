@@ -54,7 +54,10 @@ def plotHeatmapFromData(data,plot_folder_path,plot_title,linthresh,vars_name_to_
     np_data = data.as_matrix()
     # Get mask positions of 0 values before masking NaNs so NaN cells aren't included
     cells_with_0 = np_data == 0
-    # mask invalid data (NaNs)
+    # Get mask positions of NaN values explicitly so it's easier to create a Rectangle patch with these values
+    cells_with_nans = np.isnan(np_data)
+
+    # mask invalid data (NaNs) so the heatmap is not bugged
     np_data = np.ma.masked_invalid(np_data)
     # Numpy's min and max
     min_of_all = np.nanmin(np_data)
@@ -72,7 +75,7 @@ def plotHeatmapFromData(data,plot_folder_path,plot_title,linthresh,vars_name_to_
     fig,ax = initializeFigAndAx(data,abbreviated_indices,abbreviated_columns)
     plotHeatmapInLogarithmicScaleFromFigAxAndData(fig,ax,np_data,colorbar_limit_min,colorbar_limit_max,linthresh,colormap)
     configurePlotTicks()
-    addHatchesToEmphasizeCertainValues(ax,cells_with_0)
+    addHatchesToEmphasizeCertainValues(ax,cells_with_0,cells_with_nans)
     postProcessingSettings(plot_title)
     saveAndClearPlot(plot_name,plot_folder_path)
 
@@ -81,7 +84,7 @@ def plotHeatmapFromData(data,plot_folder_path,plot_title,linthresh,vars_name_to_
     fig,ax = initializeFigAndAx(data,abbreviated_indices,abbreviated_columns)
     plotHeatmapInLinearScaleFromFigAxAndData(fig,ax,np_data,colorbar_limit_min,colorbar_limit_max,colormap)
     configurePlotTicks()
-    addHatchesToEmphasizeCertainValues(ax,cells_with_0)
+    addHatchesToEmphasizeCertainValues(ax,cells_with_0,cells_with_nans)
     postProcessingSettings(plot_title)
     saveAndClearPlot(plot_name,plot_folder_path)
 
@@ -294,12 +297,10 @@ def chooseColormapFromMin(min_of_all):
         colormap = matplotlib.cm.get_cmap("bwr")
     return colormap
 
-def addHatchesToEmphasizeCertainValues(ax,cells_with_0):
-    #set the background color as gray so the transparent values (NaNs here) use that color
-    ax.patch.set_facecolor((0.6, 0.6, 0.6, 1.0))
-    # Draw an "X" on transparent values (masked values)
-    ax.patch.set(hatch='x', edgecolor='black')
-    # Put an x over cells which have value 0
+def addHatchesToEmphasizeCertainValues(ax,cells_with_0,cells_with_nans):
+    # Put an x over cells which have value NaN
+    for j, i in np.column_stack(np.where(cells_with_nans)):
+      ax.add_patch(mpatches.Rectangle((i,j),1,1,fill=True, facecolor=(0.6,0.6,0.6,1), edgecolor='black', linewidth=0.1, hatch='xx', label= "Cells with NaNs"))
     for j, i in np.column_stack(np.where(cells_with_0)):
           ax.add_patch(
               mpatches.Rectangle(
@@ -307,16 +308,11 @@ def addHatchesToEmphasizeCertainValues(ax,cells_with_0):
                   1,          # width
                   1,          # height
                   fill=False, 
-                  # edgecolor='blue',
-                  # edgecolor=None,
-                  # edgecolor="white",
                   edgecolor=(0,0,1,1), # color in hatch with format (r,g,b,transparency)
                   snap=True,  # True so no thick borders (don't ask me why)
                   linewidth=0.1, # very thin borders in the rectangles
-                  hatch='x' # the more slashes, the denser the hash lines 
+                  hatch='xx' # the more slashes, the denser the hash lines 
               ))
-
-
 # FIRST EXECUTABLE CODE:
 if __name__ == "__main__":
     main()
