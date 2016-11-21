@@ -291,10 +291,7 @@ def chooseColormapFromMin(min_of_all):
         colormap = matplotlib.colors.LinearSegmentedColormap.from_list("newReds", red_vals) 
     else:
         # The following is to get the default colormap and manually set white as it starting value for 0
-        reds_cm = matplotlib.cm.get_cmap("bwr", values) #generate a predefined map with amount of  values
-        red_vals = reds_cm(np.arange(values)) #extract those values as an array
-        red_vals = np.concatenate((np.concatenate((red_vals[0:math.ceil(4*values/10)],[[1,1,1,1]]),axis=0),red_vals[math.floor(6*values/10):]),axis=0) #remove 1/10 values from the middle and put a white in there
-        colormap = matplotlib.colors.LinearSegmentedColormap.from_list("newReds", red_vals) 
+        colormap = matplotlib.cm.get_cmap("bwr")
     return colormap
 
 def addHatchesToEmphasizeCertainValues(ax,cells_with_0):
