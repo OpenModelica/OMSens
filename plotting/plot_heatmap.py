@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 from matplotlib.colors import SymLogNorm   # for logarithmic scale
 import matplotlib.ticker                   # to set a special formatter for the ticks in the colorbar (10^1 instead of 0.000(...)*10^11)
+import matplotlib.patches as mpatches  # to add patches to "non transparent" cells
 import pandas as pd
 import numpy as np
 import math
@@ -51,6 +52,9 @@ def plotHeatmapFromData(data,plot_folder_path,plot_title,linthresh,vars_name_to_
     # max_of_all = data.max().max()   # the first max returns a series of all the maxs. The second max returns the max of the max
     ###### CONVERT TO NUMPY TO MASK INVALID DATA (COULND'T FIND OUT HOW TO MASK IN PANDAS)
     np_data = data.as_matrix()
+    # Get mask positions of 0 values before masking NaNs so NaN cells aren't included
+    cells_with_0 = np_data == 0
+    # mask invalid data (NaNs)
     np_data = np.ma.masked_invalid(np_data)
     # Numpy's min and max
     min_of_all = np.nanmin(np_data)
@@ -68,6 +72,7 @@ def plotHeatmapFromData(data,plot_folder_path,plot_title,linthresh,vars_name_to_
     fig,ax = initializeFigAndAx(data,abbreviated_indices,abbreviated_columns)
     plotHeatmapInLogarithmicScaleFromFigAxAndData(fig,ax,np_data,colorbar_limit_min,colorbar_limit_max,linthresh,colormap)
     configurePlotTicks()
+    addHatchesToEmphasizeCertainValues(ax,cells_with_0)
     postProcessingSettings(plot_title)
     saveAndClearPlot(plot_name,plot_folder_path)
 
@@ -76,6 +81,7 @@ def plotHeatmapFromData(data,plot_folder_path,plot_title,linthresh,vars_name_to_
     fig,ax = initializeFigAndAx(data,abbreviated_indices,abbreviated_columns)
     plotHeatmapInLinearScaleFromFigAxAndData(fig,ax,np_data,colorbar_limit_min,colorbar_limit_max,colormap)
     configurePlotTicks()
+    addHatchesToEmphasizeCertainValues(ax,cells_with_0)
     postProcessingSettings(plot_title)
     saveAndClearPlot(plot_name,plot_folder_path)
 
@@ -203,17 +209,12 @@ def initializeFigAndAx(data,abbreviated_indices,abbreviated_columns):
     ax.set_ylim(0,len(data.index))
     ax.set_xlim(0,len(data.columns))
 
-
-    ### Draw an "X" on invalid values (need to be masked so pcolor makes them transparent and the frame has to be set)
-    ax.patch.set(hatch='x', edgecolor='blue')
-
     # Format
     fig.set_size_inches(10, 11)
 
     # put the major ticks at the middle of each cell
     ax.set_yticks(np.arange(data.shape[0]) + 0.5, minor=False)
     ax.set_xticks(np.arange(data.shape[1]) + 0.5, minor=False)
-
 
     # want a more natural, table-like display
     ax.invert_yaxis()
@@ -281,13 +282,12 @@ def colorbarLimitsFromMinAndMax(min_of_all,max_of_all):
         colorbar_limit_min = 0
     return colorbar_limit_min, colorbar_limit_max
 def chooseColormapFromMin(min_of_all):
-    values = 80 # how many colors (we remove a few
+    values = 200 # how many colors
     if min_of_all >= 0:
         # The following is to get the default colormap and manually set white as it starting value for 0
         reds_cm = matplotlib.cm.get_cmap("Reds", values) #generate a predefined map with amount of  values
         red_vals = reds_cm(np.arange(values)) #extract those values as an array
-        red_vals = red_vals[int(values/3):] #remove the first 1/3 values so the transition from white to light red is closer to 0
-        red_vals = np.insert(red_vals,0,[1,1,1,1],axis=0)  # prepend to the list
+        red_vals = np.insert(red_vals,1,[1,1,1,1],axis=0)  # prepend pure white to the list
         colormap = matplotlib.colors.LinearSegmentedColormap.from_list("newReds", red_vals) 
     else:
         # The following is to get the default colormap and manually set white as it starting value for 0
@@ -296,6 +296,28 @@ def chooseColormapFromMin(min_of_all):
         red_vals = np.concatenate((np.concatenate((red_vals[0:math.ceil(4*values/10)],[[1,1,1,1]]),axis=0),red_vals[math.floor(6*values/10):]),axis=0) #remove 1/10 values from the middle and put a white in there
         colormap = matplotlib.colors.LinearSegmentedColormap.from_list("newReds", red_vals) 
     return colormap
+
+def addHatchesToEmphasizeCertainValues(ax,cells_with_0):
+    #set the background color as gray so the transparent values (NaNs here) use that color
+    ax.patch.set_facecolor((0.6, 0.6, 0.6, 1.0))
+    # Draw an "X" on transparent values (masked values)
+    ax.patch.set(hatch='x', edgecolor='black')
+    # Put an x over cells which have value 0
+    for j, i in np.column_stack(np.where(cells_with_0)):
+          ax.add_patch(
+              mpatches.Rectangle(
+                  (i, j),     # (x,y)
+                  1,          # width
+                  1,          # height
+                  fill=False, 
+                  # edgecolor='blue',
+                  # edgecolor=None,
+                  # edgecolor="white",
+                  edgecolor=(0,0,1,1), # color in hatch with format (r,g,b,transparency)
+                  snap=True,  # True so no thick borders (don't ask me why)
+                  linewidth=0.1, # very thin borders in the rectangles
+                  hatch='x' # the more slashes, the denser the hash lines 
+              ))
 
 
 # FIRST EXECUTABLE CODE:
