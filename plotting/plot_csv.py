@@ -1,9 +1,11 @@
+import re
 import os
 import logging #en reemplazo de los prints
 logger = logging.getLogger("--CSV Plotter--") #un logger especifico para este modulo
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib #for configuration
+import filesystem.files_aux
 
 import settings.settings_world3_sweep as world3_settings
 
@@ -12,52 +14,146 @@ _std_run_csv = world3_settings._std_run_csv
 
 
 def main():
-    pass
+    # plotVermeulenResults()
+    # plotEmpiricalSensitivities()
+    plotSimpleCSV()
+def plotSimpleCSV():
+    subtitle = "101% value (1% perturbance) for 6 parameters"
+    footer = "Parameters perturbed: \n p_fioa_cons_const_1, p_ind_cap_out_ratio_1, life_expect_norm, \n reproductive_lifetime, des_compl_fam_size_norm, p_avg_life_ind_cap_1."
+    regex = '.*perturbed\.(csv)$'
+    csvs_path_label_pair_list = [("/home/adanos/Documents/TPs/tesis/repos/modelica_scripts/tmp/6_most_senstive/6_most_sensitive_perturbation.csv","6 params perturbed")]
+    vars_list = ["population"]
+    plot_title = "Population for 6 parameters perturbed"
+    x_range=[1900,2100]
+    include_stdrun = True
+    output_base_path = "/home/adanos/Documents/TPs/tesis/repos/modelica_scripts/tmp/simple_plots/"
+    output_folder_path = filesystem.files_aux.makeDirFromCurrentTimestamp(output_base_path)
+    extra_ticks = []
+    multipleCSVsAndVarsSimplePlot(vars_list,csvs_path_label_pair_list,plot_title,x_range,output_folder_path,extra_ticks,include_stdrun,subtitle=subtitle,footer=footer)
 
-def addSeriesFromCSVToPlot(csv_path,var_name,label,color):
-        data = readFromCSV(csv_path)
-        plt.plot(data["time"], data[var_name], linewidth=1, linestyle='-', markersize=0,marker='o',label=label,color = color)
 
-def plotVarsFromSweepingInfo(plot_vars,model_name,sweeping_info,plots_folder_path):
+def plotEmpiricalSensitivities():
+    ##Example for "multipleCSVsAndVarsSimplePlot" using Vermeulen Run 2 & 3 Results.
+    # (folderpath,subtitle, footer)
+    experiments_tuples = \
+       [("tmp/modelica_outputs/2016-08-25/16_27_22/", "101% of default","Each parameter perturbed in isolation"),
+       ("tmp/modelica_outputs/2016-08-25/17_28_47/", "102% of default","Each parameter perturbed in isolation"),
+       ("tmp/modelica_outputs/2016-08-25/17_34_02/", "105% of default","Each parameter perturbed in isolation"),
+       ("tmp/modelica_outputs/2016-08-25/17_39_19/", "110% of default","Each parameter perturbed in isolation"),
+    ]
+
+    for folder_path,subtitle,footer in experiments_tuples:
+        regex = '.*perturbed\.(csv)$'
+        csvs_path_label_pair_list = []
+        for x in os.listdir(folder_path):
+            if re.match(regex, x):
+                csvs_path_label_pair_list.append((os.path.join(folder_path,x),x))
+        vars_list = ["population"]
+        plot_title = "Population in all the individual parameter perturbations"
+        x_range=[1900,2100]
+        include_stdrun = True
+        output_base_path = "/home/adanos/Documents/TPs/tesis/repos/modelica_scripts/tmp/simple_plots/"
+        output_folder_path = filesystem.files_aux.makeDirFromCurrentTimestamp(output_base_path)
+        extra_ticks = []
+        multipleCSVsAndVarsSimplePlot(vars_list,csvs_path_label_pair_list,plot_title,x_range,output_folder_path,extra_ticks,include_stdrun,subtitle=subtitle,footer=footer)
+
+def plotVermeulenResults():
+    ##Example for "multipleCSVsAndVarsSimplePlot" using Vermeulen Run 2 & 3 Results.
+    vars_list = ["Industrial_Investment1Industrial_Outputs_ind_cap_out_ratio", "Industrial_Investment1S_FIOA_Conss_fioa_cons_const","Industrial_Investment1S_Avg_Life_Ind_Caps_avg_life_ind_cap", "population","ppoll_index","industrial_output","nr_resources"]
+    csvs_path_label_pair_list = [("/home/adanos/Documents/TPs/tesis/repos/modelica_scripts/resource/vj_run2.csv", "V&J Run 2"),
+                                 ("/home/adanos/Documents/TPs/tesis/repos/modelica_scripts/resource/vj_run3.csv", "V&J Run 3"),]
+    plot_title = "Vermeulen & de Jong Runs 2 and 3 using modified models"
+    x_range=[1900,2100]
+    include_stdrun = True
+    output_base_path = "/home/adanos/Documents/TPs/tesis/repos/modelica_scripts/tmp/simple_plots/"
+    output_folder_path = filesystem.files_aux.makeDirFromCurrentTimestamp(output_base_path)
+    extra_ticks = [1975]
+    multipleCSVsAndVarsSimplePlot(vars_list,csvs_path_label_pair_list,plot_title,x_range,output_folder_path,extra_ticks,include_stdrun)
+
+
+def multipleCSVsAndVarsSimplePlot(vars_list,csvs_path_label_pair_list,plot_title,x_range,output_folder_path,extra_ticks,include_stdrun=False,subtitle="",footer=""):
+    colors_list = plt.get_cmap('jet')(np.linspace(0, 1.0, len(csvs_path_label_pair_list)))
+    for var_name in vars_list:
+        colors_iter = iter(colors_list)
+        footer_artist = setupPlt("Time",var_name,plot_title,subtitle,footer)
+        if include_stdrun:
+            plotStandardRun(var_name)
+        # for i in iterations:
+
+        i=0 #for the colours
+        for csv_path,label in csvs_path_label_pair_list:
+            # iter_dict = per_iter_info_dict[i]
+            # file_path = iter_dict["file_path"]
+            # data = readFromCSV(file_path)
+            data = readFromCSV(csv_path)
+            # sweep_value = iter_dict["sweep_value"]
+            # label = "val={sweep_value}".format(sweep_value=sweep_value)
+            plt.plot(data["time"], data[var_name], linewidth=1, linestyle='-', markersize=0,marker='o',label=label,color = next(colors_iter))
+            # plt.plot(data["time"], data[var_name], linewidth=1, linestyle='-', markersize=0,marker='o',label=label,color = "black")
+            i=i+1 #for the colours
+        lgd = plt.legend(loc="center left",fontsize="small",fancybox=True, shadow=True, bbox_to_anchor=(1,0.5)) #A la derecha
+        # lgd = plt.legend(loc="center left",fontsize="small",fancybox=True, shadow=True, bbox_to_anchor=(0.5,-0.5)) #Abajo (anda mal)
+        ## Settings that differ from the automatic plotter:
+        plt.xlim(x_range) #set an specific x range
+        plt.xticks(list(plt.xticks()[0]) + extra_ticks) # add extra ticks (1975 for vermeulen for example)
+        print(output_folder_path)
+
+        plot_path_without_extension = os.path.join(output_folder_path,var_name)
+        saveAndClearPlt(plot_path_without_extension,lgd,footer_artist)
+
+def plotVarsFromSweepingInfo(plot_vars,model_name,sweeping_info,plots_folder_path,plot_std_run,fixed_params_str):
     for var_name in plot_vars:
-        plotVarFromSweepingInfo(var_name,model_name,sweeping_info,plots_folder_path)
+        plotVarFromSweepingInfo(var_name,model_name,sweeping_info,plots_folder_path,plot_std_run,fixed_params_str)
 
-def plotVarFromSweepingInfo(var_name,model_name,sweeping_info,plots_folder_path):
+def plotVarFromSweepingInfo(var_name,model_name,sweeping_info,plots_folder_path,plot_std_run,fixed_params_str):
+    # print(str(sweeping_info))
     plot_path_without_extension = os.path.join(plots_folder_path,var_name)
     logger_plot_str = "Plotting:\n  plotvar:{var_name}\n path:{plot_path_without_extension}".format(var_name=var_name,plot_path_without_extension=plot_path_without_extension)
     logger.debug(logger_plot_str)
     sweep_vars         = sweeping_info["sweep_vars"]
+    fixed_params       = sweeping_info["fixed_params"]
     sweep_vars_str = ", ".join(sweep_vars)
-    title,subtitle,footer = sweepingPlotTexts(model_name,var_name,sweep_vars_str)
+    fixed_params_to_strs = [str(x) for x in fixed_params]
+    if fixed_params_str == False:
+        fixed_params_str = ", ".join(fixed_params_to_strs)
+    title,subtitle,footer = sweepingPlotTexts(model_name,var_name,sweep_vars_str,fixed_params_str)
     per_iter_info_dict = sweeping_info["per_iter_info_dict"]
     footer_artist = setupPlt("Time",var_name,title,subtitle,footer)
     iterations = per_iter_info_dict.keys()
-    colors = plt.get_cmap('jet')(np.linspace(0, 1.0, len(iterations)))
+    # colors = plt.get_cmap('jet')(np.linspace(0, 1.0, len(iterations)))
+    colors_list = plt.get_cmap('jet')(np.linspace(0, 1.0, len(iterations)))
+    colors_iter = iter(colors_list)
 
-    # plotStandardRun(var_name,colors)
+    if plot_std_run:
+        plotStandardRun(var_name)
 
     for i in iterations:
         iter_dict = per_iter_info_dict[i]
         file_path = iter_dict["file_path"]
         data = readFromCSV(file_path)
         sweep_value = iter_dict["sweep_value"]
-        label = "val={sweep_value}".format(sweep_value=sweep_value)
-        plt.plot(data["time"], data[var_name], linewidth=1, linestyle='-', markersize=0,marker='o',label=label,color = colors[i])
+        label = "param_val={sweep_value:.2f}".format(sweep_value=sweep_value)
+        plt.plot(data["time"], data[var_name], linewidth=1, linestyle='-', markersize=0,marker='o',label=label,color = next(colors_iter))
     lgd = plt.legend(loc="center left",fontsize="small",fancybox=True, shadow=True, bbox_to_anchor=(1,0.5)) #A la derecha
     # lgd = plt.legend(loc="center left",fontsize="small",fancybox=True, shadow=True, bbox_to_anchor=(0.5,-0.5)) #Abajo (anda mal)
     saveAndClearPlt(plot_path_without_extension,lgd,footer_artist)
-def sweepingPlotTexts(model_name,var_name,sweep_vars_str):
+def sweepingPlotTexts(model_name,var_name,sweep_vars_str,fixed_params_str):
     title = "Sweeping Plot for model: {model_name}".format(model_name=model_name)
     subtitle ="Plotting var: {var_name}".format(var_name=var_name)
-    footer = "Swept variables:\n {sweep_vars_str}".format(sweep_vars_str=sweep_vars_str)
+    swept_vars_full_str = "Swept parameters:  \n {sweep_vars_str}".format(sweep_vars_str=sweep_vars_str)
+    fixed_params_full_str = "Fixed params:  \n {fixed_params_str}".format(fixed_params_str=fixed_params_str)
+    footer = swept_vars_full_str+"\n"+fixed_params_full_str
     return (title,subtitle,footer)
-def plotStandardRun(var_name,colors):
+def plotStandardRun(var_name,color="black"):
         data = readFromCSV(_std_run_csv)
         label = "STD_RUN"
-        plt.plot(data["time"], data[var_name], linewidth=1, linestyle='-', markersize=0,marker='o',label=label,color = "black")
+        plt.plot(data["time"], data[var_name], linewidth=1, linestyle='-', markersize=0,marker='o',label=label,color = color)
 
 def readFromCSV(file_path):
-    data = np.genfromtxt(file_path, delimiter=',', skip_footer=10, names=True)
+    # El que estaba antes: (no plotea para mayores de 2091 y tiene puesto el skip footer)
+    # data = np.genfromtxt(file_path, delimiter=',', skip_footer=10, names=True)
+    # El nuevo:
+    data = np.genfromtxt(file_path, delimiter=',', names=True)
     return data
 
 def setupPlt(x_label,y_label,title,subtitle,footer):
@@ -67,13 +163,15 @@ def setupPlt(x_label,y_label,title,subtitle,footer):
     plt.style.use('fivethirtyeight')
     plt.gca().set_position([0.10, 0.15, 0.80, 0.77])
     plt.xlabel(x_label)
-    plt.title(title+"\n"+subtitle, fontsize=14)
+    plt.title(title+"\n"+subtitle, fontsize=14, y=1.08)
     # plt.title(title)
     plt.ylabel(y_label)
-    footer_artist = plt.annotate(footer, (0,0), (0, -40), xycoords='axes fraction', textcoords='offset points', va='top')
+    plt.ticklabel_format(useOffset=False) # So it doesn't use an offset on the x axis
+    footer_artist = plt.annotate(footer, (1,0), (0, -40), xycoords='axes fraction', textcoords='offset points', va='top', horizontalalignment='right')
     # fig = plt.figure()
     # fig.text(.1,.1,footer)
     # plt.figtext(.1,.1,footer)
+    plt.margins(x=0.1, y=0.1) #increase buffer so points falling on it are plotted
     return footer_artist
 
 def saveAndClearPlt(plot_path_without_extension,lgd,footer_artist):

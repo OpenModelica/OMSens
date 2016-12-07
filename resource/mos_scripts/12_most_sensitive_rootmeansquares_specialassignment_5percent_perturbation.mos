@@ -1,0 +1,29 @@
+// This script perturbes the 12 most greatest in Root Mean squares. If the parameters in "(new-std)/std" are positive, add 5%. Else, substract 5%.
+
+// load the file
+print("Loading Modelica\n");
+print("Perturbing 12 biggest RootMeanSquares parameters by + or - 5%");
+loadModel(Modelica); //new OMC version stopped importing Modelica model
+print("Loading file:/home/adanos/Documents/TPs/tesis/repos/modelica_scripts/resource/sys_dyn/pw_fix/SystemDynamics/package.mo\n");
+loadFile("/home/adanos/Documents/TPs/tesis/repos/modelica_scripts/resource/sys_dyn/pw_fix/SystemDynamics/package.mo"); getErrorString();
+// build the model once
+print("Building model:SystemDynamics.WorldDynamics.World3.Scenario_1\n");
+buildModel(SystemDynamics.WorldDynamics.World3.Scenario_1, startTime=1900,stopTime=2100,outputFormat="csv",stepSize=1); getErrorString();
+  file_name_i := "12_most_rootmeansquares_special_assignment_5percent.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_avg_life_ind_cap_1", String(13.299999999999999) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_land_yield_fact_1", String(0.95) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "reproductive_lifetime", String(28.5) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "subsist_food_pc", String(218.5) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "des_compl_fam_size_norm", String(3.9899999999999998) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "life_expect_norm", String(29.400000000000002) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "max_tot_fert_norm", String(12.600000000000001) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_fioa_cons_const_1", String(0.4515) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_ind_cap_out_ratio_1", String(3.1500000000000004) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_serv_cap_out_ratio_1", String(1.05) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "land_fr_harvested", String(0.665) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "inherent_land_fert", String(570.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);
+  getErrorString();
+

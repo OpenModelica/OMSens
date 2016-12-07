@@ -1,0 +1,29 @@
+// load the file
+print("Loading file:/home/adanos/Documents/tesis/prog/modelica_scripts/resource/BouncingBall.mo\n");
+loadFile("/home/adanos/Documents/TPs/tesis/repos/modelica_scripts/resource/BouncingBall.mo");
+getErrorString();
+params := getParameterNames(BouncingBall);
+my_params := {"e","a"};
+all_params_are_valid:= true;
+for my_param in my_params loop
+  my_param_is_valid := false;
+  for available_param in params loop
+      my_param_is_valid:= my_param_is_valid or my_param==available_param;
+  end for;
+  all_params_are_valid := all_params_are_valid and my_param_is_valid;
+end for;
+print("ASD");
+print(String(all_params_are_valid));
+//if param_exists then print("param exists, guachin"); end if;
+//buildModel(SystemDynamics.WorldDynamics.World3.Scenario_1, startTime=1900,stopTime=2300,outputFormat="csv");
+//for i in 0:(12-1) loop
+//  value := 12*(1-6*0.1) + 12*(0.1*i);
+//  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "max_tot_fert_norm", String(value) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+//  getErrorString();
+//file_name_i :=  "iter_" + String(i) + ".csv";
+//  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+//  print("Running command: "+cmd+"\n");
+//  system(cmd);
+//  getErrorString();
+//  //plot(plot_var,fileName=file_name_i,externalWindow=true);
+// end for;

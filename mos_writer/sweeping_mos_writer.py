@@ -1,4 +1,7 @@
+#Std
 import platform
+#Mine
+import filesystem.files_aux
 
 #Posibles lv para el omc_logger:
 # LOG_DEBUG: muestra todos los valores leidos del .xml (3k lineas)
@@ -10,6 +13,7 @@ def main():
     pass
 def createMos(mo_file,model_name,sweep_vars,iterations,output_mos_path,startTime,stopTime,fixed_params,sweep_value_formula_str,csv_file_name_modelica):
     load_and_build_str = strForLoadingAndBuilding(mo_file,model_name,startTime,stopTime)
+    check_if_valid_params_str = strForCheckingIfValidParams(model_name,sweep_vars,fixed_params)
     fixed_params_str = strForFixedParams(fixed_params,model_name)
     for_declaration_str = strForForDeclaration(iterations)
     sweep_value_str = strForSweepValue(iterations,sweep_value_formula_str)
@@ -19,9 +23,19 @@ def createMos(mo_file,model_name,sweep_vars,iterations,output_mos_path,startTime
     final_str = load_and_build_str + fixed_params_str + for_declaration_str + \
                 sweep_value_str    + sweeping_vars_str + full_system_call_str + \
                 end_for_str
-    writeStrToFile(final_str,output_mos_path)
+    filesystem.files_aux.writeStrToFile(final_str,output_mos_path)
+    return 0
 
 
+def strForCheckingIfValidParams(model_name,sweep_vars,fixed_params):
+    fixed_params_names =[param_tuple[0] for param_tuple in fixed_params]
+    all_params = sweep_vars+fixed_params_names
+    params_list_str = paramsListInModelicaFormat(all_params)
+    check_if_valid_params_str = check_if_valid_params_skeleton.format(model_name=model_name,params_list=params_list_str)
+    return check_if_valid_params_str
+def paramsListInModelicaFormat(all_params):
+    params_list = "{"+",".join(['"'+param+'"' for param in all_params])+"}"
+    return params_list
 def strForLoadingAndBuilding(mo_file,model_name,startTime,stopTime):
     load_and_build_str = load_and_build_skeleton.format(mo_file=mo_file,model_name=model_name,startTime=startTime,stopTime=stopTime)
     return load_and_build_str
@@ -65,22 +79,19 @@ def strForFullSystemCall(model_name,csv_file_name_modelica,omc_logger_flags):
 def strForEndFor():
     end_for_str = "\n end for;"
     return end_for_str
-def writeStrToFile(str_,file_path):
-    with open(file_path, 'w') as outputFile:
-        outputFile.write(str_)
-    return 0
 
 
 #String skeletons: (the names inside "{ }" are variables)
 load_and_build_skeleton= \
 """// load the file
 print("Loading file:{mo_file}\\n");
+loadModel(Modelica); //new OMC version stopped importing Modelica model
 loadFile("{mo_file}");
 getErrorString();
 // build the model once
 //buildModel({model_name});
 print("Building model:{model_name}\\n");
-buildModel({model_name}, startTime={startTime},stopTime={stopTime},outputFormat="csv");
+buildModel({model_name}, startTime={startTime},stopTime={stopTime},outputFormat="csv",stepSize=1);
 getErrorString();"""
 fixed_params_skeleton= \
 """
@@ -95,10 +106,6 @@ sweeping_vars_skeleton= \
   setInitXmlStartValue("{model_name}_init.xml", "{sweep_var}", String(value) , "{model_name}_init.xml");
   getErrorString();
 """
-#CAREFUL! Don't change file_name_i. May break everything (we assume in run_and_plot_model.py that the file_names will follow this standard)
-file_name_skeleton= \
-"""
-  file_name_i := "{model_name}_" + String(i) + "_res.csv";"""
 #CAREFUL! Don't change file_name_i. May break everything (we assume in run_and_plot_model.py that the file_names will follow this standard)
 windows_cmd_skeleton= \
 """
@@ -115,7 +122,18 @@ system_call_skeleton= \
   getErrorString();
   //plot(plot_var,fileName=file_name_i,externalWindow=true);"""#CAREFUL! Don't change file_name_i. May break everything (we assume in run_and_plot_model.py that the file_names will follow this standard)
 
-
+check_if_valid_params_skeleton= \
+""" params := getParameterNames({model_name});
+my_params := {params_list};
+all_params_are_valid:= true;
+for my_param in my_params loop
+  my_param_is_valid := false;
+  for available_param in params loop
+      my_param_is_valid:= my_param_is_valid or my_param==available_param;
+  end for;
+  all_params_are_valid := all_params_are_valid and my_param_is_valid;
+end for;
+print(String(all_params_are_valid));"""
 
 if __name__ == "__main__":
     main()

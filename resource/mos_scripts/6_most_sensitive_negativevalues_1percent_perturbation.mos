@@ -1,0 +1,18 @@
+// load the file
+print("Loading Modelica\n");
+loadModel(Modelica); //new OMC version stopped importing Modelica model
+print("Loading file:/home/adanos/Documents/TPs/tesis/repos/modelica_scripts/resource/sys_dyn/pw_fix/SystemDynamics/package.mo\n");
+loadFile("/home/adanos/Documents/TPs/tesis/repos/modelica_scripts/resource/sys_dyn/pw_fix/SystemDynamics/package.mo"); getErrorString();
+// build the model once
+print("Building model:SystemDynamics.WorldDynamics.World3.Scenario_1\n");
+buildModel(SystemDynamics.WorldDynamics.World3.Scenario_1, startTime=1900,stopTime=2100,outputFormat="csv",stepSize=1); getErrorString();
+  file_name_i := "6_most_negativevalues_sensitive_perturbation.csv";
+  cmd := "./SystemDynamics.WorldDynamics.World3.Scenario_1  "+ "-r="+file_name_i;
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "reproductive_lifetime", String(30.3) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_avg_life_ind_cap_1", String(14.14) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "subsist_food_pc", String(232.3) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_nr_res_use_fact_1", String(1.01) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "p_land_yield_fact_1", String(1.01) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  setInitXmlStartValue("SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml", "industrial_capital_init", String(212100000000.0) , "SystemDynamics.WorldDynamics.World3.Scenario_1_init.xml");
+  print("Running command: "+cmd+"\n");
+  system(cmd);

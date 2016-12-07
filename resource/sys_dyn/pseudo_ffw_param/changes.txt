@@ -1,0 +1,15 @@
+*) Mod of Vanilla
+*) Changed Population dynamics:
+   1) added a connection from Population.y to births.u4
+*) Changed Birth_Factors:
+   1) Now receives 4 inputs instead of 3
+   2) Added population as input u4 and output "population"
+   3) Added "pseudo_ffw_param" as a new parameter
+   4) changed the "births" equation to the one from World3-v01 using "pseudo_ffw_param" in "FFW"'s place.
+*) Population Dynamics:
+   1) Added "pseudo_ffw_param" as a new parameter
+*) Scenario_1
+   1) Added "pseudo_ffw_param" as a new parameter
+
+##### IMPORTANT #####
+For now, it has the modification of the "Piecewise function" so it can interpolate values falling outside its range.

@@ -7,9 +7,35 @@ _world3_scenario_model_skeleton = "SystemDynamics.WorldDynamics.World3.Scenario_
 _currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 _parentdir = files_aux.parentDir(_currentdir)
 _resource_path =os.path.join(_parentdir,"resource")
-_sys_dyn_package_path = os.path.join(os.path.join(_resource_path,"SystemDynamics"),"package.mo")
 _std_run_csv = os.path.join(_resource_path,"standard_run.csv")
 
-# CAREFUL: both must be equivalent!! (because of differences between modelica and python we can't merge them into one)
-csv_file_name_python_skeleton = "iter_{i_str}.csv"
-csv_file_name_modelica_skeleton= """ "iter_" + String(i) + ".csv";"""
+# CAREFUL: python vs modelica must be equivalent!! (because of differences between modelica and python we can't merge them into one)
+sweeping_csv_file_name_python_skeleton = "iter_{i_str}.csv"
+sweeping_csv_file_name_modelica_skeleton= """ "iter_" + String(i) + ".csv";"""
+
+#The csv file name of the parameters from calculation of sensitivities needs to be a function because we have to replace the brackets ([) in python and in modelica
+def calc_sens_csv_file_name_function(param_name):
+    standarized_param_name = removeSpecialCharactersTo(param_name)
+    return "{param_name}_perturbed.csv".format(param_name=standarized_param_name)
+
+
+#System Dynamics versions:
+_sys_dyn_package_path = os.path.join(os.path.join(_resource_path,"SystemDynamics"),"package.mo") ## This one is the one that has undocumented changes (obsolete)
+_sys_dyn_package_vanilla_path = os.path.join(os.path.join(os.path.join(os.path.join(_resource_path,"sys_dyn"),"vanilla"),"SystemDynamics"),"package.mo") # The System Dynamics package without modifications
+_sys_dyn_package_pw_fix_path = os.path.join(os.path.join(os.path.join(os.path.join(_resource_path,"sys_dyn"),"pw_fix"),"SystemDynamics"),"package.mo") # Piecewise function modified to accept queries for values outside of range. Interpolate linearly using closest 2 values
+_sys_dyn_package_pop_state_var_new = os.path.join(os.path.join(os.path.join(os.path.join(_resource_path,"sys_dyn"),"pop_state_var_new"),"SystemDynamics"),"package.mo") # Added a new "population" var that includes an integrator. Numerically it's the same as "population" but with the advantage that now we can calculate sensitivities for it
+    # V&J paths
+_sys_dyn_package_v_and_j_run_2 = os.path.join(os.path.join(os.path.join(os.path.join(_resource_path,"sys_dyn"),"vermeulen_and_jongh_run_2"),"SystemDynamics"),"package.mo")
+_sys_dyn_package_v_and_j_run_3 = os.path.join(os.path.join(os.path.join(os.path.join(_resource_path,"sys_dyn"),"vermeulen_and_jongh_run_3"),"SystemDynamics"),"package.mo")
+    # Pseudo ffw param and var paths:
+_sys_dyn_package_pseudo_ffw_param_path = os.path.join(os.path.join(os.path.join(os.path.join(_resource_path,"sys_dyn"),"pseudo_ffw_param"),"SystemDynamics"),"package.mo")
+_sys_dyn_package_pseudo_ffw_var_path = os.path.join(os.path.join(os.path.join(os.path.join(_resource_path,"sys_dyn"),"pseudo_ffw_var"),"SystemDynamics"),"package.mo")
+
+
+
+#Aux:
+def removeSpecialCharactersTo(param_name):
+    wo_left_bracket  = param_name.replace("[","_bracket_")
+    wo_both_brackets = wo_left_bracket.replace("]","_bracket")
+    standarized_param_name = wo_both_brackets
+    return standarized_param_name
