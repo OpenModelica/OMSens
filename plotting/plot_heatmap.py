@@ -78,6 +78,7 @@ def plotHeatmapFromData(data,plot_folder_path,plot_title,linthresh,vars_name_to_
     plotHeatmapInLogarithmicScaleFromFigAxAndData(fig,ax,np_data,colorbar_limit_min,colorbar_limit_max,linthresh,colormap)
     configurePlotTicks()
     addHatchesToEmphasizeCertainValues(ax, cells_with_0, cells_with_0_initialkwargs, cells_with_nans, cells_with_nans_initialkwargs)
+    addLegendForPatches(cells_with_0_initialkwargs,cells_with_nans_initialkwargs)
     postProcessingSettings(plot_title)
     saveAndClearPlot(plot_name,plot_folder_path)
 
@@ -87,6 +88,7 @@ def plotHeatmapFromData(data,plot_folder_path,plot_title,linthresh,vars_name_to_
     plotHeatmapInLinearScaleFromFigAxAndData(fig,ax,np_data,colorbar_limit_min,colorbar_limit_max,colormap)
     configurePlotTicks()
     addHatchesToEmphasizeCertainValues(ax, cells_with_0, cells_with_0_initialkwargs, cells_with_nans, cells_with_nans_initialkwargs)
+    addLegendForPatches(cells_with_0_initialkwargs,cells_with_nans_initialkwargs)
     postProcessingSettings(plot_title)
     saveAndClearPlot(plot_name,plot_folder_path)
 
@@ -310,6 +312,14 @@ def addHatchesToEmphasizeCertainValues(ax, cells_with_0, cells_with_0_initialkwa
         copy_of_dict = dict(cells_with_0_initialkwargs)
         copy_of_dict["xy"] = (i,j)
         ax.add_patch(mpatches.Rectangle(**copy_of_dict))
+def addLegendForPatches(cells_with_0_initialkwargs,cells_with_nans_initialkwargs):
+    copy_of_dict_0s           = dict(cells_with_0_initialkwargs)
+    copy_of_dict_0s["xy"]     = (0,0)
+    copy_of_dict_nans         = dict(cells_with_nans_initialkwargs)
+    copy_of_dict_nans["xy"]   = (0,0)
+    cells_with_0_patch_legend = mpatches.Rectangle(**copy_of_dict_0s)
+    nans_legend               = mpatches.Rectangle(**copy_of_dict_nans)
+    plt.legend(handles=[cells_with_0_patch_legend,nans_legend],loc="upper right", bbox_to_anchor=(-0.04, 1.01))
 # FIRST EXECUTABLE CODE:
 if __name__ == "__main__":
     main()
