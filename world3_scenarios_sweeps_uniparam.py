@@ -56,8 +56,10 @@ def main():
   # Dynamics to Growth tests:
     # testDeltaICOR()
     # testDeltaPseudoFFWParam()
-#### WORK PACKAGE 2 ####
+#### Temp ####
     # testHugoScolnikRuns()
+#### WORK PACKAGE 2 ####
+    # None. The "sweeps" for empirical sensitivity analysis needed to be different, so we included them in "w3_sens_calculator.py"
 
 ## Predefined tests
 def testDeltaPseudoFFWParam():
