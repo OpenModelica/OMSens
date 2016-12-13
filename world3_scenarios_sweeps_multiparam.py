@@ -1,7 +1,61 @@
+# Std:
 import os
 import sys
 import logging #en reemplazo de los prints
-logger = logging.getLogger("--World3 scenarios Uniparameter sweep --") #un logger especifico para este modulo
+logger = logging.getLogger("--World3 scenarios sweep--") #un logger especifico para este modulo
+logger = logging.getLogger("--World3 scenarios Multiparameter sweep --") #un logger especifico para este modulo
+
+#Mine:
+import settings.settings_world3_sweep as world3_settings
+import mos_writer.formulas as predefined_formulas
+
+vanilla_SysDyn_mo_path               = world3_settings._sys_dyn_package_vanilla_path.replace("\\","/") # The System Dynamics package without modifications
+piecewiseMod_SysDyn_mo_path          = world3_settings._sys_dyn_package_pw_fix_path.replace("\\","/") # Piecewise function modified to accept queries for values outside of range. Interpolate linearly using closest 2 values
+populationTankNewVar_SysDyn_mo_path  = world3_settings._sys_dyn_package_pop_state_var_new.replace("\\","/") # Added a new "population" var that includes an integrator. Numerically it's the same as "population" but with the advantage that now we can calculate sensitivities for it
+Run2vermeulenAndJongh_SysDyn_mo_path = world3_settings._sys_dyn_package_v_and_j_run_2.replace("\\","/") # Added a new "population" var that includes an integrator. Numerically it's the same as "population" but with the advantage that now we can calculate sensitivities for it
+Run3vermeulenAndJongh_SysDyn_mo_path = world3_settings._sys_dyn_package_v_and_j_run_3.replace("\\","/") # Added a new "population" var that includes an integrator. Numerically it's the same as "population" but with the advantage that now we can calculate sensitivities for it
+pseudoffwparam_SysDyn_mo_path        = world3_settings._sys_dyn_package_pseudo_ffw_param_path.replace("\\","/") # Added a new "population" var that includes an integrator. Numerically it's the same as "population" but with the advantage that now we can calculate sensitivities for it
+
+def main():
+    logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+#### WORK PACKAGE 3 ####
+    test2Params()
+   
+def test2Params():
+    # 1) name: "param_1"
+    # 2) default value: 20
+    # 3) fórmula (i variable libre porque es variable de MOS y no de Python): "{default} + i* {increment_factor}".format(def=20,incr_f=10)
+    # 4) # iterations: 5
+    inExAvgTim_default = 3    #don't modify (for now we leave the default here)
+    inExAvgTim_iterations = 5
+    inExAvgTim_sweeping_dict = {"name":"income_expect_avg_time","default":inExAvgTim_default,"formula": predefined_formulas.deltaBeforeAndAfter(inExAvgTim_default,inExAvgTim_iterations,0.01),"#iterations":inExAvgTim_iterations}
+    indCapOutRat_default = 3    #don't modify (for now we leave the default here)
+    indCapOutRat_iterations = 2
+    indCapOutRat_sweeping_dict = {"name":"p_ind_cap_out_ratio_1","default":indCapOutRat_default,"formula": predefined_formulas.increasingByPercentage(indCapOutRat_default,5),"#iterations":indCapOutRat_iterations}
+
+    ### Arriba definí lios "sweeping_dict" para cada parámetro a sweepear en conjunto. Faltaría seguir con los otros tasks de freedcamp
+
+    kwargs = {
+    "plot_vars":["population"],
+    "startTime": 1900 ,# year to start the simulation (1900 example)
+    "stopTime": 2500  ,# year to end the simulation (2100 for example)
+    "scens_to_run" : [1], #The standard run corresponds to the first scenario
+    "iterations" : 1, #More than one iteration is irrelevant
+    "sweep_vars": [] ,#No sweeping done in std run
+    "sweep_value_formula_str" : "i" ,#irrelevant formula (no sweeping)
+    "fixed_params" : [], #We don't want to change any parameters
+    "mo_file" : piecewiseMod_SysDyn_mo_path, # mo file with tabular modified (to allow out of tabular interpolation)
+    "plot_std_run": False, #Choose to plot std run alognside this test results
+    }
+    setUpSweepsAndRun(**kwargs)
+
+# FIRST EXECUTABLE CODE:
+if __name__ == "__main__":
+    main()
+
+
+#######    BORRAR DE ACA PARA ABAJO:  #######
+
 # Mine:
 import mos_writer.mos_script_factory as mos_script_factory
 import sweeping.run_and_plot_model as run_and_plot_model
@@ -24,12 +78,6 @@ def deltaBeforeAndAfter(p,iterations,delta): #Have to create a function for "del
 # Special sweeps constants definitions: DON'T CHANGE ANYTHING
 SPECIAL_policy_years = None # Special vars sweeping that sweeps the year to apply the different policies respective of each scenario. (each scenario has it's policies to apply.)
 # System Dynamics .mo to use:
-vanilla_SysDyn_mo_path               = world3_settings._sys_dyn_package_vanilla_path.replace("\\","/") # The System Dynamics package without modifications
-piecewiseMod_SysDyn_mo_path          = world3_settings._sys_dyn_package_pw_fix_path.replace("\\","/") # Piecewise function modified to accept queries for values outside of range. Interpolate linearly using closest 2 values
-populationTankNewVar_SysDyn_mo_path  = world3_settings._sys_dyn_package_pop_state_var_new.replace("\\","/") # Added a new "population" var that includes an integrator. Numerically it's the same as "population" but with the advantage that now we can calculate sensitivities for it
-Run2vermeulenAndJongh_SysDyn_mo_path = world3_settings._sys_dyn_package_v_and_j_run_2.replace("\\","/") # Added a new "population" var that includes an integrator. Numerically it's the same as "population" but with the advantage that now we can calculate sensitivities for it
-Run3vermeulenAndJongh_SysDyn_mo_path = world3_settings._sys_dyn_package_v_and_j_run_3.replace("\\","/") # Added a new "population" var that includes an integrator. Numerically it's the same as "population" but with the advantage that now we can calculate sensitivities for it
-pseudoffwparam_SysDyn_mo_path        = world3_settings._sys_dyn_package_pseudo_ffw_param_path.replace("\\","/") # Added a new "population" var that includes an integrator. Numerically it's the same as "population" but with the advantage that now we can calculate sensitivities for it
 
 def main():
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
@@ -476,6 +524,3 @@ def defaultSweepVarsDict():
             }
     return default_sweep_vars_dict
 
-# FIRST EXECUTABLE CODE:
-if __name__ == "__main__":
-    main()
