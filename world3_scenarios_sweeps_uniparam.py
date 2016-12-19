@@ -3,7 +3,7 @@ import sys
 import logging #en reemplazo de los prints
 logger = logging.getLogger("--World3 scenarios Uniparameter sweep --") #un logger especifico para este modulo
 # Mine:
-import mos_writer.mos_script_factory as mos_script_factory
+import mos_writer.mos_script_factory
 import sweeping.run_and_plot_model as run_and_plot_model
 import filesystem.files_aux as files_aux
 import settings.settings_world3_sweep as world3_settings
@@ -456,7 +456,7 @@ def initialFactoryForWorld3Scenario(scen_num,start_time,stop_time,mo_file,sweep_
         "stopTime"    : stop_time,
         "fixed_params": fixed_params,
         }
-    initial_factory = mos_script_factory.MosScriptFactory(initial_factory_dict)
+    initial_factory = mos_writer.mos_script_factory.UniparamMosScriptFactory(settings_dict=initial_factory_dict)
     return initial_factory
 def defaultSweepVarsForScenario(scen_num):
     default_sweep_vars_dict = defaultSweepVarsDict()

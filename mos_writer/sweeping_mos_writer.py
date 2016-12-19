@@ -9,22 +9,26 @@ import filesystem.files_aux
 # omc_logger_flags = "-w -lv=LOG_SOLVER"
 # omc_logger_flags = "-w"
 omc_logger_flags = ""
+class UniparamSweepingMosWriter():
+    def __init__(self,*args,**kwargs):
+        pass
+    def createMos(self,mo_file,model_name,sweep_vars,iterations,output_mos_path,startTime,stopTime,fixed_params,sweep_value_formula_str,csv_file_name_modelica):
+        load_and_build_str = strForLoadingAndBuilding(mo_file,model_name,startTime,stopTime)
+        check_if_valid_params_str = strForCheckingIfValidParams(model_name,sweep_vars,fixed_params)
+        fixed_params_str = strForFixedParams(fixed_params,model_name)
+        for_declaration_str = strForForDeclaration(iterations)
+        sweep_value_str = strForSweepValue(iterations,sweep_value_formula_str)
+        sweeping_vars_str = strForSweepingVars(model_name,sweep_vars)
+        full_system_call_str =  strForFullSystemCall(model_name,csv_file_name_modelica,omc_logger_flags)
+        end_for_str = strForEndFor()
+        final_str = load_and_build_str + fixed_params_str + for_declaration_str + \
+                    sweep_value_str    + sweeping_vars_str + full_system_call_str + \
+                    end_for_str
+        filesystem.files_aux.writeStrToFile(final_str,output_mos_path)
+        return 0
+
 def main():
     pass
-def createMos(mo_file,model_name,sweep_vars,iterations,output_mos_path,startTime,stopTime,fixed_params,sweep_value_formula_str,csv_file_name_modelica):
-    load_and_build_str = strForLoadingAndBuilding(mo_file,model_name,startTime,stopTime)
-    check_if_valid_params_str = strForCheckingIfValidParams(model_name,sweep_vars,fixed_params)
-    fixed_params_str = strForFixedParams(fixed_params,model_name)
-    for_declaration_str = strForForDeclaration(iterations)
-    sweep_value_str = strForSweepValue(iterations,sweep_value_formula_str)
-    sweeping_vars_str = strForSweepingVars(model_name,sweep_vars)
-    full_system_call_str =  strForFullSystemCall(model_name,csv_file_name_modelica,omc_logger_flags)
-    end_for_str = strForEndFor()
-    final_str = load_and_build_str + fixed_params_str + for_declaration_str + \
-                sweep_value_str    + sweeping_vars_str + full_system_call_str + \
-                end_for_str
-    filesystem.files_aux.writeStrToFile(final_str,output_mos_path)
-    return 0
 
 
 def strForCheckingIfValidParams(model_name,sweep_vars,fixed_params):

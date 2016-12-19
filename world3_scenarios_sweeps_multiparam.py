@@ -7,7 +7,9 @@ logger = logging.getLogger("--World3 scenarios Multiparameter sweep --") #un log
 
 #Mine:
 import settings.settings_world3_sweep as world3_settings
-import mos_writer.formulas as predefined_formulas
+import mos_writer.formulas as predef_formulas
+import mos_writer.parameter_sweep_settings as parameter_sweep_settings
+import filesystem.files_aux as files_aux
 
 vanilla_SysDyn_mo_path               = world3_settings._sys_dyn_package_vanilla_path.replace("\\","/") # The System Dynamics package without modifications
 piecewiseMod_SysDyn_mo_path          = world3_settings._sys_dyn_package_pw_fix_path.replace("\\","/") # Piecewise function modified to accept queries for values outside of range. Interpolate linearly using closest 2 values
@@ -22,18 +24,23 @@ def main():
     test2Params()
    
 def test2Params():
-    # 1) name: "param_1"
-    # 2) default value: 20
-    # 3) fórmula (i variable libre porque es variable de MOS y no de Python): "{default} + i* {increment_factor}".format(def=20,incr_f=10)
-    # 4) # iterations: 5
-    inExAvgTim_default = 3    #don't modify (for now we leave the default here)
-    inExAvgTim_iterations = 5
-    inExAvgTim_sweeping_dict = {"name":"income_expect_avg_time","default":inExAvgTim_default,"formula": predefined_formulas.deltaBeforeAndAfter(inExAvgTim_default,inExAvgTim_iterations,0.01),"#iterations":inExAvgTim_iterations}
-    indCapOutRat_default = 3    #don't modify (for now we leave the default here)
-    indCapOutRat_iterations = 2
-    indCapOutRat_sweeping_dict = {"name":"p_ind_cap_out_ratio_1","default":indCapOutRat_default,"formula": predefined_formulas.increasingByPercentage(indCapOutRat_default,5),"#iterations":indCapOutRat_iterations}
+    
+    inExAvgTim_sweepSettings   = parameter_sweep_settings.OrigParameterSweepSettings("income_expect_avg_time" , predef_formulas.DeltaBeforeAndAfter(0.01) , 5) # (param_name , formula_instance , iterations)
+    indCapOutRat_sweepSettings = parameter_sweep_settings.OrigParameterSweepSettings("p_ind_cap_out_ratio_1"  , predef_formulas.IncreasingByPercentage(5) , 2) # (param_name , formula_instance , iterations)
 
-    ### Arriba definí lios "sweeping_dict" para cada parámetro a sweepear en conjunto. Faltaría seguir con los otros tasks de freedcamp
+    #The "root" output folder path.
+    output_path = files_aux.makeOutputPath()
+    #Create scenarios from factory
+    scenarios = []
+    for i in scens_to_run:
+        scenario_tuple =("scenario_"+str(i),initial_factory_for_scen_i)
+        scenarios.append(scenario_tuple)
+    doScenariosSet(scenarios, plot_vars=plot_vars,iterations=iterations,output_root_path=output_path, sweep_value_formula_str=sweep_value_formula_str,plot_std_run=plot_std_run,fixed_params_str=fixed_params_str)
+def doScenariosSet(scenarios,plot_vars,iterations,output_root_path,sweep_value_formula_str,plot_std_run,fixed_params_str):
+    for folder_name,initial_scen_factory in scenarios:
+        logger.info("Running scenario {folder_name}".format(folder_name=folder_name))
+        os.makedirs(os.path.join(output_root_path,folder_name))
+        run_and_plot_model.createSweepRunAndPlotForModelInfo(initial_scen_factory,plot_vars=plot_vars,iterations=iterations,output_folder_path=os.path.join(output_root_path,folder_name),sweep_value_formula_str=sweep_value_formula_str,csv_file_name_modelica_skeleton=world3_settings.sweeping_csv_file_name_modelica_skeleton,csv_file_name_python_skeleton=world3_settings.sweeping_csv_file_name_python_skeleton,plot_std_run=plot_std_run,fixed_params_str=fixed_params_str)
 
     kwargs = {
     "plot_vars":["population"],
@@ -486,7 +493,6 @@ def doScenariosSet(scenarios,plot_vars,iterations,output_root_path,sweep_value_f
         os.makedirs(os.path.join(output_root_path,folder_name))
         run_and_plot_model.createSweepRunAndPlotForModelInfo(initial_scen_factory,plot_vars=plot_vars,iterations=iterations,output_folder_path=os.path.join(output_root_path,folder_name),sweep_value_formula_str=sweep_value_formula_str,csv_file_name_modelica_skeleton=world3_settings.sweeping_csv_file_name_modelica_skeleton,csv_file_name_python_skeleton=world3_settings.sweeping_csv_file_name_python_skeleton,plot_std_run=plot_std_run,fixed_params_str=fixed_params_str)
 def initialFactoryForWorld3Scenario(scen_num,start_time,stop_time,mo_file,sweep_vars=None,fixed_params=[]):
-    initial_factory_for_scen_1 = initialFactoryForWorld3Scenario
     #Get the mos script factory for a scenario number (valid from 1 to 11)
     assert 1<=scen_num<=9 , "The scenario number must be between 1 and 9. Your input: {0}".format(scen_num)
     if sweep_vars or isinstance(sweep_vars,list): #Have to use isinstance for empty lists
