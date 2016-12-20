@@ -3,7 +3,7 @@ from abc import ABC
 #Mine:
 import mos_writer.sweeping_mos_writer
 # Abstract class that implements most of the functionaltity.
-   # The only responsibility of the subclasses is to set if uniparam or multiparam
+   # The only responsibility of the subclasses is to set if uniparam or multiparam mos_writer
 class MosScriptFactory(ABC):
     #Init
     def __init__(self,*args,**kwargs):
@@ -48,3 +48,10 @@ class UniparamMosScriptFactory(MosScriptFactory):
         super(UniparamMosScriptFactory,self).__init__(*args,**kwargs)
         # Set the info for this subclass (if uniparam or multiparam factory)
         self._sweeping_mos_writer = mos_writer.sweeping_mos_writer.UniparamSweepingMosWriter()
+class MultiparamMosScriptFactory(MosScriptFactory):
+    #Init
+    def __init__(self,*args,**kwargs):
+        # Call superclass init with kwargs
+        super(MultiparamMosScriptFactory,self).__init__(*args,**kwargs)
+        # Set the info for this subclass (if uniparam or multiparam factory)
+        self._sweeping_mos_writer = mos_writer.sweeping_mos_writer.MultiparamSweepingMosWriter()

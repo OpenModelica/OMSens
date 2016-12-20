@@ -11,7 +11,7 @@ _std_run_csv = os.path.join(_resource_path,"standard_run.csv")
 
 # CAREFUL: python vs modelica must be equivalent!! (because of differences between modelica and python we can't merge them into one)
 sweeping_csv_file_name_python_skeleton = "iter_{i_str}.csv"
-sweeping_csv_file_name_modelica_skeleton= """ "iter_" + String(i) + ".csv";"""
+sweeping_csv_file_name_modelica_skeleton= """ "iter_" + String({i_name}) + ".csv";"""
 
 #The csv file name of the parameters from calculation of sensitivities needs to be a function because we have to replace the brackets ([) in python and in modelica
 def calc_sens_csv_file_name_function(param_name):

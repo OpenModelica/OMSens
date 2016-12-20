@@ -424,7 +424,7 @@ def testPolicyYears():
 #World3 specific:
 def setUpSweepsAndRun(iterations,sweep_vars,sweep_value_formula_str,fixed_params,plot_vars,startTime,stopTime,scens_to_run,mo_file,plot_std_run=False,fixed_params_str=False):
     #The "root" output folder path.
-    output_path = files_aux.makeOutputPath()
+    output_path = files_aux.makeOutputPath("modelica_uniparam_sweep")
     #Create scenarios from factory
     scenarios = []
     for i in scens_to_run:

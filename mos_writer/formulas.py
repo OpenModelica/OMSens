@@ -17,9 +17,12 @@ class IncreasingByScalar(SweepingFormulas):
     def __init__(self,scalar):
         self._scalar = scalar
     def initialize(self,extra_info):
-        default_value = extra_info["default_value"]
-        scalar        = self._scalar
-        return "{default_value} + i*{scalar}".format(default_value=default_value,scalar=scalar)
+        default_value  = extra_info["default_value"]
+        i_var_name = extra_info["i_var_name"]
+        scalar         = self._scalar
+        return "{default_value} + {i_var_name}*{scalar}".format(default_value=default_value,scalar=scalar,i_var_name=i_var_name)
+    def __str__(self):
+        return "IncreasingByScalar(scalar="+str(self._scalar)+")"
 
 class IncreasingByPercentage(SweepingFormulas):
   # Example:
@@ -28,8 +31,11 @@ class IncreasingByPercentage(SweepingFormulas):
         self._percentage = percentage
     def initialize(self,extra_info):
         default_value = extra_info["default_value"]
+        i_var_name = extra_info["i_var_name"]
         percentage    = self._percentage
-        return "{default_value}*({percentage}/100*i+1)".format(default_value=default_value,percentage=percentage)
+        return "{default_value}*({percentage}/100*{i_var_name}+1)".format(default_value=default_value,percentage=percentage,i_var_name=i_var_name)
+    def __str__(self):
+        return "IncreasingByPercentage(percentage="+str(self._percentage)+")"
 
 class DeltaBeforeAndAfter(SweepingFormulas):
   # To make the formula simpler, this function asks for #iterations to calculate the values before and after the default
@@ -40,6 +46,9 @@ class DeltaBeforeAndAfter(SweepingFormulas):
     def initialize(self,extra_info):
         default_value = extra_info["default_value"]
         iterations    = extra_info["iterations"]
+        i_var_name = extra_info["i_var_name"]
         delta         = self._delta
         iterations_div_2_int = int(iterations/2)
-        return "{default_value}*(1-{iterations_div_2_int}*{delta}) + {default_value}*({delta}*i)".format(default_value=default_value,iterations_div_2_int=iterations_div_2_int,delta=delta)
+        return "{default_value}*(1-{iterations_div_2_int}*{delta}) + {default_value}*({delta}*{i_var_name})".format(default_value=default_value,iterations_div_2_int=iterations_div_2_int,delta=delta,i_var_name=i_var_name)
+    def __str__(self):
+        return "DeltaBeforeAndAfter(delta="+str(self._delta)+")"

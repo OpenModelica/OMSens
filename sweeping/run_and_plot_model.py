@@ -15,7 +15,7 @@ def createSweepRunAndPlotForModelInfo(mos_script_factory_inst,plot_vars,iteratio
     output_mos_path = os.path.join(output_folder_path,gral_settings.mos_script_filename)
 	# EL scripting de modelica se rompe con la backslash (aunque estemos en windows). Hay que mandar la de unix nomas:
     output_mos_path = output_mos_path.replace("\\","/")
-    csv_file_name_modelica = csv_file_name_modelica_skeleton.format(**{})
+    csv_file_name_modelica = csv_file_name_modelica_skeleton.format(i_name="i")
     mos_script_factory_inst.setSetting("csv_file_name_modelica",csv_file_name_modelica)
     # mos_script_factory_inst.setSetting("plot_vars",plot_vars)
     mos_script_factory_inst.setSetting("iterations",iterations)
