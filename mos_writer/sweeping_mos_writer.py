@@ -31,7 +31,7 @@ class MultiparamSweepingMosWriter():
     def __init__(self,*args,**kwargs):
         pass
     # def createMos(self,mo_file,model_name,sweep_vars,iterations,output_mos_path,startTime,stopTime,fixed_params,sweep_value_formula_str,csv_file_name_modelica):
-    def createMos(self, model_name, startTime, stopTime, mo_file, sweep_params_settings, fixed_params,output_mos_path,csv_file_name_modelica_skeleton,mos_copy_path=False):
+    def createMos(self, model_name, startTime, stopTime, mo_file, sweep_params_settings_list, fixed_params,output_mos_path,csv_file_name_modelica_skeleton,mos_copy_path=False):
         # Initial settings of the .mos script
         load_and_build_str   = strForLoadingAndBuilding(mo_file,model_name,startTime,stopTime)
         fixed_params_str     = strForFixedParams(fixed_params,model_name)
@@ -41,7 +41,7 @@ class MultiparamSweepingMosWriter():
         param_padding = ""   # white spaces to add for each nested "for loop" (so they are tabularized and easier to read)
         i_total_init_str = "i_total := 0;"
         end_for_list = []
-        for param_settings in sweep_params_settings:
+        for param_settings in sweep_params_settings_list:
             param_name_wo_SpChars  = removeSpecialCharactersTo(param_settings.param_name)
             i_param                = "i_"+param_name_wo_SpChars
             value_var_name         = "value_"+param_name_wo_SpChars                       # "value_pop_init :        = ..."

@@ -2,6 +2,7 @@
 import os
 import sys
 import logging #en reemplazo de los prints
+import functools # for reduce
 logger = logging.getLogger("--World3 scenarios sweep--") #un logger especifico para este modulo
 logger = logging.getLogger("--World3 scenarios Multiparameter sweep --") #un logger especifico para este modulo
 
@@ -13,6 +14,7 @@ import mos_writer.mos_script_factory
 import filesystem.files_aux as files_aux
 import settings.gral_settings as gral_settings
 import running.run_omc
+import sweeping.iterationInfo
 
 vanilla_SysDyn_mo_path               = world3_settings._sys_dyn_package_vanilla_path.replace("\\","/") # The System Dynamics package without modifications
 piecewiseMod_SysDyn_mo_path          = world3_settings._sys_dyn_package_pw_fix_path.replace("\\","/") # Piecewise function modified to accept queries for values outside of range. Interpolate linearly using closest 2 values
@@ -32,7 +34,7 @@ def test2Params():
     indCapOutRat_sweepSettings = parameter_sweep_settings.OrigParameterSweepSettings("p_ind_cap_out_ratio_1"  , predef_formulas.IncreasingByPercentage(5) , 2) # (param_name , formula_instance , iterations)
 
     run_kwargs = {
-    "sweep_params_settings" : [ inExAvgTim_sweepSettings, indCapOutRat_sweepSettings],
+    "sweep_params_settings_list" : [ inExAvgTim_sweepSettings, indCapOutRat_sweepSettings],
     "plot_vars"             : ["population"],
     "stopTime"              : 2500  ,# year to end the simulation (2100 for example)
     "scens_to_run"          : [1], #The standard run corresponds to the first scenario
@@ -42,7 +44,7 @@ def test2Params():
     }
     setUpSweepsAndRun(**run_kwargs)
 
-def setUpSweepsAndRun(sweep_params_settings,fixed_params,plot_vars,stopTime,scens_to_run,mo_file,plot_std_run,fixed_params_description_str=False):
+def setUpSweepsAndRun(sweep_params_settings_list,fixed_params,plot_vars,stopTime,scens_to_run,mo_file,plot_std_run,fixed_params_description_str=False):
     startTime = 1900 # year to start the simulation. Because W3-Mod needs the starttime to be always 1900, we don't allow the user to change it
     #The "root" output folder path.
     output_root_path = files_aux.makeOutputPath("modelica_multiparam_sweep")
@@ -54,7 +56,7 @@ def setUpSweepsAndRun(sweep_params_settings,fixed_params,plot_vars,stopTime,scen
         # Create main folder
         scen_folder_path = os.path.join(output_root_path,folder_name)
         os.makedirs(scen_folder_path)
-        # Create run folder 
+        # Create run folder
         run_folder_path  = os.path.join(scen_folder_path,"run")
         os.makedirs(run_folder_path)
         # Write 2 copies of the output mos_path: one in the root folder of the scenario and the other inside the 'run' folder. The second one will be the one being executed.
@@ -62,24 +64,53 @@ def setUpSweepsAndRun(sweep_params_settings,fixed_params,plot_vars,stopTime,scen
         output_mos_tobeExe_path = os.path.join(run_folder_path,gral_settings.mos_script_filename)
         model_name = world3_settings._world3_scenario_model_skeleton.format(scen_num=scen_num)
         multiparamMosWriter = mos_writer.sweeping_mos_writer.MultiparamSweepingMosWriter()
-        multiparamMosWriter.createMos(model_name, startTime, stopTime, mo_file, sweep_params_settings, fixed_params, output_mos_tobeExe_path, world3_settings.sweeping_csv_file_name_modelica_skeleton,mos_copy_path=output_mos_copy_path)
+        multiparamMosWriter.createMos(model_name, startTime, stopTime, mo_file, sweep_params_settings_list, fixed_params, output_mos_tobeExe_path, world3_settings.sweeping_csv_file_name_modelica_skeleton,mos_copy_path=output_mos_copy_path)
         # Write run settings:
-        run_settings = { 
-        "sweep_params_settings": sweep_params_settings,
-        "fixed_params": fixed_params,
-        "plot_vars": plot_vars,
-        "stopTime": stopTime,
-        "scen_num": scen_num,
-        "model_name": model_name,
-        "mo_file": mo_file,
-        "plot_std_run": plot_std_run,
-        "fixed_params_description_str":fixed_params_description_str,}
+        run_settings = {
+            "sweep_params_settings_list": sweep_params_settings_list,
+            "fixed_params": fixed_params,
+            "plot_vars": plot_vars,
+            "stopTime": stopTime,
+            "scen_num": scen_num,
+            "model_name": model_name,
+            "mo_file": mo_file,
+            "plot_std_run": plot_std_run,
+            "fixed_params_description_str":fixed_params_description_str,
+        }
         writeRunLog(run_settings, os.path.join(scen_folder_path,gral_settings.omc_creation_settings_filename))
         # Run
-        running.run_omc.runMosScript(output_mos_tobeExe_path)
+        iterationsInfo_list = iterationsInfoForThisRun(sweep_params_settings_list)
+# DESCOMENTAME:
+        # running.run_omc.runMosScript(output_mos_tobeExe_path)
         # run_and_plot_model.createSweepRunAndPlotForModelInfo(initial_scen_factory,plot_vars=plot_vars,iterations=iterations,output_folder_path=os.path.join(output_root_path,folder_name),sweep_value_formula_str=sweep_value_formula_str,csv_file_name_modelica_skeleton=world3_settings.sweeping_csv_file_name_modelica_skeleton,csv_file_name_python_skeleton=world3_settings.sweeping_csv_file_name_python_skeleton,plot_std_run=plot_std_run,fixed_params_description_str=fixed_params_description_str)
 
     # setUpSweepsAndRun(**kwargs)
+def iterationsInfoForThisRun(sweep_params_settings_list):
+    # We iterate the params in the same order in which they will be iteratted in the fors in the .mos script.
+    # For each "total" iteration, each parameter will have it's own "i" set in a value and from that personal "i" and their formula they will calculate their value for the simulation corresponding to this run
+    # Here, we will calculate each of those values but in python instead of in Modelica
+#     iterationInfo():
+# import  simulationParamInfo():
+    itersTotal = functools.reduce(lambda accum,e: accum*e, [e.iterations for e in sweep_params_settings_list], 1)
+    
+    iterationsInfo_list = []
+
+    counter = [0] * len(sweep_params_settings_list)   # for each param, we keep a count of its internal iterator in this list
+    for i_total in range(itersTotal):
+        # Calculate the info of each parameter for this iteration
+        iterInfo = sweeping.iterationInfo.IterationInfo(i_total, sweep_params_settings_list, counter)
+
+        # Add 1 to the last param
+        counter[len(counter)-1] = counter[len(counter)-1] +1
+        # Check if the last params and its predecessors reached their max ( max = #iterations)
+        pos = len(counter) -1
+        while(counter[pos] == sweep_params_settings_list[pos].iterations and pos > 0):
+            counter[pos] = 0   # restart the counter for current pos
+            pos = pos -1       # go to previous pos
+            counter[pos] = counter[pos] +1    # add 1 to previous pos
+    return iterationsInfo_list
+
+
 
 def writeRunLog(run_settings_dict, output_path):
     intro_str = """The whole "create mos, run it and plot it" script was run with the following settings"""+"\n"
@@ -92,16 +123,16 @@ def writeRunLog(run_settings_dict, output_path):
     final_str = intro_str + format_explanation_str + "\n" + all_settings_str
     files_aux.writeStrToFile(final_str,output_path)
     return 0
-def initialFactoryForWorld3ScenarioMultiparamSweep(scen_num,stop_time,mo_file,sweep_params_settings,fixed_params=[]):
+def initialFactoryForWorld3ScenarioMultiparamSweep(scen_num,stop_time,mo_file,sweep_params_settings_list,fixed_params=[]):
     #Get the mos script factory for a scenario number (valid from 1 to 11)
     model_name = world3_settings._world3_scenario_model_skeleton.format(scen_num=scen_num) #global
     initial_factory_dict = {
-        "model_name"            : model_name,
-        "startTime"             : 1900, # year to start the simulation. Because W3-Mod needs the starttime to be always 1900, we don't allow the user to change it
-        "stopTime"              : stop_time,
-        "mo_file"               : mo_file,
-        "sweep_params_settings" : sweep_params_settings,
-        "fixed_params"          : fixed_params,
+        "model_name"                 : model_name,
+        "startTime"                  : 1900, # year to start the simulation. Because W3-Mod needs the starttime to be always 1900, we don't allow the user to change it
+        "stopTime"                   : stop_time,
+        "mo_file"                    : mo_file,
+        "sweep_params_settings_list" : sweep_params_settings_list,
+        "fixed_params"               : fixed_params,
         }
     initial_factory = mos_writer.mos_script_factory.MultiparamMosScriptFactory(settings_dict=initial_factory_dict)
     return initial_factory
