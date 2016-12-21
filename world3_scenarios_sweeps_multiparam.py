@@ -30,7 +30,6 @@ def test2Params():
 
     inExAvgTim_sweepSettings   = parameter_sweep_settings.OrigParameterSweepSettings("income_expect_avg_time" , predef_formulas.DeltaBeforeAndAfter(0.01) , 5) # (param_name , formula_instance , iterations)
     indCapOutRat_sweepSettings = parameter_sweep_settings.OrigParameterSweepSettings("p_ind_cap_out_ratio_1"  , predef_formulas.IncreasingByPercentage(5) , 2) # (param_name , formula_instance , iterations)
-    import ipdb; ipdb.set_trace();
 
     run_kwargs = {
     "sweep_params_settings" : [ inExAvgTim_sweepSettings, indCapOutRat_sweepSettings],
@@ -52,12 +51,18 @@ def setUpSweepsAndRun(sweep_params_settings,fixed_params,plot_vars,stopTime,scen
     for scen_num in scens_to_run:
         folder_name = "scenario_"+str(scen_num)
         logger.info("Running scenario {folder_name}".format(folder_name=folder_name))
+        # Create main folder
         scen_folder_path = os.path.join(output_root_path,folder_name)
         os.makedirs(scen_folder_path)
-        output_mos_path = os.path.join(scen_folder_path,gral_settings.mos_script_filename)
+        # Create run folder 
+        run_folder_path  = os.path.join(scen_folder_path,"run")
+        os.makedirs(run_folder_path)
+        # Write 2 copies of the output mos_path: one in the root folder of the scenario and the other inside the 'run' folder. The second one will be the one being executed.
+        output_mos_copy_path = os.path.join(scen_folder_path,gral_settings.mos_script_filename)
+        output_mos_tobeExe_path = os.path.join(run_folder_path,gral_settings.mos_script_filename)
         model_name = world3_settings._world3_scenario_model_skeleton.format(scen_num=scen_num)
         multiparamMosWriter = mos_writer.sweeping_mos_writer.MultiparamSweepingMosWriter()
-        multiparamMosWriter.createMos(model_name, startTime, stopTime, mo_file, sweep_params_settings, fixed_params, output_mos_path, world3_settings.sweeping_csv_file_name_modelica_skeleton)
+        multiparamMosWriter.createMos(model_name, startTime, stopTime, mo_file, sweep_params_settings, fixed_params, output_mos_tobeExe_path, world3_settings.sweeping_csv_file_name_modelica_skeleton,mos_copy_path=output_mos_copy_path)
         # Write run settings:
         run_settings = { 
         "sweep_params_settings": sweep_params_settings,
@@ -71,7 +76,7 @@ def setUpSweepsAndRun(sweep_params_settings,fixed_params,plot_vars,stopTime,scen
         "fixed_params_description_str":fixed_params_description_str,}
         writeRunLog(run_settings, os.path.join(scen_folder_path,gral_settings.omc_creation_settings_filename))
         # Run
-        running.run_omc.runMosScript(output_mos_path)
+        running.run_omc.runMosScript(output_mos_tobeExe_path)
         # run_and_plot_model.createSweepRunAndPlotForModelInfo(initial_scen_factory,plot_vars=plot_vars,iterations=iterations,output_folder_path=os.path.join(output_root_path,folder_name),sweep_value_formula_str=sweep_value_formula_str,csv_file_name_modelica_skeleton=world3_settings.sweeping_csv_file_name_modelica_skeleton,csv_file_name_python_skeleton=world3_settings.sweeping_csv_file_name_python_skeleton,plot_std_run=plot_std_run,fixed_params_description_str=fixed_params_description_str)
 
     # setUpSweepsAndRun(**kwargs)
@@ -85,8 +90,6 @@ def writeRunLog(run_settings_dict, output_path):
         all_settings.append(setting_str)
     all_settings_str = "\n".join(all_settings)
     final_str = intro_str + format_explanation_str + "\n" + all_settings_str
-### BORRAME:
-    print(final_str)
     files_aux.writeStrToFile(final_str,output_path)
     return 0
 def initialFactoryForWorld3ScenarioMultiparamSweep(scen_num,stop_time,mo_file,sweep_params_settings,fixed_params=[]):

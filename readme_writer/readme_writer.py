@@ -33,7 +33,7 @@ def plotsFolderStr():
     return strTemplate(filename,explanation)
 def outOfRangeCasesStr():
     filename= "out_of_range_cases.txt"
-    explanation = "This file is generated when the interpolation function from SystemDynamics model in OpenModelica is asked to interpolate values outside the default range (lower than the minimum or greater than the maximum). In those cases, we extrapolate linearly outwards the standard interval."
+    explanation = "This file is generated when the interpolation function from SystemDynamics model in OpenModelica is asked to interpolate values outside the default range (lower than the minimum or greater than the maximum). In those cases, we extrapolate linearly outwards the standard interval. Logging to file has to be enabled in that function in the Modelica source file."
     return strTemplate(filename,explanation)
 def csvFilesStr():
     filename= "*.csv files"

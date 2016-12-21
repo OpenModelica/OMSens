@@ -31,7 +31,7 @@ class MultiparamSweepingMosWriter():
     def __init__(self,*args,**kwargs):
         pass
     # def createMos(self,mo_file,model_name,sweep_vars,iterations,output_mos_path,startTime,stopTime,fixed_params,sweep_value_formula_str,csv_file_name_modelica):
-    def createMos(self, model_name, startTime, stopTime, mo_file, sweep_params_settings, fixed_params,output_mos_path,csv_file_name_modelica_skeleton):
+    def createMos(self, model_name, startTime, stopTime, mo_file, sweep_params_settings, fixed_params,output_mos_path,csv_file_name_modelica_skeleton,mos_copy_path=False):
         # Initial settings of the .mos script
         load_and_build_str   = strForLoadingAndBuilding(mo_file,model_name,startTime,stopTime)
         fixed_params_str     = strForFixedParams(fixed_params,model_name)
@@ -62,6 +62,9 @@ class MultiparamSweepingMosWriter():
 
         final_str          = "\n".join([load_and_build_str, fixed_params_str, i_total_init_str, params_str_w_newl,full_system_call_str,i_total_succ_str,end_for_str_w_newl])
         filesystem.files_aux.writeStrToFile(final_str,output_mos_path)
+        if mos_copy_path:
+            # If a copy of the mos file needs to be written
+            filesystem.files_aux.writeStrToFile(final_str,mos_copy_path)
         return 0
 
 def removeSpecialCharactersTo(param_name):
