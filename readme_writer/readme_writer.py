@@ -8,15 +8,6 @@ import filesystem.files_aux
 introduction = "This readme file was automatically generated to ease the effort of understanding the produced outputs. Here you'll find run-specific and run-independant information."
 
 
-##BORRA DESDE ACA
-sweeping_info_asd ={'sweep_vars': ['t_fcaor_time', 't_fert_cont_eff_time', 't_zero_pop_grow_time', 't_ind_equil_time',
-    't_policy_year', 't_land_life_time'], 'per_iter_info_dict': {0: {'file_path':
-        '/home/adanos/Documents/TPs/tesis/repos/modelica_scripts/tmp/modelica_outputs/2016-04-23/02_01_13/scenario_9/iter_0.csv',
-        'sweep_value': 2012}, 1: {'file_path':
-            '/home/adanos/Documents/TPs/tesis/repos/modelica_scripts/tmp/modelica_outputs/2016-04-23/02_01_13/scenario_9/iter_1.csv',
-            'sweep_value': 2022}}}
-## BORRA HASTA ACA
-
 def writeReadme(output_path,sweeping_info):
     logger.debug("Writing readme to path:{output_path}".format(output_path=output_path))
     run_indep_info = runIndependantInformation()
