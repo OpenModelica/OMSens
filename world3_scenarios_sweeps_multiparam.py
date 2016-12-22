@@ -16,6 +16,7 @@ import settings.gral_settings as gral_settings
 import running.run_omc
 import sweeping.iterationInfo
 import readme_writer.readme_writer as readme_writer
+import plotting.plot_csv as plot_csv
 
 vanilla_SysDyn_mo_path               = world3_settings._sys_dyn_package_vanilla_path.replace("\\","/") # The System Dynamics package without modifications
 piecewiseMod_SysDyn_mo_path          = world3_settings._sys_dyn_package_pw_fix_path.replace("\\","/") # Piecewise function modified to accept queries for values outside of range. Interpolate linearly using closest 2 values
@@ -27,15 +28,18 @@ pseudoffwparam_SysDyn_mo_path        = world3_settings._sys_dyn_package_pseudo_f
 def main():
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 #### WORK PACKAGE 3 ####
-    test2Params()
+    test3Params()
 
-def test2Params():
+def test3Params():
 
+    # Declare each parameter settings separately and then add them to the list manually
     inExAvgTim_sweepSettings   = parameter_sweep_settings.OrigParameterSweepSettings("income_expect_avg_time" , predef_formulas.DeltaBeforeAndAfter(0.01) , 5) # (param_name , formula_instance , iterations)
     indCapOutRat_sweepSettings = parameter_sweep_settings.OrigParameterSweepSettings("p_ind_cap_out_ratio_1"  , predef_formulas.IncreasingByPercentage(5) , 2) # (param_name , formula_instance , iterations)
+    nrRes_sweepSettings        = parameter_sweep_settings.OrigParameterSweepSettings("nr_resources_init"      , predef_formulas.DeltaBeforeAndAfter(0.1)  , 5) # (param_name , formula_instance , iterations)
+    sweep_params_settings_list = [ inExAvgTim_sweepSettings, indCapOutRat_sweepSettings,nrRes_sweepSettings]
 
     run_kwargs = {
-    "sweep_params_settings_list" : [ inExAvgTim_sweepSettings, indCapOutRat_sweepSettings],
+    "sweep_params_settings_list" : sweep_params_settings_list,
     "plot_vars"             : ["population"],
     "stopTime"              : 2500  ,# year to end the simulation (2100 for example)
     "scens_to_run"          : [1], #The standard run corresponds to the first scenario
@@ -80,21 +84,27 @@ def setUpSweepsAndRun(sweep_params_settings_list,fixed_params,plot_vars,stopTime
         }
         writeRunLog(run_settings, os.path.join(scen_folder_path,gral_settings.omc_creation_settings_filename))
         # Run
-# DESCOMENTAME:
-        # running.run_omc.runMosScript(output_mos_tobeExe_path)
+        running.run_omc.runMosScript(output_mos_tobeExe_path)
         # Get iterations info per param per iteration
-        iterationsInfo_list = iterationsInfoForThisRun(sweep_params_settings_list)
+        iterationsInfo_list = iterationsInfoForThisRun(sweep_params_settings_list,run_folder_path)
         # Plot desired variables
-        # run_and_plot_model.createSweepRunAndPlotForModelInfo(initial_scen_factory,plot_vars=plot_vars,iterations=iterations,output_folder_path=os.path.join(output_root_path,folder_name),sweep_value_formula_str=sweep_value_formula_str,csv_file_name_modelica_skeleton=world3_settings.sweeping_csv_file_name_modelica_skeleton,csv_file_name_python_skeleton=world3_settings.sweeping_csv_file_name_python_skeleton,plot_std_run=plot_std_run,fixed_params_description_str=fixed_params_description_str)
-        # plots_folder_path =os.path.join(output_folder_path,"plots")
-        # os.makedirs(plots_folder_path)
-        # plot_csv.plotVarsFromIterationsInfo(plot_vars,model_name,iterationsInfo_list,plots_folder_path,plot_std_run,fixed_params_str)
+        plots_folder_path =os.path.join(scen_folder_path,"plots")
+        os.makedirs(plots_folder_path)
+        # If the fixed params description has not been set (if there are a lot of params changed fixed then a custom description may be advantageous) then make the default one
+        if not fixed_params_description_str:
+            # If there are no fixed params for this run then just write "None" or similar
+            if len(fixed_params) == 0:
+                fixed_params_description_str = "None"
+            # If there is at least one fixed param, write them separated by commas.
+            else:
+                fixed_params_description_str = ", ".join([str(x) for x in fixed_params])
+        plot_csv.plotVarsFromIterationsInfo(plot_vars,model_name,iterationsInfo_list,plots_folder_path,plot_std_run,fixed_params_description_str)
         # Write automatic readme (with general info and specific info for this sweep)
         readme_path = os.path.join(scen_folder_path,gral_settings.readme_filename)
         readme_writer.writeReadmeMultiparam(readme_path,iterationsInfo_list)
 
     # setUpSweepsAndRun(**kwargs)
-def iterationsInfoForThisRun(sweep_params_settings_list):
+def iterationsInfoForThisRun(sweep_params_settings_list,run_folder_path):
     # We iterate the params in the same order in which they will be iteratted in the fors in the .mos script.
     # For each "total" iteration, each parameter will have it's own "i" set in a value and from that personal "i" and their formula they will calculate their value for the simulation corresponding to this run
     # Here, we will calculate each of those values but in python instead of in Modelica
@@ -107,7 +117,7 @@ def iterationsInfoForThisRun(sweep_params_settings_list):
     counter = [0] * len(sweep_params_settings_list)   # for each param, we keep a count of its internal iterator in this list
     for i_total in range(itersTotal):
         # Calculate the info of each parameter for this iteration
-        iterInfo = sweeping.iterationInfo.IterationInfo(i_total, sweep_params_settings_list, counter)
+        iterInfo = sweeping.iterationInfo.IterationInfo(i_total, sweep_params_settings_list, counter,run_folder_path)
 
         # Add 1 to the last param
         counter[len(counter)-1] = counter[len(counter)-1] +1

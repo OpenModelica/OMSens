@@ -110,37 +110,44 @@ def plotVarsFromSweepingInfo(plot_vars,model_name,sweeping_info,plots_folder_pat
         plotVarFromSweepingInfo(var_name,model_name,sweeping_info,plots_folder_path,plot_std_run,fixed_params_str)
 
 def plotVarFromIterationsInfo(var_name,model_name,iterationsInfo_list,plots_folder_path,plot_std_run,fixed_params_str):
-    # print(str(sweeping_info))
     plot_path_without_extension = os.path.join(plots_folder_path,var_name)
     logger_plot_str = "Plotting:\n  plotvar:{var_name}\n path:{plot_path_without_extension}".format(var_name=var_name,plot_path_without_extension=plot_path_without_extension)
     logger.debug(logger_plot_str)
-    sweep_vars         = sweeping_info["sweep_vars"]
-    fixed_params       = sweeping_info["fixed_params"]
-    sweep_vars_str = ", ".join(sweep_vars)
-    fixed_params_to_strs = [str(x) for x in fixed_params]
-    if fixed_params_str == False:
-        fixed_params_str = ", ".join(fixed_params_to_strs)
-    title,subtitle,footer = sweepingPlotTexts(model_name,var_name,sweep_vars_str,fixed_params_str)
-    per_iter_info_dict = sweeping_info["per_iter_info_dict"]
+    swept_params_str = sweptParamsStrMultiparam(iterationsInfo_list)
+    title,subtitle,footer = sweepingPlotTexts(model_name,var_name,swept_params_str,fixed_params_str)
     footer_artist = setupPlt("Time",var_name,title,subtitle,footer)
-    iterations = per_iter_info_dict.keys()
+    # per_iter_info_dict = sweeping_info["per_iter_info_dict"]
+    # iterations = per_iter_info_dict.keys()
     # colors = plt.get_cmap('jet')(np.linspace(0, 1.0, len(iterations)))
-    colors_list = plt.get_cmap('jet')(np.linspace(0, 1.0, len(iterations)))
+    colors_list = plt.get_cmap('jet')(np.linspace(0, 1.0, len(iterationsInfo_list)))
     colors_iter = iter(colors_list)
 
     if plot_std_run:
         plotStandardRun(var_name)
 
-    for i in iterations:
-        iter_dict = per_iter_info_dict[i]
-        file_path = iter_dict["file_path"]
+    # for i in iterations:
+    for iterInfo in iterationsInfo_list:
+        file_path = iterInfo.csv_path
         data = readFromCSV(file_path)
-        sweep_value = iter_dict["sweep_value"]
-        label = "param_val={sweep_value:.2f}".format(sweep_value=sweep_value)
+        label = labelForIterInfo(iterInfo)
         plt.plot(data["time"], data[var_name], linewidth=1, linestyle='-', markersize=0,marker='o',label=label,color = next(colors_iter))
     lgd = plt.legend(loc="center left",fontsize="small",fancybox=True, shadow=True, bbox_to_anchor=(1,0.5)) #A la derecha
     # lgd = plt.legend(loc="center left",fontsize="small",fancybox=True, shadow=True, bbox_to_anchor=(0.5,-0.5)) #Abajo (anda mal)
     saveAndClearPlt(plot_path_without_extension,lgd,footer_artist)
+
+def labelForIterInfo(iterInfo):
+    simu_param_info_list = iterInfo.simu_param_info_list
+    params_strs_list = []
+    for param_pos in range(0,len(simu_param_info_list)):
+        simu_param_info = simu_param_info_list[param_pos]
+        param_name = simu_param_info.param_name
+        this_run_val = simu_param_info.this_run_val
+        this_run_def_diff = simu_param_info.this_run_def_diff
+        param_id_str = "({id})".format(id=param_pos)
+        param_str = "{param_id_str}={val:.2f} [{def_diff}]".format(param_id_str=param_id_str,val=this_run_val,def_diff=this_run_def_diff)
+        params_strs_list.append(param_str)
+    label = " | ".join(params_strs_list)
+    return label
 
 def plotVarFromSweepingInfo(var_name,model_name,sweeping_info,plots_folder_path,plot_std_run,fixed_params_str):
     # print(str(sweeping_info))
@@ -181,6 +188,13 @@ def sweepingPlotTexts(model_name,var_name,sweep_vars_str,fixed_params_str):
     fixed_params_full_str = "Fixed params:  \n {fixed_params_str}".format(fixed_params_str=fixed_params_str)
     footer = swept_vars_full_str+"\n"+fixed_params_full_str
     return (title,subtitle,footer)
+
+def sweptParamsStrMultiparam(iterationsInfo_list):
+    # Get the parameters list from the first iterationsInfo
+    swept_params = iterationsInfo_list[0].swept_params
+    # Prepare the string by joining with a comma the parameters with their ID. eg: "param_1 (1), param_2 (2) ..."
+    swept_params_str = ", ".join([swept_params[i] + " ({i})".format(i=i) for i in range(0,len(swept_params))])
+    return swept_params_str
 def plotStandardRun(var_name,color="black"):
         data = readFromCSV(_std_run_csv)
         label = "STD_RUN"
