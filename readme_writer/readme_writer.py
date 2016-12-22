@@ -14,7 +14,6 @@ def writeReadmeMultiparam(output_path,iterationsInfo_list):
     run_specif_info = runSpecificInformationMultiparam(iterationsInfo_list)
     final_str = (introduction+"\n\n") + (run_indep_info+"\n\n") + (run_specif_info)
     filesystem.files_aux.writeStrToFile(final_str,output_path)
-    print(final_str)
 
 def writeReadme(output_path,sweeping_info):
     logger.debug("Writing readme to path:{output_path}".format(output_path=output_path))
