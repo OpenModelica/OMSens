@@ -8,6 +8,14 @@ import filesystem.files_aux
 introduction = "This readme file was automatically generated to ease the effort of understanding the produced outputs. Here you'll find run-specific and run-independant information."
 
 
+def writeReadmeMultiparam(output_path,iterationsInfo_list):
+    logger.debug("Writing readme to path:{output_path}".format(output_path=output_path))
+    run_indep_info = runIndependantInformation()
+    run_specif_info = runSpecificInformationMultiparam(iterationsInfo_list)
+    final_str = (introduction+"\n\n") + (run_indep_info+"\n\n") + (run_specif_info)
+    filesystem.files_aux.writeStrToFile(final_str,output_path)
+    print(final_str)
+
 def writeReadme(output_path,sweeping_info):
     logger.debug("Writing readme to path:{output_path}".format(output_path=output_path))
     run_indep_info = runIndependantInformation()
@@ -32,20 +40,20 @@ def plotsFolderStr():
     explanation = "The plot for the plot_variable (different than the sweep_variables) for each of its values for each iteration."
     return strTemplate(filename,explanation)
 def outOfRangeCasesStr():
-    filename= "out_of_range_cases.txt"
+    filename= "run/out_of_range_cases.txt"
     explanation = "This file is generated when the interpolation function from SystemDynamics model in OpenModelica is asked to interpolate values outside the default range (lower than the minimum or greater than the maximum). In those cases, we extrapolate linearly outwards the standard interval. Logging to file has to be enabled in that function in the Modelica source file."
     return strTemplate(filename,explanation)
 def csvFilesStr():
-    filename= "*.csv files"
+    filename= "run/*.csv files"
     explanation = "This are the results of the sweep. Each .csv corresponds to an iteration. The filenames for this specific run are explained in the 'Run Specific Information' section"
     return strTemplate(filename,explanation)
 
 def binaryFileStr():
-    filename= "executable (*.exe in windows. No extension in Linux)"
+    filename= "run/executable (*.exe in windows. No extension in Linux)"
     explanation = "This is the executable corresponding to the compiled code for the model.  It's used to run each of the experiments for this sweep. It gets it's configuration from the *.xml file."
     return strTemplate(filename,explanation)
 def xmlFileStr():
-    filename= "*.xml"
+    filename= "run/*.xml"
     explanation = "This file was automatically generated after compiling the Modelica model and is used by the .mos script to change the experiment conditions for each iteration of the sweep."
     return strTemplate(filename,explanation)
 
@@ -67,6 +75,14 @@ def omcRunLogStr():
 def strTemplate(filename,explanation):
     return filename+":\n  "+explanation
 
+def runSpecificInformationMultiparam(iterationsInfo_list):
+    simu_param_info_list = iterationsInfo_list[0].simu_param_info_list # get the first one as all of them have the same parameters
+    swept_params = iterationsInfo_list[0].swept_params
+    strs = ["... Specific info for this run ...",
+            sweptVarsStr(swept_params),
+            iterationsInfoMultiparam(iterationsInfo_list),
+            ]
+    return "\n".join(strs)
 def runSpecificInformation(sweeping_info):
     strs = ["... Specific info for this run ...",
             sweptVarsStr(sweeping_info["sweep_vars"]),
@@ -75,9 +91,25 @@ def runSpecificInformation(sweeping_info):
     return "\n".join(strs)
 
 def sweptVarsStr(swept_vars):
-    intro_str = "The script was ran sweeping the following variables (all of them with the same value for each iteration):"
+    intro_str = "The script was ran sweeping the following parameters"
     vars_separated_by_commas = ", ".join(swept_vars)
     return intro_str+"\n  "+vars_separated_by_commas
+
+def iterationsInfoMultiparam(iterationsInfo_list):
+    total_iterations = len(iterationsInfo_list)
+    number_of_iterations_str = "The produced CSV files for the {iterations} values tested are the following:".format(iterations=total_iterations)
+    iterations_str_list = []
+    for iterationInfo in iterationsInfo_list:
+        i_total = iterationInfo.i_total
+        iter_num_str = iterationInfo.csv_file_name + " (Iteration number: "+str(i_total) +")"
+        param_info_str_list = []
+        for simu_param_info in iterationInfo.simu_param_info_list:
+            this_param_str = "   (param_name: " + str(simu_param_info.param_name) + ", " + "param_default: " + "{:.2f}".format(simu_param_info.param_default) + ", " + "this_run_val: " + "{:.2f}".format(simu_param_info.this_run_val) + ", " + "this_run_def_diff: " + str(simu_param_info.this_run_def_diff) + ")"
+            param_info_str_list.append(this_param_str)
+        this_iteration_str = "\n".join([iter_num_str,"\n".join(param_info_str_list)])
+        iterations_str_list.append(this_iteration_str)
+    final_str = "\n" + number_of_iterations_str + "\n" + "\n-\n".join(iterations_str_list)
+    return final_str
 
 def iterationsInfo(per_iter_info_dict):
     iterations = len(per_iter_info_dict)

@@ -101,9 +101,46 @@ def multipleCSVsAndVarsSimplePlot(vars_list,csvs_path_label_pair_list,plot_title
         plot_path_without_extension = os.path.join(output_folder_path,var_name)
         saveAndClearPlt(plot_path_without_extension,lgd,footer_artist)
 
+def plotVarsFromIterationsInfo(plot_vars,model_name,iterationsInfo_list,plots_folder_path,plot_std_run,fixed_params_str):
+    for var_name in plot_vars:
+        plotVarFromIterationsInfo(var_name,model_name,iterationsInfo_list,plots_folder_path,plot_std_run,fixed_params_str)
+
 def plotVarsFromSweepingInfo(plot_vars,model_name,sweeping_info,plots_folder_path,plot_std_run,fixed_params_str):
     for var_name in plot_vars:
         plotVarFromSweepingInfo(var_name,model_name,sweeping_info,plots_folder_path,plot_std_run,fixed_params_str)
+
+def plotVarFromIterationsInfo(var_name,model_name,iterationsInfo_list,plots_folder_path,plot_std_run,fixed_params_str):
+    # print(str(sweeping_info))
+    plot_path_without_extension = os.path.join(plots_folder_path,var_name)
+    logger_plot_str = "Plotting:\n  plotvar:{var_name}\n path:{plot_path_without_extension}".format(var_name=var_name,plot_path_without_extension=plot_path_without_extension)
+    logger.debug(logger_plot_str)
+    sweep_vars         = sweeping_info["sweep_vars"]
+    fixed_params       = sweeping_info["fixed_params"]
+    sweep_vars_str = ", ".join(sweep_vars)
+    fixed_params_to_strs = [str(x) for x in fixed_params]
+    if fixed_params_str == False:
+        fixed_params_str = ", ".join(fixed_params_to_strs)
+    title,subtitle,footer = sweepingPlotTexts(model_name,var_name,sweep_vars_str,fixed_params_str)
+    per_iter_info_dict = sweeping_info["per_iter_info_dict"]
+    footer_artist = setupPlt("Time",var_name,title,subtitle,footer)
+    iterations = per_iter_info_dict.keys()
+    # colors = plt.get_cmap('jet')(np.linspace(0, 1.0, len(iterations)))
+    colors_list = plt.get_cmap('jet')(np.linspace(0, 1.0, len(iterations)))
+    colors_iter = iter(colors_list)
+
+    if plot_std_run:
+        plotStandardRun(var_name)
+
+    for i in iterations:
+        iter_dict = per_iter_info_dict[i]
+        file_path = iter_dict["file_path"]
+        data = readFromCSV(file_path)
+        sweep_value = iter_dict["sweep_value"]
+        label = "param_val={sweep_value:.2f}".format(sweep_value=sweep_value)
+        plt.plot(data["time"], data[var_name], linewidth=1, linestyle='-', markersize=0,marker='o',label=label,color = next(colors_iter))
+    lgd = plt.legend(loc="center left",fontsize="small",fancybox=True, shadow=True, bbox_to_anchor=(1,0.5)) #A la derecha
+    # lgd = plt.legend(loc="center left",fontsize="small",fancybox=True, shadow=True, bbox_to_anchor=(0.5,-0.5)) #Abajo (anda mal)
+    saveAndClearPlt(plot_path_without_extension,lgd,footer_artist)
 
 def plotVarFromSweepingInfo(var_name,model_name,sweeping_info,plots_folder_path,plot_std_run,fixed_params_str):
     # print(str(sweeping_info))

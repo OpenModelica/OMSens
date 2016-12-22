@@ -15,6 +15,7 @@ import filesystem.files_aux as files_aux
 import settings.gral_settings as gral_settings
 import running.run_omc
 import sweeping.iterationInfo
+import readme_writer.readme_writer as readme_writer
 
 vanilla_SysDyn_mo_path               = world3_settings._sys_dyn_package_vanilla_path.replace("\\","/") # The System Dynamics package without modifications
 piecewiseMod_SysDyn_mo_path          = world3_settings._sys_dyn_package_pw_fix_path.replace("\\","/") # Piecewise function modified to accept queries for values outside of range. Interpolate linearly using closest 2 values
@@ -79,10 +80,18 @@ def setUpSweepsAndRun(sweep_params_settings_list,fixed_params,plot_vars,stopTime
         }
         writeRunLog(run_settings, os.path.join(scen_folder_path,gral_settings.omc_creation_settings_filename))
         # Run
-        iterationsInfo_list = iterationsInfoForThisRun(sweep_params_settings_list)
 # DESCOMENTAME:
         # running.run_omc.runMosScript(output_mos_tobeExe_path)
+        # Get iterations info per param per iteration
+        iterationsInfo_list = iterationsInfoForThisRun(sweep_params_settings_list)
+        # Plot desired variables
         # run_and_plot_model.createSweepRunAndPlotForModelInfo(initial_scen_factory,plot_vars=plot_vars,iterations=iterations,output_folder_path=os.path.join(output_root_path,folder_name),sweep_value_formula_str=sweep_value_formula_str,csv_file_name_modelica_skeleton=world3_settings.sweeping_csv_file_name_modelica_skeleton,csv_file_name_python_skeleton=world3_settings.sweeping_csv_file_name_python_skeleton,plot_std_run=plot_std_run,fixed_params_description_str=fixed_params_description_str)
+        # plots_folder_path =os.path.join(output_folder_path,"plots")
+        # os.makedirs(plots_folder_path)
+        # plot_csv.plotVarsFromIterationsInfo(plot_vars,model_name,iterationsInfo_list,plots_folder_path,plot_std_run,fixed_params_str)
+        # Write automatic readme (with general info and specific info for this sweep)
+        readme_path = os.path.join(scen_folder_path,gral_settings.readme_filename)
+        readme_writer.writeReadmeMultiparam(readme_path,iterationsInfo_list)
 
     # setUpSweepsAndRun(**kwargs)
 def iterationsInfoForThisRun(sweep_params_settings_list):
@@ -92,7 +101,7 @@ def iterationsInfoForThisRun(sweep_params_settings_list):
 #     iterationInfo():
 # import  simulationParamInfo():
     itersTotal = functools.reduce(lambda accum,e: accum*e, [e.iterations for e in sweep_params_settings_list], 1)
-    
+
     iterationsInfo_list = []
 
     counter = [0] * len(sweep_params_settings_list)   # for each param, we keep a count of its internal iterator in this list
@@ -108,6 +117,7 @@ def iterationsInfoForThisRun(sweep_params_settings_list):
             counter[pos] = 0   # restart the counter for current pos
             pos = pos -1       # go to previous pos
             counter[pos] = counter[pos] +1    # add 1 to previous pos
+        iterationsInfo_list.append(iterInfo)
     return iterationsInfo_list
 
 

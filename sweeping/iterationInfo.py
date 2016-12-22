@@ -3,8 +3,8 @@ class IterationInfo():
     def __init__(self, i_total, sweep_params_settings_list, counter):
         self.csv_file_name = w3_settings.sweeping_csv_file_name_python_skeleton.format(i_str=i_total)  #here we use the string skeleton for a special run instead of for any run
         self.simu_param_info_list = simulationInfoForEachParam(sweep_params_settings_list,counter)
-
-
+        self.i_total = i_total
+        self.swept_params = [e.param_name for e in self.simu_param_info_list]
 
 class SimulationParamInfo():
     def __init__(self, param_name, param_default, this_run_val, this_run_def_diff):
@@ -13,9 +13,9 @@ class SimulationParamInfo():
         self.this_run_val = this_run_val
         self.this_run_def_diff = this_run_def_diff
     def __str__(self):
-        return "(param_name: " + str(self.param_name) + ", " + "param_default: " + str(self.param_default) + ", " + "this_run_val: " + str(self.this_run_val) + ", " + "this_run_def_diff: " + str(self.this_run_def_diff) + ")"
+        return "(param_name: " + str(simu_param_info.param_name) + ", " + "param_default: " + "{:.2f}".format(simu_param_info.param_default) + ", " + "this_run_val: " + "{:.2f}".format(simu_param_info.this_run_val) + ", " + "this_run_def_diff: " + str(simu_param_info.this_run_def_diff) + ")"
     def __repr__(self):
-        return "(param_name: " + str(self.param_name) + ", " + "param_default: " + str(self.param_default) + ", " + "this_run_val: " + str(self.this_run_val) + ", " + "this_run_def_diff: " + str(self.this_run_def_diff) + ")"
+        return "(param_name: " + str(simu_param_info.param_name) + ", " + "param_default: " + "{:.2f}".format(simu_param_info.param_default) + ", " + "this_run_val: " + "{:.2f}".format(simu_param_info.this_run_val) + ", " + "this_run_def_diff: " + str(simu_param_info.this_run_def_diff) + ")"
 
 # Aux
 def simulationInfoForEachParam(sweep_params_settings_list,counter):
