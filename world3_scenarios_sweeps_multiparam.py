@@ -29,10 +29,29 @@ def main():
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 #### WORK PACKAGE 3 ####
     test3Params()
+    test3fromTop12RelativeWP2()
+
+def test3fromTop12RelativeWP2():
+
+    # Declare each parameter settings separately and then add them to the list manually
+    fioaConsConst_sweepSettings  = parameter_sweep_settings.OrigParameterSweepSettings("p_fioa_cons_const_1"   , predef_formulas.DeltaBeforeAndAfter(0.01) , 5) # (param_name , formula_instance , iterations)
+    indCapOutRat_sweepSettings   = parameter_sweep_settings.OrigParameterSweepSettings("p_ind_cap_out_ratio_1" , predef_formulas.DeltaBeforeAndAfter(0.01) , 5) # (param_name , formula_instance , iterations)
+    reproLifet_sweepSettings     = parameter_sweep_settings.OrigParameterSweepSettings("reproductive_lifetime" , predef_formulas.DeltaBeforeAndAfter(0.01) , 5) # (param_name , formula_instance , iterations)
+    sweep_params_settings_list   = [ fioaConsConst_sweepSettings, indCapOutRat_sweepSettings, reproLifet_sweepSettings]
+
+    run_kwargs = {
+    "sweep_params_settings_list" : sweep_params_settings_list,
+    "plot_vars"                  : ["population"],
+    "stopTime"                   : 2500  ,# year to end the simulation (2100 for example)
+    "scens_to_run"               : [1], #The standard run corresponds to the first scenario
+    "fixed_params"               : [], #We don't want to change any parameters
+    "mo_file"                    : piecewiseMod_SysDyn_mo_path, # mo file with tabular modified (to allow out of tabular interpolation)
+    "plot_std_run"               : False, #Choose to plot std run alognside this test results
+    }
+    setUpSweepsAndRun(**run_kwargs)
 
 def test3Params():
 
-    # Declare each parameter settings separately and then add them to the list manually
     inExAvgTim_sweepSettings   = parameter_sweep_settings.OrigParameterSweepSettings("income_expect_avg_time" , predef_formulas.DeltaBeforeAndAfter(0.01) , 5) # (param_name , formula_instance , iterations)
     indCapOutRat_sweepSettings = parameter_sweep_settings.OrigParameterSweepSettings("p_ind_cap_out_ratio_1"  , predef_formulas.IncreasingByPercentage(5) , 2) # (param_name , formula_instance , iterations)
     nrRes_sweepSettings        = parameter_sweep_settings.OrigParameterSweepSettings("nr_resources_init"      , predef_formulas.DeltaBeforeAndAfter(0.1)  , 5) # (param_name , formula_instance , iterations)
@@ -40,12 +59,12 @@ def test3Params():
 
     run_kwargs = {
     "sweep_params_settings_list" : sweep_params_settings_list,
-    "plot_vars"             : ["population"],
-    "stopTime"              : 2500  ,# year to end the simulation (2100 for example)
-    "scens_to_run"          : [1], #The standard run corresponds to the first scenario
-    "fixed_params"          : [], #We don't want to change any parameters
-    "mo_file"               : piecewiseMod_SysDyn_mo_path, # mo file with tabular modified (to allow out of tabular interpolation)
-    "plot_std_run"          : False, #Choose to plot std run alognside this test results
+    "plot_vars"                  : ["population"],
+    "stopTime"                   : 2500  ,# year to end the simulation (2100 for example)
+    "scens_to_run"               : [1], #The standard run corresponds to the first scenario
+    "fixed_params"               : [], #We don't want to change any parameters
+    "mo_file"                    : piecewiseMod_SysDyn_mo_path, # mo file with tabular modified (to allow out of tabular interpolation)
+    "plot_std_run"               : False, #Choose to plot std run alognside this test results
     }
     setUpSweepsAndRun(**run_kwargs)
 

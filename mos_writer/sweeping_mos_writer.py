@@ -60,7 +60,9 @@ class MultiparamSweepingMosWriter():
         params_str_w_newl  = "\n".join(params_str_list)
         end_for_str_w_newl = "\n".join(end_for_list)
 
-        final_str          = "\n".join([load_and_build_str, fixed_params_str, i_total_init_str, params_str_w_newl,full_system_call_str,i_total_succ_str,end_for_str_w_newl])
+        final_str          = "\n".join([load_and_build_str, fixed_params_str, i_total_init_str,
+                                        params_str_w_newl, full_system_call_str, i_total_succ_str,
+                                        end_for_str_w_newl])
         filesystem.files_aux.writeStrToFile(final_str,output_mos_path)
         if mos_copy_path:
             # If a copy of the mos file needs to be written
