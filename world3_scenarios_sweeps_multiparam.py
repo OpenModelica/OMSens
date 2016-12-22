@@ -28,7 +28,7 @@ pseudoffwparam_SysDyn_mo_path        = world3_settings._sys_dyn_package_pseudo_f
 def main():
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 #### WORK PACKAGE 1 ####
-    testNRResources()
+    # testNRResources()
 #### WORK PACKAGE 3 ####
     # test3Params()
     # test3fromTop12RelativeWP2()
