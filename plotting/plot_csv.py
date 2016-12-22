@@ -10,65 +10,7 @@ import filesystem.files_aux
 import settings.settings_world3_sweep as world3_settings
 
 #GLOBALS:
-_std_run_csv = world3_settings._std_run_csv 
-
-
-def main():
-    # plotVermeulenResults()
-    # plotEmpiricalSensitivities()
-    plotSimpleCSV()
-def plotSimpleCSV():
-    subtitle = "101% value (1% perturbance) for 6 parameters"
-    footer = "Parameters perturbed: \n p_fioa_cons_const_1, p_ind_cap_out_ratio_1, life_expect_norm, \n reproductive_lifetime, des_compl_fam_size_norm, p_avg_life_ind_cap_1."
-    regex = '.*perturbed\.(csv)$'
-    csvs_path_label_pair_list = [("/home/adanos/Documents/TPs/tesis/repos/modelica_scripts/tmp/6_most_senstive/6_most_sensitive_perturbation.csv","6 params perturbed")]
-    vars_list = ["population"]
-    plot_title = "Population for 6 parameters perturbed"
-    x_range=[1900,2100]
-    include_stdrun = True
-    output_base_path = "/home/adanos/Documents/TPs/tesis/repos/modelica_scripts/tmp/simple_plots/"
-    output_folder_path = filesystem.files_aux.makeDirFromCurrentTimestamp(output_base_path)
-    extra_ticks = []
-    multipleCSVsAndVarsSimplePlot(vars_list,csvs_path_label_pair_list,plot_title,x_range,output_folder_path,extra_ticks,include_stdrun,subtitle=subtitle,footer=footer)
-
-
-def plotEmpiricalSensitivities():
-    ##Example for "multipleCSVsAndVarsSimplePlot" using Vermeulen Run 2 & 3 Results.
-    # (folderpath,subtitle, footer)
-    experiments_tuples = \
-       [("tmp/modelica_outputs/2016-08-25/16_27_22/", "101% of default","Each parameter perturbed in isolation"),
-       ("tmp/modelica_outputs/2016-08-25/17_28_47/", "102% of default","Each parameter perturbed in isolation"),
-       ("tmp/modelica_outputs/2016-08-25/17_34_02/", "105% of default","Each parameter perturbed in isolation"),
-       ("tmp/modelica_outputs/2016-08-25/17_39_19/", "110% of default","Each parameter perturbed in isolation"),
-    ]
-
-    for folder_path,subtitle,footer in experiments_tuples:
-        regex = '.*perturbed\.(csv)$'
-        csvs_path_label_pair_list = []
-        for x in os.listdir(folder_path):
-            if re.match(regex, x):
-                csvs_path_label_pair_list.append((os.path.join(folder_path,x),x))
-        vars_list = ["population"]
-        plot_title = "Population in all the individual parameter perturbations"
-        x_range=[1900,2100]
-        include_stdrun = True
-        output_base_path = "/home/adanos/Documents/TPs/tesis/repos/modelica_scripts/tmp/simple_plots/"
-        output_folder_path = filesystem.files_aux.makeDirFromCurrentTimestamp(output_base_path)
-        extra_ticks = []
-        multipleCSVsAndVarsSimplePlot(vars_list,csvs_path_label_pair_list,plot_title,x_range,output_folder_path,extra_ticks,include_stdrun,subtitle=subtitle,footer=footer)
-
-def plotVermeulenResults():
-    ##Example for "multipleCSVsAndVarsSimplePlot" using Vermeulen Run 2 & 3 Results.
-    vars_list = ["Industrial_Investment1Industrial_Outputs_ind_cap_out_ratio", "Industrial_Investment1S_FIOA_Conss_fioa_cons_const","Industrial_Investment1S_Avg_Life_Ind_Caps_avg_life_ind_cap", "population","ppoll_index","industrial_output","nr_resources"]
-    csvs_path_label_pair_list = [("/home/adanos/Documents/TPs/tesis/repos/modelica_scripts/resource/vj_run2.csv", "V&J Run 2"),
-                                 ("/home/adanos/Documents/TPs/tesis/repos/modelica_scripts/resource/vj_run3.csv", "V&J Run 3"),]
-    plot_title = "Vermeulen & de Jong Runs 2 and 3 using modified models"
-    x_range=[1900,2100]
-    include_stdrun = True
-    output_base_path = "/home/adanos/Documents/TPs/tesis/repos/modelica_scripts/tmp/simple_plots/"
-    output_folder_path = filesystem.files_aux.makeDirFromCurrentTimestamp(output_base_path)
-    extra_ticks = [1975]
-    multipleCSVsAndVarsSimplePlot(vars_list,csvs_path_label_pair_list,plot_title,x_range,output_folder_path,extra_ticks,include_stdrun)
+_std_run_csv = world3_settings._std_run_csv
 
 
 def multipleCSVsAndVarsSimplePlot(vars_list,csvs_path_label_pair_list,plot_title,x_range,output_folder_path,extra_ticks,include_stdrun=False,subtitle="",footer=""):

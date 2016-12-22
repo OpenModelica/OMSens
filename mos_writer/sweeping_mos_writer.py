@@ -36,7 +36,7 @@ class MultiparamSweepingMosWriter():
         load_and_build_str   = strForLoadingAndBuilding(mo_file,model_name,startTime,stopTime)
         fixed_params_str     = strForFixedParams(fixed_params,model_name)
 
-        # A foor loop for each parameter to sweep
+        # A "for loop" for each parameter to sweep
         params_str_list = []
         param_padding = ""   # white spaces to add for each nested "for loop" (so they are tabularized and easier to read)
         i_total_init_str = "i_total := 0;"
@@ -74,10 +74,6 @@ def removeSpecialCharactersTo(param_name):
     wo_both_brackets = wo_left_bracket.replace("]","_bracket")
     standarized_param_name = wo_both_brackets
     return standarized_param_name
-
-def main():
-    pass
-
 
 def strForCheckingIfValidParams(model_name,sweep_vars,fixed_params):
     fixed_params_names =[param_tuple[0] for param_tuple in fixed_params]
