@@ -32,7 +32,7 @@ def main():
 #### WORK PACKAGE 3 ####
     # test3Params()
     # test3fromTop12RelativeWP2()
-    test12fromTop12RelativeWP2()
+    test12fromTop12RelativeWP2OneUpOneDown()
 
 ### WP 3 tests ####
 def test12fromTop12RelativeWP2OneUpOneDown():
