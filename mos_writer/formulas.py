@@ -52,3 +52,25 @@ class DeltaBeforeAndAfter(SweepingFormulas):
         return "{default_value}*(1-{iterations_div_2_int}*{delta}) + {default_value}*({delta}*{i_var_name})".format(default_value=default_value,iterations_div_2_int=iterations_div_2_int,delta=delta,i_var_name=i_var_name)
     def __str__(self):
         return "DeltaBeforeAndAfter(delta="+str(self._delta)+")"
+
+class DeltaOneUpAndOneDown(SweepingFormulas):
+    ### Similar to "DeltaBeforeAndAfter" but only two iterations (Forced by exception) and doesn't include the default value
+  # To make the formula simpler, this function asks for #iterations to calculate the values before and after the default
+  # Example:
+  #   default_value = 100,iterations = 2 (forced), delta= 0.1 ==> 90.0, 110.0
+    def __init__(self,delta):
+        self._delta = delta
+    def initialize(self,extra_info):
+        default_value = extra_info["default_value"]
+        iterations    = extra_info["iterations"]
+        if iterations != 2:
+            # This formula needs the number of iterations to be 2 (we force it here so we don't make the code too complicated)
+            raise InvalidNumberOfIterations("This formula needs to be used only in runs of 2 iterations. Iterations for this run: " + str(iterations))
+        i_var_name = extra_info["i_var_name"]
+        delta         = self._delta
+        return "{default_value}*((1-{delta})*(1-{i_var_name}) + (1+{delta})*{i_var_name})".format(default_value=default_value,delta=delta,i_var_name=i_var_name)
+    def __str__(self):
+        return "DeltaBeforeAndAfter(delta="+str(self._delta)+")"
+
+class InvalidNumberOfIterations(Exception):
+    pass
