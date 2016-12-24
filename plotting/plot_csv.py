@@ -13,6 +13,35 @@ import settings.settings_world3_sweep as world3_settings
 _std_run_csv = world3_settings._std_run_csv
 
 
+def multipleCSVsAndVarsSimplePlotTemp(vars_list,csvs_path_label_pair_list,plot_title,x_range,output_folder_path,extra_ticks,include_stdrun=False,subtitle="",footer=""):
+    colors_list = plt.get_cmap('jet')(np.linspace(0, 1.0, len(csvs_path_label_pair_list)))
+    for var_name in vars_list:
+        colors_iter = iter(colors_list)
+        footer_artist = setupPlt("Time",var_name,plot_title,subtitle,footer)
+        if include_stdrun:
+            plotStandardRun(var_name)
+        # for i in iterations:
+
+        i=0 #for the colours
+        for csv_path in csvs_path_label_pair_list:
+            # iter_dict = per_iter_info_dict[i]
+            # file_path = iter_dict["file_path"]
+            # data = readFromCSV(file_path)
+            data = readFromCSV(csv_path)
+            # sweep_value = iter_dict["sweep_value"]
+            # label = "val={sweep_value}".format(sweep_value=sweep_value)
+            plt.plot(data["time"], data[var_name], linewidth=1, linestyle='-', markersize=0,marker='o',color = next(colors_iter))
+            # plt.plot(data["time"], data[var_name], linewidth=1, linestyle='-', markersize=0,marker='o',label=label,color = "black")
+            i=i+1 #for the colours
+        lgd = plt.legend(loc="center left",fontsize="small",fancybox=True, shadow=True, bbox_to_anchor=(1,0.5)) #A la derecha
+        # lgd = plt.legend(loc="center left",fontsize="small",fancybox=True, shadow=True, bbox_to_anchor=(0.5,-0.5)) #Abajo (anda mal)
+        ## Settings that differ from the automatic plotter:
+        plt.xlim(x_range) #set an specific x range
+        plt.xticks(list(plt.xticks()[0]) + extra_ticks) # add extra ticks (1975 for vermeulen for example)
+        print(output_folder_path)
+
+        plot_path_without_extension = os.path.join(output_folder_path,var_name)
+        saveAndClearPlt(plot_path_without_extension,lgd,footer_artist)
 def multipleCSVsAndVarsSimplePlot(vars_list,csvs_path_label_pair_list,plot_title,x_range,output_folder_path,extra_ticks,include_stdrun=False,subtitle="",footer=""):
     colors_list = plt.get_cmap('jet')(np.linspace(0, 1.0, len(csvs_path_label_pair_list)))
     for var_name in vars_list:
@@ -33,7 +62,7 @@ def multipleCSVsAndVarsSimplePlot(vars_list,csvs_path_label_pair_list,plot_title
             plt.plot(data["time"], data[var_name], linewidth=1, linestyle='-', markersize=0,marker='o',label=label,color = next(colors_iter))
             # plt.plot(data["time"], data[var_name], linewidth=1, linestyle='-', markersize=0,marker='o',label=label,color = "black")
             i=i+1 #for the colours
-        lgd = plt.legend(loc="center left",fontsize="small",fancybox=True, shadow=True, bbox_to_anchor=(1,0.5)) #A la derecha
+        # lgd = plt.legend(loc="center left",fontsize="small",fancybox=True, shadow=True, bbox_to_anchor=(1,0.5)) #A la derecha
         # lgd = plt.legend(loc="center left",fontsize="small",fancybox=True, shadow=True, bbox_to_anchor=(0.5,-0.5)) #Abajo (anda mal)
         ## Settings that differ from the automatic plotter:
         plt.xlim(x_range) #set an specific x range
