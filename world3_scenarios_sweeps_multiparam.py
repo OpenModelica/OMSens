@@ -41,17 +41,17 @@ def test12fromTop12RelativeWP2OneUpOneDown():
 # Con one up one down
     indCapInit_sweepSettings          = parameter_sweep_settings.OrigParameterSweepSettings("industrial_capital_init" , predef_formulas.DeltaOneUpAndOneDown(0.01) , 2) # (param_name , formula_instance , iterations)
 # Orig
-    landYieldFact_sweepSettings       = parameter_sweep_settings.OrigParameterSweepSettings("p_land_yield_fact_1"     , predef_formulas.DeltaOneUpAndOneDown(0.01) , 5) # (param_name , formula_instance , iterations)
-    nRResUseFact_sweepSettings        = parameter_sweep_settings.OrigParameterSweepSettings("p_nr_res_use_fact_1"     , predef_formulas.DeltaOneUpAndOneDown(0.01) , 5) # (param_name , formula_instance , iterations)
-    reproLifet_sweepSettings          = parameter_sweep_settings.OrigParameterSweepSettings("reproductive_lifetime"   , predef_formulas.DeltaOneUpAndOneDown(0.01) , 5) # (param_name , formula_instance , iterations)
-    subsistFood_sweepSettings         = parameter_sweep_settings.OrigParameterSweepSettings("subsist_food_pc"         , predef_formulas.DeltaOneUpAndOneDown(0.01) , 5) # (param_name , formula_instance , iterations)
-    avgLifeIndCap_sweepSettings       = parameter_sweep_settings.OrigParameterSweepSettings("p_avg_life_ind_cap_1"    , predef_formulas.DeltaOneUpAndOneDown(0.01) , 5) # (param_name , formula_instance , iterations)
-    maxTotFertNorm_sweepSettings      = parameter_sweep_settings.OrigParameterSweepSettings("max_tot_fert_norm"       , predef_formulas.DeltaOneUpAndOneDown(0.01) , 5) # (param_name , formula_instance , iterations)
-    fioaConsConst_sweepSettings       = parameter_sweep_settings.OrigParameterSweepSettings("p_fioa_cons_const_1"     , predef_formulas.DeltaOneUpAndOneDown(0.01) , 5) # (param_name , formula_instance , iterations)
-    indCapOutRat_sweepSettings        = parameter_sweep_settings.OrigParameterSweepSettings("p_ind_cap_out_ratio_1"   , predef_formulas.DeltaOneUpAndOneDown(0.01) , 5) # (param_name , formula_instance , iterations)
-    servCapOutRatio_sweepSettings     = parameter_sweep_settings.OrigParameterSweepSettings("p_serv_cap_out_ratio_1"  , predef_formulas.DeltaOneUpAndOneDown(0.01) , 5) # (param_name , formula_instance , iterations)
-    lifeExpectNorm_sweepSettings      = parameter_sweep_settings.OrigParameterSweepSettings("life_expect_norm"        , predef_formulas.DeltaOneUpAndOneDown(0.01) , 5) # (param_name , formula_instance , iterations)
-    desComplFamSizeNorm_sweepSettings = parameter_sweep_settings.OrigParameterSweepSettings("des_compl_fam_size_norm" , predef_formulas.DeltaOneUpAndOneDown(0.01) , 5) # (param_name , formula_instance , iterations)
+    landYieldFact_sweepSettings       = parameter_sweep_settings.OrigParameterSweepSettings("p_land_yield_fact_1"     , predef_formulas.DeltaOneUpAndOneDown(0.01) , 2) # (param_name , formula_instance , iterations)
+    nRResUseFact_sweepSettings        = parameter_sweep_settings.OrigParameterSweepSettings("p_nr_res_use_fact_1"     , predef_formulas.DeltaOneUpAndOneDown(0.01) , 2) # (param_name , formula_instance , iterations)
+    reproLifet_sweepSettings          = parameter_sweep_settings.OrigParameterSweepSettings("reproductive_lifetime"   , predef_formulas.DeltaOneUpAndOneDown(0.01) , 2) # (param_name , formula_instance , iterations)
+    subsistFood_sweepSettings         = parameter_sweep_settings.OrigParameterSweepSettings("subsist_food_pc"         , predef_formulas.DeltaOneUpAndOneDown(0.01) , 2) # (param_name , formula_instance , iterations)
+    avgLifeIndCap_sweepSettings       = parameter_sweep_settings.OrigParameterSweepSettings("p_avg_life_ind_cap_1"    , predef_formulas.DeltaOneUpAndOneDown(0.01) , 2) # (param_name , formula_instance , iterations)
+    maxTotFertNorm_sweepSettings      = parameter_sweep_settings.OrigParameterSweepSettings("max_tot_fert_norm"       , predef_formulas.DeltaOneUpAndOneDown(0.01) , 2) # (param_name , formula_instance , iterations)
+    fioaConsConst_sweepSettings       = parameter_sweep_settings.OrigParameterSweepSettings("p_fioa_cons_const_1"     , predef_formulas.DeltaOneUpAndOneDown(0.01) , 2) # (param_name , formula_instance , iterations)
+    indCapOutRat_sweepSettings        = parameter_sweep_settings.OrigParameterSweepSettings("p_ind_cap_out_ratio_1"   , predef_formulas.DeltaOneUpAndOneDown(0.01) , 2) # (param_name , formula_instance , iterations)
+    servCapOutRatio_sweepSettings     = parameter_sweep_settings.OrigParameterSweepSettings("p_serv_cap_out_ratio_1"  , predef_formulas.DeltaOneUpAndOneDown(0.01) , 2) # (param_name , formula_instance , iterations)
+    lifeExpectNorm_sweepSettings      = parameter_sweep_settings.OrigParameterSweepSettings("life_expect_norm"        , predef_formulas.DeltaOneUpAndOneDown(0.01) , 2) # (param_name , formula_instance , iterations)
+    desComplFamSizeNorm_sweepSettings = parameter_sweep_settings.OrigParameterSweepSettings("des_compl_fam_size_norm" , predef_formulas.DeltaOneUpAndOneDown(0.01) , 2) # (param_name , formula_instance , iterations)
     sweep_params_settings_list   = [indCapInit_sweepSettings, landYieldFact_sweepSettings, nRResUseFact_sweepSettings, reproLifet_sweepSettings, subsistFood_sweepSettings, avgLifeIndCap_sweepSettings, maxTotFertNorm_sweepSettings, fioaConsConst_sweepSettings, indCapOutRat_sweepSettings, servCapOutRatio_sweepSettings, lifeExpectNorm_sweepSettings, desComplFamSizeNorm_sweepSettings]
 
     run_kwargs = {
