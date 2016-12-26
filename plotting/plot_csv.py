@@ -27,7 +27,7 @@ def multipleCSVsAndVarsSimplePlotTemp(vars_list,csvs_path_label_pair_list,plot_t
             # iter_dict = per_iter_info_dict[i]
             # file_path = iter_dict["file_path"]
             # data = readFromCSV(file_path)
-            data = readFromCSV(csv_path)
+            data = readFromCSVTemp(csv_path)
             # sweep_value = iter_dict["sweep_value"]
             # label = "val={sweep_value}".format(sweep_value=sweep_value)
             plt.plot(data["time"], data[var_name], linewidth=1, linestyle='-', markersize=0,marker='o',color = next(colors_iter))
@@ -171,11 +171,17 @@ def plotStandardRun(var_name,color="black"):
         label = "STD_RUN"
         plt.plot(data["time"], data[var_name], linewidth=1, linestyle='-', markersize=0,marker='o',label=label,color = color)
 
+def readFromCSVTemp(file_path):
+    # El que manda todo a memoria:
+    # data = np.genfromtxt(file_path, delimiter=',', names=True)
+    # El que no manda todo a memoria:
+    data = np.memmap(file_path, delimiter=',', names=True)
+    return data
 def readFromCSV(file_path):
-    # El que estaba antes: (no plotea para mayores de 2091 y tiene puesto el skip footer)
-    # data = np.genfromtxt(file_path, delimiter=',', skip_footer=10, names=True)
-    # El nuevo:
+    # El que manda todo a memoria:
     data = np.genfromtxt(file_path, delimiter=',', names=True)
+    # El que no manda todo a memoria:
+    # data = np.memmap(file_path, delimiter=',', names=True)
     return data
 
 def setupPlt(x_label,y_label,title,subtitle,footer):
