@@ -175,6 +175,7 @@ def readFromCSVTemp(file_path):
     # El que manda todo a memoria:
     # data = np.genfromtxt(file_path, delimiter=',', names=True)
     # El que no manda todo a memoria:
+    print("Reading with low ram usage")
     data = np.memmap(file_path, delimiter=',', names=True)
     return data
 def readFromCSV(file_path):
