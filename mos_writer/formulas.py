@@ -37,6 +37,20 @@ class IncreasingByPercentage(SweepingFormulas):
     def __str__(self):
         return "IncreasingByPercentage(percentage="+str(self._percentage)+")"
 
+class IncreasingByPercentageNotInclusive(SweepingFormulas):
+  # Similar to IncreasingByPercentage but without including std value
+  # Example:
+  #   default_value = 1, percentage = 2 ==> 1.02, 1.04, 1.06, 1.08, 1.1, 1.12, 1.14, 1.16, 1.18,
+    def __init__(self,percentage):
+        self._percentage = percentage
+    def initialize(self,extra_info):
+        default_value = extra_info["default_value"]
+        i_var_name = extra_info["i_var_name"]
+        percentage    = self._percentage
+        return "{default_value}*({percentage}/100*({i_var_name}+1)+1)".format(default_value=default_value,percentage=percentage,i_var_name=i_var_name)
+    def __str__(self):
+        return "IncreasingByPercentage(percentage="+str(self._percentage)+")"
+
 class DeltaBeforeAndAfter(SweepingFormulas):
   # To make the formula simpler, this function asks for #iterations to calculate the values before and after the default
   # Example:

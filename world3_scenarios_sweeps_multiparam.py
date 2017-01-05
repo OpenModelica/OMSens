@@ -32,8 +32,88 @@ def main():
 #### WORK PACKAGE 3 ####
     # test3Params()
     # test3fromTop12RelativeWP2()
-    test12fromTop12RelativeWP2OneUpOneDown()
+    # test12fromTop12RelativeWP2OneUpOneDown()
+### WP3: no sweeps ###
+    # change2For2000and2For2100RelativeTop()
+    relativeTop2for2100AndTop8For2000()
 
+# WP3: no sweeps #
+def relativeTop2for2100AndTop8For2000():
+# We try to increase the population for both 2100 and 2000 to try and fit the function between 1900 and 2000 and still have an effect on 2100
+# Top 2 for 2100 up and top 3-8 for 2000 also up (to try and revert the (-) effect on those top 2). Some of these "top 3-8" for 2000 have a negative effect in 2100.
+
+# Parameter             |   Position in 2000 sorted for pop | Position in 2100 sorted for pop
+# p_fioa_cons_const_1       1  (-0.1896934079)                1  (0.4367021008)
+# p_ind_cap_out_ratio_1     2  (-0.1590716648)                2  (0.30914336)
+# p_avg_life_ind_cap_1      3  (0.0880944114)                 6  (-0.0982760653)
+# reproductive_lifetime     4  (-0.0598396094)                3  (-0.1321867349)   <- we affect this one negatively (-5%)
+# land_fr_harvested         5  (0.0549721817)                 20 (-0.0083348982)
+# inherent_land_fert        6  (0.0511521159)                 21 (-0.0080056655)
+# p_land_yield_fact_1       7  (0.0508257086)                 12 (-0.0269650958)
+# des_compl_fam_size_norm   8  (0.0477282242)                 5  (0.1060414143)
+
+    fioaConsConst_sweepSettings       = parameter_sweep_settings.OrigParameterSweepSettings("p_fioa_cons_const_1"     , predef_formulas.IncreasingByPercentageNotInclusive(5), 1) # (param_name , formula_instance , iterations)
+    indCapOutRat_sweepSettings        = parameter_sweep_settings.OrigParameterSweepSettings("p_ind_cap_out_ratio_1"   , predef_formulas.IncreasingByPercentageNotInclusive(5), 1) # (param_name , formula_instance , iterations)
+    avgLifeIndCap_sweepSettings       = parameter_sweep_settings.OrigParameterSweepSettings("p_avg_life_ind_cap_1"    , predef_formulas.IncreasingByPercentageNotInclusive(5), 1) # (param_name , formula_instance , iterations)
+    reproLifet_sweepSettings          = parameter_sweep_settings.OrigParameterSweepSettings("reproductive_lifetime"   , predef_formulas.IncreasingByPercentageNotInclusive(-5), 1) # (param_name , formula_instance , iterations)
+    landFrHarvested_sweepSettings     = parameter_sweep_settings.OrigParameterSweepSettings("land_fr_harvested"       , predef_formulas.IncreasingByPercentageNotInclusive(5), 1) # (param_name , formula_instance , iterations)
+    inherentLandFert_sweepSettings    = parameter_sweep_settings.OrigParameterSweepSettings("inherent_land_fert"      , predef_formulas.IncreasingByPercentageNotInclusive(5), 1) # (param_name , formula_instance , iterations)
+    landYieldFact1_sweepSettings      = parameter_sweep_settings.OrigParameterSweepSettings("p_land_yield_fact_1"     , predef_formulas.IncreasingByPercentageNotInclusive(5), 1) # (param_name , formula_instance , iterations)
+    desComplFamSizeNorm_sweepSettings = parameter_sweep_settings.OrigParameterSweepSettings("des_compl_fam_size_norm" , predef_formulas.IncreasingByPercentageNotInclusive(5), 1) # (param_name , formula_instance , iterations)
+# add the sweepSettings to the list
+    sweep_params_settings_list    = [fioaConsConst_sweepSettings, indCapOutRat_sweepSettings, avgLifeIndCap_sweepSettings, reproLifet_sweepSettings, landFrHarvested_sweepSettings, inherentLandFert_sweepSettings, landYieldFact1_sweepSettings, desComplFamSizeNorm_sweepSettings,]
+
+    run_kwargs = {
+    "sweep_params_settings_list" : sweep_params_settings_list,
+    "plot_vars"                  : ["population","ppoll_index","industrial_output","nr_resources","food"],
+    "stopTime"                   : 2100  ,# year to end the simulation (2100 for example)
+    "scens_to_run"               : [1], #The standard run corresponds to the first scenario
+    "fixed_params"               : [], #We don't want to change any parameters
+    "mo_file"                    : piecewiseMod_SysDyn_mo_path, # mo file with tabular modified (to allow out of tabular interpolation)
+    "plot_std_run"               : True, #Choose to plot std run alognside this test results
+    }
+    setUpSweepsAndRun(**run_kwargs)
+
+def relativeTop2for2100AndManyPositiveFor2000():
+# We try to increase the population for 2100 and decrease it for 2000 to try and fit the function between 1900 and 2000 and still have an effect on 2100
+# Top 2 for 2100 up and only the positive in both up. The Top 2 for 2100 affect the one in 2000 negatively so we try to revert those changes with only positive for 2000 (that are also positive in 2100)
+
+
+# Parameter             |   Position in 2000 sorted for pop | Position in 2100 sorted for pop
+# p_fioa_cons_const_1       1  (-0.1896934079)                1  (0.4367021008)
+# p_ind_cap_out_ratio_1     2  (-0.1590716648)                2  (0.30914336)
+# life_expect_norm          11 (0.0305075556)                 4  (0.1315758044)
+# des_compl_fam_size_norm   8  (0.0477282242)                 5  (0.1060414143)
+# max_tot_fert_norm         18 (0.009409269)                  9  (0.0345123911)
+# lifet_perc_del            22 (0.0044847922)                 22 (0.0068062731)
+# avg_life_land_norm        26 (0.0020099261)                 28 (0.0037855243)
+# ppoll_in_1970             29 (0.0012835169)                 31 (0.0027901066)
+# income_expect_avg_time    21 (0.0050549969)                 33 (0.0018008269)
+# social_adj_del            24 (0.003111505)                  34 (0.0016976242)
+
+    fioaConsConst_sweepSettings       = parameter_sweep_settings.OrigParameterSweepSettings("p_fioa_cons_const_1"     , predef_formulas.IncreasingByPercentageNotInclusive(5), 1) # (param_name , formula_instance , iterations)
+    indCapOutRat_sweepSettings        = parameter_sweep_settings.OrigParameterSweepSettings("p_ind_cap_out_ratio_1"   , predef_formulas.IncreasingByPercentageNotInclusive(5), 1) # (param_name , formula_instance , iterations)
+    lifeExpectNorm_sweepSettings      = parameter_sweep_settings.OrigParameterSweepSettings("life_expect_norm"        , predef_formulas.IncreasingByPercentageNotInclusive(5), 1) # (param_name , formula_instance , iterations)
+    desComplFamSizeNorm_sweepSettings = parameter_sweep_settings.OrigParameterSweepSettings("des_compl_fam_size_norm" , predef_formulas.IncreasingByPercentageNotInclusive(5), 1) # (param_name , formula_instance , iterations)
+    maxTotFertNorm_sweepSettings      = parameter_sweep_settings.OrigParameterSweepSettings("max_tot_fert_norm"       , predef_formulas.IncreasingByPercentageNotInclusive(5), 1) # (param_name , formula_instance , iterations)
+    lifetPercDel_sweepSettings        = parameter_sweep_settings.OrigParameterSweepSettings("lifet_perc_del"          , predef_formulas.IncreasingByPercentageNotInclusive(5), 1) # (param_name , formula_instance , iterations)
+    avgLifeLandNorm_sweepSettings     = parameter_sweep_settings.OrigParameterSweepSettings("avg_life_land_norm"      , predef_formulas.IncreasingByPercentageNotInclusive(5), 1) # (param_name , formula_instance , iterations)
+    ppollIn1970_sweepSettings         = parameter_sweep_settings.OrigParameterSweepSettings("ppoll_in_1970"           , predef_formulas.IncreasingByPercentageNotInclusive(5), 1) # (param_name , formula_instance , iterations)
+    incomeExpectAvgTime_sweepSettings = parameter_sweep_settings.OrigParameterSweepSettings("income_expect_avg_time"  , predef_formulas.IncreasingByPercentageNotInclusive(5), 1) # (param_name , formula_instance , iterations)
+    socialAdjDel_sweepSettings        = parameter_sweep_settings.OrigParameterSweepSettings("social_adj_del"          , predef_formulas.IncreasingByPercentageNotInclusive(5), 1) # (param_name , formula_instance , iterations)
+# Add the sweepSettings to the following list
+    sweep_params_settings_list   = [ fioaConsConst_sweepSettings, indCapOutRat_sweepSettings, lifeExpectNorm_sweepSettings, desComplFamSizeNorm_sweepSettings, maxTotFertNorm_sweepSettings,lifetPercDel_sweepSettings, avgLifeLandNorm_sweepSettings, ppollIn1970_sweepSettings, incomeExpectAvgTime_sweepSettings, socialAdjDel_sweepSettings,]
+
+    run_kwargs = {
+    "sweep_params_settings_list" : sweep_params_settings_list,
+    "plot_vars"                  : ["population"],
+    "stopTime"                   : 2100  ,# year to end the simulation (2100 for example)
+    "scens_to_run"               : [1], #The standard run corresponds to the first scenario
+    "fixed_params"               : [], #We don't want to change any parameters
+    "mo_file"                    : piecewiseMod_SysDyn_mo_path, # mo file with tabular modified (to allow out of tabular interpolation)
+    "plot_std_run"               : True, #Choose to plot std run alognside this test results
+    }
+    setUpSweepsAndRun(**run_kwargs)
 ### WP 3 tests ####
 def test12fromTop12RelativeWP2OneUpOneDown():
 
