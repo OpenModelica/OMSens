@@ -71,6 +71,7 @@ def relativeTop2for2100AndTop8For2000():
     "fixed_params"               : [], #We don't want to change any parameters
     "mo_file"                    : piecewiseMod_SysDyn_mo_path, # mo file with tabular modified (to allow out of tabular interpolation)
     "plot_std_run"               : True, #Choose to plot std run alognside this test results
+    "extra_ticks"                : [1940] # extra years ticks for the plot(s)
     }
     setUpSweepsAndRun(**run_kwargs)
 
@@ -198,7 +199,7 @@ def testNRResources():
 
 # Functions:
 
-def setUpSweepsAndRun(sweep_params_settings_list,fixed_params,plot_vars,stopTime,scens_to_run,mo_file,plot_std_run,fixed_params_description_str=False):
+def setUpSweepsAndRun(sweep_params_settings_list,fixed_params,plot_vars,stopTime,scens_to_run,mo_file,plot_std_run,fixed_params_description_str=False,extra_ticks=[]):
     startTime = 1900 # year to start the simulation. Because W3-Mod needs the starttime to be always 1900, we don't allow the user to change it
     #The "root" output folder path.
     output_root_path = files_aux.makeOutputPath("modelica_multiparam_sweep")
@@ -247,7 +248,7 @@ def setUpSweepsAndRun(sweep_params_settings_list,fixed_params,plot_vars,stopTime
             # If there is at least one fixed param, write them separated by commas.
             else:
                 fixed_params_description_str = ", ".join([str(x) for x in fixed_params])
-        plot_csv.plotVarsFromIterationsInfo(plot_vars,model_name,iterationsInfo_list,plots_folder_path,plot_std_run,fixed_params_description_str)
+        plot_csv.plotVarsFromIterationsInfo(plot_vars,model_name,iterationsInfo_list,plots_folder_path,plot_std_run,fixed_params_description_str,extra_ticks)
         # Write automatic readme (with general info and specific info for this sweep)
         readme_path = os.path.join(scen_folder_path,gral_settings.readme_filename)
         readme_writer.writeReadmeMultiparam(readme_path,iterationsInfo_list)
