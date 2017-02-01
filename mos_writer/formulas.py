@@ -14,9 +14,10 @@ class SweepingFormulas(ABC):
 class IncreasingByScalar(SweepingFormulas):
   # Example:
   #   default_value = 1900, scalar = 2 ==> 1900, 1902, 1904 ...
-    def __init__(self,scalar):
+    def __init__(self,scalar):    # <--- this function is the one used explicitly in the scripts
         self._scalar = scalar
     def initialize(self,extra_info):
+        # This function is called by the parameter sweep settings instance 
         default_value  = extra_info["default_value"]
         i_var_name = extra_info["i_var_name"]
         scalar         = self._scalar
@@ -27,9 +28,10 @@ class IncreasingByScalar(SweepingFormulas):
 class IncreasingByPercentage(SweepingFormulas):
   # Example:
   #   default_value = 1, percentage = 2 ==> 1.0, 1.02, 1.04, 1.06, 1.08, 1.1, 1.12, 1.14, 1.16, 1.18,
-    def __init__(self,percentage):
+    def __init__(self,percentage):    # <--- this function is the one used explicitly in the scripts
         self._percentage = percentage
     def initialize(self,extra_info):
+        # This function is called by the parameter sweep settings instance 
         default_value = extra_info["default_value"]
         i_var_name = extra_info["i_var_name"]
         percentage    = self._percentage
@@ -41,9 +43,10 @@ class IncreasingByPercentageNotInclusive(SweepingFormulas):
   # Similar to IncreasingByPercentage but without including std value
   # Example:
   #   default_value = 1, percentage = 2 ==> 1.02, 1.04, 1.06, 1.08, 1.1, 1.12, 1.14, 1.16, 1.18,
-    def __init__(self,percentage):
+    def __init__(self,percentage):    # <--- this function is the one used explicitly in the scripts
         self._percentage = percentage
     def initialize(self,extra_info):
+        # This function is called by the parameter sweep settings instance 
         default_value = extra_info["default_value"]
         i_var_name = extra_info["i_var_name"]
         percentage    = self._percentage
@@ -55,9 +58,10 @@ class DeltaBeforeAndAfter(SweepingFormulas):
   # To make the formula simpler, this function asks for #iterations to calculate the values before and after the default
   # Example:
   #   default_value = 100,iterations = 5, delta= 0.1 ==> 80.0, 90.0, 100.0, 110.0, 120.0,
-    def __init__(self,delta):
+    def __init__(self,delta):    # <--- this function is the one used explicitly in the scripts
         self._delta = delta
     def initialize(self,extra_info):
+        # This function is called by the parameter sweep settings instance 
         default_value = extra_info["default_value"]
         iterations    = extra_info["iterations"]
         i_var_name = extra_info["i_var_name"]
@@ -72,9 +76,10 @@ class DeltaOneUpAndOneDown(SweepingFormulas):
   # To make the formula simpler, this function asks for #iterations to calculate the values before and after the default
   # Example:
   #   default_value = 100,iterations = 2 (forced), delta= 0.1 ==> 90.0, 110.0
-    def __init__(self,delta):
+    def __init__(self,delta):    # <--- this function is the one used explicitly in the scripts
         self._delta = delta
     def initialize(self,extra_info):
+        # This function is called by the parameter sweep settings instance 
         default_value = extra_info["default_value"]
         iterations    = extra_info["iterations"]
         if iterations != 2:
