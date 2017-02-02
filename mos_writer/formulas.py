@@ -17,7 +17,7 @@ class IncreasingByScalar(SweepingFormulas):
     def __init__(self,scalar):    # <--- this function is the one used explicitly in the scripts
         self._scalar = scalar
     def initialize(self,extra_info):
-        # This function is called by the parameter sweep settings instance 
+        # This function is called by the parameter sweep settings instance
         default_value  = extra_info["default_value"]
         i_var_name = extra_info["i_var_name"]
         scalar         = self._scalar
@@ -31,7 +31,7 @@ class IncreasingByPercentage(SweepingFormulas):
     def __init__(self,percentage):    # <--- this function is the one used explicitly in the scripts
         self._percentage = percentage
     def initialize(self,extra_info):
-        # This function is called by the parameter sweep settings instance 
+        # This function is called by the parameter sweep settings instance
         default_value = extra_info["default_value"]
         i_var_name = extra_info["i_var_name"]
         percentage    = self._percentage
@@ -46,7 +46,7 @@ class IncreasingByPercentageNotInclusive(SweepingFormulas):
     def __init__(self,percentage):    # <--- this function is the one used explicitly in the scripts
         self._percentage = percentage
     def initialize(self,extra_info):
-        # This function is called by the parameter sweep settings instance 
+        # This function is called by the parameter sweep settings instance
         default_value = extra_info["default_value"]
         i_var_name = extra_info["i_var_name"]
         percentage    = self._percentage
@@ -61,7 +61,7 @@ class DeltaBeforeAndAfter(SweepingFormulas):
     def __init__(self,delta):    # <--- this function is the one used explicitly in the scripts
         self._delta = delta
     def initialize(self,extra_info):
-        # This function is called by the parameter sweep settings instance 
+        # This function is called by the parameter sweep settings instance
         default_value = extra_info["default_value"]
         iterations    = extra_info["iterations"]
         i_var_name = extra_info["i_var_name"]
@@ -79,7 +79,7 @@ class DeltaOneUpAndOneDown(SweepingFormulas):
     def __init__(self,delta):    # <--- this function is the one used explicitly in the scripts
         self._delta = delta
     def initialize(self,extra_info):
-        # This function is called by the parameter sweep settings instance 
+        # This function is called by the parameter sweep settings instance
         default_value = extra_info["default_value"]
         iterations    = extra_info["iterations"]
         if iterations != 2:
