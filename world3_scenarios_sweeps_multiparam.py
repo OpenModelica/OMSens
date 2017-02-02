@@ -33,11 +33,173 @@ def main():
     # test3Params()
     # test3fromTop12RelativeWP2()
     # test12fromTop12RelativeWP2OneUpOneDown()
+    # nrResourcesInitCurvi()
+    # hugoScolnikParamsCurvi01()
+    # hugoScolnikParamsCurvi02()
+    relativeTop12ParamsNoSweep()
 ### WP3: no sweeps ###
     # change2For2000and2For2100RelativeTop()
-    relativeTop2for2100AndTop8For2000()
+    # relativeTop2for2100AndTop8For2000()
 
-# WP3: no sweeps #
+def relativeTop12ParamsNoSweep():
+# Table from WP2 + curvi results (the ones with an x differ between "individual" (wp2) and "together" (curvi)
+#                            DEFAULT            Value WP2         Curvi Results        Description
+#     max_tot_fert_norm       & 12.0           & 12.60          & 12.5999994203700  & "Normal maximal total fertility"                                 \\
+#     p_fioa_cons_const_1     & 0.43           & 0.45           & 0.448380420759870 & "Default frac of industrial output allocated to consumption" \\
+#     p_ind_cap_out_ratio_1   & 3.0            & 3.15           & 3.14999863042567  & "Default industrial capital output ratio"                        \\
+#     p_serv_cap_out_ratio_1  & 1.0            & 1.05           & 1.04559432323735  & "Default fraction of service sector output ratio"                \\
+#     life_expect_norm        & 28.0           & 29.40          & 29.3999986573765  & "Normal life expectancy"                                         \\
+#     des_compl_fam_size_norm & 3.8            & 4.00           & 3.98999981851597  & "Desired normal complete family size"                            \\
+#     industrial_capital_init & 210000000000.0 & 199500000000.0 & 199499999088.315  & "Initial industrial investment"                       \\
+# x   p_land_yield_fact_1     & 1.0            & 0.95           & 1.04989368154214  & "Default land yield factor"                           \\
+#     p_nr_res_use_fact_1     & 1.0            & 0.95           & 0.949999988082543 & "Default non-recoverable resource utilization factor" \\
+#     reproductive_lifetime   & 30.0           & 28.5           & 28.4999996571028  & "Reproductive life time"                              \\
+#     subsist_food_pc         & 230.0          & 218.5          & 218.499997333924  & "Available per capita food"                           \\
+# x   p_avg_life_ind_cap_1    & 14.0           & 13.29          & 14.6999966717931  & "Default average life of industrial capital";         \\
+# Curvi run:
+    # Optimum x0:
+#    (in the table above)
+# With:
+# ier =   2 nfu =  2623 nit =     33
+# And +-5% of boundaries
+    maxTotFertNorm_sweepSettings  = parameter_sweep_settings      . OrigParameterSweepSettings("max_tot_fert_norm"       , predef_formulas . IncreasingByDeltaNotInclusive(0.0499999516975    ), 1) # (param_name , formula_instance , iterations)
+    fioaConsConst1_sweepSettings  = parameter_sweep_settings      . OrigParameterSweepSettings("p_fioa_cons_const_1"     , predef_formulas . IncreasingByDeltaNotInclusive(0.0427451645578372 ), 1) # (param_name , formula_instance , iterations)
+    indCapOutRatio1_sweepSettings  = parameter_sweep_settings     . OrigParameterSweepSettings("p_ind_cap_out_ratio_1"   , predef_formulas . IncreasingByDeltaNotInclusive(0.0499995434752234 ), 1) # (param_name , formula_instance , iterations)
+    servCapOutRatio1_sweepSettings  = parameter_sweep_settings    . OrigParameterSweepSettings("p_serv_cap_out_ratio_1"  , predef_formulas . IncreasingByDeltaNotInclusive(0.04559432323735   ), 1) # (param_name , formula_instance , iterations)
+    lifeExpectNorm_sweepSettings  = parameter_sweep_settings      . OrigParameterSweepSettings("life_expect_norm"        , predef_formulas . IncreasingByDeltaNotInclusive(0.0499999520491607 ), 1) # (param_name , formula_instance , iterations)
+    desComplFamSizeNorm_sweepSettings  = parameter_sweep_settings . OrigParameterSweepSettings("des_compl_fam_size_norm" , predef_formulas . IncreasingByDeltaNotInclusive(0.0499999522410448 ), 1) # (param_name , formula_instance , iterations)
+    indCapInit_sweepSettings  = parameter_sweep_settings          . OrigParameterSweepSettings("industrial_capital_init" , predef_formulas . IncreasingByDeltaNotInclusive(-0.05              ), 1) # (param_name , formula_instance , iterations)
+    landYieldFact1_sweepSettings  = parameter_sweep_settings      . OrigParameterSweepSettings("p_land_yield_fact_1"     , predef_formulas . IncreasingByDeltaNotInclusive(0.04989368154214   ), 1) # (param_name , formula_instance , iterations)
+    nrResUseFact1_sweepSettings  = parameter_sweep_settings       . OrigParameterSweepSettings("p_nr_res_use_fact_1"     , predef_formulas . IncreasingByDeltaNotInclusive(-0.05              ), 1) # (param_name , formula_instance , iterations)
+    reproLifetime_sweepSettings  = parameter_sweep_settings       . OrigParameterSweepSettings("reproductive_lifetime"   , predef_formulas . IncreasingByDeltaNotInclusive(-0.05              ), 1) # (param_name , formula_instance , iterations)
+    subsistFoodPc_sweepSettings  = parameter_sweep_settings       . OrigParameterSweepSettings("subsist_food_pc"         , predef_formulas . IncreasingByDeltaNotInclusive(-0.05              ), 1) # (param_name , formula_instance , iterations)
+    avgLifeIndCap1_sweepSettings  = parameter_sweep_settings      . OrigParameterSweepSettings("p_avg_life_ind_cap_1"    , predef_formulas . IncreasingByDeltaNotInclusive(0.0499997622709356 ), 1) # (param_name , formula_instance , iterations)
+# add the sweepSettings to the list
+    sweep_params_settings_list    = [maxTotFertNorm_sweepSettings, fioaConsConst1_sweepSettings, indCapOutRatio1_sweepSettings, servCapOutRatio1_sweepSettings, lifeExpectNorm_sweepSettings, desComplFamSizeNorm_sweepSettings, indCapInit_sweepSettings, landYieldFact1_sweepSettings, nrResUseFact1_sweepSettings, reproLifetime_sweepSettings, subsistFoodPc_sweepSettings, avgLifeIndCap1_sweepSettings]
+
+    run_kwargs = {
+    "sweep_params_settings_list" : sweep_params_settings_list,
+    "plot_vars"                  : ["population"],
+    "stopTime"                   : 2500  ,# year to end the simulation (2100 for example)
+    "scens_to_run"               : [1], #The standard run corresponds to the first scenario
+    "fixed_params"               : [], #We don't want to change any parameters
+    "mo_file"                    : piecewiseMod_SysDyn_mo_path, # mo file with tabular modified (to allow out of tabular interpolation)
+    "plot_std_run"               : True, #Choose to plot std run alognside this test results
+    "extra_ticks"                : [2025,2050,2075] # extra years ticks for the plot(s)
+    }
+    setUpSweepsAndRun(**run_kwargs)
+def hugoScolnikParamsCurvi02():
+# Hugo Scolnik article: "Crítica metodológica al modelo WORLD 3" (Methodological criticisim to the World3 model)
+#   Perturbed 5 params by 5%
+      # ICOR= 3.15, Default: ICOR=3
+      # ALIC= 13.3, Default: ALIC=14
+      # ALSC= 17.1, Default: ALSC=20
+      # SCOR= 1.05, Default: SCOR=1
+      # Run "Perturbed": FFW= 0.231, Default: FFW=0.22
+      # Run "Perturbed Increasing FFW": FFW= 0.242, Default: FFW=0.22
+#   Perturbed rest of the params by a scalar of 0.24172080E-12
+# This function is based in the results of curvi+w3:
+    # Optimum x0:
+#    p_ind_cap_out_ratio_1  - 3.15 ==> +5%
+#    p_avg_life_ind_cap_1   - 13.3 ==> -5%
+#    p_avg_life_serv_cap_1  - 19.0 ==> -5%
+#    p_serv_cap_out_ratio_1 - 1.05 ==> +5%
+# With:
+# ier = 2 nfu = 1964 nit = 93 fopt = -9985562545.07286
+# And +-5% of boundaries
+    icor_sweepSettings  = parameter_sweep_settings.OrigParameterSweepSettings("p_ind_cap_out_ratio_1"  , predef_formulas.IncreasingByPercentage(5), 2) # (param_name , formula_instance , iterations)
+    ialic_sweepSettings = parameter_sweep_settings.OrigParameterSweepSettings("p_avg_life_ind_cap_1"   , predef_formulas.IncreasingByPercentage(-5), 2) # (param_name , formula_instance , iterations)
+    ialsc_sweepSettings = parameter_sweep_settings.OrigParameterSweepSettings("p_avg_life_serv_cap_1"  , predef_formulas.IncreasingByPercentage(-5), 2) # (param_name , formula_instance , iterations)
+    iscor_sweepSettings = parameter_sweep_settings.OrigParameterSweepSettings("p_serv_cap_out_ratio_1" , predef_formulas.IncreasingByPercentage(5), 2) # (param_name , formula_instance , iterations)
+# add the sweepSettings to the list
+    sweep_params_settings_list    = [ icor_sweepSettings, ialic_sweepSettings, ialsc_sweepSettings, iscor_sweepSettings]
+
+    run_kwargs = {
+    "sweep_params_settings_list" : sweep_params_settings_list,
+    "plot_vars"                  : ["population"],
+    "stopTime"                   : 2100  ,# year to end the simulation (2100 for example)
+    "scens_to_run"               : [1], #The standard run corresponds to the first scenario
+    "fixed_params"               : [], #We don't want to change any parameters
+    "mo_file"                    : piecewiseMod_SysDyn_mo_path, # mo file with tabular modified (to allow out of tabular interpolation)
+    "plot_std_run"               : True, #Choose to plot std run alognside this test results
+    "extra_ticks"                : [2025,2050,2075] # extra years ticks for the plot(s)
+    }
+    setUpSweepsAndRun(**run_kwargs)
+def hugoScolnikParamsCurvi01():
+# Hugo Scolnik article: "Crítica metodológica al modelo WORLD 3" (Methodological criticisim to the World3 model)
+#   Perturbed 5 params by 5%
+      # ICOR= 3.15, Default: ICOR=3
+      # ALIC= 13.3, Default: ALIC=14
+      # ALSC= 17.1, Default: ALSC=20
+      # SCOR= 1.05, Default: SCOR=1
+      # Run "Perturbed": FFW= 0.231, Default: FFW=0.22
+      # Run "Perturbed Increasing FFW": FFW= 0.242, Default: FFW=0.22
+#   Perturbed rest of the params by a scalar of 0.24172080E-12
+# This function is based in the results of curvi+w3:
+    # Optimum x0:
+    # p_ind_cap_out_ratio_1  - 3.93944837212699...  Default: ICOR=3     ==> +31%
+    # p_avg_life_ind_cap_1   - 14.4095197725215...  Default: ALIC=14    ==> +03%
+    # p_avg_life_serv_cap_1  - 24.8371810528411...  Default: ALSC=20    ==> +24%
+    # p_serv_cap_out_ratio_1 - 0.500018268440072..  Default: SCOR=1     ==> -50%
+# With:
+# ier = 2 nfu = 1964 nit = 93 fopt = -9985562545.07286
+# And with big boundaries (~50%)
+
+
+
+    icor_sweepSettings  = parameter_sweep_settings.OrigParameterSweepSettings("p_ind_cap_out_ratio_1"  , predef_formulas.IncreasingByPercentage(16)  , 3) # (param_name , formula_instance , iterations)
+    ialic_sweepSettings = parameter_sweep_settings.OrigParameterSweepSettings("p_avg_life_ind_cap_1"   , predef_formulas.IncreasingByPercentage(0.015) , 3) # (param_name , formula_instance , iterations)
+    ialsc_sweepSettings = parameter_sweep_settings.OrigParameterSweepSettings("p_avg_life_serv_cap_1"  , predef_formulas.IncreasingByPercentage(12)  , 3) # (param_name , formula_instance , iterations)
+    iscor_sweepSettings = parameter_sweep_settings.OrigParameterSweepSettings("p_serv_cap_out_ratio_1" , predef_formulas.IncreasingByPercentage(-25) , 3) # (param_name , formula_instance , iterations)
+# add the sweepSettings to the list
+    sweep_params_settings_list    = [ icor_sweepSettings, ialic_sweepSettings, ialsc_sweepSettings, iscor_sweepSettings]
+
+    run_kwargs = {
+    "sweep_params_settings_list" : sweep_params_settings_list,
+    "plot_vars"                  : ["population"],
+    "stopTime"                   : 2100  ,# year to end the simulation (2100 for example)
+    "scens_to_run"               : [1], #The standard run corresponds to the first scenario
+    "fixed_params"               : [], #We don't want to change any parameters
+    "mo_file"                    : piecewiseMod_SysDyn_mo_path, # mo file with tabular modified (to allow out of tabular interpolation)
+    "plot_std_run"               : True, #Choose to plot std run alognside this test results
+    "extra_ticks"                : [] # extra years ticks for the plot(s)
+    }
+    setUpSweepsAndRun(**run_kwargs)
+def nrResourcesInitCurvi():
+# Curvi run with:
+#       parameter= nr_resources_init
+#       variable to optimize = population
+#       x0 = (/1000000000000.0D0/)
+#       n = 1
+#       eps=1.d-10
+#       ibound=1
+#       jbound(1)=3      ! 0 if the ith variable has no constraints.
+# c                        1 if the ith variable has only upper bounds.
+# c                        2 if the ith variable has only lower bounds.
+# c                        3 if the ith variable has both upper and lower bounds
+#       bl(1)=1000D0     ! lower bound of x0(1) (depends on ibound and jbound)
+#       bu(1)=2000000000000.0D0    ! upper bound of x0(1)  (depends on ibound and jbound)
+#       nfu=1000         ! <--- MAX NUMBER OF CALLS TO FU
+#       idiff=2
+#       kmax=3
+
+
+
+    nRResInit_sweepSettings        = parameter_sweep_settings.OrigParameterSweepSettings("nr_resources_init"      , predef_formulas.IncreasingByPercentageNotInclusive(8), 5) # (param_name , formula_instance , iterations)
+# add the sweepSettings to the list
+    sweep_params_settings_list    = [nRResInit_sweepSettings]
+
+    run_kwargs = {
+    "sweep_params_settings_list" : sweep_params_settings_list,
+    "plot_vars"                  : ["population"],
+    "stopTime"                   : 2100  ,# year to end the simulation (2100 for example)
+    "scens_to_run"               : [1], #The standard run corresponds to the first scenario
+    "fixed_params"               : [], #We don't want to change any parameters
+    "mo_file"                    : piecewiseMod_SysDyn_mo_path, # mo file with tabular modified (to allow out of tabular interpolation)
+    "plot_std_run"               : True, #Choose to plot std run alognside this test results
+    "extra_ticks"                : [] # extra years ticks for the plot(s)
+    }
+    setUpSweepsAndRun(**run_kwargs)
 def relativeTop2for2100AndTop8For2000():
 # We try to increase the population for both 2100 and 2000 to try and fit the function between 1900 and 2000 and still have an effect on 2100
 # Top 2 for 2100 up and top 3-8 for 2000 also up (to try and revert the (-) effect on those top 2). Some of these "top 3-8" for 2000 have a negative effect in 2100.
@@ -169,8 +331,8 @@ def test3Params():
 
     inExAvgTim_sweepSettings   = parameter_sweep_settings.OrigParameterSweepSettings("income_expect_avg_time" , predef_formulas.DeltaBeforeAndAfter(0.01) , 5) # (param_name , formula_instance , iterations)
     indCapOutRat_sweepSettings = parameter_sweep_settings.OrigParameterSweepSettings("p_ind_cap_out_ratio_1"  , predef_formulas.IncreasingByPercentage(5) , 2) # (param_name , formula_instance , iterations)
-    nrRes_sweepSettings        = parameter_sweep_settings.OrigParameterSweepSettings("nr_resources_init"      , predef_formulas.DeltaBeforeAndAfter(0.1)  , 5) # (param_name , formula_instance , iterations)
-    sweep_params_settings_list = [ inExAvgTim_sweepSettings, indCapOutRat_sweepSettings,nrRes_sweepSettings]
+    nRResInit_sweepSettings        = parameter_sweep_settings.OrigParameterSweepSettings("nr_resources_init"      , predef_formulas.DeltaBeforeAndAfter(0.1)  , 5) # (param_name , formula_instance , iterations)
+    sweep_params_settings_list = [ inExAvgTim_sweepSettings, indCapOutRat_sweepSettings,nRResInit_sweepSettings]
 
     run_kwargs = {
     "sweep_params_settings_list" : sweep_params_settings_list,
@@ -184,8 +346,8 @@ def test3Params():
     setUpSweepsAndRun(**run_kwargs)
 ### WP 1 tests ####
 def testNRResources():
-    nRRes_sweepSettings   = parameter_sweep_settings.OrigParameterSweepSettings("nr_resources_init" , predef_formulas.DeltaBeforeAndAfter(0.1) , 10) # (param_name , formula_instance , iterations)
-    sweep_params_settings_list = [ nRRes_sweepSettings ]
+    nRResInit_sweepSettings   = parameter_sweep_settings.OrigParameterSweepSettings("nr_resources_init" , predef_formulas.DeltaBeforeAndAfter(0.1) , 10) # (param_name , formula_instance , iterations)
+    sweep_params_settings_list = [ nRResInit_sweepSettings ]
     run_kwargs = {
     "sweep_params_settings_list" : sweep_params_settings_list,
     "plot_vars":["Food_Production1Agr_InpIntegrator1y","Arable_Land_Dynamics1Pot_Arable_LandIntegrator1y","Arable_Land_Dynamics1Arable_LandIntegrator1y","population","nr_resources"], # Examples: SPECIAL_policy_years, ["nr_resources_init"]

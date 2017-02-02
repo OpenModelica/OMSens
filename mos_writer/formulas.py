@@ -21,7 +21,8 @@ class IncreasingByScalar(SweepingFormulas):
         default_value  = extra_info["default_value"]
         i_var_name = extra_info["i_var_name"]
         scalar         = self._scalar
-        return "{default_value} + {i_var_name}*{scalar}".format(default_value=default_value,scalar=scalar,i_var_name=i_var_name)
+        return "({default_value}) + {i_var_name}*({scalar})".format(default_value=default_value,scalar=scalar,i_var_name=i_var_name)
+    # (we wrap all the values in parenthesis "()" just in case the value is negative and omc doesn't like negative signs roaming around)
     def __str__(self):
         return "IncreasingByScalar(scalar="+str(self._scalar)+")"
 
@@ -35,7 +36,8 @@ class IncreasingByPercentage(SweepingFormulas):
         default_value = extra_info["default_value"]
         i_var_name = extra_info["i_var_name"]
         percentage    = self._percentage
-        return "{default_value}*({percentage}/100*{i_var_name}+1)".format(default_value=default_value,percentage=percentage,i_var_name=i_var_name)
+        return "({default_value})*(({percentage})/100*{i_var_name}+1)".format(default_value=default_value,percentage=percentage,i_var_name=i_var_name)
+    # (we wrap all the values in parenthesis "()" just in case the value is negative and omc doesn't like negative signs roaming around)
     def __str__(self):
         return "IncreasingByPercentage(percentage="+str(self._percentage)+")"
 
@@ -50,7 +52,8 @@ class IncreasingByPercentageNotInclusive(SweepingFormulas):
         default_value = extra_info["default_value"]
         i_var_name = extra_info["i_var_name"]
         percentage    = self._percentage
-        return "{default_value}*({percentage}/100*({i_var_name}+1)+1)".format(default_value=default_value,percentage=percentage,i_var_name=i_var_name)
+        return "({default_value})*(({percentage})/100*({i_var_name}+1)+1)".format(default_value=default_value,percentage=percentage,i_var_name=i_var_name)
+    # (we wrap all the values in parenthesis "()" just in case the value is negative and omc doesn't like negative signs roaming around)
     def __str__(self):
         return "IncreasingByPercentage(percentage="+str(self._percentage)+")"
 
@@ -67,7 +70,8 @@ class DeltaBeforeAndAfter(SweepingFormulas):
         i_var_name = extra_info["i_var_name"]
         delta         = self._delta
         iterations_div_2_int = int(iterations/2)
-        return "{default_value}*(1-{iterations_div_2_int}*{delta}) + {default_value}*({delta}*{i_var_name})".format(default_value=default_value,iterations_div_2_int=iterations_div_2_int,delta=delta,i_var_name=i_var_name)
+        return "({default_value})*(1-{iterations_div_2_int}*({delta})) + ({default_value})*(({delta})*{i_var_name})".format(default_value=default_value,iterations_div_2_int=iterations_div_2_int,delta=delta,i_var_name=i_var_name)
+    # (we wrap all the values in parenthesis "()" just in case the value is negative and omc doesn't like negative signs roaming around)
     def __str__(self):
         return "DeltaBeforeAndAfter(delta="+str(self._delta)+")"
 
@@ -87,7 +91,25 @@ class DeltaOneUpAndOneDown(SweepingFormulas):
             raise InvalidNumberOfIterations("This formula needs to be used only in runs of 2 iterations. Iterations for this run: " + str(iterations))
         i_var_name = extra_info["i_var_name"]
         delta         = self._delta
-        return "{default_value}*((1-{delta})*(1-{i_var_name}) + (1+{delta})*{i_var_name})".format(default_value=default_value,delta=delta,i_var_name=i_var_name)
+        return "({default_value})*((1-({delta}))*(1-{i_var_name}) + (1+({delta}))*{i_var_name})".format(default_value=default_value,delta=delta,i_var_name=i_var_name)
+    # (we wrap all the values in parenthesis "()" just in case the value is negative and omc doesn't like negative signs roaming around)
+    def __str__(self):
+        return "DeltaBeforeAndAfter(delta="+str(self._delta)+")"
+
+class IncreasingByDeltaNotInclusive(SweepingFormulas):
+  ### Similar to "DeltaBeforeAndAfter" but only after and not including the std value  (may receive a negative delta and it becomes a "DecreasingByDeltaNotInclusive")
+  # Example:
+  #   default_value = 100,iterations = 2 (forced), delta= 0.1 ==> 110.0, 120.0
+    def __init__(self,delta):    # <--- this function is the one used explicitly in the scripts
+        self._delta = delta
+    def initialize(self,extra_info):
+        # This function is called by the parameter sweep settings instance
+        default_value = extra_info["default_value"]
+        iterations    = extra_info["iterations"]
+        i_var_name = extra_info["i_var_name"]
+        delta         = self._delta
+        return "({default_value})*(1+({delta})*({i_var_name}+1))".format(default_value=default_value,delta=delta,i_var_name=i_var_name)
+    # (we wrap all the values in parenthesis "()" just in case the value is negative and omc doesn't like negative signs roaming around)
     def __str__(self):
         return "DeltaBeforeAndAfter(delta="+str(self._delta)+")"
 
