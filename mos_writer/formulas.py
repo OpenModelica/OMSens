@@ -99,19 +99,18 @@ class DeltaOneUpAndOneDown(SweepingFormulas):
 class IncreasingByDeltaNotInclusive(SweepingFormulas):
   ### Similar to "DeltaBeforeAndAfter" but only after and not including the std value  (may receive a negative delta and it becomes a "DecreasingByDeltaNotInclusive")
   # Example:
-  #   default_value = 100,iterations = 2 (forced), delta= 0.1 ==> 110.0, 120.0
+  #   default_value = 100,iterations = 2 , delta= 0.1 ==> 110.0, 120.0
     def __init__(self,delta):    # <--- this function is the one used explicitly in the scripts
         self._delta = delta
     def initialize(self,extra_info):
         # This function is called by the parameter sweep settings instance
         default_value = extra_info["default_value"]
-        iterations    = extra_info["iterations"]
         i_var_name = extra_info["i_var_name"]
         delta         = self._delta
         return "({default_value})*(1+({delta})*({i_var_name}+1))".format(default_value=default_value,delta=delta,i_var_name=i_var_name)
     # (we wrap all the values in parenthesis "()" just in case the value is negative and omc doesn't like negative signs roaming around)
     def __str__(self):
-        return "DeltaBeforeAndAfter(delta="+str(self._delta)+")"
+        return "IncreasingByDeltaNotInclusive(delta="+str(self._delta)+")"
 
 class InvalidNumberOfIterations(Exception):
     pass

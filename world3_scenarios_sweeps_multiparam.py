@@ -36,12 +36,118 @@ def main():
     # nrResourcesInitCurvi()
     # hugoScolnikParamsCurvi01()
     # hugoScolnikParamsCurvi02()
-    relativeTop12ParamsNoSweep()
+    # relativeTop12ParamsNoSweep5Percent()
+    # relativeTop12ParamsNoSweep1Percent()
+    relativeTop18ParamsNoSweep3Percent()
 ### WP3: no sweeps ###
     # change2For2000and2For2100RelativeTop()
     # relativeTop2for2100AndTop8For2000()
+def relativeTop18ParamsNoSweep3Percent():
+# Curvi run:
+    # Optimum x0:
+# Param name              & Default         & CurviVal3%        & Curvival3%/Default
+# p_fioa_cons_const_1     & 0.43            & 0.442899987695998 & 1.0299999713860417
+# p_ind_cap_out_ratio_1   & 3.0             & 3.0899999140853   & 1.0299999713617667
+# reproductive_lifetime   & 30.0            & 29.1000008583085  & 0.9700000286102833
+# life_expect_norm        & 28.0            & 28.8399991989023  & 1.029999971389368
+# des_compl_fam_size_norm & 3.8             & 3.91399989128112  & 1.0299999713897685
+# p_avg_life_ind_cap_1    & 14.0            & 13.5800004167702  & 0.9700000297693
+# subsist_food_pc         & 230.0           & 223.100006581901  & 0.9700000286169609
+# p_serv_cap_out_ratio_1  & 1.0             & 1.02999996814411  & 1.02999996814411
+# max_tot_fert_norm       & 12.0            & 12.35999965249    & 1.0299999710408334
+# p_nr_res_use_fact_1     & 1.0             & 0.970000028610385 & 0.970000028610385
+# nr_resources_init       & 1000000000000.0 & 1029999970165.11  & 1.02999997016511
+# p_land_yield_fact_1     & 1.0             & 1.01267089341769  & 1.01267089341769
+# pop2_init               & 700000000.0     & 720999977.481686  & 1.02999996783098
+# industrial_capital_init & 210000000000.0  & 203700006501.859  & 0.9700000309612333
+# pot_arable_land_tot     & 3200000000.0    & 3104000158.43538  & 0.9700000495110562
+# p_avg_life_serv_cap_1   & 20.0            & 19.400001917118   & 0.9700000958559001
+# pot_arable_land_init    & 2300000000.0    & 2368999933.94436  & 1.0299999712801564
+# pop1_init               & 650000000.0     & 669499934.855496  & 1.0299998997776862
+# With:
+# f=  -11515475440.7037   (negated)
+#  ier =   2 nfu =  3289 nit =     21
 
-def relativeTop12ParamsNoSweep():
+
+    sweep_params_settings_list = [ parameter_sweep_settings.OrigParameterSweepSettings("p_fioa_cons_const_1"      , predef_formulas.IncreasingByDeltaNotInclusive( 0.03), 1),     # (param_name , formula_instance , iterations)
+                                   parameter_sweep_settings.OrigParameterSweepSettings("p_ind_cap_out_ratio_1"    , predef_formulas.IncreasingByDeltaNotInclusive( 0.03), 1),    # (param_name , formula_instance , iterations)
+                                   parameter_sweep_settings.OrigParameterSweepSettings("reproductive_lifetime"    , predef_formulas.IncreasingByDeltaNotInclusive(-0.03), 1),     # (param_name , formula_instance , iterations)
+                                   parameter_sweep_settings.OrigParameterSweepSettings("life_expect_norm"         , predef_formulas.IncreasingByDeltaNotInclusive( 0.03), 1),          # (param_name , formula_instance , iterations)
+                                   parameter_sweep_settings.OrigParameterSweepSettings("des_compl_fam_size_norm"  , predef_formulas.IncreasingByDeltaNotInclusive( 0.03), 1),     # (param_name , formula_instance , iterations)
+                                   parameter_sweep_settings.OrigParameterSweepSettings("p_avg_life_ind_cap_1"     , predef_formulas.IncreasingByDeltaNotInclusive(-0.03), 1),    # (param_name , formula_instance , iterations)
+                                   parameter_sweep_settings.OrigParameterSweepSettings("subsist_food_pc"          , predef_formulas.IncreasingByDeltaNotInclusive(-0.03), 1),       # (param_name , formula_instance , iterations)
+                                   parameter_sweep_settings.OrigParameterSweepSettings("p_serv_cap_out_ratio_1"   , predef_formulas.IncreasingByDeltaNotInclusive( 0.03), 1),     # (param_name , formula_instance , iterations)
+                                   parameter_sweep_settings.OrigParameterSweepSettings("max_tot_fert_norm"        , predef_formulas.IncreasingByDeltaNotInclusive( 0.03), 1),    # (param_name , formula_instance , iterations)
+                                   parameter_sweep_settings.OrigParameterSweepSettings("p_nr_res_use_fact_1"      , predef_formulas.IncreasingByDeltaNotInclusive(-0.03), 1),     # (param_name , formula_instance , iterations)
+                                   parameter_sweep_settings.OrigParameterSweepSettings("nr_resources_init"        , predef_formulas.IncreasingByDeltaNotInclusive( 0.03), 1),     # (param_name , formula_instance , iterations)
+                                   parameter_sweep_settings.OrigParameterSweepSettings("p_land_yield_fact_1"      , predef_formulas.IncreasingByDeltaNotInclusive( 0.01267089341769   ), 1),     # (param_name , formula_instance , iterations)
+                                   parameter_sweep_settings.OrigParameterSweepSettings("pop2_init"                , predef_formulas.IncreasingByDeltaNotInclusive( 0.03), 1),          # (param_name , formula_instance , iterations)
+                                   parameter_sweep_settings.OrigParameterSweepSettings("industrial_capital_init"  , predef_formulas.IncreasingByDeltaNotInclusive(-0.03 ), 1),     # (param_name , formula_instance , iterations)
+                                   parameter_sweep_settings.OrigParameterSweepSettings("pot_arable_land_tot"      , predef_formulas.IncreasingByDeltaNotInclusive(-0.03 ), 1),    # (param_name , formula_instance , iterations)
+                                   parameter_sweep_settings.OrigParameterSweepSettings("p_avg_life_serv_cap_1"    , predef_formulas.IncreasingByDeltaNotInclusive(-0.03 ), 1),       # (param_name , formula_instance , iterations)
+                                   parameter_sweep_settings.OrigParameterSweepSettings("pot_arable_land_init"     , predef_formulas.IncreasingByDeltaNotInclusive( 0.03), 1),     # (param_name , formula_instance , iterations)
+                                   parameter_sweep_settings.OrigParameterSweepSettings("pop1_init"                , predef_formulas.IncreasingByDeltaNotInclusive( 0.03), 1),    # (param_name , formula_instance , iterations)
+                                 ]
+
+    run_kwargs = {
+    "sweep_params_settings_list" : sweep_params_settings_list,
+    "plot_vars"                  : ["population","human_welfare_index"],
+    "stopTime"                   : 2500  ,# year to end the simulation (2100 for example)
+    "scens_to_run"               : [1], #The standard run corresponds to the first scenario
+    "fixed_params"               : [], #We don't want to change any parameters
+    "mo_file"                    : piecewiseMod_SysDyn_mo_path, # mo file with tabular modified (to allow out of tabular interpolation)
+    "plot_std_run"               : True, #Choose to plot std run alognside this test results
+    "extra_ticks"                : [2025,2050,2075] # extra years ticks for the plot(s)
+    }
+    setUpSweepsAndRun(**run_kwargs)
+def relativeTop12ParamsNoSweep1Percent():
+#                            DEFAULT            Value WP2(5%, not 1%)      Curvi Results        Description
+#     max_tot_fert_norm       & 12.0           & 12.60                    & 12.1199998842193   & "Normal maximal total fertility"                                 \\
+#     p_fioa_cons_const_1     & 0.43           & 0.45                     & 0.434299995889143  & "Default frac of industrial output allocated to consumption" \\
+#     p_ind_cap_out_ratio_1   & 3.0            & 3.15                     & 3.02999996986311   & "Default industrial capital output ratio"                        \\
+#     p_serv_cap_out_ratio_1  & 1.0            & 1.05                     & 1.00999999046000   & "Default fraction of service sector output ratio"                \\
+#     life_expect_norm        & 28.0           & 29.40                    & 28.2799997316718   & "Normal life expectancy"                                         \\
+#     des_compl_fam_size_norm & 3.8            & 4.00                     & 3.83799996359204   & "Desired normal complete family size"                            \\
+#     industrial_capital_init & 210000000000.0 & 199500000000.0           & 207900018721.344   & "Initial industrial investment"                       \\
+# x   p_land_yield_fact_1     & 1.0            & 0.95                     & 0.990001558054131  & "Default land yield factor"                           \\
+#     p_nr_res_use_fact_1     & 1.0            & 0.95                     & 0.990000010442315  & "Default non-recoverable resource utilization factor" \\
+#     reproductive_lifetime   & 30.0           & 28.5                     & 29.7000002862185   & "Reproductive life time"                              \\
+#     subsist_food_pc         & 230.0          & 218.5                    & 227.700002194902   & "Available per capita food"                           \\
+#     p_avg_life_ind_cap_1    & 14.0           & 13.29                    & 13.8600001336145   & "Default average life of industrial capital";         \\
+# Curvi run:
+    # Optimum x0:
+#    (in the table above)
+# With:
+# ier =   2 nfu =  2623 nit =     33
+# And +-1% of boundaries
+    maxTotFertNorm_sweepSettings  = parameter_sweep_settings      . OrigParameterSweepSettings("max_tot_fert_norm"       , predef_formulas . IncreasingByDeltaNotInclusive(0.01 ), 1) # (param_name , formula_instance , iterations)
+    fioaConsConst1_sweepSettings  = parameter_sweep_settings      . OrigParameterSweepSettings("p_fioa_cons_const_1"     , predef_formulas . IncreasingByDeltaNotInclusive(0.01 ), 1) # (param_name , formula_instance , iterations)
+    indCapOutRatio1_sweepSettings  = parameter_sweep_settings     . OrigParameterSweepSettings("p_ind_cap_out_ratio_1"   , predef_formulas . IncreasingByDeltaNotInclusive(0.01 ), 1) # (param_name , formula_instance , iterations)
+    servCapOutRatio1_sweepSettings  = parameter_sweep_settings    . OrigParameterSweepSettings("p_serv_cap_out_ratio_1"  , predef_formulas . IncreasingByDeltaNotInclusive(0.01 ), 1) # (param_name , formula_instance , iterations)
+    lifeExpectNorm_sweepSettings  = parameter_sweep_settings      . OrigParameterSweepSettings("life_expect_norm"        , predef_formulas . IncreasingByDeltaNotInclusive(0.01 ), 1) # (param_name , formula_instance , iterations)
+    desComplFamSizeNorm_sweepSettings  = parameter_sweep_settings . OrigParameterSweepSettings("des_compl_fam_size_norm" , predef_formulas . IncreasingByDeltaNotInclusive(0.01 ), 1) # (param_name , formula_instance , iterations)
+    indCapInit_sweepSettings  = parameter_sweep_settings          . OrigParameterSweepSettings("industrial_capital_init" , predef_formulas . IncreasingByDeltaNotInclusive(-0.01), 1) # (param_name , formula_instance , iterations)
+    landYieldFact1_sweepSettings  = parameter_sweep_settings      . OrigParameterSweepSettings("p_land_yield_fact_1"     , predef_formulas . IncreasingByDeltaNotInclusive(-0.01), 1) # (param_name , formula_instance , iterations)
+    nrResUseFact1_sweepSettings  = parameter_sweep_settings       . OrigParameterSweepSettings("p_nr_res_use_fact_1"     , predef_formulas . IncreasingByDeltaNotInclusive(-0.01), 1) # (param_name , formula_instance , iterations)
+    reproLifetime_sweepSettings  = parameter_sweep_settings       . OrigParameterSweepSettings("reproductive_lifetime"   , predef_formulas . IncreasingByDeltaNotInclusive(-0.01), 1) # (param_name , formula_instance , iterations)
+    subsistFoodPc_sweepSettings  = parameter_sweep_settings       . OrigParameterSweepSettings("subsist_food_pc"         , predef_formulas . IncreasingByDeltaNotInclusive(-0.01), 1) # (param_name , formula_instance , iterations)
+    avgLifeIndCap1_sweepSettings  = parameter_sweep_settings      . OrigParameterSweepSettings("p_avg_life_ind_cap_1"    , predef_formulas . IncreasingByDeltaNotInclusive(-0.01), 1) # (param_name , formula_instance , iterations)
+# add the sweepSettings to the list
+    sweep_params_settings_list    = [maxTotFertNorm_sweepSettings, fioaConsConst1_sweepSettings, indCapOutRatio1_sweepSettings, servCapOutRatio1_sweepSettings, lifeExpectNorm_sweepSettings, desComplFamSizeNorm_sweepSettings, indCapInit_sweepSettings, landYieldFact1_sweepSettings, nrResUseFact1_sweepSettings, reproLifetime_sweepSettings, subsistFoodPc_sweepSettings, avgLifeIndCap1_sweepSettings]
+
+    run_kwargs = {
+    "sweep_params_settings_list" : sweep_params_settings_list,
+    "plot_vars"                  : ["population","human_welfare_index"],
+    "stopTime"                   : 2500  ,# year to end the simulation (2100 for example)
+    "scens_to_run"               : [1], #The standard run corresponds to the first scenario
+    "fixed_params"               : [], #We don't want to change any parameters
+    "mo_file"                    : piecewiseMod_SysDyn_mo_path, # mo file with tabular modified (to allow out of tabular interpolation)
+    "plot_std_run"               : True, #Choose to plot std run alognside this test results
+    "extra_ticks"                : [2025,2050,2075] # extra years ticks for the plot(s)
+    }
+    setUpSweepsAndRun(**run_kwargs)
+
+def relativeTop12ParamsNoSweep5Percent():
 # Table from WP2 + curvi results (the ones with an x differ between "individual" (wp2) and "together" (curvi)
 #                            DEFAULT            Value WP2         Curvi Results        Description
 #     max_tot_fert_norm       & 12.0           & 12.60          & 12.5999994203700  & "Normal maximal total fertility"                                 \\
@@ -79,7 +185,7 @@ def relativeTop12ParamsNoSweep():
 
     run_kwargs = {
     "sweep_params_settings_list" : sweep_params_settings_list,
-    "plot_vars"                  : ["population"],
+    "plot_vars"                  : ["population","human_welfare_index"],
     "stopTime"                   : 2500  ,# year to end the simulation (2100 for example)
     "scens_to_run"               : [1], #The standard run corresponds to the first scenario
     "fixed_params"               : [], #We don't want to change any parameters
