@@ -70,6 +70,14 @@ def twoVarsMultipleCSVsPlot(vars_list_pairs , csvs_path_label_pair_list , plot_t
         ax1.tick_params('y', colors='b')     # left ticks in color blue
         ax2.set_ylabel(var_right, color='r')  # left name in color red
         ax2.tick_params('y', colors='r')     # left ticks in color red
+        # Enable the grid for both y axis
+        # Leave the ax1 grids as default
+        ax1.grid(True)
+        # Modify the grids for axis 2
+        ax2.grid(True)
+        gridlines_ax2 = ax2.get_xgridlines() + ax2.get_ygridlines()
+        for line in gridlines_ax2:
+            line.set_linestyle('-.')
 
         if include_stdrun:
             # Plot the std run of the left variable
