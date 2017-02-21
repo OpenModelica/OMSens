@@ -11,8 +11,8 @@ def main():
     base_path = filesystem.files_aux.makeOutputPath("predefined_plots")
     # nrResInitCurviVsZXPOWL_curviNoBounds_population(base_path)
     top12FromRelative_curvi5Perc_populationVSpopAndhwi(base_path)
-    # top12FromRelative_curvi5Perc_populationVShwi(base_path)
-    # onlyMeasurableInits_curvi3Perc_population(base_path)
+    # top12FromRelative_curvi3Perc_populationVShwi(base_path)    # no encontré el only pop.
+    # onlyMeasurableInits_curvi3Perc_population(base_path)       # me parece que con el plot de multiparam sweep basta. Con quién lo compararíamos acá para justificar su presencia en este archivo?
 #    # top12FromRelative_WP2vscurvi5Perc_populationVShwi(base_path) ## <--- PARA ESTE TODAVÍA HAY QUE HACER EL MULTIPARAM SWEEP
     sys.exit(0)
 

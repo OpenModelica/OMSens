@@ -35,21 +35,21 @@ def main():
     # test12fromTop12RelativeWP2OneUpOneDown()
     # hugoScolnikParamsCurvi01()
     # hugoScolnikParamsCurvi02()
-### WP3: no sweeps ###
-    # change2For2000and2For2100RelativeTop()
-    # relativeTop2for2100AndTop8For2000()
+    # change2For2000and2For2100RelativeTop()            # no sweep
+    # relativeTop2for2100AndTop8For2000()               # no sweep
 # Curvi Only Pop
-    # relativeTop12ParamsNoSweep5PercentOptimizePop()
-    # relativeTop12ParamsNoSweep1PercentOptimizePop()
-    # relativeTop18ParamsNoSweep3PercentOptimizePop()
-    # relativeTop36ParamsNoSweep3PercentOptimizePop()
-    nrResourcesInitCurviNoSweepOptimizePop()
-    # onlyMeasurableInitValsNoSweep3PercOptimizePop()
+    # relativeTop12ParamsNoSweep5PercentOptimizePop()   # no sweep
+    # relativeTop12ParamsNoSweep1PercentOptimizePop()   # no sweep
+    # relativeTop18ParamsNoSweep3PercentOptimizePop()   # no sweep
+    # relativeTop36ParamsNoSweep3PercentOptimizePop()   # no sweep
+    # nrResourcesInitCurviNoSweepOptimizePop()          # no sweep
+    # onlyMeasurableInitValsNoSweep3PercOptimizePop()   # no sweep
+    relativeTop12ParamsSweepOf2Params5PercentOptimizePop()
 # Curvi pop and hwi
-    # relativeTop12ParamsNoSweep3PercentOptimizePopAndHWI()
-    # relativeTop12ParamsNoSweep5PercentOptimizePopAndHWI()
+    # relativeTop12ParamsNoSweep3PercentOptimizePopAndHWI() #no sweep
+    # relativeTop12ParamsNoSweep5PercentOptimizePopAndHWI() #no sweep
 # ZXPOWL only pop
-    nrResourcesInitZXPOWLNoSweepOptimizePop()
+    # nrResourcesInitZXPOWLNoSweepOptimizePop() #no sweep
 def onlyMeasurableInitValsNoSweep3PercOptimizePop():
 # Curvi run:
     # Optimum x0:
@@ -404,6 +404,55 @@ def relativeTop12ParamsNoSweep1PercentOptimizePop():
     }
     setUpSweepsAndRun(**run_kwargs)
 
+def relativeTop12ParamsSweepOf2Params5PercentOptimizePop():
+# We sweep the 2 params that differ from the single sensitivity calculations of Relative (presented in wp2)
+# (similar to the "NoSweep" variant of this run, but sweeping 2 parameters)
+# Table from WP2 + curvi results (the ones with an x differ between "individual" (wp2) and "together" (curvi)
+#                            DEFAULT            Value WP2         Curvi Results        Description
+#     max_tot_fert_norm       & 12.0           & 12.60          & 12.5999994203700  & "Normal maximal total fertility"                                 \\
+#     p_fioa_cons_const_1     & 0.43           & 0.45           & 0.448380420759870 & "Default frac of industrial output allocated to consumption" \\
+#     p_ind_cap_out_ratio_1   & 3.0            & 3.15           & 3.14999863042567  & "Default industrial capital output ratio"                        \\
+#     p_serv_cap_out_ratio_1  & 1.0            & 1.05           & 1.04559432323735  & "Default fraction of service sector output ratio"                \\
+#     life_expect_norm        & 28.0           & 29.40          & 29.3999986573765  & "Normal life expectancy"                                         \\
+#     des_compl_fam_size_norm & 3.8            & 4.00           & 3.98999981851597  & "Desired normal complete family size"                            \\
+#     industrial_capital_init & 210000000000.0 & 199500000000.0 & 199499999088.315  & "Initial industrial investment"                       \\
+# x   p_land_yield_fact_1     & 1.0            & 0.95           & 1.04989368154214  & "Default land yield factor"                           \\
+#     p_nr_res_use_fact_1     & 1.0            & 0.95           & 0.949999988082543 & "Default non-recoverable resource utilization factor" \\
+#     reproductive_lifetime   & 30.0           & 28.5           & 28.4999996571028  & "Reproductive life time"                              \\
+#     subsist_food_pc         & 230.0          & 218.5          & 218.499997333924  & "Available per capita food"                           \\
+# x   p_avg_life_ind_cap_1    & 14.0           & 13.29          & 14.6999966717931  & "Default average life of industrial capital";         \\
+# Curvi run:
+    # Optimum x0:
+#    (in the table above)
+# With:
+# ier =   2 nfu =  2623 nit =     33
+# And +-5% of boundaries
+    maxTotFertNorm_sweepSettings  = parameter_sweep_settings      . OrigParameterSweepSettings("max_tot_fert_norm"       , predef_formulas . IncreasingByDeltaNotInclusive(0.0499999516975    ), 1) # (param_name , formula_instance , iterations)
+    fioaConsConst1_sweepSettings  = parameter_sweep_settings      . OrigParameterSweepSettings("p_fioa_cons_const_1"     , predef_formulas . IncreasingByDeltaNotInclusive(0.0427451645578372 ), 1) # (param_name , formula_instance , iterations)
+    indCapOutRatio1_sweepSettings  = parameter_sweep_settings     . OrigParameterSweepSettings("p_ind_cap_out_ratio_1"   , predef_formulas . IncreasingByDeltaNotInclusive(0.0499995434752234 ), 1) # (param_name , formula_instance , iterations)
+    servCapOutRatio1_sweepSettings  = parameter_sweep_settings    . OrigParameterSweepSettings("p_serv_cap_out_ratio_1"  , predef_formulas . IncreasingByDeltaNotInclusive(0.04559432323735   ), 1) # (param_name , formula_instance , iterations)
+    lifeExpectNorm_sweepSettings  = parameter_sweep_settings      . OrigParameterSweepSettings("life_expect_norm"        , predef_formulas . IncreasingByDeltaNotInclusive(0.0499999520491607 ), 1) # (param_name , formula_instance , iterations)
+    desComplFamSizeNorm_sweepSettings  = parameter_sweep_settings . OrigParameterSweepSettings("des_compl_fam_size_norm" , predef_formulas . IncreasingByDeltaNotInclusive(0.0499999522410448 ), 1) # (param_name , formula_instance , iterations)
+    indCapInit_sweepSettings  = parameter_sweep_settings          . OrigParameterSweepSettings("industrial_capital_init" , predef_formulas . IncreasingByDeltaNotInclusive(-0.05              ), 1) # (param_name , formula_instance , iterations)
+    landYieldFact1_sweepSettings  = parameter_sweep_settings      . OrigParameterSweepSettings("p_land_yield_fact_1"     , predef_formulas . DeltaBeforeAndAfter(0.05   ), 3) # (param_name , formula_instance , iterations)
+    nrResUseFact1_sweepSettings  = parameter_sweep_settings       . OrigParameterSweepSettings("p_nr_res_use_fact_1"     , predef_formulas . IncreasingByDeltaNotInclusive(-0.05              ), 1) # (param_name , formula_instance , iterations)
+    reproLifetime_sweepSettings  = parameter_sweep_settings       . OrigParameterSweepSettings("reproductive_lifetime"   , predef_formulas . IncreasingByDeltaNotInclusive(-0.05              ), 1) # (param_name , formula_instance , iterations)
+    subsistFoodPc_sweepSettings  = parameter_sweep_settings       . OrigParameterSweepSettings("subsist_food_pc"         , predef_formulas . IncreasingByDeltaNotInclusive(-0.05              ), 1) # (param_name , formula_instance , iterations)
+    avgLifeIndCap1_sweepSettings  = parameter_sweep_settings      . OrigParameterSweepSettings("p_avg_life_ind_cap_1"    , predef_formulas . DeltaBeforeAndAfter(0.05), 3) # (param_name , formula_instance , iterations)
+# add the sweepSettings to the list
+    sweep_params_settings_list    = [maxTotFertNorm_sweepSettings, fioaConsConst1_sweepSettings, indCapOutRatio1_sweepSettings, servCapOutRatio1_sweepSettings, lifeExpectNorm_sweepSettings, desComplFamSizeNorm_sweepSettings, indCapInit_sweepSettings, landYieldFact1_sweepSettings, nrResUseFact1_sweepSettings, reproLifetime_sweepSettings, subsistFoodPc_sweepSettings, avgLifeIndCap1_sweepSettings]
+
+    run_kwargs = {
+    "sweep_params_settings_list" : sweep_params_settings_list,
+    "plot_vars"                  : ["population","human_welfare_index"],
+    "stopTime"                   : 2500  ,# year to end the simulation (2100 for example)
+    "scens_to_run"               : [1], #The standard run corresponds to the first scenario
+    "fixed_params"               : [], #We don't want to change any parameters
+    "mo_file"                    : piecewiseMod_SysDyn_mo_path, # mo file with tabular modified (to allow out of tabular interpolation)
+    "plot_std_run"               : True, #Choose to plot std run alognside this test results
+    "extra_ticks"                : [2025,2050,2075] # extra years ticks for the plot(s)
+    }
+    setUpSweepsAndRun(**run_kwargs)
 def relativeTop12ParamsNoSweep5PercentOptimizePop():
 # Table from WP2 + curvi results (the ones with an x differ between "individual" (wp2) and "together" (curvi)
 #                            DEFAULT            Value WP2         Curvi Results        Description

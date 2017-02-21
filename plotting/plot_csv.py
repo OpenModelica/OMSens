@@ -5,6 +5,7 @@ logger = logging.getLogger("--CSV Plotter--") #un logger especifico para este mo
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib #for configuration
+import matplotlib.ticker as ticker
 import filesystem.files_aux
 
 import settings.settings_world3_sweep as world3_settings
@@ -64,6 +65,8 @@ def twoVarsMultipleCSVsPlot(vars_list_pairs , csvs_path_label_pair_list , plot_t
         ax2 = ax1.twinx()
         # Set up the general configuration of the plot (title, subtitles, axis labels, etc)
         footer_artist = setupPltTwoVariables("Time",plot_title,subtitle,footer) # setupPltTwoVariables(x_label,title,subtitle,footer):
+        # Manually set the number of ticks but keeping the default max and mins
+        # (HAD TO PUT IT LOWER. RIGHT BEFORE CALL TO "save plot")
         # Set x and y labels here for now. May change in the future
         ax1.set_xlabel('Time')
         ax1.set_ylabel(var_left, color='b')  # left name in color blue
@@ -73,11 +76,10 @@ def twoVarsMultipleCSVsPlot(vars_list_pairs , csvs_path_label_pair_list , plot_t
         # Enable the grid for both y axis
         # Leave the ax1 grids as default
         ax1.grid(True)
-        # Modify the grids for axis 2
-        ax2.grid(True)
-        gridlines_ax2 = ax2.get_xgridlines() + ax2.get_ygridlines()
-        for line in gridlines_ax2:
-            line.set_linestyle('-.')
+        gridlines_ax1 = ax1.get_xgridlines() + ax1.get_ygridlines()
+        for line in gridlines_ax1:
+            line.set_alpha(0.5)
+        # ax2.grid(True)   # only 1 grid is enough as both are sinchronized
 
         if include_stdrun:
             # Plot the std run of the left variable
@@ -93,14 +95,26 @@ def twoVarsMultipleCSVsPlot(vars_list_pairs , csvs_path_label_pair_list , plot_t
             # Plot the data of the right variable from this csv to the left axis:
             ax2.plot(data["time"], data[var_right], linewidth=1, linestyle='-', markersize=0,marker='o',color = next(colors_iter_red),label=var_right+":"+label)
 
-        lgd_left = ax1.legend(loc="center right",fontsize="small",fancybox=True, shadow=True,bbox_to_anchor=(-0.11,0.5)) # bbox_to_anchor are the coordinates in the axes and the "loc" is how to put the "rectangle" sorrounding this coordinates"
-        lgd_right  = ax2.legend(loc="center left",fontsize="small",fancybox=True, shadow=True,bbox_to_anchor=(1.11,0.5))
+        lgd_left = ax1.legend(loc="center right",fontsize="small",fancybox=True, shadow=True,bbox_to_anchor=(-0.13,0.5)) # bbox_to_anchor are the coordinates (x,y) in the axes and the "loc" is how to put the "rectangle" sorrounding this coordinates"
+        lgd_right  = ax2.legend(loc="center left",fontsize="small",fancybox=True, shadow=True,bbox_to_anchor=(1.17,0.5))
         ## Settings that differ from the automatic plotter:
         plt.xlim(x_range) #set an specific x range
         plt.xticks(list(plt.xticks()[0]) + extra_ticks) # add extra ticks (1975 for vermeulen for example)
 
         plot_name_base = var_left+"_-_"+var_right
         plot_path_without_extension = os.path.join(output_folder_path,plot_name_base)
+
+        # Set same amount of ticks on both axis. I have to put it down here for it to work. Needs to be put higher.
+        # Right axis:
+        start, end = ax2.get_ylim()
+        stepsize = (end-start)/10
+        right_y_ticks = list(set(list(np.arange(start, end + stepsize, stepsize)) + [start,end]))
+        ax2.set_yticks(right_y_ticks)  # start, end, stepsize
+        # Left axis:
+        start, end = ax1.get_ylim()
+        stepsize = (end-start)/10
+        left_y_ticks = list(set(list(np.arange(start, end + stepsize, stepsize)) + [start,end]))
+        ax1.set_yticks(left_y_ticks)  # start, end, stepsize
         saveAndClearPlt(plot_path_without_extension,lgd_left,footer_artist,extra_lgd=lgd_right)
 def multipleCSVsAndVarsSimplePlot(vars_list,csvs_path_label_pair_list,plot_title,x_range,output_folder_path,extra_ticks,include_stdrun=False,subtitle="",footer=""):
     colors_list = plt.get_cmap('jet')(np.linspace(0, 1.0, len(csvs_path_label_pair_list)))
@@ -243,13 +257,6 @@ def plotStandardRun(var_name,color="black",ax=None, label="STD_RUN",linestyle="-
             # Otherwise, use the plt object
             plt.plot(data["time"], data[var_name], linewidth=1, linestyle=linestyle, markersize=0,marker='o',label=label,color = color)
 
-def readFromCSVTemp(file_path):
-    # El que manda todo a memoria:
-    # data = np.genfromtxt(file_path, delimiter=',', names=True)
-    # El que no manda todo a memoria:
-    print("Reading with low ram usage")
-    data = np.memmap(file_path, delimiter=',', names=True)
-    return data
 def readFromCSV(file_path):
     # El que manda todo a memoria:
     data = np.genfromtxt(file_path, delimiter=',', names=True)
@@ -277,18 +284,13 @@ def setupPltOneVariable(x_label,y_label,title,subtitle,footer):
     plt.gca().set_position([0.10, 0.15, 0.80, 0.77])
     plt.xlabel(x_label)
     plt.title(title+"\n"+subtitle, fontsize=14, y=1.08)
-    # plt.title(title)
     plt.ylabel(y_label)
     plt.ticklabel_format(useOffset=False) # So it doesn't use an offset on the x axis
     footer_artist = plt.annotate(footer, (1,0), (0, -70), xycoords='axes fraction', textcoords='offset points', va='top', horizontalalignment='right')
-    # fig = plt.figure()
-    # fig.text(.1,.1,footer)
-    # plt.figtext(.1,.1,footer)
     plt.margins(x=0.1, y=0.1) #increase buffer so points falling on it are plotted
     return footer_artist
 
 def saveAndClearPlt(plot_path_without_extension,lgd,footer_artist,extra_lgd=None):
-    # plt.savefig(plot_path)
     extensions = [".svg",".png"]
     for ext in extensions:
         plot_path = plot_path_without_extension + ext
@@ -299,7 +301,6 @@ def saveAndClearPlt(plot_path_without_extension,lgd,footer_artist,extra_lgd=None
             # If only one legend
             plt.savefig(plot_path,bbox_extra_artists=(lgd,footer_artist), bbox_inches='tight')
         logger.debug("Plotted to: "+plot_path)
-    # plt.show()
     plt.clf()
 
 if __name__ == "__main__":
