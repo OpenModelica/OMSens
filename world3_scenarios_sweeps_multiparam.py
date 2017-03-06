@@ -55,7 +55,7 @@ def main():
 def onlyMeasurableInitValsNoSweep5PercOptimizePop():
 # Curvi run:
     # Optimum x0:
-# Param name              & Default         & CurviVal3%       & Curvival3%/Default
+# Param name              & Default         & CurviVal5%       & Curvival5%/Default
 # nr_resources_init       & 1000000000000.0 & 1049999932898.45 & 1.04999993289845   
 # pop2_init               & 700000000.0     & 734997926.769216 & 1.049997038241737  
 # industrial_capital_init & 210000000000.0  & 199500310116.404 & 0.9500014767447809 
