@@ -37,7 +37,7 @@ class CustomParameterSweepSettings(ParameterSweepSettings):
 # 
 def defaultValueForParam(param_name):
     params_info_list = world3_specific.standard_run_params_defaults.w3_params_info_list
-    for def_param_name,def_param_val in params_info_list:
+    for def_param_name,def_param_val,def_param_desc in params_info_list:
         if param_name == def_param_name:
             return def_param_val
     # If the parameter was not found, raise exception

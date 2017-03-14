@@ -113,7 +113,7 @@ def runModelicaSweepingAllOfW3Params(percentage,year_target,output_folder_path):
 
 def calculateParametersPerturbedValueByPercentage(params_info_list,percentage):
     parameters_to_perturbate_tuples = []
-    for param_name,param_val in params_info_list:
+    for param_name,param_val,param_desc in params_info_list:
         new_value = param_val+param_val*percentage/100 #for now, we just want the value + a percentage
         parameters_to_perturbate_tuples.append((param_name,param_val,new_value))
     return parameters_to_perturbate_tuples

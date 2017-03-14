@@ -45,7 +45,7 @@ def main():
     # nrResourcesInitCurviNoSweepOptimizePop()          # no sweep
     # onlyMeasurableInitValsNoSweep3PercOptimizePop()   # no sweep
     # onlyMeasurableInitValsNoSweep5PercOptimizePop()   # no sweep
-    # relativeTop12ParamsSweepOf2Params5PercentOptimizePop()
+    relativeTop12ParamsSweepOf2Params5PercentOptimizePop()
 # Curvi pop and hwi
     # relativeTop12ParamsNoSweep3PercentOptimizePopAndHWI() #no sweep
     # relativeTop12ParamsNoSweep5PercentOptimizePopAndHWI() #no sweep
@@ -508,7 +508,7 @@ def relativeTop12ParamsSweepOf2Params5PercentOptimizePop():
         ("reproductive_lifetime"   ,28.4999996571028),
         ("subsist_food_pc"         ,218.499997333924)
        ],
-    "fixed_params_description_str": "10 parameters were changed to a fixed value. See description.",
+    "fixed_params_description_str": "10 parameters were perturbed to a fixed value. See description.",
     "mo_file"                    : piecewiseMod_SysDyn_mo_path, # mo file with tabular modified (to allow out of tabular interpolation)
     "plot_std_run"               : True, #Choose to plot std run alognside this test results
     "extra_ticks"                : [2025,2050,2075] # extra years ticks for the plot(s)
