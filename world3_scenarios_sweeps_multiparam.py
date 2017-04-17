@@ -41,17 +41,128 @@ def main():
     # relativeTop12ParamsNoSweep5PercentOptimizePop()   # no sweep
     # relativeTop12ParamsNoSweep1PercentOptimizePop()   # no sweep
     # relativeTop18ParamsNoSweep3PercentOptimizePop()   # no sweep
-    relativeTop36ParamsNoSweep3PercentOptimizePop()   # no sweep
+    # relativeTop36ParamsNoSweep3PercentOptimizePop()   # no sweep
     # nrResourcesInitCurviNoSweepOptimizePop()          # no sweep
     # onlyMeasurableInitValsNoSweep3PercOptimizePop()   # no sweep
     # onlyMeasurableInitValsNoSweep5PercOptimizePop()   # no sweep
-    relativeTop12ParamsSweepOf2Params5PercentOptimizePop()
+    # relativeTop12ParamsSweepOf2Params5PercentOptimizePop()
 # Curvi pop and hwi
     # relativeTop12ParamsNoSweep3PercentOptimizePopAndHWI() #no sweep
     # relativeTop12ParamsNoSweep5PercentOptimizePopAndHWI() #no sweep
 # ZXPOWL only pop
     # nrResourcesInitZXPOWLNoSweepOptimizePop() #no sweep
+#### POST - WORK PACKAGE 3 ####
+# Policies Triggers  with CURVI
+    policyTriggers_test31_nosweep()  # the parameters are the policy triggers for scenarios 2 to 9. Initial: 2050 
+    policyTriggers_test32_nosweep()  # the parameters are the policy triggers for scenarios 2 to 9. Initial: 2018 
+    policyTriggers_test33_nosweep()  # the parameters are the policy triggers for scenarios 2 to 9. Initial: 2034 
+
 ##### TESTS DEFINITIONS #####
+def policyTriggers_test33_nosweep():
+# Curvi run:
+# Formula: -hdi
+# Param name           & Starting point & Max  & Min  & Curvi
+# t_fert_cont_eff_time & 2034           & 2100 & 2018 & 2076.81717859103
+# t_ind_equil_time     & 2034           & 2100 & 2018 & 2073.09706915164
+# t_zero_pop_grow_time & 2034           & 2100 & 2018 & 2049.83898445364
+# t_land_life_time     & 2034           & 2100 & 2018 & 2026.08829271848
+# t_policy_year        & 2034           & 2100 & 2018 & 2034.32051122486
+# t_fcaor_time         & 2034           & 2100 & 2018 & 2083.36491898977
+
+# With:
+# ier =   0 nfu =    13 nit =      0
+# Time: ~2m on laptop
+
+
+    sweep_params_settings_list = [ parameter_sweep_settings.OrigParameterSweepSettings("t_fert_cont_eff_time" , predef_formulas.OneValue(2076.81717859103   ), 1),     # (param_name , formula_instance , iterations)
+                                   parameter_sweep_settings.OrigParameterSweepSettings("t_ind_equil_time"     , predef_formulas.OneValue(2073.09706915164   ), 1),    # (param_name , formula_instance , iterations)
+                                   parameter_sweep_settings.OrigParameterSweepSettings("t_zero_pop_grow_time" , predef_formulas.OneValue(2049.83898445364    ), 1),     # (param_name , formula_instance , iterations)
+                                   parameter_sweep_settings.OrigParameterSweepSettings("t_land_life_time"     , predef_formulas.OneValue(2026.08829271848   ), 1),          # (param_name , formula_instance , iterations)
+                                   parameter_sweep_settings.OrigParameterSweepSettings("t_policy_year"        , predef_formulas.OneValue(2034.32051122486   ), 1),     # (param_name , formula_instance , iterations)
+                                   parameter_sweep_settings.OrigParameterSweepSettings("t_fcaor_time"         , predef_formulas.OneValue(2083.36491898977    ), 1),    # (param_name , formula_instance , iterations)
+                                 ]
+
+    run_kwargs = {
+    "sweep_params_settings_list" : sweep_params_settings_list,
+    "plot_vars"                  : ["population","human_welfare_index"],
+    "stopTime"                   : 2500  ,# year to end the simulation (2100 for example)
+    "scens_to_run"               : [1], #The standard run corresponds to the first scenario
+    "fixed_params"               : [], #We don't want to change any parameters
+    "mo_file"                    : piecewiseMod_SysDyn_mo_path, # mo file with tabular modified (to allow out of tabular interpolation)
+    "plot_std_run"               : True, #Choose to plot std run alognside this test results
+    "extra_ticks"                : [] # extra years ticks for the plot(s)
+    }
+    setUpSweepsAndRun(**run_kwargs)
+def policyTriggers_test32_nosweep():
+# Curvi run:
+# Formula: -hdi
+# Param name           & Starting point & Max  & Min  & Curvi
+# t_fert_cont_eff_time & 2018           & 2100 & 2018 & 2018
+# t_ind_equil_time     & 2018           & 2100 & 2018 & 2018
+# t_zero_pop_grow_time & 2018           & 2100 & 2018 & 2018
+# t_land_life_time     & 2018           & 2100 & 2018 & 2018
+# t_policy_year        & 2018           & 2100 & 2018 & 2018
+# t_fcaor_time         & 2018           & 2100 & 2018 & 2018
+
+# With:
+# ier =   0 nfu =    13 nit =      0
+# Time: ~2m on laptop
+
+
+    sweep_params_settings_list = [ parameter_sweep_settings.OrigParameterSweepSettings("t_fert_cont_eff_time" , predef_formulas.OneValue(2018   ), 1),     # (param_name , formula_instance , iterations)
+                                   parameter_sweep_settings.OrigParameterSweepSettings("t_ind_equil_time"     , predef_formulas.OneValue(2018   ), 1),    # (param_name , formula_instance , iterations)
+                                   parameter_sweep_settings.OrigParameterSweepSettings("t_zero_pop_grow_time" , predef_formulas.OneValue(2018    ), 1),     # (param_name , formula_instance , iterations)
+                                   parameter_sweep_settings.OrigParameterSweepSettings("t_land_life_time"     , predef_formulas.OneValue(2018   ), 1),          # (param_name , formula_instance , iterations)
+                                   parameter_sweep_settings.OrigParameterSweepSettings("t_policy_year"        , predef_formulas.OneValue(2018   ), 1),     # (param_name , formula_instance , iterations)
+                                   parameter_sweep_settings.OrigParameterSweepSettings("t_fcaor_time"         , predef_formulas.OneValue(2018    ), 1),    # (param_name , formula_instance , iterations)
+                                 ]
+
+    run_kwargs = {
+    "sweep_params_settings_list" : sweep_params_settings_list,
+    "plot_vars"                  : ["population","human_welfare_index"],
+    "stopTime"                   : 2500  ,# year to end the simulation (2100 for example)
+    "scens_to_run"               : [1], #The standard run corresponds to the first scenario
+    "fixed_params"               : [], #We don't want to change any parameters
+    "mo_file"                    : piecewiseMod_SysDyn_mo_path, # mo file with tabular modified (to allow out of tabular interpolation)
+    "plot_std_run"               : True, #Choose to plot std run alognside this test results
+    "extra_ticks"                : [] # extra years ticks for the plot(s)
+    }
+    setUpSweepsAndRun(**run_kwargs)
+def policyTriggers_test31_nosweep():
+# Curvi run:
+# Formula: -hdi
+# Param name           & Starting point & Max  & Min  & Curvi
+# t_fert_cont_eff_time & 2050           & 2100 & 2018 & 2076.49542873992
+# t_ind_equil_time     & 2050           & 2100 & 2018 & 2049.20235624306
+# t_zero_pop_grow_time & 2050           & 2100 & 2018 & 2046.51075636435
+# t_land_life_time     & 2050           & 2100 & 2018 & 2061.14818103240
+# t_policy_year        & 2050           & 2100 & 2018 & 2049.72195968877
+# t_fcaor_time         & 2050           & 2100 & 2018 & 2086.03299786679
+
+# With:
+# ier =   2 nfu =  1325 nit =     26
+# Time: ~3h on laptop
+
+
+    sweep_params_settings_list = [ parameter_sweep_settings.OrigParameterSweepSettings("t_fert_cont_eff_time" , predef_formulas.OneValue(2076.49542873992   ), 1),     # (param_name , formula_instance , iterations)
+                                   parameter_sweep_settings.OrigParameterSweepSettings("t_ind_equil_time"     , predef_formulas.OneValue(2049.20235624306   ), 1),    # (param_name , formula_instance , iterations)
+                                   parameter_sweep_settings.OrigParameterSweepSettings("t_zero_pop_grow_time" , predef_formulas.OneValue(2046.51075636435    ), 1),     # (param_name , formula_instance , iterations)
+                                   parameter_sweep_settings.OrigParameterSweepSettings("t_land_life_time"     , predef_formulas.OneValue(2061.14818103240   ), 1),          # (param_name , formula_instance , iterations)
+                                   parameter_sweep_settings.OrigParameterSweepSettings("t_policy_year"        , predef_formulas.OneValue(2049.72195968877   ), 1),     # (param_name , formula_instance , iterations)
+                                   parameter_sweep_settings.OrigParameterSweepSettings("t_fcaor_time"         , predef_formulas.OneValue(2086.03299786679    ), 1),    # (param_name , formula_instance , iterations)
+                                 ]
+
+    run_kwargs = {
+    "sweep_params_settings_list" : sweep_params_settings_list,
+    "plot_vars"                  : ["population","human_welfare_index"],
+    "stopTime"                   : 2500  ,# year to end the simulation (2100 for example)
+    "scens_to_run"               : [1], #The standard run corresponds to the first scenario
+    "fixed_params"               : [], #We don't want to change any parameters
+    "mo_file"                    : piecewiseMod_SysDyn_mo_path, # mo file with tabular modified (to allow out of tabular interpolation)
+    "plot_std_run"               : True, #Choose to plot std run alognside this test results
+    "extra_ticks"                : [] # extra years ticks for the plot(s)
+    }
+    setUpSweepsAndRun(**run_kwargs)
 def onlyMeasurableInitValsNoSweep5PercOptimizePop():
 # Curvi run:
     # Optimum x0:
