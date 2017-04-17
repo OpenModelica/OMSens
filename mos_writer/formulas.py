@@ -111,6 +111,24 @@ class IncreasingByDeltaNotInclusive(SweepingFormulas):
     # (we wrap all the values in parenthesis "()" just in case the value is negative and omc doesn't like negative signs roaming around)
     def __str__(self):
         return "IncreasingByDeltaNotInclusive(delta="+str(self._delta)+")"
+class OneValue(SweepingFormulas):
+# For when you want to set a fixed value but still want to see the difference from the default in the legend of this run (the alternative would be to instead use the "fixed_values" array to set a fixed value but this change wouldn't be taken into accound in the legend of this run in the plot)
+  # Example:
+  #   default_value = "anything",iterations = 1 (forced), fixed_value= 33 ==> 33
+    def __init__(self,fixed_value):    # <--- this function is the one used explicitly in the scripts
+        self._fixed_value = fixed_value
+    def initialize(self,extra_info):
+        # This function is called by the parameter sweep settings instance
+        default_value = extra_info["default_value"] # we will just ignore the default value
+        iterations    = extra_info["iterations"]
+        if iterations != 1:
+            # This formula needs the number of iterations to be 1 (we force it here so we don't make the code too complicated)
+            raise InvalidNumberOfIterations("This formula needs to be used only in runs of 1 iteration. Iterations set for this run: " + str(iterations))
+        fixed_value         = self._fixed_value
+        return "{fixed_value}".format(fixed_value=fixed_value)
+    # (we wrap all the values in parenthesis "()" just in case the value is negative and omc doesn't like negative signs roaming around)
+    def __str__(self):
+        return "OneValueFormula(fixed_value="+str(self._fixed_value)+")"
 
 class InvalidNumberOfIterations(Exception):
     pass
