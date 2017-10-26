@@ -15,18 +15,17 @@ def main():
     # omTheoParamSens_1901_VanillaW3_onlyParamsThatHaveNoInfluenceIn1901_heatmap(base_path)
     # omTheoParamSens_1901_VanillaW3_all_heatmap(base_path)
     ## Population state var new
-    omTheoParamSens_1901_PopStateVarNew_onlyParamsThatHaveInfluenceIn1901_heatmap(base_path)
+    # omTheoParamSens_1901_PopStateVarNew_onlyParamsThatHaveInfluenceIn1901_heatmap(base_path)
     # omTheoParamSens_1901_PopStateVarNew_onlyParamsThatHaveNoInfluenceIn1901_heatmap(base_path)
     # omTheoParamSens_1901_PopStateVarNew_all_Heatmap(base_path)
     # omTheoParamSens_1901_PopStateVarNew_onlyWorkPackage1ParamsAndVars_Heatmap(base_path)
     # Generate Empirical heatmaps
     ## (new - std) /std
-# DESCOMENTAR:
     # omEmpiricalParamSens_newMinusStdDivStd_1901and2001_influencers_heatmap(base_path)
     # omEmpiricalParamSens_newMinusStdDivStd_1901and2001_all_heatmap(base_path)
+    omEmpiricalParamSens_newMinusStdDivStd_2100_all_paper_heatmap(base_path)
     # omEmpiricalParamSens_newMinusStdDivStd_1901and2100_onlyWorkPackage1ParamsAndVars_Heatmap(base_path)
     ## RMS
-# DESCOMENTAR:
     # omEmpiricalParamSens_rootMeanSquares_1901and2001_influencers_heatmap(base_path)
     # omEmpiricalParamSens_rootMeanSquares_1901and2001_all_heatmap(base_path)
     # omEmpiricalParamSens_rootMeanSquares_1901and2100_onlyWorkPackage1ParamsAndVars_Heatmap(base_path)
@@ -67,9 +66,16 @@ def omEmpiricalParamSens_newMinusStdDivStd_1901and2001_influencers_heatmap(base_
         # os.makedirs(plot_folder_path)
         # plotting.plot_heatmap.readCSVMatrixAndPlotHeatmap(input_matrix_path,plot_folder_path,plot_title,rows_to_plot=noninfluencers)
 # All vars
+def omEmpiricalParamSens_newMinusStdDivStd_2100_all_paper_heatmap(base_path):
+    year = "2100"
+    input_matrix_path = "resource/paramVarSensMatrix/empiricalSens/"+year+"/new_minus_std_div_std_perturbed_5percent_"+year+"yr.csv"
+    plot_title = ""
+    plot_folder_path = os.path.join(base_path,"omEmpiricalParamSens_newMinusStdDivStd_"+year+"_all_heatmap")
+    os.makedirs(plot_folder_path)
+    plotting.plot_heatmap.readCSVMatrixAndPlotHeatmap(input_matrix_path,plot_folder_path,plot_title)
 def omEmpiricalParamSens_newMinusStdDivStd_1901and2001_all_heatmap(base_path):
     for year in ["1901","2100"]:
-        input_matrix_path = "resource/paramVarSensMatrix/empiricalSens/"+year+"/root_mean_squares_perturbed_5percent_From1900To"+year+".csv"
+        input_matrix_path = "resource/paramVarSensMatrix/empiricalSens/"+year+"/new_minus_std_div_std_perturbed_5percent_"+year+"yr.csv"
         plot_title = "Empirical Parameter Sensitivity for "+year+" for World3-Modelica\nSensitivity calculated using (std-new)/new formula for the year "+year
         plot_folder_path = os.path.join(base_path,"omEmpiricalParamSens_newMinusStdDivStd_"+year+"_all_heatmap")
         os.makedirs(plot_folder_path)

@@ -198,6 +198,9 @@ def sortIndicesAndOrColumns(data):
     # data.sort_index(inplace=True)
     ### Sort data's columns by alphabetical order
     data.sort_index(axis=1,inplace=True)
+
+    # For paper heatmap (it's hardcoded because it's urgent):
+    # data = data[:21]
     return data
 
 
@@ -295,7 +298,7 @@ def chooseColormapFromMin(min_of_all):
         reds_cm = matplotlib.cm.get_cmap("Reds", values) #generate a predefined map with amount of  values
         red_vals = reds_cm(np.arange(values)) #extract those values as an array
         red_vals = np.insert(red_vals,1,[1,1,1,1],axis=0)  # prepend pure white to the list
-        colormap = matplotlib.colors.LinearSegmentedColormap.from_list("newReds", red_vals) 
+        colormap = matplotlib.colors.LinearSegmentedColormap.from_list("newReds", red_vals)
     else:
         # The following is to get the default colormap and manually set white as it starting value for 0
         colormap = matplotlib.cm.get_cmap("bwr")
