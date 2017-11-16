@@ -53,11 +53,33 @@ def main():
     # nrResourcesInitZXPOWLNoSweepOptimizePop() #no sweep
 #### POST - WORK PACKAGE 3 ####
 # Policies Triggers  with CURVI
-    policyTriggers_test31_nosweep()  # the parameters are the policy triggers for scenarios 2 to 9. Initial: 2050 
-    policyTriggers_test32_nosweep()  # the parameters are the policy triggers for scenarios 2 to 9. Initial: 2018 
-    policyTriggers_test33_nosweep()  # the parameters are the policy triggers for scenarios 2 to 9. Initial: 2034 
+#   policyTriggers_test31_nosweep()  # the parameters are the policy triggers for scenarios 2 to 9. Initial: 2050 
+#   policyTriggers_test32_nosweep()  # the parameters are the policy triggers for scenarios 2 to 9. Initial: 2018 
+#   policyTriggers_test33_nosweep()  # the parameters are the policy triggers for scenarios 2 to 9. Initial: 2034 
+    hapzardExperiment()
 
 ##### TESTS DEFINITIONS #####
+def hapzardExperiment():
+    # Hapzard sweep of 4 paramet
+    sweep_params_settings_list    = [
+      parameter_sweep_settings      . OrigParameterSweepSettings("p_land_yield_fact_1"    , predef_formulas . DeltaBeforeAndAfter(0.05), 2), # (param_name , formula_instance , iterations)
+      parameter_sweep_settings      . OrigParameterSweepSettings("p_avg_life_ind_cap_1"   , predef_formulas . DeltaBeforeAndAfter(0.05), 2), # (param_name , formula_instance , iterations)
+      parameter_sweep_settings      . OrigParameterSweepSettings("p_nr_res_use_fact_1"    , predef_formulas . DeltaBeforeAndAfter(0.05), 2), # (param_name , formula_instance , iterations)
+    ]
+# add the sweepSettings to the list
+
+    run_kwargs = {
+    "sweep_params_settings_list" : sweep_params_settings_list,
+    "plot_vars"                  : ["population","human_welfare_index"],
+    "stopTime"                   : 2500  ,# year to end the simulation (2100 for example)
+    "scens_to_run"               : [1], #The standard run corresponds to the first scenario
+    "fixed_params"               : [],
+    "fixed_params_description_str": "",
+    "mo_file"                    : piecewiseMod_SysDyn_mo_path, # mo file with tabular modified (to allow out of tabular interpolation)
+    "plot_std_run"               : True, #Choose to plot std run alognside this test results
+    "extra_ticks"                : [] # extra years ticks for the plot(s)
+    }
+    setUpSweepsAndRun(**run_kwargs)
 def policyTriggers_test33_nosweep():
 # Curvi run:
 # Formula: -hdi
