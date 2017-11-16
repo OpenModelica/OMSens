@@ -54,10 +54,10 @@ def plotHeatmapFromData(data,plot_folder_path,plot_title,linthresh,vars_name_to_
     np_data = data.as_matrix()
     # Get mask positions of 0 values before masking NaNs so NaN cells aren't included
     cells_with_0 = np_data == 0
-    cells_with_0_initialkwargs = {"width":1,"height":1,"fill":False, "edgecolor":(0,0,1,1), "snap":True, "linewidth":0.1, "hatch":'xx', "label": "Cells with 0s"}
+    cells_with_0_initialkwargs = {"width":1,"height":1,"fill":False, "edgecolor":(0,0,1,1), "snap":True, "linewidth":0.1, "hatch":'xx', "label": "Zeros"}
     # Get mask positions of NaN values explicitly so it's easier to create a Rectangle patch with these values
     cells_with_nans = np.isnan(np_data)
-    cells_with_nans_initialkwargs = {"width":1,"height":1,"fill":True, "facecolor":(0.6,0.6,0.6,1), "edgecolor":'black', "linewidth":0.1, "hatch":'xx', "label": "Cells with NaNs"}
+    cells_with_nans_initialkwargs = {"width":1,"height":1,"fill":True, "facecolor":(0.6,0.6,0.6,1), "edgecolor":'black', "linewidth":0.1, "hatch":'xx', "label": "NaNs"}
 
     # mask invalid data (NaNs) so the heatmap is not bugged
     np_data = np.ma.masked_invalid(np_data)
@@ -234,8 +234,8 @@ def initializeFigAndAx(data,abbreviated_indices,abbreviated_columns):
     # ax.set_xticklabels(data.columns, minor=False)
     # ax.set_yticklabels(data.index, minor=False)
     ## With abbreviated string names
-    ax.set_xticklabels(abbreviated_columns, minor=False, fontsize=8)
-    ax.set_yticklabels(abbreviated_indices, minor=False, fontsize=6)
+    ax.set_xticklabels(abbreviated_columns, minor=False, fontsize=14)
+    ax.set_yticklabels(abbreviated_indices, minor=False, fontsize=14)
 
     ax.grid(False)
     return fig,ax
@@ -322,7 +322,7 @@ def addLegendForPatches(cells_with_0_initialkwargs,cells_with_nans_initialkwargs
     copy_of_dict_nans["xy"]   = (0,0)
     cells_with_0_patch_legend = mpatches.Rectangle(**copy_of_dict_0s)
     nans_legend               = mpatches.Rectangle(**copy_of_dict_nans)
-    plt.legend(handles=[cells_with_0_patch_legend,nans_legend],loc="upper right", bbox_to_anchor=(-0.04, 1.01))
-# FIRST EXECUTABLE CODE:
+    plt.legend(handles=[cells_with_0_patch_legend,nans_legend],loc="upper left", bbox_to_anchor=(1.03, 1.07))
+
 if __name__ == "__main__":
     main()
