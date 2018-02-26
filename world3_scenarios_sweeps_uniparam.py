@@ -2,9 +2,9 @@
 import os
 import sys
 import logging #en reemplazo de los prints
-logger = logging.getLogger("--World3 scenarios sweep--") #un logger especifico para este modulo
+logger = logging.getLogger("--World3 scenarios Uniparameter sweep --") #un logger especifico para este modulo
 # Mine:
-import mos_writer.mos_script_factory as mos_script_factory
+import mos_writer.mos_script_factory
 import sweeping.run_and_plot_model as run_and_plot_model
 import filesystem.files_aux as files_aux
 import settings.settings_world3_sweep as world3_settings
@@ -25,12 +25,12 @@ def deltaBeforeAndAfter(p,iterations,delta): #Have to create a function for "del
 # Special sweeps constants definitions: DON'T CHANGE ANYTHING
 SPECIAL_policy_years = None # Special vars sweeping that sweeps the year to apply the different policies respective of each scenario. (each scenario has it's policies to apply.)
 # System Dynamics .mo to use:
-vanilla_SysDyn_mo_path =  world3_settings._sys_dyn_package_vanilla_path.replace("\\","/") # The System Dynamics package without modifications
-piecewiseMod_SysDyn_mo_path =  world3_settings._sys_dyn_package_pw_fix_path.replace("\\","/") # Piecewise function modified to accept queries for values outside of range. Interpolate linearly using closest 2 values
-populationTankNewVar_SysDyn_mo_path = world3_settings._sys_dyn_package_pop_state_var_new.replace("\\","/") # Added a new "population" var that includes an integrator. Numerically it's the same as "population" but with the advantage that now we can calculate sensitivities for it
-Run2vermeulenAndJongh_SysDyn_mo_path= world3_settings._sys_dyn_package_v_and_j_run_2.replace("\\","/") # Added a new "population" var that includes an integrator. Numerically it's the same as "population" but with the advantage that now we can calculate sensitivities for it
-Run3vermeulenAndJongh_SysDyn_mo_path= world3_settings._sys_dyn_package_v_and_j_run_3.replace("\\","/") # Added a new "population" var that includes an integrator. Numerically it's the same as "population" but with the advantage that now we can calculate sensitivities for it
-pseudoffwparam_SysDyn_mo_path = world3_settings._sys_dyn_package_pseudo_ffw_param_path.replace("\\","/") # Added a new "population" var that includes an integrator. Numerically it's the same as "population" but with the advantage that now we can calculate sensitivities for it
+vanilla_SysDyn_mo_path               = world3_settings._sys_dyn_package_vanilla_path.replace("\\","/") # The System Dynamics package without modifications
+piecewiseMod_SysDyn_mo_path          = world3_settings._sys_dyn_package_pw_fix_path.replace("\\","/") # Piecewise function modified to accept queries for values outside of range. Interpolate linearly using closest 2 values
+populationTankNewVar_SysDyn_mo_path  = world3_settings._sys_dyn_package_pop_state_var_new.replace("\\","/") # Added a new "population" var that includes an integrator. Numerically it's the same as "population" but with the advantage that now we can calculate sensitivities for it
+Run2vermeulenAndJongh_SysDyn_mo_path = world3_settings._sys_dyn_package_v_and_j_run_2.replace("\\","/") # Added a new "population" var that includes an integrator. Numerically it's the same as "population" but with the advantage that now we can calculate sensitivities for it
+Run3vermeulenAndJongh_SysDyn_mo_path = world3_settings._sys_dyn_package_v_and_j_run_3.replace("\\","/") # Added a new "population" var that includes an integrator. Numerically it's the same as "population" but with the advantage that now we can calculate sensitivities for it
+pseudoffwparam_SysDyn_mo_path        = world3_settings._sys_dyn_package_pseudo_ffw_param_path.replace("\\","/") # Added a new "population" var that includes an integrator. Numerically it's the same as "population" but with the advantage that now we can calculate sensitivities for it
 
 def main():
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
@@ -57,8 +57,10 @@ def main():
   # Dynamics to Growth tests:
     # testDeltaICOR()
     # testDeltaPseudoFFWParam()
-#### WORK PACKAGE 2 ####
+#### Temp ####
     # testHugoScolnikRuns()
+#### WORK PACKAGE 2 ####
+    # None. The "sweeps" for empirical sensitivity analysis needed to be different, so we included them in "w3_sens_calculator.py"
 
 ## Predefined tests
 def testDeltaPseudoFFWParam():
@@ -423,7 +425,7 @@ def testPolicyYears():
 #World3 specific:
 def setUpSweepsAndRun(iterations,sweep_vars,sweep_value_formula_str,fixed_params,plot_vars,startTime,stopTime,scens_to_run,mo_file,plot_std_run=False,fixed_params_str=False):
     #The "root" output folder path.
-    output_path = files_aux.makeOutputPath()
+    output_path = files_aux.makeOutputPath("modelica_uniparam_sweep")
     #Create scenarios from factory
     scenarios = []
     for i in scens_to_run:
@@ -437,7 +439,6 @@ def doScenariosSet(scenarios,plot_vars,iterations,output_root_path,sweep_value_f
         os.makedirs(os.path.join(output_root_path,folder_name))
         run_and_plot_model.createSweepRunAndPlotForModelInfo(initial_scen_factory,plot_vars=plot_vars,iterations=iterations,output_folder_path=os.path.join(output_root_path,folder_name),sweep_value_formula_str=sweep_value_formula_str,csv_file_name_modelica_skeleton=world3_settings.sweeping_csv_file_name_modelica_skeleton,csv_file_name_python_skeleton=world3_settings.sweeping_csv_file_name_python_skeleton,plot_std_run=plot_std_run,fixed_params_str=fixed_params_str)
 def initialFactoryForWorld3Scenario(scen_num,start_time,stop_time,mo_file,sweep_vars=None,fixed_params=[]):
-    initial_factory_for_scen_1 = initialFactoryForWorld3Scenario
     #Get the mos script factory for a scenario number (valid from 1 to 11)
     assert 1<=scen_num<=9 , "The scenario number must be between 1 and 9. Your input: {0}".format(scen_num)
     if sweep_vars or isinstance(sweep_vars,list): #Have to use isinstance for empty lists
@@ -456,7 +457,7 @@ def initialFactoryForWorld3Scenario(scen_num,start_time,stop_time,mo_file,sweep_
         "stopTime"    : stop_time,
         "fixed_params": fixed_params,
         }
-    initial_factory = mos_script_factory.MosScriptFactory(initial_factory_dict)
+    initial_factory = mos_writer.mos_script_factory.UniparamMosScriptFactory(settings_dict=initial_factory_dict)
     return initial_factory
 def defaultSweepVarsForScenario(scen_num):
     default_sweep_vars_dict = defaultSweepVarsDict()

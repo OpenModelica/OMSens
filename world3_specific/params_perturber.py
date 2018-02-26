@@ -50,7 +50,7 @@ def perturbeParameterByLambda(parameters,lambda_func):
     perturbed_params_info_list = []
 
     logger.debug("  (<PARAM_NAME>,<PARAM_DEFAULT>,<PARAM_PERTURBED>)")
-    for param_name,param_val in default_params_info_list:
+    for param_name,param_val,param_desc in default_params_info_list:
         if(param_name in parameters):
             perturbed_val = lambda_func(param_val)
             # Commented because "debug" filter was used wrongly in other modules

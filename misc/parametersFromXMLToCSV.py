@@ -44,4 +44,5 @@ filesystem.files_aux.writeStrToFile(accum_csv_str,output_path)
 #     param_name = param_node.getAttribute("name")
 #     real_sub_node = param_node.getElementsByTagName('Real')[0]
 #     param_val = real_sub_node.getAttribute("start")
-#     print(param_name+","+param_val)
+#     param_desc = param_node.getAttribute("description")
+#     print(param_name+","+param_val+","+param_desc)

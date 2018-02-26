@@ -2,7 +2,7 @@
 import os
 import sys
 import logging #en reemplazo de los prints
-logger = logging.getLogger("--Predefined Plotting script--") #un logger especifico para este modulo
+logger = logging.getLogger("--Predefined Plotting script for Wp2 results--") #un logger especifico para este modulo
 #Mine
 import filesystem.files_aux
 import plotting.plot_csv
