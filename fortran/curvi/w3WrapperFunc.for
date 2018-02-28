@@ -124,7 +124,9 @@ C    a) Put the target_vars in a string with the variables separated by commas
       output_flag = "-output " // TRIM(vars_commas)
 C    b) [cd tmp/] and [simulate with flags -noemit and -output] and [send output to full_output.txt]
        w3_sys_call = TRIM(TRIM(TRIM(TRIM("cd tmp/ && ./"//     ! cd to tmp dir where the W3 binary executable and the newly created .xml are
-     *TRIM(w3_executable_path))//" -noemit " // TRIM(output_flag) 
+     *TRIM(w3_executable_path))//" -noemit " //
+     *" -lv=-LOG_SUCCESS " //
+     *TRIM(output_flag)
      *) //" > full_output.txt"))
        call SYSTEM(w3_sys_call)
 C  2) Parse the output using sed and tail and write the values of the variables to a file
