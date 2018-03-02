@@ -45,16 +45,29 @@ c             very difficult.  In this case choose kmax = 1 or 2.
       program main
         use testData
         implicit none
-      CHARACTER(LEN=500) :: file_path,tests_path,file_name
-      integer i, ibound, nfu, idiff, kmax, nit, ier
+      CHARACTER(LEN=500) :: file_path,tests_path,file_name,
+     * raw_file_path
+      integer i, ibound, nfu, idiff, kmax, nit, ier,argsize
       double precision eps
       external objectiveFunction
 
       ! Define which test to run
-      tests_path = "tests/"
-      file_name = "test_01.txt"
-      !file_name = "test_10.txt"
-      file_path = trim(tests_path) // trim(file_name)
+
+      ! Read test to run from command line
+      CALL getarg(1, raw_file_path)
+      argsize = LEN_TRIM(raw_file_path)
+      IF(argsize .EQ. 0) call exitWithError("Invalid input command line
+     * arguments. Should be only one and has to be path to test to run.
+     *Example: tests/test_01.txt")
+      file_path = TRIM(raw_file_path)
+
+      write(*,*) file_path
+
+      ! Hardcode the test to run
+!      tests_path = "tests/"
+!      file_name = "test_01.txt"
+!      !file_name = "test_10.txt"
+!      file_path = trim(tests_path) // trim(file_name)
 
       ! Read test file
       call readTest(file_path)
