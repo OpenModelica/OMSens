@@ -12,12 +12,10 @@ c 1) Sets the .xml with the stoptime and desired parameters values
 C 2) Runs W3 binary
 C 3) Gets the value of the desired variable for the specified stopTime
 C 4) Returns the value of the desired variable for the specified stopTime
-      ! Input types:
-      CHARACTER(LEN=*) :: params_names
-      ! Local variable types:
       CHARACTER*1000 string_to_write,xml_sys_call,file_path,
      *main_cmd_str, xmlorig_cmd_str, xmlnew_cmd_str, params_list_str,
      *params_values_str, xml_origin_path,xml_new_path,
+     *params_names(nparams),
      *w3_sys_call,target_vars(nvars),w3_executable_path,
      *result_file_name,values_str_list(nparams),str_temp,
      *stopTime_cmd_str,stopTime_str, pyScriptInput_file_path,
