@@ -45,17 +45,37 @@ c             very difficult.  In this case choose kmax = 1 or 2.
       program main
         use testData
       CHARACTER(LEN=500) :: file_path
+      integer i
 
 ! BORRAR/ADAPTAR:
       file_path = "test_01.txt"
       call readTest(file_path)
 ! BORRAR/ADAPTAR^
       write(*,*) nparams
-      write(*,*) (param_names(i), i = 1, nparams)
-      write(*,*) (param_values(i), i = 1, nparams)
+      write(*,*) (params_names(i), i = 1, nparams)
+      write(*,*) (params_values(i), i = 1, nparams)
       write(*,*) stopTime
       write(*,*) ntarget_vars
       write(*,*) (target_vars(i), i = 1, ntarget_vars)
+      ! Initialize CURVI inputs that are used with the same value for every test
+      DO i=1,nparams
+        jbound(i)=3      ! 0 if the ith variable has no constraints.
+c                          1 if the ith variable has only upper bounds.
+c                          2 if the ith variable has only lower bounds.
+c                          3 if the ith variable has both upper and lower bounds
+      end do
+      ! Call curvi:
+      ! call curvif(objectiveFunction, n, x0, fopt, eps, ibound,
+      !* jbound, bl, bu, wa, nfu, nit, idiff, kmax, ier)
+
+      ! Deallocate everything and exit
+      deallocate(params_names)
+      deallocate(params_values)
+      deallocate(bl)
+      deallocate(bu)
+      deallocate(jbound)
+      deallocate(wa)
+      deallocate(target_vars)
 
 C  Curvi single variable cost function using only population:
 !      call test01()  ! only nr_resources_init
@@ -89,6 +109,21 @@ C      n = 1
 C       call fu_test10(n,x,f)
 C BORRAR ^
       end program
+      subroutine objectiveFunction(n,x,f)
+        use testData ! where we get the common vars
+      DOUBLE PRECISION x(n), res_vars_values(1), f
+
+      call w3Wrapper(stopTime,
+     * params_names,x,target_vars,nparams,
+     * ntarget_vars,res_vars_values)
+      f = -res_vars_values(1)
+      write(*,*) "f"
+      write(*,*) f
+      return
+      end subroutine objectiveFunction
+
+
+
 C .--------------------------------------------------------------------------------- DESCOMENTAR:
 
 C--------------- Test01 -----------------

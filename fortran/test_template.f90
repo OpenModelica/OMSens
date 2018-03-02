@@ -12,20 +12,20 @@ subroutine readTest(file_path)
   read(file_id,*, iostat=stat) nparams
   if (stat /= 0) call exitWithError("Error reading value of nparams into memory")
   ! Allocate all structures that depend on number of params
-  allocate(param_names(nparams))
-  allocate(param_values(nparams))
+  allocate(params_names(nparams))
+  allocate(params_values(nparams))
   allocate(bl(nparams))
   allocate(bu(nparams))
   allocate(jbound(nparams))
   allocate(wa(nparams))
   ! Continue reading the file
-  call assertNextVarInFileIs(file_id,"param_names")
-  read(file_id,*, iostat=stat) (param_names(i), i = 1, nparams)
-  if (stat /= 0) call exitWithError("Error reading value of param_names into memory")
+  call assertNextVarInFileIs(file_id,"params_names")
+  read(file_id,*, iostat=stat) (params_names(i), i = 1, nparams)
+  if (stat /= 0) call exitWithError("Error reading value of params_names into memory")
 
-  call assertNextVarInFileIs(file_id,"param_values")
-  read(file_id,*, iostat=stat) (param_values(i), i = 1, nparams)
-  if (stat /= 0) call exitWithError("Error reading value of param_values into memory")
+  call assertNextVarInFileIs(file_id,"params_values")
+  read(file_id,*, iostat=stat) (params_values(i), i = 1, nparams)
+  if (stat /= 0) call exitWithError("Error reading value of params_values into memory")
 
   call assertNextVarInFileIs(file_id,"stopTime")
   read(file_id,*, iostat=stat) stopTime

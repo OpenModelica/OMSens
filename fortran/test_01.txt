@@ -1,8 +1,8 @@
 nparams
 1
-param_names
+params_names
 nr_resources_init
-param_values
+params_values
 1000000000000
 stopTime
 2100
