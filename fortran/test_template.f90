@@ -23,10 +23,6 @@ subroutine readTest(file_path)
   call assertNextVarInFileIs(file_id,"params_names")
   read(file_id,*, iostat=stat) (params_names(i), i = 1, nparams)
   if (stat /= 0) call exitWithError("Error reading value of params_names into memory")
-  ! Trim strings
-  do i=1, nparams
-    params_names = trim(params_names(i))
-  end do
 
   call assertNextVarInFileIs(file_id,"params_values")
   read(file_id,*, iostat=stat) (params_values(i), i = 1, nparams)
