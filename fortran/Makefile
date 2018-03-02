@@ -11,8 +11,7 @@ FLAGS= -traceback -gen-interfaces -warn interfaces -save -init=zero -fpe0 -check
 # MAIN_FILE = main.for
 # all: csv_file.o
 all:
-	# ifort $(FLAGS) $(EXTRA_OBJECT) $(DATA_SHARED_FILES) $(DATA_LOCAL_FILES) $(FUNCS_FILES) $(EXTRA_FILES) $(MODEL_FILE) $(MONITORS_FILES) $(MAIN_FILE) -o $(TARGET)
-	ifort $(FLAGS) test_template.f90 data.f90 zxpowl.for Rut.for  Rutf.for Curvif.for w3WrapperFunc.for main.for -o $(TARGET)
+	ifort $(FLAGS)  data.f90 test_template.f90  zxpowl.for Rut.for  Rutf.for Curvif.for w3WrapperFunc.for main.for -o $(TARGET)
 
 clean:
 	rm -f *.mod
