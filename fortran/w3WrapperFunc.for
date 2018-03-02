@@ -82,6 +82,7 @@ C We write the inputs in the following order separated by a new line: xml_origin
       pyScriptInput_file_path = "inputSandR.txt"   ! For now this file name is fixed!
       open(pyScriptInput_id,file=TRIM("inputSandR.txt"))
       write(pyScriptInput_id,*) trim(xml_origin_path)
+      pause
       write(pyScriptInput_id,*) trim(xml_new_path)
       write(pyScriptInput_id,*) stopTime
 C Write the params names in a line (strings)

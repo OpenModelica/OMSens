@@ -76,7 +76,7 @@ c             very difficult.  In this case choose kmax = 1 or 2.
       call curvif(objectiveFunction, ! fu
      * nparams,                      ! n
      * params_values,                 ! x0
-     * fopt,                         ! f
+     * fopt,                         ! fopt
      * eps,
      * ibound,
      * jbound,
