@@ -133,7 +133,9 @@ C BORRAR ^
 
       subroutine objectiveFunction(n,x,f)
         use testData ! where we get the common vars
+        implicit none
       DOUBLE PRECISION x(n), res_vars_values(1), f
+      integer n
 
       call w3Wrapper(stopTime,
      * params_names,x,target_vars,nparams,

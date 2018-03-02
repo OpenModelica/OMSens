@@ -2,7 +2,7 @@ subroutine readTest(file_path)
   use testData
   implicit none
   CHARACTER(LEN=500) :: file_path
-  integer file_id,stat,i
+  integer file_id,stat,i,wa_length
 
   ! Initialize IO id and file
   file_id=2
@@ -17,7 +17,8 @@ subroutine readTest(file_path)
   allocate(bl(nparams))
   allocate(bu(nparams))
   allocate(jbound(nparams))
-  allocate(wa(nparams))
+  wa_length = 9*nparams+nparams*(nparams+1)/2+nparams*nparams+max(7*nparams-nparams*(nparams+1)/2,0)
+  allocate(wa(wa_length))
   ! Continue reading the file
   call assertNextVarInFileIs(file_id,"params_names")
   read(file_id,*, iostat=stat) (params_names(i), i = 1, nparams)
