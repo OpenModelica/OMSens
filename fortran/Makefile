@@ -4,5 +4,4 @@ all:
 	ifort $(FLAGS)  data.f90 test_template.f90  zxpowl.for Rut.for  Rutf.for Curvif.for w3WrapperFunc.for main.for -o $(TARGET)
 
 clean:
-	rm -f *.mod
-	rm -f *.o
+	rm -f *__genmod*
