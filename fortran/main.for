@@ -43,9 +43,22 @@ c             recomputed every kmax iterations.
 c             We recommend kmax = 3 unless the problem is
 c             very difficult.  In this case choose kmax = 1 or 2.
       program main
+        use testData
+      CHARACTER(LEN=500) :: file_path
+
+! BORRAR/ADAPTAR:
+      file_path = "test_01.txt"
+      call readTest(file_path)
+! BORRAR/ADAPTAR^
+      write(*,*) nparams
+      write(*,*) (param_names(i), i = 1, nparams)
+      write(*,*) (param_values(i), i = 1, nparams)
+      write(*,*) stopTime
+      write(*,*) ntarget_vars
+      write(*,*) (target_vars(i), i = 1, ntarget_vars)
 
 C  Curvi single variable cost function using only population:
-C      call test01()  ! only nr_resources_init
+!      call test01()  ! only nr_resources_init
 C      call test02()
 C      call test03()  !relative top12 for 5% and modifying here 5%
 C      call test04()  !relative top12 for 5% and modifying here 1%
@@ -65,7 +78,7 @@ C      call test16()   ! equivalent to test06 but zxpowl instead of curvi
 C Trying to maximize only hdi:
 C      call test31()   ! the parameters are the policy triggers for scenarios 2 to 9. Initial: 2050
 C      call test32()   ! the parameters are the policy triggers for scenarios 2 to 9. Initial: 2018
-      call test33()   ! the parameters are the policy triggers for scenarios 2 to 9. Initial: 2034
+C      call test33()   ! the parameters are the policy triggers for scenarios 2 to 9. Initial: 2034
 
 C BORRAR :
 C      DOUBLE PRECISION params_values(1),x(1)
