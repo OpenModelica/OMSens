@@ -45,23 +45,20 @@ c             very difficult.  In this case choose kmax = 1 or 2.
       program main
         use testData
         implicit none
-      CHARACTER(LEN=500) :: file_path
+      CHARACTER(LEN=500) :: file_path,tests_path,file_name
       integer i, ibound, nfu, idiff, kmax, nit, ier
       double precision eps
       external objectiveFunction
 
-! BORRAR/ADAPTAR:
-      file_path = "test_01.txt"
+      ! Define which test to run
+      tests_path = "tests/"
+      file_name = "test_01.txt"
+      !file_name = "test_10.txt"
+      file_path = trim(tests_path) // trim(file_name)
+
+      ! Read test file
       call readTest(file_path)
-! BORRAR/ADAPTAR^
-      write(*,*) nparams
-      write(*,*) (params_names(i), i = 1, nparams)
-      write(*,*) (params_values(i), i = 1, nparams)
-      write(*,*) (bl(i), i = 1, nparams)
-      write(*,*) (bu(i), i = 1, nparams)
-      write(*,*) stopTime
-      write(*,*) ntarget_vars
-      write(*,*) (target_vars(i), i = 1, ntarget_vars)
+
       ! Initialize CURVI inputs that are used with the same value for every test
       eps=1.d-10    ! tolerance for the stopping criterion.
       ibound=1      ! 1 if constrained problem
@@ -75,7 +72,7 @@ c             very difficult.  In this case choose kmax = 1 or 2.
       ! Call curvi:
       call curvif(objectiveFunction, ! fu
      * nparams,                      ! n
-     * params_values,                 ! x0
+     * params_values,                ! x0
      * fopt,                         ! fopt
      * eps,
      * ibound,
