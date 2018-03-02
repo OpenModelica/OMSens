@@ -27,6 +27,14 @@ subroutine readTest(file_path)
   read(file_id,*, iostat=stat) (params_values(i), i = 1, nparams)
   if (stat /= 0) call exitWithError("Error reading value of params_values into memory")
 
+  call assertNextVarInFileIs(file_id,"lower_bounds")
+  read(file_id,*, iostat=stat) (bl(i), i = 1, nparams)
+  if (stat /= 0) call exitWithError("Error reading value of lower_bounds into memory")
+
+  call assertNextVarInFileIs(file_id,"upper_bounds")
+  read(file_id,*, iostat=stat) (bu(i), i = 1, nparams)
+  if (stat /= 0) call exitWithError("Error reading value of upper_bounds into memory")
+
   call assertNextVarInFileIs(file_id,"stopTime")
   read(file_id,*, iostat=stat) stopTime
   if (stat /= 0) call exitWithError("Error reading value of stopTime into memory")

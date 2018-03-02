@@ -44,8 +44,11 @@ c             We recommend kmax = 3 unless the problem is
 c             very difficult.  In this case choose kmax = 1 or 2.
       program main
         use testData
+        implicit none
       CHARACTER(LEN=500) :: file_path
-      integer i
+      integer i, ibound, nfu, idiff, kmax, nit, ier
+      double precision eps
+      external objectiveFunction
 
 ! BORRAR/ADAPTAR:
       file_path = "test_01.txt"
@@ -54,19 +57,37 @@ c             very difficult.  In this case choose kmax = 1 or 2.
       write(*,*) nparams
       write(*,*) (params_names(i), i = 1, nparams)
       write(*,*) (params_values(i), i = 1, nparams)
+      write(*,*) (bl(i), i = 1, nparams)
+      write(*,*) (bu(i), i = 1, nparams)
       write(*,*) stopTime
       write(*,*) ntarget_vars
       write(*,*) (target_vars(i), i = 1, ntarget_vars)
       ! Initialize CURVI inputs that are used with the same value for every test
+      eps=1.d-10    ! tolerance for the stopping criterion.
+      ibound=1      ! 1 if constrained problem
+      nfu=0         ! max number of calls to fu
+      idiff=2       ! idiff = 2  central differences
+      kmax=3        ! hessian is recomputed after kmax iterations
       DO i=1,nparams
-        jbound(i)=3      ! 0 if the ith variable has no constraints.
-c                          1 if the ith variable has only upper bounds.
-c                          2 if the ith variable has only lower bounds.
-c                          3 if the ith variable has both upper and lower bounds
+        jbound(i)=3      ! 3 if the ith variable has both upper and lower bounds
       end do
+
       ! Call curvi:
-      ! call curvif(objectiveFunction, n, x0, fopt, eps, ibound,
-      !* jbound, bl, bu, wa, nfu, nit, idiff, kmax, ier)
+      call curvif(objectiveFunction, ! fu
+     * nparams,                      ! n
+     * params_values,                 ! x0
+     * fopt,                         ! f
+     * eps,
+     * ibound,
+     * jbound,
+     * bl,
+     * bu,
+     * wa,
+     * nfu,
+     * nit,
+     * idiff,
+     * kmax,
+     * ier)
 
       ! Deallocate everything and exit
       deallocate(params_names)
@@ -109,6 +130,7 @@ C      n = 1
 C       call fu_test10(n,x,f)
 C BORRAR ^
       end program
+
       subroutine objectiveFunction(n,x,f)
         use testData ! where we get the common vars
       DOUBLE PRECISION x(n), res_vars_values(1), f
