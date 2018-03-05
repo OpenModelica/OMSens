@@ -45,32 +45,38 @@ c             very difficult.  In this case choose kmax = 1 or 2.
       program main
         use testData
         implicit none
-      CHARACTER(LEN=500) :: file_path,tests_path,file_name,
-     * raw_file_path
+      CHARACTER(LEN=500) :: infile_path,tests_path,file_name,
+     * raw_infile_path, raw_outfile_path, outfile_path
       integer i, ibound, nfu, idiff, kmax, nit, ier,argsize
+      integer output_id
       double precision eps
       external objectiveFunction
 
       ! Define which test to run
 
       ! Read test to run from command line
-      CALL getarg(1, raw_file_path)
-      argsize = LEN_TRIM(raw_file_path)
+      CALL getarg(1, raw_infile_path)
+      argsize = LEN_TRIM(raw_infile_path)
       IF(argsize .EQ. 0) call exitWithError("Invalid input command line
-     * arguments. Should be only one and has to be path to test to run.
-     *Example: tests/test_01.txt")
-      file_path = TRIM(raw_file_path)
-
-      write(*,*) file_path
+     * arguments. Should be two: input file and output file
+     *Example: tests/test_01.txt tmp/output.csv")
+      infile_path = TRIM(raw_infile_path)
+      ! Read output file path from command line
+      CALL getarg(2, raw_outfile_path)
+      argsize = LEN_TRIM(raw_outfile_path)
+      IF(argsize .EQ. 0) call exitWithError("Invalid input command line
+     * arguments. Should be two: input file and output file
+     *Example: tests/test_01.txt tmp/output.csv")
+      outfile_path = TRIM(raw_outfile_path)
 
       ! Hardcode the test to run
 !      tests_path = "tests/"
 !      file_name = "test_01.txt"
 !      !file_name = "test_10.txt"
-!      file_path = trim(tests_path) // trim(file_name)
+!      infile_path = trim(tests_path) // trim(file_name)
 
       ! Read test file
-      call readTest(file_path)
+      call readTest(infile_path)
 
       ! Initialize CURVI inputs that are used with the same value for every test
       eps=1.d-10    ! tolerance for the stopping criterion.
@@ -98,6 +104,19 @@ c             very difficult.  In this case choose kmax = 1 or 2.
      * idiff,
      * kmax,
      * ier)
+
+      ! Open output file to output_id
+      output_id = 555
+      open(output_id,file=outfile_path)
+      ! Write header
+      write(output_id,"(A)")'"Parameter_name", "Parameter_value"'
+      ! Write values for each parameter
+      do i=1,nparams
+        write(output_id,"(9999(A,',',G12.5))")trim(params_names(i)),
+     * params_values(i)
+      end do
+      ! Log to stdout that we wrote the result
+      write(*,*)" Wrote optimal parameter values to ",trim(outfile_path)
 
       ! Deallocate everything and exit
       deallocate(params_names)
