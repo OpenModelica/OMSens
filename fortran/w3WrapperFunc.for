@@ -30,7 +30,7 @@ C 4) Returns the value of the desired variable for the specified stopTime
 C Define the inputs to the script. I chose to hardcode them here instead
 C of being read from a file or from prompt because I didn't want to deal
 C with variable legnth arrays using fortran
-      write(*,*) "-- Inside W3Wrapper --"
+      !write(*,*) "-- Inside W3Wrapper --"
 
       w3_executable_path =
      *"SystemDynamics.WorldDynamics.World3.Scenario_1"
@@ -144,7 +144,7 @@ C  3) Read the varialbles output form result_file_name inside tmp/
         read(result_io_id,*) var_from_file                   ! read the next var name from file
         IF(TRIM(targ_var).NE.TRIM(var_from_file)) GO TO 999  ! compare the var name from file and from the array and if different exit with error
         read(result_io_id,*, END=999) res_vars_values(itargetvars) ! write the read file to the array of values to return
-        write(*,*) res_vars_values(itargetvars)
+        !write(*,*) res_vars_values(itargetvars)
         GO TO 7                                              ! go to the end of the do so it continues with the next var (no error raised)
   999   write(*,*) "  ERROR! Invalid config file. Stopping"
         temp_var = 0

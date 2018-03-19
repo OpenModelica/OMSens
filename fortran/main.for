@@ -170,7 +170,7 @@ C BORRAR ^
      * params_names,x,target_vars,nparams,
      * ntarget_vars,res_vars_values)
       f = -res_vars_values(1)
-      write(*,*) "f"
+      write(*,*) "Objective function value:"
       write(*,*) f
       return
       end subroutine objectiveFunction
