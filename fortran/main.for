@@ -169,6 +169,11 @@ C BORRAR ^
       call w3Wrapper(stopTime,
      * params_names,x,target_vars,nparams,
      * ntarget_vars,res_vars_values)
+      !  For now the objective function allows only one output variable
+      !  and it tries to maximize it (by negating it as CURVI is a
+      !  minimizer). An example of a more complex objective function
+      !  could be: "f = -(res_vars_values(1)/1D10 + res_vars_values(2))",
+      !  that uses 2 variables instead of one.
       f = -res_vars_values(1)
       write(*,*) "Objective function value:"
       write(*,*) f
