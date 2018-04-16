@@ -1,0 +1,11 @@
+{
+  "model_name":"BouncingBall",
+  "model_mo_path":"BouncingBall.mo",
+  "target":"h",
+  "percentage":5,
+  "start_time":0,
+  "stop_time":3,
+  "param_names":["e","g"],
+  "param_vals":[ 0.7, 9.81]
+}
+
