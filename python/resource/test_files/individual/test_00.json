@@ -1,7 +1,7 @@
 {
   "model_name":"BouncingBall",
   "model_mo_path":"BouncingBall.mo",
-  "target":"h",
+  "vars_to_analyze":["h"],
   "percentage":5,
   "start_time":0,
   "stop_time":3,
