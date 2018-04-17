@@ -21,21 +21,23 @@ def main():
     }
     createMos(**createMos_kwargs)
     pass
-def createMos(mo_file,model_name,parameters_to_perturbate_tuples,output_mos_path,startTime,stopTime,csv_file_name_modelica_function,run_std_run=False):
+def createMos(mo_file,model_name,parameters_to_perturbate_tuples,output_mos_path,startTime,stopTime,csv_file_name_modelica_function,std_run_filename=None):
     load_and_build_str           = strForLoadingAndBuilding(mo_file,model_name,startTime,stopTime)
-    if run_std_run:
+    if std_run_filename:
         # If we need to run the standard run alongside the other simulations:
-        std_run_filename = "std_run.csv"
         run_std_run_str = strForRunStdRun(model_name,std_run_filename,omc_logger_flags)
+    else:
+        # If no std run needs to be run, just put it's str as empty
+        run_std_run_str = ""
     perturbate_param_and_run_str = strForPerturbateParamAndRun(parameters_to_perturbate_tuples,model_name,csv_file_name_modelica_function,omc_logger_flags)
 
-    final_str = load_and_build_str + perturbate_param_and_run_str
+    final_str = load_and_build_str + run_std_run_str + perturbate_param_and_run_str
     filesystem.files_aux.writeStrToFile(final_str,output_mos_path)
     return 0
 
 def strForRunStdRun(model_name,std_run_filename,omc_logger_flags):
     # Human readable comment in resulting .mos
-    comment_tag_str            = "\n// Running standard run (no parameters modified)".format(param_name = param_name)
+    comment_tag_str            = "\n// Running standard run (no parameters modified)"
     # Define lambda for simulation filename so that the file name is fixed
     lambda_ignore_param_name   = lambda param_name, std_run_filename=std_run_filename: std_run_filename
     # Simulation file name
@@ -55,7 +57,7 @@ def strForPerturbateParamAndRun(parameters_to_perturbate_tuples,model_name,csv_f
         filename_and_cmd_defs_str = strForFilenameAndCmdDefs(csv_file_name_modelica_function,param_name,model_name,omc_logger_flags)
         # Set parameter with new value, run, return parameter to default value
         set_new_value_str          = set_xml_value_skeleton.format(model_name = model_name,param_name = param_name, param_val = param_new_value)
-        run_cmd_str                = run_system_command_str
+        run_cmd_str                = run_system_command_str + "\n"
         set_default_value_back_str = set_xml_value_skeleton.format(model_name = model_name,param_name = param_name, param_val = param_default)
         # Join the "perturb, run, de-perturb" strs into one
         this_param_str             = "\n".join([set_new_value_str,run_cmd_str,set_default_value_back_str])
@@ -63,6 +65,7 @@ def strForPerturbateParamAndRun(parameters_to_perturbate_tuples,model_name,csv_f
         temp_str                  = temp_str + comment_tag_str + filename_and_cmd_defs_str + this_param_str
     perturbate_param_and_run_str = temp_str
     return perturbate_param_and_run_str
+
 def strForLoadingAndBuilding(mo_file,model_name,startTime,stopTime):
     load_and_build_str = load_and_build_skeleton.format(mo_file=mo_file,model_name=model_name,startTime=startTime,stopTime=stopTime)
     return load_and_build_str
@@ -98,17 +101,16 @@ buildModel({model_name}, startTime={startTime},stopTime={stopTime},outputFormat=
 #CAREFUL! Don't change file_name_i. May break everything (we assume in run_and_plot_model.py that the file_names will follow this standard)
 windows_cmd_skeleton= \
 """
-  cmd := "{model_name}.exe {omc_logger_flags} "+ "-r="+file_name_i;"""
+  cmd := "{model_name}.exe {omc_logger_flags} "+ "-r="+file_name_i + " -noEventEmit";"""
 #CAREFUL! Don't change file_name_i. May break everything (we assume in run_and_plot_model.py that the file_names will follow this standard)
 linux_cmd_skeleton= \
 """
-  cmd := "./{model_name} {omc_logger_flags} "+ "-r="+file_name_i;"""
+  cmd := "./{model_name} {omc_logger_flags} "+ "-r="+file_name_i + " -noEventEmit";"""
 #CAREFUL! Don't change file_name_i. May break everything (we assume in run_and_plot_model.py that the file_names will follow this standard)
 set_xml_value_skeleton = \
 """  setInitXmlStartValue("{model_name}_init.xml", "{param_name}", String({param_val}) , "{model_name}_init.xml");"""
 run_system_command_str = \
-"""
-  print("Running command: "+cmd+"\\n");
+"""  print("Running command: "+cmd+"\\n");
   system(cmd);
   getErrorString();"""
 
