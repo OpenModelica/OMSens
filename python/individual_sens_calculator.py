@@ -5,7 +5,8 @@ import inspect
 import json
 import logging # instead of prints
 logger = logging.getLogger("-Individual Sens Calculator-")
-# Mine
+# Ours
+import analysis.sensitivities_to_parameters_analysis_from_csv
 import mos_writer.calculate_sensitivities_mos_writer
 import settings.settings_world3_sweep as world3_settings
 import running.run_omc
@@ -54,6 +55,18 @@ def main():
     # # Get csvs paths and info pairs
     # perturbed_csvs_path_and_info_pairs = w3_sens_calculator.csvPathAndParameterNameForFolderAndParametersInfo(output_folder_path,parameters_to_perturbate_tuples)
     # # Calculate sensitivities
+    # analyze_csvs_kwargs = {
+    #     "perturbed_csvs_path_and_info_pairs" : perturbed_csvs_path_and_info_pairs,
+    #     "std_run_csv_path"                   : "resource/standard_run.csv",
+    #     "target_vars_list"                   : target_vars_list,
+    #     "percentage_perturbed"               : percentage,
+    #     "specific_year"                      : year_target,
+    #     "output_folder_analyses_path"        : output_folder_path,
+    #     "rms_first_year"                     : full_json["start_time"],
+    #     "rms_last_year"                      : full_json["stop_time"],
+    # }
+    # logger.info("Analyzing variable sensitivities to parameters from CSVs")
+    # analysis.sensitivities_to_parameters_analysis_from_csv.analyzeSensitivitiesFromManyVariablesToParametersAndCreateParamVarMatrices(**analyze_csvs_kwargs)
 # DESCOMENTAR^
 
 # FIRST EXECUTABLE CODE:
