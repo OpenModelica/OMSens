@@ -39,7 +39,7 @@ def main():
     std_run_filename = "std_run.csv"
     std_run_path     = os.path.join(output_folder_path,std_run_filename)
     # Generate list of params and their perturbed values from their defaults and a percentage to perturb
-    parameters_to_perturbate_tuples = [(p_name,p_val,p_val*full_json["percentage"]/100) for p_name,p_val in zip(full_json["param_names"], full_json["param_vals"])]
+    parameters_to_perturbate_tuples = [(p_name,p_val,p_val*(1+full_json["percentage"]/100)) for p_name,p_val in zip(full_json["param_names"], full_json["param_vals"])]
     # Set .mos creator arguments
     mos_creator_kwargs = {
         "model_name"                      : full_json["model_name"],
@@ -68,7 +68,7 @@ def main():
     analyze_csvs_kwargs = {
         "perturbed_csvs_path_and_info_pairs" : perturbed_csvs_path_and_info_pairs,
         "std_run_csv_path"                   : std_run_path,
-        "target_vars_list"                   : full_json["vars_to_analyze"],
+        "target_vars"                   : full_json["vars_to_analyze"],
         "percentage_perturbed"               : full_json["percentage"],
         "specific_year"                      : full_json["stop_time"],
         "output_folder_analyses_path"        : output_folder_path,
