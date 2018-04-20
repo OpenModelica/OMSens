@@ -7,6 +7,7 @@ import re #para los regex
 from io import StringIO
 # Mine
 import analysis.indiv_sens
+import filesystem.files_aux
 
 class TestIndividualSensitivityAnalysis(unittest.TestCase):
 #setup y teardown de los tests
@@ -23,7 +24,7 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
     def test_sens_run_gives_correct_results(self):
         # We test everything on this test for now
         analyze_csvs_kwargs = {
-            "perturbed_csvs_path_and_info_pairs" : [(StringIO(bb_e_perturbed_str), ('e', 0.7, 0.735)), (StringIO(bb_g_perturbed_str), ('g', 9.81, 10.300500000000001))],
+            "perturbed_csvs_path_and_info_pairs" : [(StringIO(bb_e_perturbed_str), ('e', 0.7, 0.735)), (StringIO(bb_g_perturbed_str), ('g', 9.81, 10.3005))],
             "std_run_csv_path"                   : StringIO(bb_std_run_str),
             "target_vars"                        : ['h'],
             "percentage_perturbed"               : 5,
@@ -35,7 +36,21 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
         analysis_files_paths = analysis.indiv_sens.completeIndividualSensAnalysis(**analyze_csvs_kwargs)
         # Test that that the resulting run info includes the basic info: all param names, default and perturbed vals, the variable and its value
         run_infos_per_var = analysis_files_paths["run_infos_per_var"]
-        # for t_var in analyze_csvs_kwargs["target_vars"]:
+        params_strs = [str(x) for param_info_tuple in analyze_csvs_kwargs["perturbed_csvs_path_and_info_pairs"] for x in param_info_tuple[1]]
+        # Method results for the run being tested:
+        g_rel_method_per_var = {
+            "h": [ "251928", "001858"],
+        }
+        for t_var in analyze_csvs_kwargs["target_vars"]:
+            # Read file into memory as str
+            run_info_path = run_infos_per_var[t_var]
+            run_info_str  = filesystem.files_aux.readStrFromFile(run_info_path)
+            # Get the list of strings that the file must include
+            strs_to_include = params_strs + g_rel_method_per_var[t_var]
+            # Check that the strs are included
+            for s in strs_to_include:
+                if s not in run_info_str:
+                    self.fail("The file should but doesn't include the string {0}.".format(s))
 
 ###########
 # Globals #
