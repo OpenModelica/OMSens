@@ -23,27 +23,27 @@ def main():
     logger.info("Reading individual sensitivities test file in path {0}.".format(json_path))
     with open(json_path, 'r') as fp:
         full_json =  json.load(fp)
-    # Make tmp dir
-    output_folder_path = files_aux.makeOutputPath()
-    # Set relative paths as absolute paths using this scripts path as base
-    #  Folders
-    current_dir   = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-    resource_path = os.path.join(current_dir,"resource")
-    #  Files
-    #   Modelica model file
-    mo_file          = os.path.join(resource_path,full_json["model_mo_path"])
-    #   .mos script
+    # Mo file from json
+    json_mo_path          = full_json["model_mo_path"]
+    # Check if it's absolute path or relative path and act accordingly
+    is_abs_path = os.path.isabs(json_mo_path)
+    if is_abs_path:
+        # If it's already an absolute path, there's nothing to do
+        mo_file_path = json_mo_path
+    else:
+        # If it's a relative path, make it absolute
+        mo_file_path = os.path.abspath(json_mo_path)
+    # Default file names
     output_mos_name  = "runPerturbingIndividually.mos"
-    output_mos_path  = os.path.join(output_folder_path,output_mos_name)
-    #   Standard run csv
     std_run_filename = "std_run.csv"
-    std_run_path     = os.path.join(output_folder_path,std_run_filename)
+    # Get files paths in output folder
+    output_folder_path, output_mos_path, std_run_path= filesPathsInOutputFolder(output_mos_name,std_run_filename)
     # Generate list of params and their perturbed values from their defaults and a percentage to perturb
-    parameters_to_perturbate_tuples = [(p_name,p_val,p_val*(1+full_json["percentage"]/100)) for p_name,p_val in zip(full_json["param_names"], full_json["param_vals"])]
+    parameters_to_perturbate_tuples = listOfParametersPerturbationInfo(full_json["param_names"],full_json["param_vals"],full_json["percentage"])
     # Set .mos creator arguments
     mos_creator_kwargs = {
         "model_name"                      : full_json["model_name"],
-        "mo_file"                         : mo_file,
+        "mo_file"                         : mo_file_path,
         "startTime"                       : full_json["start_time"],
         "stopTime"                        : full_json["stop_time"],
         "parameters_to_perturbate_tuples" : parameters_to_perturbate_tuples,
@@ -67,7 +67,7 @@ def main():
     analyze_csvs_kwargs = {
         "perturbed_csvs_path_and_info_pairs" : perturbed_csvs_path_and_info_pairs,
         "std_run_csv_path"                   : std_run_path,
-        "target_vars"                   : full_json["vars_to_analyze"],
+        "target_vars"                        : full_json["vars_to_analyze"],
         "percentage_perturbed"               : full_json["percentage"],
         "specific_year"                      : full_json["stop_time"],
         "output_folder_analyses_path"        : output_folder_path,
@@ -76,6 +76,26 @@ def main():
     }
     logger.info("Analyzing variable sensitivities to parameters from CSVs")
     analysis.sensitivities_to_parameters_analysis_from_csv.analyzeSensitivitiesFromManyVariablesToParametersAndCreateParamVarMatrices(**analyze_csvs_kwargs)
+
+def listOfParametersPerturbationInfo(param_names,param_vals,percentage):
+    parameters_to_perturbate_tuples = []
+    # Iterate parameters name and default info
+    for p_name,p_val in zip(param_names, param_vals):
+        # Calculate parameter value from percentage to perturb
+        perturbed_val = p_val*(1+percentage/100)
+        # Create tuple and add it to list of tuples
+        param_tuple = (p_name,p_val,perturbed_val)
+        parameters_to_perturbate_tuples.append(param_tuple)
+    return parameters_to_perturbate_tuples
+
+def filesPathsInOutputFolder(output_mos_name,std_run_filename):
+    # Make tmp dir
+    output_folder_path = files_aux.makeOutputPath()
+    # .mos script
+    output_mos_path  = os.path.join(output_folder_path,output_mos_name)
+    # Standard run csv
+    std_run_path     = os.path.join(output_folder_path,std_run_filename)
+    return output_folder_path, output_mos_path, std_run_path
 
 # FIRST EXECUTABLE CODE:
 if __name__ == "__main__":

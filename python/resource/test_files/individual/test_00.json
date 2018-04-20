@@ -1,6 +1,6 @@
 {
   "model_name":"BouncingBall",
-  "model_mo_path":"BouncingBall.mo",
+  "model_mo_path":"resource/BouncingBall.mo",
   "vars_to_analyze":["h"],
   "percentage":5,
   "start_time":0,
