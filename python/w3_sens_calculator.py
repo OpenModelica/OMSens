@@ -10,7 +10,7 @@ import world3_specific.standard_run_params_defaults
 
 import mos_writer.calculate_sensitivities_mos_writer
 import running.run_omc
-import analysis.sensitivities_to_parameters_analysis_from_csv
+import analysis.indiv_sens
 
 
 #Aux for GLOBALS:
@@ -52,7 +52,7 @@ def simpleSensitivitiesCalculator(percentage,target_var,year_target):
         "rms_last_year": year_target,
     }
     logger.info("Analyzing variable sensitivities to parameters from CSVs")
-    analysis.sensitivities_to_parameters_analysis_from_csv.analyzeSensitivitiesFromManyVariablesToParametersAndCreateParamVarMatrices(**analyze_csvs_kwargs)
+    analysis.indiv_sens.completeIndividualSensAnalysis(**analyze_csvs_kwargs)
     return 0
 
 def allOfDifferentiableVariablesPlusExtraVarsSensitivitiesCalculator(percentage,year_target):
@@ -75,7 +75,7 @@ def allOfDifferentiableVariablesPlusExtraVarsSensitivitiesCalculator(percentage,
         "rms_last_year": year_target,
     }
     logger.info("Analyzing variable sensitivities to parameters from CSVs")
-    analysis.sensitivities_to_parameters_analysis_from_csv.analyzeSensitivitiesFromManyVariablesToParametersAndCreateParamVarMatrices(**analyze_csvs_kwargs)
+    analysis.indiv_sens.completeIndividualSensAnalysis(**analyze_csvs_kwargs)
     return 0
 # Aux funcs
 def runModelSweepingParametersInIsolation(percentage, startTime, stopTime, scens_to_run,mo_file,parameters_to_perturbate_tuples,output_folder_path):

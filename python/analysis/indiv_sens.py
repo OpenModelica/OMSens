@@ -11,7 +11,7 @@ logger = logging.getLogger("--ParameterSensAnalysis--") # this modules logger
 #Mine
 import filesystem.files_aux
 
-def analyzeSensitivitiesFromManyVariablesToParametersAndCreateParamVarMatrices(perturbed_csvs_path_and_info_pairs,target_vars,percentage_perturbed,specific_year,rms_first_year,rms_last_year,std_run_csv_path,output_folder_analyses_path):
+def completeIndividualSensAnalysis(perturbed_csvs_path_and_info_pairs,target_vars,percentage_perturbed,specific_year,rms_first_year,rms_last_year,std_run_csv_path,output_folder_analyses_path):
     # Initialize dict with rows for each variable. Each row will correspond to the values of said variable for a respective run from each respective parameter perturbed
     vars_rows_dicts = {var_name:[] for var_name in target_vars}
     # Read standard run output that we will use as default output

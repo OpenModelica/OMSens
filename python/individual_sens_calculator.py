@@ -6,7 +6,7 @@ import json
 import logging # instead of prints
 logger = logging.getLogger("-Individual Sens Calculator-")
 # Ours
-import analysis.sensitivities_to_parameters_analysis_from_csv
+import analysis.indiv_sens
 import mos_writer.calculate_sensitivities_mos_writer
 import settings.settings_world3_sweep as world3_settings
 import running.run_omc
@@ -75,7 +75,7 @@ def main():
         "rms_last_year"                      : full_json["stop_time"],
     }
     logger.info("Analyzing variable sensitivities to parameters from CSVs")
-    analysis.sensitivities_to_parameters_analysis_from_csv.analyzeSensitivitiesFromManyVariablesToParametersAndCreateParamVarMatrices(**analyze_csvs_kwargs)
+    analysis.indiv_sens.completeIndividualSensAnalysis(**analyze_csvs_kwargs)
 
 def listOfParametersPerturbationInfo(param_names,param_vals,percentage):
     parameters_to_perturbate_tuples = []

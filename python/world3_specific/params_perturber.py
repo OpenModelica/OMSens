@@ -13,7 +13,6 @@ import world3_specific.standard_run_params_defaults
 
 import mos_writer.calculate_sensitivities_mos_writer
 import running.run_omc
-import analysis.sensitivities_to_parameters_analysis_from_csv
 
 
 #Aux for GLOBALS:
