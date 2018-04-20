@@ -37,6 +37,7 @@ class TestsW3TheoSensToMatrixProccessing(unittest.TestCase):
         # Assert that the value row has the correct param and value
         self.assertEqual(rows_str_list[1].split(",")[0],"agr_inp_init")
         self.assertEqual(rows_str_list[1].split(",")[1],"43")
+
     def test_one_param_one_var_5_years(self):
         w3TheoSens_str = w3TheoSens_oneParamOneVar5Years_str
         rows_str_list = to_matrix.W3TheoSensToMatrixRowsListFromYear(w3TheoSens_str,1903)
@@ -45,18 +46,23 @@ class TestsW3TheoSensToMatrixProccessing(unittest.TestCase):
         # Assert that the value row has the correct param and value
         self.assertEqual(rows_str_list[1].split(",")[0],"agr_inp_init")
         self.assertEqual(rows_str_list[1].split(",")[1],"33")
+
     def test_one_param_one_var_one_year_3_values(self):
         w3TheoSens_str = w3TheoSens_oneParamOneVarOneYear2Values_str
         self.assertRaises(to_matrix.InvalidW3TheoSensCSVException,to_matrix.W3TheoSensToMatrixRowsListFromYear,w3TheoSens_str,1901)
+
     def test_one_param_2_vars_one_year_1_value(self):
         w3TheoSens_str = w3TheoSens_oneParam2VarsOneYearOneValue_str
         self.assertRaises(to_matrix.InvalidW3TheoSensCSVException,to_matrix.W3TheoSensToMatrixRowsListFromYear,w3TheoSens_str,1901)
+
     def test_2_params_2_vars_one_year_but_repeated_param_and_var(self):
         w3TheoSens_str = w3TheoSens_2Params2VarsOneYearButRepeatedParamAndVar_str
         self.assertRaises(to_matrix.RepeatedParamVarPairException,to_matrix.W3TheoSensToMatrixRowsListFromYear,w3TheoSens_str,1901)
+
     def test_2_params_3_vars_one_year(self):
         w3TheoSens_str = w3TheoSens_2Params3VarsOneYear_str
         self.assertRaises(to_matrix.DifferentInfluencedVariablesException,to_matrix.W3TheoSensToMatrixRowsListFromYear,w3TheoSens_str,1901)
+
     def test_one_param_one_var_one_year_but_invalid_year(self):
         w3TheoSens_str = w3TheoSens_oneParamOneVarOneYear_str
         self.assertRaises(to_matrix.InvalidYearException,to_matrix.W3TheoSensToMatrixRowsListFromYear,w3TheoSens_str,1902)
