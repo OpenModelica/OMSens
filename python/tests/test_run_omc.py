@@ -7,9 +7,8 @@ import re #para los regex
 #Mine
 import tests.aux_tests
 import running.run_omc as omc_runner
-import filesystem.files_aux
 
-class TestsCompareTwoCSVs(unittest.TestCase):
+class TestsRunOMC(unittest.TestCase):
 #setup y teardown de los tests
     def setUp(self):
         #Create tempdir and save its path
