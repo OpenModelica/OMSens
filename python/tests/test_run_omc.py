@@ -19,10 +19,7 @@ class TestsRunOMC(unittest.TestCase):
         shutil.rmtree(self._temp_dir)
         for f in self._temp_files:
             f.close()
-#TDD
-    # def test_empty_csv_raises_exception(self):
-    #     file_path= os.path.join(currentdir, csvs_path+"/empty_file.csv")
-    #     self.assertRaises(EmptyCSVException,CSVData,file_path)
+# Tests
     def test_omc_loads_a_model_correctly(self):
         mos_str= model_str
         mos_path=createTMPMos(mos_str,self)
