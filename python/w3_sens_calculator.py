@@ -44,15 +44,15 @@ def simpleSensitivitiesCalculator(percentage,target_var,year_target):
     analyze_csvs_kwargs = {
         "perturbed_csvs_path_and_info_pairs": perturbed_csvs_path_and_info_pairs,
         "std_run_csv_path": "resource/standard_run.csv",
-        "target_var": target_var,
+        "target_vars_list": [target_var],
         "percentage_perturbed":percentage,
         "specific_year":year_target,
-        "output_analysis_path": os.path.join(output_folder_path,"sens_analysis.csv"),
+        "output_folder_analyses_path": output_folder_path,
         "rms_first_year": 1900 ,# DONT CHANGE! W3-Modelica can't be started on an arbitrary year
         "rms_last_year": year_target,
     }
     logger.info("Analyzing variable sensitivities to parameters from CSVs")
-    analysis.sensitivities_to_parameters_analysis_from_csv.analyzeSensitivitiesFromVariableToParametersFromCSVs(**analyze_csvs_kwargs)
+    analysis.sensitivities_to_parameters_analysis_from_csv.analyzeSensitivitiesFromManyVariablesToParametersAndCreateParamVarMatrices(**analyze_csvs_kwargs)
     return 0
 
 def allOfDifferentiableVariablesPlusExtraVarsSensitivitiesCalculator(percentage,year_target):

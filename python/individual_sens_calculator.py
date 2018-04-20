@@ -58,7 +58,6 @@ def main():
     # logger.info("Calculating empirical parameter sensitivities for percentage {perc}, for all of the differentiable variables in W3 and target year {year_target}".format(perc=full_json["percentage"])
 # ADAPTAR INFO PARA QUE DIGA TODA LA INFO A CORRER (modelo, path, etc)^
     logger.info("Running Modelica with specified information")
-# DESCOMENTAR:
     running.run_omc.runMosScript(output_mos_path)
     # Get csvs paths and info pairs
     perturbed_csvs_path_and_info_pairs = w3_sens_calculator.csvPathAndParameterNameForFolderAndParametersInfo(output_folder_path,parameters_to_perturbate_tuples)
@@ -77,7 +76,6 @@ def main():
     }
     logger.info("Analyzing variable sensitivities to parameters from CSVs")
     analysis.sensitivities_to_parameters_analysis_from_csv.analyzeSensitivitiesFromManyVariablesToParametersAndCreateParamVarMatrices(**analyze_csvs_kwargs)
-# DESCOMENTAR^
 
 # FIRST EXECUTABLE CODE:
 if __name__ == "__main__":

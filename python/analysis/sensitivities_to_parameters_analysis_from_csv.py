@@ -10,46 +10,6 @@ import logging
 logger = logging.getLogger("--Sensitivities To parameters analysis--") #un logger especifico para este modulo
 #Mine
 import filesystem.files_aux
-def main():
-    # logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
-    # kwargs = {
-    #     "perturbed_csvs_path_and_info_pairs": [("resource/standard_run.csv","std_run_2")],
-    #     "std_run_csv_path": "resource/standard_run.csv",
-    #     "target_var": "population",
-    #     "percentage_perturbed":"10",
-    #     "specific_year":1950,
-    #     "output_analysis_path": "tmp/asd_2.txt",
-    #     "rms_first_year": 1900,
-    #     "rms_last_year": 2100,
-    # }
-    # analyzeSensitivitiesFromVariableToParametersFromCSVs(**kwargs)
-    pass
-def analyzeSensitivitiesFromVariableToParametersFromCSVs(perturbed_csvs_path_and_info_pairs,target_var,percentage_perturbed,specific_year,rms_first_year,rms_last_year,std_run_csv_path,output_analysis_path):
-# Old Version:
-    # CAREFUL! The order is hardcoded for now
-    headers = "parameter,parameter_default,parameter_perturbed_{percentage}_percent,{var_name}_{specific_year}_std,{var_name}_{specific_year}_new,std/new,(new-std)/std,ABS((new-std)/std),root_mean_square_{rms_first_year}_to_{rms_last_year},perturbed_param_csv_path".format(percentage=percentage_perturbed,var_name=target_var,specific_year=specific_year,rms_first_year=rms_first_year,rms_last_year=rms_last_year)
-    rows_strs = [headers]
-    data_std_run = np.genfromtxt(std_run_csv_path, delimiter=',', names=True,deletechars="""~!@#$%^&*()=+~\|]}[{';: /?>,<""")  # deletechars="..." so it doesn't remove dots
-    for csv_path,param_info in perturbed_csvs_path_and_info_pairs:
-        param_name = param_info[0]
-        param_default = param_info[1]
-        param_new_value = param_info[2]
-        data_perturbed_parameter = np.genfromtxt(csv_path, delimiter=',', names=True,deletechars="""~!@#$%^&*()=+~\|]}[{';: /?>,<""")  # deletechars="..." so it doesn't remove dots
-        var_std_value_for_year = varValueForYear(target_var,specific_year,data_std_run)
-        var_new_value_for_year = varValueForYear(target_var,specific_year,data_perturbed_parameter)
-        std_div_new = var_std_value_for_year/var_new_value_for_year
-        perturbation_proportion = (var_new_value_for_year-var_std_value_for_year)/var_std_value_for_year
-        perturbation_proportion_abs = abs(perturbation_proportion)
-        rootMeanSquare = rootMeanSquareForCsvAndYearsAndStateVarAndStdCSV(data_perturbed_parameter,rms_first_year,rms_last_year,target_var,data_std_run)
-
-        # CAREFUL! The order is hardcoded for now
-        param_row_str = "{param_name},{param_default},{param_new_value},{var_std_value_for_year:.4f},{var_new_value_for_year:.4f},{std_div_new:.4f},{perturbation_proportion},{perturbation_proportion_abs},{rootMeanSquare},{perturbed_param_csv_path}".format(param_name=param_name,param_default=param_default,param_new_value=param_new_value,var_std_value_for_year = var_std_value_for_year, var_new_value_for_year = var_new_value_for_year, std_div_new = std_div_new,perturbation_proportion=perturbation_proportion,perturbation_proportion_abs=perturbation_proportion_abs,rootMeanSquare=rootMeanSquare,perturbed_param_csv_path=csv_path)
-        rows_strs.append(param_row_str)
-    final_str = "\n".join(rows_strs)
-    filesystem.files_aux.writeStrToFile(final_str,output_analysis_path)
-    logger.debug("Wrote analysis for sensitivities to param to path:{path}".format(path=output_analysis_path))
-# Old version^
-
 
 def analyzeSensitivitiesFromManyVariablesToParametersAndCreateParamVarMatrices(perturbed_csvs_path_and_info_pairs,target_vars,percentage_perturbed,specific_year,rms_first_year,rms_last_year,std_run_csv_path,output_folder_analyses_path):
     # Initialize dict with rows for each variable. Each row will correspond to the values of said variable for a respective run from each respective parameter perturbed
@@ -224,9 +184,3 @@ def varValueForYear(target_var,specific_year,numpy_data):
 def yearIndexForNdarray(numpy_data,year,year_col_name="time"):
     year_index = np.where(numpy_data[year_col_name]==year)[0][0]
     return year_index
-
-
-if __name__ == "__main__":
-    main()
-
-
