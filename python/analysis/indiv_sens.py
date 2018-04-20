@@ -37,9 +37,9 @@ def completeIndividualSensAnalysis(perturbed_csvs_path_and_info_pairs,target_var
     columns_order = defaultColsOrder(percentage_perturbed,specific_year,rms_first_year,rms_last_year)
     # Create a df for each var using its rows
     for target_var in target_vars:
-        df_sens = dataFrameWithSensAnalysisForVar(vars_rows_dicts,target_var,columns_order)
+        df_run_info = dataFrameWithSensAnalysisForVar(vars_rows_dicts,target_var,columns_order)
         # Write sensitivity df to csv file
-        run_info_path = writeRunInfoFromDF(df_sens,target_var,output_folder_analyses_path)
+        run_info_path = writeRunInfoFromDF(df_run_info,target_var,output_folder_analyses_path)
         # Add file path to run infos paths dict
         run_infos_paths[target_var] = run_info_path
     # Add run infos paths to main dict with paths
@@ -112,16 +112,16 @@ def defaultColsOrder(percentage_perturbed,specific_year,rms_first_year,rms_last_
 
 def dataFrameWithSensAnalysisForVar(vars_rows_dicts,target_var,columns_order):
     var_rows = vars_rows_dicts[target_var]
-    df_sens = pandas.DataFrame.from_records(var_rows, columns=columns_order)
+    df_run_info = pandas.DataFrame.from_records(var_rows, columns=columns_order)
     # Sort by diff column so we get the "most different" up top
-    df_sens = df_sens.sort_values(by="ABS((new-std)/std)", ascending=False)
-    return df_sens
+    df_run_info = df_run_info.sort_values(by="ABS((new-std)/std)", ascending=False)
+    return df_run_info
 
-def writeRunInfoFromDF(df_sens,target_var,output_folder_analyses_path):
+def writeRunInfoFromDF(df_run_info,target_var,output_folder_analyses_path):
     var_name_slugified     = slugify(target_var)
     var_sens_csv_file_name = "sens_{0}.csv".format(var_name_slugified)
     output_analysis_path   = os.path.join(output_folder_analyses_path,var_sens_csv_file_name)
-    df_sens.to_csv(output_analysis_path,index=False)
+    df_run_info.to_csv(output_analysis_path,index=False)
     return output_analysis_path
 
 def rowDictFromParamVarSensAnal(param_name,param_default,param_new_value,percentage_perturbed,specific_year,rms_first_year,rms_last_year,var_analysis_dict,param_csv_path):
