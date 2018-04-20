@@ -24,11 +24,11 @@ def analyzeSensitivitiesFromManyVariablesToParametersAndCreateParamVarMatrices(p
         param_name, param_default, param_new_value = extractParamInfo(param_info)
         # Iterate variables getting the values in the perturbed param csv
         for target_var in target_vars:
-            var_std_value_for_year, var_new_value_for_year, std_div_new, perturbation_proportion, perturbation_proportion_abs, rootMeanSquare = varAnalysisForPerturbedParam(df_std_run,df_param_perturbed,target_var,specific_year,rms_first_year,rms_last_year,param_csv_path)
-            var_analysis_row_dict = rowDictFromParamVarSensAnal(param_name,param_default,param_new_value,percentage_perturbed,specific_year,rms_first_year,rms_last_year,var_std_value_for_year, var_new_value_for_year, std_div_new, perturbation_proportion, perturbation_proportion_abs, rootMeanSquare,param_csv_path)
+            var_analysis_dict = varAnalysisForPerturbedParam(df_std_run,df_param_perturbed,target_var,specific_year,rms_first_year,rms_last_year)
+            sens_file_row_dict = rowDictFromParamVarSensAnal(param_name,param_default,param_new_value,percentage_perturbed,specific_year,rms_first_year,rms_last_year,var_analysis_dict,param_csv_path)
             # Add this row to the rows of this respective variable
             var_rows = vars_rows_dicts[target_var]
-            var_rows.append(var_analysis_row_dict)
+            var_rows.append(sens_file_row_dict)
     # Set the columns order of the sensitivity analysis csv
     columns_order = defaultColsOrder(percentage_perturbed,specific_year,rms_first_year,rms_last_year)
     # Create a df for each var using its rows
@@ -65,7 +65,7 @@ def extractParamInfo(param_info):
     param_new_value = param_info[2]
     return param_name, param_default, param_new_value
 
-def varAnalysisForPerturbedParam(df_std_run,df_param_perturbed,target_var,specific_year,rms_first_year,rms_last_year,param_csv_path):
+def varAnalysisForPerturbedParam(df_std_run,df_param_perturbed,target_var,specific_year,rms_first_year,rms_last_year):
     # Get values for variable from standard run and perturbed run outputs and an specific year
     var_std_value_for_year = df_std_run[target_var][specific_year]
     var_new_value_for_year = df_param_perturbed[target_var][specific_year]
@@ -75,7 +75,16 @@ def varAnalysisForPerturbedParam(df_std_run,df_param_perturbed,target_var,specif
     perturbation_proportion_abs = abs(perturbation_proportion)
     # Calculate sensitivity methods for the whole run
     rootMeanSquare = rootMeanSquareForVar(df_std_run,df_param_perturbed,rms_first_year,rms_last_year,target_var)
-    return var_std_value_for_year, var_std_value_for_year, std_div_new, perturbation_proportion, perturbation_proportion_abs, rootMeanSquare
+
+    var_analysis_dict = {
+        "var_std_value_for_year": var_std_value_for_year,
+        "var_new_value_for_year": var_new_value_for_year,
+        "std_div_new": std_div_new,
+        "perturbation_proportion": perturbation_proportion,
+        "perturbation_proportion_abs": perturbation_proportion_abs,
+        "rootMeanSquare": rootMeanSquare,
+    }
+    return var_analysis_dict
 
 def defaultColsOrder(percentage_perturbed,specific_year,rms_first_year,rms_last_year):
     columns_order = [
@@ -105,17 +114,17 @@ def writeSensAnalToFile(df_sens,target_var,output_folder_analyses_path):
     output_analysis_path   = os.path.join(output_folder_analyses_path,var_sens_csv_file_name)
     df_sens.to_csv(output_analysis_path,index=False)
 
-def rowDictFromParamVarSensAnal(param_name,param_default,param_new_value,percentage_perturbed,specific_year,var_std_value_for_year,rms_first_year,rms_last_year, var_new_value_for_year, std_div_new, perturbation_proportion, perturbation_proportion_abs, rootMeanSquare,param_csv_path):
-    var_analysis_row_dict = {
+def rowDictFromParamVarSensAnal(param_name,param_default,param_new_value,percentage_perturbed,specific_year,rms_first_year,rms_last_year,var_analysis_dict,param_csv_path):
+    sens_file_row_dict = {
         "parameter"                                                        : param_name,
         "parameter_default"                                                : param_default,
         "parameter_perturbed_{0}_percent".format(percentage_perturbed)     : param_new_value,
-        "std_at_t_{0}".format(specific_year)                               : var_std_value_for_year,
-        "new_at_t_{0}".format(specific_year)                               : var_new_value_for_year,
-        "std/new"                                                          : std_div_new,
-        "(new-std)/std"                                                    : perturbation_proportion,
-        "ABS((new-std)/std)"                                               : perturbation_proportion_abs,
-        "root_mean_square_{0}_to_{1}".format(rms_first_year,rms_last_year) : rootMeanSquare,
+        "std_at_t_{0}".format(specific_year)                               : var_analysis_dict["var_std_value_for_year"],
+        "new_at_t_{0}".format(specific_year)                               : var_analysis_dict["var_new_value_for_year"],
+        "std/new"                                                          : var_analysis_dict["std_div_new"],
+        "(new-std)/std"                                                    : var_analysis_dict["perturbation_proportion"],
+        "ABS((new-std)/std)"                                               : var_analysis_dict["perturbation_proportion_abs"],
+        "root_mean_square_{0}_to_{1}".format(rms_first_year,rms_last_year) : var_analysis_dict["rootMeanSquare"],
         "perturbed_param_csv_path"                                         : param_csv_path,
     }
-    return var_analysis_row_dict
+    return sens_file_row_dict
