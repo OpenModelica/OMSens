@@ -64,11 +64,3 @@ end Model;
 ");\n """
 build_model_str =\
 """buildModel(Model);getErrorString();\n"""
-build_model_sensitivity_str=\
-"""buildModel(Model, method="ida");getErrorString();\n"""
-set_initial_val_str =\
-"""setInitXmlStartValue("Model_init.xml", "x", String(1) , "Model_init.xml");"""
-command_line_sensitivity_flag_str=\
-"""setCommandLineOptions("+calculateSensitivities"); getErrorString();\n"""
-cmd_sensitivity_to_run_str=\
-"""./Model -idaSensitivity -r=archivito.mat;\n"""
