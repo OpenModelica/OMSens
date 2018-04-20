@@ -12,6 +12,8 @@ logger = logging.getLogger("--ParameterSensAnalysis--") # this modules logger
 import filesystem.files_aux
 
 def completeIndividualSensAnalysis(perturbed_csvs_path_and_info_pairs,target_vars,percentage_perturbed,specific_year,rms_first_year,rms_last_year,std_run_csv_path,output_folder_analyses_path):
+    # Initialize result with paths
+    analysis_files_paths = {}
     # Initialize dict with rows for each variable. Each row will correspond to the values of said variable for a respective run from each respective parameter perturbed
     vars_rows_dicts = {var_name:[] for var_name in target_vars}
     # Read standard run output that we will use as default output
@@ -29,13 +31,20 @@ def completeIndividualSensAnalysis(perturbed_csvs_path_and_info_pairs,target_var
             # Add this row to the rows of this respective variable
             var_rows = vars_rows_dicts[target_var]
             var_rows.append(sens_file_row_dict)
+    # Initialize dict with run infos paths, it will have one key per var
+    run_infos_paths = {}
     # Set the columns order of the sensitivity analysis csv
     columns_order = defaultColsOrder(percentage_perturbed,specific_year,rms_first_year,rms_last_year)
     # Create a df for each var using its rows
     for target_var in target_vars:
         df_sens = dataFrameWithSensAnalysisForVar(vars_rows_dicts,target_var,columns_order)
         # Write sensitivity df to csv file
-        writeSensAnalToFile(df_sens,target_var,output_folder_analyses_path)
+        run_info_path = writeRunInfoFromDF(df_sens,target_var,output_folder_analyses_path)
+        # Add file path to run infos paths dict
+        run_infos_paths[target_var] = run_info_path
+    # Add run infos paths to main dict with paths
+    analysis_files_paths["run_infos_per_var"] = run_infos_paths
+    return analysis_files_paths
 
 def slugify(value):
     """
@@ -108,11 +117,12 @@ def dataFrameWithSensAnalysisForVar(vars_rows_dicts,target_var,columns_order):
     df_sens = df_sens.sort_values(by="ABS((new-std)/std)", ascending=False)
     return df_sens
 
-def writeSensAnalToFile(df_sens,target_var,output_folder_analyses_path):
+def writeRunInfoFromDF(df_sens,target_var,output_folder_analyses_path):
     var_name_slugified     = slugify(target_var)
     var_sens_csv_file_name = "sens_{0}.csv".format(var_name_slugified)
     output_analysis_path   = os.path.join(output_folder_analyses_path,var_sens_csv_file_name)
     df_sens.to_csv(output_analysis_path,index=False)
+    return output_analysis_path
 
 def rowDictFromParamVarSensAnal(param_name,param_default,param_new_value,percentage_perturbed,specific_year,rms_first_year,rms_last_year,var_analysis_dict,param_csv_path):
     sens_file_row_dict = {

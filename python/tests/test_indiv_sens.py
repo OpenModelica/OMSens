@@ -21,6 +21,7 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
             f.close()
 # Tests:
     def test_sens_run_gives_correct_results(self):
+        # We test everything on this test for now
         analyze_csvs_kwargs = {
             "perturbed_csvs_path_and_info_pairs" : [(StringIO(bb_e_perturbed_str), ('e', 0.7, 0.735)), (StringIO(bb_g_perturbed_str), ('g', 9.81, 10.300500000000001))],
             "std_run_csv_path"                   : StringIO(bb_std_run_str),
@@ -31,17 +32,14 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
             "rms_first_year"                     : 0,
             "rms_last_year"                      : 3,
         }
-        analysis.indiv_sens.completeIndividualSensAnalysis(**analyze_csvs_kwargs)
+        analysis_files_paths = analysis.indiv_sens.completeIndividualSensAnalysis(**analyze_csvs_kwargs)
+        # Test that that the resulting run info includes the basic info: all param names, default and perturbed vals, the variable and its value
+        run_infos_per_var = analysis_files_paths["run_infos_per_var"]
+        # for t_var in analyze_csvs_kwargs["target_vars"]:
 
 ###########
 # Globals #
 ###########
-def createTMPMos(file_str,test_case):
-    # Creates mos script in temp folder
-    return tests.aux_tests.createTempFromStrIntoTestCaseTempFolder(file_str,test_case,"script.mos")
-    # Creates stand alone tempfile
-    # return tests.aux_tests.createTempFromStrAndAddToTestCase(file_str,test_case,suffix=".mos")
-
 bb_std_run_str = \
 """"time","h","v","der(h)","der(v)","v_new","flying","impact"
 0,1,0,0,-9.81,0,1,0
