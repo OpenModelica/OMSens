@@ -46,37 +46,6 @@ class TestsCompareTwoCSVs(unittest.TestCase):
                 trash_files.append(x)
         self.assertEqual(trash_files,[])
 
-    def test_sensitivity_analysis_enabled_creates_new_meta_vars(self):
-        # Again, more than one test in one to minimize building times
-        # Test: omc builds with sensitivity flags without errors
-        mos_str= model_str + command_line_sensitivity_flag_str + build_model_sensitivity_str
-        mos_path=createTMPMos(mos_str,self)
-        process_output = omc_runner.runMosScript(mos_path)
-        error_line = process_output.splitlines()[-1]
-        self.assertEqual(error_line,'""')
-        # Test: running the executable binary creates a .mat with new meta vars
-        mos_folder_path=os.path.dirname(mos_path)
-        trash_files = []
-        for x in os.listdir(mos_folder_path):
-            if re.match('.*\.(c|o|h|makefile|log|libs|json)$', x):
-                trash_files.append(x)
-        cmd = cmd_sensitivity_to_run_str
-        exe_call_output = filesystem.files_aux.callCMDStringInPath(cmd,mos_folder_path)
-        mat_grep_cmd = """strings archivito.mat | grep "\$Sens" """
-
-
-        for x in os.listdir(mos_folder_path):
-            print(x)
-        self.assertEqual(trash_files,[])
-        #DELETE FROM HERE DOWN:
-        # print(mos_folder_path)
-        # print(os.listdir(mos_folder_path))
-        # with open(mos_path,"r") as outf:
-        #     print(outf.read())
-        # print(process_output)
-        self.assertTrue(False)
-        #DELETE UNTIL HERE ^
-
 ###########
 # Globals #
 ###########
