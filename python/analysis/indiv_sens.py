@@ -61,6 +61,7 @@ def rootMeanSquareForVar(df_std_run,df_param_perturbed,rms_first_year,rms_last_y
     col_subyrs_std       =         df_std_run[target_var].loc[rms_first_year:rms_last_year]
     col_subyrs_perturbed = df_param_perturbed[target_var].loc[rms_first_year:rms_last_year]
     # Assert that both columns have the same number of rows
+    raiseErrorIfDifferentLengthsInDFs(df_std_run,df_param_perturbed)
     # Calculate root mean square from both columns
     diff = col_subyrs_std - col_subyrs_perturbed
     diff_squared = diff**2
@@ -138,3 +139,20 @@ def rowDictFromParamVarSensAnal(param_name,param_default,param_new_value,percent
         "perturbed_param_csv_path"                                         : param_csv_path,
     }
     return sens_file_row_dict
+
+def raiseErrorIfDifferentLengthsInDFs(df_1,df_2):
+    # Get both dfs shapes
+    nrows_1, ncols_1 = df_1.shape
+    nrows_2, ncols_2 = df_2.shape
+    # Test both dimensions separately
+    error_str_skeleton = "One simulation result has {0} {1} while the other has {2}"
+    if not nrows_1 == nrows_2:
+        raise InvalidSimulationResultsException(error_str_skeleton.format(nrows_1,"rows",nrows_2))
+    if not ncols_1 == ncols_2:
+        raise InvalidSimulationResultsException(error_str_skeleton.format(ncols_1,"columns",ncols_2))
+    return 0
+
+# Exceptions and the like
+class InvalidSimulationResultsException(Exception):
+    pass
+
