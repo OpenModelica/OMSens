@@ -1,12 +1,13 @@
-#Std
+# Std
 import unittest
 import os
-import tempfile #para crear el tempdir
-import shutil #para borrar el tempdir
-import re #para los regex
-#Mine
+import tempfile  # tempdir creation
+import shutil    # tempdir deletion
+import re        # regex support
+# Mine
 import tests.aux_tests
 import running.run_omc as omc_runner
+
 
 class TestsRunOMC(unittest.TestCase):
 #setup y teardown de los tests
