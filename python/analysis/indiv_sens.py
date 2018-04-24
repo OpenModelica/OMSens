@@ -11,7 +11,6 @@ logger = logging.getLogger("--ParameterSensAnalysis--")  # this modules logger
 
 def completeIndividualSensAnalysis(perturbed_csvs_path_and_info_pairs, target_vars, percentage_perturbed, specific_year,
                                    rms_first_year, rms_last_year, std_run_csv_path, output_folder_analyses_path):
-
     # Initialize result with paths
     analysis_files_paths = {}
     # Initialize dict with rows for each variable. Each row will correspond to the values of said variable for a
@@ -36,15 +35,15 @@ def completeIndividualSensAnalysis(perturbed_csvs_path_and_info_pairs, target_va
             var_rows = vars_rows_dicts[target_var]
             var_rows.append(sens_file_row_dict)
     # Initialize dict with run infos paths, it will have one key per var
-    run_infos_paths = writeRunInfosAndReturnPaths(output_folder_analyses_path, percentage_perturbed, rms_first_year,
-                                                  rms_last_year, specific_year, target_vars, vars_rows_dicts)
+    run_infos_paths = writeRunInfosAndReturnThePaths(output_folder_analyses_path, percentage_perturbed, rms_first_year,
+                                                     rms_last_year, specific_year, target_vars, vars_rows_dicts)
     # Add run infos paths to main dict with paths
     analysis_files_paths["run_infos_per_var"] = run_infos_paths
     return analysis_files_paths
 
 
-def writeRunInfosAndReturnPaths(output_folder_analyses_path, percentage_perturbed, rms_first_year, rms_last_year,
-                                specific_year, target_vars, vars_rows_dicts):
+def writeRunInfosAndReturnThePaths(output_folder_analyses_path, percentage_perturbed, rms_first_year, rms_last_year,
+                                   specific_year, target_vars, vars_rows_dicts):
     run_infos_paths = {}
     # Set the columns order of the sensitivity analysis csv
     columns_order = defaultColsOrder(percentage_perturbed, specific_year, rms_first_year, rms_last_year)
