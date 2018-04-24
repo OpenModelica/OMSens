@@ -13,6 +13,19 @@ def completeIndividualSensAnalysis(perturbed_csvs_path_and_info_pairs, target_va
                                    rms_first_year, rms_last_year, std_run_csv_path, output_folder_analyses_path):
     # Initialize result with paths
     analysis_files_paths = {}
+    vars_rows_dicts = analysisPerParamPerturbedForEachVar(percentage_perturbed, perturbed_csvs_path_and_info_pairs,
+                                                          rms_first_year, rms_last_year, specific_year,
+                                                          std_run_csv_path, target_vars)
+    # Initialize dict with run infos paths, it will have one key per var
+    run_infos_paths = writeRunInfosAndReturnThePaths(output_folder_analyses_path, percentage_perturbed, rms_first_year,
+                                                     rms_last_year, specific_year, target_vars, vars_rows_dicts)
+    # Add run infos paths to main dict with paths
+    analysis_files_paths["run_infos_per_var"] = run_infos_paths
+    return analysis_files_paths
+
+
+def analysisPerParamPerturbedForEachVar(percentage_perturbed, perturbed_csvs_path_and_info_pairs, rms_first_year,
+                                        rms_last_year, specific_year, std_run_csv_path, target_vars):
     # Initialize dict with rows for each variable. Each row will correspond to the values of said variable for a
     #   respective run from each respective parameter perturbed
     vars_rows_dicts = {var_name: [] for var_name in target_vars}
@@ -20,26 +33,35 @@ def completeIndividualSensAnalysis(perturbed_csvs_path_and_info_pairs, target_va
     df_std_run = pandas.read_csv(std_run_csv_path, index_col=0)
     # Iterate simulations for each parameter perturbed in isolation
     for param_csv_path, param_info in perturbed_csvs_path_and_info_pairs:
-        # Read perturbed parameter csv
-        df_param_perturbed = pandas.read_csv(param_csv_path, index_col=0)
-        # Get param info such as name, default value, etc
-        param_name, param_default, param_new_value = extractParamInfo(param_info)
-        # Iterate variables getting the values in the perturbed param csv
-        for target_var in target_vars:
-            var_analysis_dict = varAnalysisForPerturbedParam(df_std_run, df_param_perturbed, target_var, specific_year,
-                                                             rms_first_year, rms_last_year)
-            sens_file_row_dict = rowDictFromParamVarSensAnal(param_name, param_default, param_new_value,
-                                                             percentage_perturbed, specific_year, rms_first_year,
-                                                             rms_last_year, var_analysis_dict, param_csv_path)
-            # Add this row to the rows of this respective variable
-            var_rows = vars_rows_dicts[target_var]
-            var_rows.append(sens_file_row_dict)
-    # Initialize dict with run infos paths, it will have one key per var
-    run_infos_paths = writeRunInfosAndReturnThePaths(output_folder_analyses_path, percentage_perturbed, rms_first_year,
-                                                     rms_last_year, specific_year, target_vars, vars_rows_dicts)
-    # Add run infos paths to main dict with paths
-    analysis_files_paths["run_infos_per_var"] = run_infos_paths
-    return analysis_files_paths
+        analyzeParamResultsForEachVar(df_std_run, param_csv_path, param_info, percentage_perturbed, rms_first_year,
+                                      rms_last_year, specific_year, target_vars, vars_rows_dicts)
+    return vars_rows_dicts
+
+
+def analyzeParamResultsForEachVar(df_std_run, param_csv_path, param_info, percentage_perturbed, rms_first_year,
+                                  rms_last_year, specific_year, target_vars, vars_rows_dicts):
+    # Read perturbed parameter csv
+    df_param_perturbed = pandas.read_csv(param_csv_path, index_col=0)
+    # Get param info such as name, default value, etc
+    param_name, param_default, param_new_value = extractParamInfo(param_info)
+    # Iterate variables getting the values in the perturbed param csv
+    for target_var in target_vars:
+        analyzeVarFromPerturbedParamResults(df_param_perturbed, df_std_run, param_csv_path, param_default,
+                                            param_name, param_new_value, percentage_perturbed, rms_first_year,
+                                            rms_last_year, specific_year, target_var, vars_rows_dicts)
+
+
+def analyzeVarFromPerturbedParamResults(df_param_perturbed, df_std_run, param_csv_path, param_default, param_name,
+                                        param_new_value, percentage_perturbed, rms_first_year, rms_last_year,
+                                        specific_year, target_var, vars_rows_dicts):
+    var_analysis_dict = varAnalysisForPerturbedParam(df_std_run, df_param_perturbed, target_var, specific_year,
+                                                     rms_first_year, rms_last_year)
+    sens_file_row_dict = rowDictFromParamVarSensAnal(param_name, param_default, param_new_value,
+                                                     percentage_perturbed, specific_year, rms_first_year,
+                                                     rms_last_year, var_analysis_dict, param_csv_path)
+    # Add this row to the rows of this respective variable
+    var_rows = vars_rows_dicts[target_var]
+    var_rows.append(sens_file_row_dict)
 
 
 def writeRunInfosAndReturnThePaths(output_folder_analyses_path, percentage_perturbed, rms_first_year, rms_last_year,

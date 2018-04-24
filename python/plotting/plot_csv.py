@@ -211,7 +211,7 @@ def plotVarFromSweepingInfo(var_name,model_name,sweeping_info,plots_folder_path,
     fixed_params       = sweeping_info["fixed_params"]
     sweep_vars_str = ", ".join(sweep_vars)
     fixed_params_to_strs = [str(x) for x in fixed_params]
-    if fixed_params_str == False:
+    if not fixed_params_str:
         fixed_params_str = ", ".join(fixed_params_to_strs)
     title,subtitle,footer = sweepingPlotTexts(model_name,var_name,sweep_vars_str,fixed_params_str)
     per_iter_info_dict = sweeping_info["per_iter_info_dict"]
