@@ -19,7 +19,7 @@ def main():
     # Logging settings
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
     # Args
-    json_path = "resource/test_files/individual/test_00.json"
+    json_path = "resource/test_files/individual/test_06.json"
     # Read json
     logger.info("Reading individual sensitivities test file in path {0}.".format(json_path))
     with open(json_path, 'r') as fp:
@@ -103,11 +103,6 @@ def filesPathsInOutputFolder(output_mos_name, std_run_filename):
     return output_folder_path, output_mos_path, std_run_path
 
 
-# FIRST EXECUTABLE CODE:
-if __name__ == "__main__":
-    main()
-
-
 def csvPathAndParameterNameForFolderAndParametersInfo(output_folder_path, parameters_info):
     perturbed_csvs_path_and_info_pairs = []
     for param_info in parameters_info:
@@ -116,3 +111,8 @@ def csvPathAndParameterNameForFolderAndParametersInfo(output_folder_path, parame
         csv_path = os.path.join(output_folder_path, csv_name)
         perturbed_csvs_path_and_info_pairs.append((csv_path, param_info))
     return perturbed_csvs_path_and_info_pairs
+
+
+# FIRST EXECUTABLE CODE:
+if __name__ == "__main__":
+    main()
