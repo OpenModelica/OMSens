@@ -1,19 +1,20 @@
 # STD
-import os
-import sys
-import inspect
 import json
 import logging  # instead of prints
+import os
+import sys
 
-logger = logging.getLogger("-Individual Sens Calculator-")
 # Ours
 import analysis.indiv_sens
-import mos_writer.calculate_sensitivities_mos_writer
-import settings.settings_world3_sweep as world3_settings
-import running.run_omc
 import filesystem.files_aux as files_aux
+import mos_writer.calculate_sensitivities_mos_writer
+import running.run_omc
+import settings.settings_world3_sweep as world3_settings
 # We import it for now but the objective is that this script replaces that one
 import w3_sens_calculator
+
+# Setup logging
+logger = logging.getLogger("-Individual Sens Calculator-")
 
 
 def main():
