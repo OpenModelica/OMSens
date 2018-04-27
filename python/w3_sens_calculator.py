@@ -1,6 +1,9 @@
+import logging  # en reemplazo de los prints
 import os
 import sys
-import logging #en reemplazo de los prints
+
+from individual_sens_calculator import csvPathAndParameterNameForFolderAndParametersInfo
+
 logger = logging.getLogger("--World3 Sensitivities Calculator--") #un logger especifico para este modulo
 # Mine:
 import filesystem.files_aux as files_aux
@@ -86,7 +89,8 @@ def runModelSweepingParametersInIsolation(percentage, startTime, stopTime, scens
     mos_writer.calculate_sensitivities_mos_writer.createMos(mo_file,model_name,parameters_to_perturbate_tuples,output_mos_path,startTime,stopTime, world3_settings.calc_sens_csv_file_name_function)
     logger.info("Running Modelica with specified information")
     running.run_omc.runMosScript(output_mos_path)
-    perturbed_csvs_path_and_info_pairs = csvPathAndParameterNameForFolderAndParametersInfo(output_folder_path,parameters_to_perturbate_tuples)
+    perturbed_csvs_path_and_info_pairs = csvPathAndParameterNameForFolderAndParametersInfo(output_folder_path,
+                                                                                           parameters_to_perturbate_tuples)
     return perturbed_csvs_path_and_info_pairs
 
 def runModelicaSweepingAllOfW3Params(percentage,year_target,output_folder_path):
@@ -115,16 +119,6 @@ def calculateParametersPerturbedValueByPercentage(params_info_list,percentage):
         new_value = param_val+param_val*percentage/100 #for now, we just want the value + a percentage
         parameters_to_perturbate_tuples.append((param_name,param_val,new_value))
     return parameters_to_perturbate_tuples
-
-def csvPathAndParameterNameForFolderAndParametersInfo(output_folder_path,parameters_info):
-    perturbed_csvs_path_and_info_pairs = []
-    for param_info in parameters_info:
-        param_name = param_info[0]
-        csv_name = world3_settings.calc_sens_csv_file_name_function(param_name)
-        csv_path = os.path.join(output_folder_path,csv_name)
-        perturbed_csvs_path_and_info_pairs.append((csv_path,param_info))
-    return perturbed_csvs_path_and_info_pairs
-
 
 
 # FIRST EXECUTABLE CODE:

@@ -9,11 +9,9 @@ import analysis.indiv_sens
 import filesystem.files_aux as files_aux
 import mos_writer.calculate_sensitivities_mos_writer
 import running.run_omc
-import settings.settings_world3_sweep as world3_settings
-# We import it for now but the objective is that this script replaces that one
-import w3_sens_calculator
-
 # Setup logging
+from settings import settings_world3_sweep as world3_settings
+
 logger = logging.getLogger("-Individual Sens Calculator-")
 
 
@@ -64,7 +62,7 @@ def main():
     logger.info("Running Modelica with specified information")
     running.run_omc.runMosScript(output_mos_path)
     # Get csvs paths and info pairs
-    perturbed_csvs_path_and_info_pairs = w3_sens_calculator.csvPathAndParameterNameForFolderAndParametersInfo(
+    perturbed_csvs_path_and_info_pairs = csvPathAndParameterNameForFolderAndParametersInfo(
         output_folder_path, parameters_to_perturbate_tuples)
     # Assume that the .csv with the standard run data will be called like the following
     # Get the path of the recently ran standard run
@@ -108,3 +106,13 @@ def filesPathsInOutputFolder(output_mos_name, std_run_filename):
 # FIRST EXECUTABLE CODE:
 if __name__ == "__main__":
     main()
+
+
+def csvPathAndParameterNameForFolderAndParametersInfo(output_folder_path, parameters_info):
+    perturbed_csvs_path_and_info_pairs = []
+    for param_info in parameters_info:
+        param_name = param_info[0]
+        csv_name = world3_settings.calc_sens_csv_file_name_function(param_name)
+        csv_path = os.path.join(output_folder_path, csv_name)
+        perturbed_csvs_path_and_info_pairs.append((csv_path, param_info))
+    return perturbed_csvs_path_and_info_pairs
