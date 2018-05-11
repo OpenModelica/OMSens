@@ -1,12 +1,13 @@
 # Std
-import unittest
 import os
-import tempfile  # tempdir creation
-import shutil  # tempdir deletion
 import re  # regex support
+import shutil  # tempdir deletion
+import tempfile  # tempdir creation
+import unittest
+
+import running.run_omc as omc_runner
 # Mine
 import tests.aux_tests
-import running.run_omc as omc_runner
 
 
 class TestsRunOMC(unittest.TestCase):
@@ -37,13 +38,16 @@ class TestsRunOMC(unittest.TestCase):
         self.assertEqual(error_line, '""')
         # The following should be another test but beacuse of slow building times, we minimize the
         # amount of compiling Modelica times
-        # test_omc_leaves_no_trash_after_building(self):
+        # Test that OMC leaves no trash after building and simulating
         mos_folder_path = os.path.dirname(mos_path)
         trash_files = []
         for x in os.listdir(mos_folder_path):
             if re.match('.*\.(c|o|h|makefile|log|libs|json)$', x):
                 trash_files.append(x)
-        self.assertEqual(trash_files, [])
+        if len(trash_files) > 0:
+            not_removed_files = ",".join(trash_files)
+            fail_message = "The following files should've been removed but weren't: {0}".format(not_removed_files)
+            self.fail(fail_message)
 
 
 ###########
