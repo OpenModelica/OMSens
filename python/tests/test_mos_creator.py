@@ -1,5 +1,6 @@
 # Standard
 import os
+import re
 import shutil
 import tempfile
 import unittest
@@ -24,7 +25,7 @@ class TestsRunOMC(unittest.TestCase):
         for f in self._temp_files:
             f.close()
 
-    def test_creates_and_runs_indiv_sens_mos_script_correctly(self):
+    def test_indiv_sens_from_json_with_correct_data(self):
         # Write simple model to temp dir
         mo_file_name = "model.mo"
         mo_file_path = os.path.join(self._temp_dir, mo_file_name)
@@ -39,7 +40,7 @@ class TestsRunOMC(unittest.TestCase):
             "mo_file": mo_file_path,
             "startTime": 0,
             "stopTime": 2,
-            "parameters_to_perturbate_tuples": [("a", -1, 5)],
+            "parameters_to_perturbate_tuples": [("param_name", -1, 5)],
             "output_mos_path": output_mos_path,
             "csv_file_name_modelica_function": world3_settings.calc_sens_csv_file_name_function,
             "std_run_filename": std_run_filename,
@@ -48,15 +49,56 @@ class TestsRunOMC(unittest.TestCase):
         sens_mos_writer.createMos(**mos_creator_kwargs)
         process_output = omc_runner.runMosScript(output_mos_path)
         error_line = process_output.splitlines()[-1]
+        # Assert that the script ends without error
         self.assertEqual(error_line, 'true')
+        # Assert that there's a file containing the substring of the param of the model in the temp dir
+        files_matching_regex = []
+        for x in os.listdir(self._temp_dir):
+            if re.match('.*param_name.*\.csv$', x):
+                files_matching_regex.append(x)
+        if len(files_matching_regex) != 1:
+            error_msg = "There is more than one CSV file matching with the param_name."
+            self.fail(error_msg)
+
+
+# The following test requires that we test by hand if the parameter exists or not. OM doesn't fail if we try to set
+#  a parameter that doesn't exist
+# def test_indiv_sens_from_json_fails_if_incorrect_param_name(self):
+#     # Write simple model to temp dir
+#     mo_file_name = "model.mo"
+#     mo_file_path = os.path.join(self._temp_dir, mo_file_name)
+#     filesystem.files_aux.writeStrToFile(model_str, mo_file_path)
+#     # Define names and paths for the other things
+#     output_mos_name = "script.mos"
+#     output_mos_path = os.path.join(self._temp_dir, output_mos_name)
+#     std_run_filename = "std_run.csv"
+#     # Prepare mos creator arguments
+#     mos_creator_kwargs = {
+#         "model_name": "Model",
+#         "mo_file": mo_file_path,
+#         "startTime": 0,
+#         "stopTime": 2,
+#         "parameters_to_perturbate_tuples": [("a", -1, 5)],
+#         "output_mos_path": output_mos_path,
+#         "csv_file_name_modelica_function": world3_settings.calc_sens_csv_file_name_function,
+#         "std_run_filename": std_run_filename,
+#     }
+#     # Call .mos creator
+#     sens_mos_writer.createMos(**mos_creator_kwargs)
+#     process_output = omc_runner.runMosScript(output_mos_path)
+#     error_line = process_output.splitlines()[-1]
+#     # Assert that the script ends without error
+#     if error_line != "false":
+#         error_msg = "The script should fail but it doesn't."
+#         self.fail(error_msg)
 
 
 model_str = \
     """
     class Model
-      parameter Real a=-1;
+      parameter Real param_name=-1;
       Real x(start=1,fixed=true);
     equation
-      der(x) = a*x;
+      der(x) = param_name*x;
     end Model;
     """
