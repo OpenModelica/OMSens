@@ -1,13 +1,13 @@
 #Std
+import shutil  # para borrar el tempdir
+import tempfile  # para crear el tempdir
 import unittest
-import os
-import tempfile #para crear el tempdir
-import shutil #para borrar el tempdir
-import re #para los regex
 from io import StringIO
+
 # Mine
 import analysis.indiv_sens
 import filesystem.files_aux
+
 
 class TestIndividualSensitivityAnalysis(unittest.TestCase):
 #setup y teardown de los tests

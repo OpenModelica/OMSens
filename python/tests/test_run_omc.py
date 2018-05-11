@@ -36,7 +36,7 @@ class TestsRunOMC(unittest.TestCase):
         process_output = omc_runner.runMosScript(mos_path)
         error_line = process_output.splitlines()[-1]
         self.assertEqual(error_line, '""')
-        # The following should be another test but beacuse of slow building times, we minimize the
+        # The following should be another test but because of slow building times, we minimize the
         # amount of compiling Modelica times
         # Test that OMC leaves no trash after building and simulating
         mos_folder_path = os.path.dirname(mos_path)
@@ -62,12 +62,13 @@ def createTMPMos(file_str, test_case):
 
 model_str = \
     """loadString("
-class Model
-  parameter Real a=-1;
-  Real x(start=1,fixed=true);
-equation
-  der(x) = a*x;
-end Model;
-");\n """
+    class Model
+      parameter Real a=-1;
+      Real x(start=1,fixed=true);
+    equation
+      der(x) = a*x;
+    end Model;
+    ");\n """
+
 build_model_str = \
     """buildModel(Model);getErrorString();\n"""
