@@ -1,7 +1,10 @@
 # Std
 import platform
+import json
+import os
 # Mine
-import filesystem.files_aux
+import filesystem.files_aux as files_aux
+from settings import settings_world3_sweep as world3_settings
 
 # Posibles lv para el omc_logger:
 # LOG_DEBUG: muestra todos los valores leidos del .xml (3k lineas)
@@ -11,19 +14,51 @@ import filesystem.files_aux
 omc_logger_flags = ""
 
 
-def main():
-    createMos_kwargs = {
-        "mo_file": "MO_FILE.mo",
-        "model_name": "MODEL_NAME_GUACHO",
-        "parameters_to_perturbate_tuples": [("param1", 1, 2), ("param2", 3, 4)],
-        "output_mos_path": "/tmp/asd.mos",
-        "startTime": 1900,
-        "stopTime": 1950,
-        "csv_file_name_modelica_function": "{param_name}_perturbed.csv",
-    }
-    createMos(**createMos_kwargs)
-    pass
+def createMosFromJSON(json_file_path, output_mos_path, std_run_filename):
+    mos_creator_kwargs = mosCreationArgsFromJSON(json_file_path, output_mos_path, std_run_filename)
+    createMos(**mos_creator_kwargs)
 
+
+def mosCreationArgsFromJSON(json_file_path, output_mos_path, std_run_filename):
+    with open(json_file_path, 'r') as fp:
+        full_json = json.load(fp)
+    # Mo file from json
+    json_mo_path = full_json["model_mo_path"]
+    # Check if it's absolute path or relative path and act accordingly
+    is_abs_path = os.path.isabs(json_mo_path)
+    if is_abs_path:
+        # If it's already an absolute path, there's nothing to do
+        mo_file_path = json_mo_path
+    else:
+        # If it's a relative path, make it absolute
+        mo_file_path = os.path.abspath(json_mo_path)
+    # Generate list of params and their perturbed values from their defaults and a percentage to perturb
+    parameters_to_perturbate_tuples = listOfParametersPerturbationInfo(full_json["param_names"],
+                                                                       full_json["param_vals"], full_json["percentage"])
+    # Set .mos creator arguments
+    mos_creator_kwargs = {
+        "model_name": full_json["model_name"],
+        "mo_file": mo_file_path,
+        "startTime": full_json["start_time"],
+        "stopTime": full_json["stop_time"],
+        "parameters_to_perturbate_tuples": parameters_to_perturbate_tuples,
+        "output_mos_path": output_mos_path,
+        "csv_file_name_modelica_function": world3_settings.calc_sens_csv_file_name_function,
+        "std_run_filename": std_run_filename,
+    }
+    return mos_creator_kwargs
+
+
+def listOfParametersPerturbationInfo(param_names, param_vals, percentage):
+    parameters_to_perturbate_tuples = []
+    # Iterate parameters name and default info
+    for p_name, p_val in zip(param_names, param_vals):
+        # Calculate parameter value from percentage to perturb
+        perturbed_val = p_val * (1 + percentage / 100)
+        # Create tuple and add it to list of tuples
+        param_tuple = (p_name, p_val, perturbed_val)
+        parameters_to_perturbate_tuples.append(param_tuple)
+    return parameters_to_perturbate_tuples
 
 def createMos(mo_file, model_name, parameters_to_perturbate_tuples, output_mos_path, startTime, stopTime,
               csv_file_name_modelica_function, std_run_filename=None):
@@ -38,7 +73,7 @@ def createMos(mo_file, model_name, parameters_to_perturbate_tuples, output_mos_p
                                                                csv_file_name_modelica_function, omc_logger_flags)
 
     final_str = load_and_build_str + run_std_run_str + perturbate_param_and_run_str
-    filesystem.files_aux.writeStrToFile(final_str, output_mos_path)
+    files_aux.writeStrToFile(final_str, output_mos_path)
     return 0
 
 
@@ -132,6 +167,3 @@ run_system_command_str = \
     """  print("Running command: "+cmd+"\\n");
   system(cmd);
   getErrorString();"""
-
-if __name__ == "__main__":
-    main()

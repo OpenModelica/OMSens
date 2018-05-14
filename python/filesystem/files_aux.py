@@ -34,6 +34,11 @@ def destPath(folder_name):
     return os.path.join(tmp_path, folder_name)
 
 
+def projectRoot():
+    currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+    project_root = parentDir(currentdir)
+    return project_root
+
 def tmpPath():
     currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
     parentdir = parentDir(currentdir)

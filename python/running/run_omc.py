@@ -1,6 +1,5 @@
 #Std
 import os
-import re
 import platform
 import logging #en reemplazo de los prints
 logger = logging.getLogger("--Run OMC--") #un logger especifico para este modulo
