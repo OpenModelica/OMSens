@@ -17,6 +17,7 @@ omc_logger_flags = ""
 def createMosFromJSON(json_file_path, output_mos_path, std_run_filename):
     mos_creator_kwargs = mosCreationArgsFromJSON(json_file_path, output_mos_path, std_run_filename)
     createMos(**mos_creator_kwargs)
+    return 0
 
 
 def mosCreationArgsFromJSON(json_file_path, output_mos_path, std_run_filename):
