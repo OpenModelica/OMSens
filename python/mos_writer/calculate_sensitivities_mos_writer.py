@@ -1,8 +1,8 @@
 # Std
-import platform
 import json
-import os
 import logging
+import os
+import platform
 
 # Mine
 import filesystem.files_aux as files_aux
