@@ -64,7 +64,7 @@ class TestsRunOMC(unittest.TestCase):
         process_output = omc_runner.runMosScript(output_mos_path)
         error_line = process_output.splitlines()[-1]
         # Assert that the script ends without error
-        self.assertEqual(error_line, 'true', msg="The last line of the .mos execution was not satisfactory. It ended "
+        self.assertEqual(error_line, '""', msg="The last line of the .mos execution was not satisfactory. It ended "
                                                  "with an unexpected output.")
         # Assert that there's a file containing the substring of the param of the model in the temp dir
         files_matching_regex = []

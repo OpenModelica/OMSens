@@ -21,10 +21,24 @@ def createMosFromJSON(json_file_path, output_mos_path, std_run_filename):
 
 
 def mosCreationArgsFromJSON(json_file_path, output_mos_path, std_run_filename):
-    with open(json_file_path, 'r') as fp:
-        full_json = json.load(fp)
-    # Mo file from json
-    json_mo_path = full_json["model_mo_path"]
+    full_json = readJSON(json_file_path)
+    mo_file_path = moFilePathFromJSONMoPath(full_json["model_mo_path"])
+    # Set .mos creator arguments
+    mos_creator_kwargs = {
+        "model_name": full_json["model_name"],
+        "mo_file": mo_file_path,
+        "startTime": full_json["start_time"],
+        "stopTime": full_json["stop_time"],
+        "params_info_list": full_json["params_info_list"],
+        "percentage": full_json["percentage"],
+        "output_mos_path": output_mos_path,
+        "csv_file_name_modelica_function": world3_settings.calc_sens_csv_file_name_function,
+        "std_run_filename": std_run_filename,
+    }
+    return mos_creator_kwargs
+
+
+def moFilePathFromJSONMoPath(json_mo_path):
     # Check if it's absolute path or relative path and act accordingly
     is_abs_path = os.path.isabs(json_mo_path)
     if is_abs_path:
@@ -33,37 +47,16 @@ def mosCreationArgsFromJSON(json_file_path, output_mos_path, std_run_filename):
     else:
         # If it's a relative path, make it absolute
         mo_file_path = os.path.abspath(json_mo_path)
-    # Generate list of params and their perturbed values from their defaults and a percentage to perturb
-    parameters_to_perturbate_tuples = listOfParametersPerturbationInfo(full_json["params_info_list"],
-                                                                       full_json["percentage"])
-    # Set .mos creator arguments
-    mos_creator_kwargs = {
-        "model_name": full_json["model_name"],
-        "mo_file": mo_file_path,
-        "startTime": full_json["start_time"],
-        "stopTime": full_json["stop_time"],
-        "parameters_to_perturbate_tuples": parameters_to_perturbate_tuples,
-        "output_mos_path": output_mos_path,
-        "csv_file_name_modelica_function": world3_settings.calc_sens_csv_file_name_function,
-        "std_run_filename": std_run_filename,
-    }
-    return mos_creator_kwargs
+    return mo_file_path
 
 
-def listOfParametersPerturbationInfo(params_info_list, percentage):
-    parameters_to_perturbate_tuples = []
-    # Iterate parameters name and default info
-    for param_info in params_info_list:
-        p_name = param_info["name"]
-        p_val = param_info["initial_val"]
-        # Calculate parameter value from percentage to perturb
-        perturbed_val = p_val * (1 + percentage / 100)
-        # Create tuple and add it to list of tuples
-        param_tuple = (p_name, p_val, perturbed_val)
-        parameters_to_perturbate_tuples.append(param_tuple)
-    return parameters_to_perturbate_tuples
+def readJSON(json_file_path):
+    with open(json_file_path, 'r') as fp:
+        full_json = json.load(fp)
+    return full_json
 
-def createMos(mo_file, model_name, parameters_to_perturbate_tuples, output_mos_path, startTime, stopTime,
+
+def createMos(mo_file, model_name, params_info_list, percentage, output_mos_path, startTime, stopTime,
               csv_file_name_modelica_function, std_run_filename=None):
     load_and_build_str = strForLoadingAndBuilding(mo_file, model_name, startTime, stopTime)
     if std_run_filename:
@@ -72,7 +65,7 @@ def createMos(mo_file, model_name, parameters_to_perturbate_tuples, output_mos_p
     else:
         # If no std run needs to be run, just put it's str as empty
         run_std_run_str = ""
-    perturbate_param_and_run_str = strForPerturbateParamAndRun(parameters_to_perturbate_tuples, model_name,
+    perturbate_param_and_run_str = strForPerturbateParamAndRun(params_info_list, model_name, percentage,
                                                                csv_file_name_modelica_function, omc_logger_flags)
 
     final_str = load_and_build_str + run_std_run_str + perturbate_param_and_run_str
@@ -94,10 +87,16 @@ def strForRunStdRun(model_name, std_run_filename, omc_logger_flags):
     return run_std_run_str
 
 
-def strForPerturbateParamAndRun(parameters_to_perturbate_tuples, model_name, csv_file_name_modelica_function,
+def strForPerturbateParamAndRun(params_info_list, model_name, percentage, csv_file_name_modelica_function,
                                 omc_logger_flags):
     temp_str = ""
-    for param_name, param_default, param_new_value in parameters_to_perturbate_tuples:
+    # Get the strings for all but the last parameter
+    for i in range(len(params_info_list) - 1):
+        # Get param info from dict
+        param_name = params_info_list[i]["name"]
+        param_default = params_info_list[i]["initial_val"]
+        # Calculate param new value from initial value and percentage
+        param_new_value = param_default * (1 + percentage / 100)
         # Human readable comment in resulting .mos
         comment_tag_str = "\n// Perturbing parameter: {param_name}".format(param_name=param_name)
         # Simulation file name
@@ -113,6 +112,26 @@ def strForPerturbateParamAndRun(parameters_to_perturbate_tuples, model_name, csv
         this_param_str = "\n".join([set_new_value_str, run_cmd_str, set_default_value_back_str])
         # Join all the strs into one
         temp_str = temp_str + comment_tag_str + filename_and_cmd_defs_str + this_param_str
+    # Make the string of the last parameter on its own so we don't add a "setInitXML" at the end which ofuscates the
+    # last output of the script run
+    param_name = params_info_list[-1]["name"]
+    param_default = params_info_list[-1]["initial_val"]
+    # Calculate param new value from initial value and percentage
+    param_new_value = param_default * (1 + percentage / 100)
+    # Human readable comment in resulting .mos
+    comment_tag_str = "\n// Perturbing parameter: {param_name}".format(param_name=param_name)
+    # Simulation file name
+    filename_and_cmd_defs_str = strForFilenameAndCmdDefs(csv_file_name_modelica_function, param_name, model_name,
+                                                         omc_logger_flags)
+    # Set parameter with new value, run, return parameter to default value
+    set_new_value_str = set_xml_value_skeleton.format(model_name=model_name, param_name=param_name,
+                                                      param_val=param_new_value)
+    run_cmd_str = run_system_command_str + "\n"
+    # Join the "perturb, run, de-perturb" strs into one
+    this_param_str = "\n".join([set_new_value_str, run_cmd_str])
+    # Join all the strs into one
+    temp_str = temp_str + comment_tag_str + filename_and_cmd_defs_str + this_param_str
+
     perturbate_param_and_run_str = temp_str
     return perturbate_param_and_run_str
 
@@ -132,7 +151,7 @@ def removeSpecialCharactersTo(param_name):
 
 def strForFilenameAndCmdDefs(csv_file_name_modelica_function, param_name, model_name, omc_logger_flags):
     standarized_param_name = removeSpecialCharactersTo(param_name)
-    file_name_str = "file_name_i := " + '"' + csv_file_name_modelica_function(param_name) + '";'
+    file_name_str = "file_name_i := " + '"' + csv_file_name_modelica_function(standarized_param_name) + '";'
     # cmd str
     cmd_str = ""
     if platform.system() == "Linux":
