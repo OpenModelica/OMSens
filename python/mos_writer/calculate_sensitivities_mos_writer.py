@@ -34,8 +34,8 @@ def mosCreationArgsFromJSON(json_file_path, output_mos_path, std_run_filename):
         # If it's a relative path, make it absolute
         mo_file_path = os.path.abspath(json_mo_path)
     # Generate list of params and their perturbed values from their defaults and a percentage to perturb
-    parameters_to_perturbate_tuples = listOfParametersPerturbationInfo(full_json["param_names"],
-                                                                       full_json["param_vals"], full_json["percentage"])
+    parameters_to_perturbate_tuples = listOfParametersPerturbationInfo(full_json["params_info_list"],
+                                                                       full_json["percentage"])
     # Set .mos creator arguments
     mos_creator_kwargs = {
         "model_name": full_json["model_name"],
@@ -50,10 +50,12 @@ def mosCreationArgsFromJSON(json_file_path, output_mos_path, std_run_filename):
     return mos_creator_kwargs
 
 
-def listOfParametersPerturbationInfo(param_names, param_vals, percentage):
+def listOfParametersPerturbationInfo(params_info_list, percentage):
     parameters_to_perturbate_tuples = []
     # Iterate parameters name and default info
-    for p_name, p_val in zip(param_names, param_vals):
+    for param_info in params_info_list:
+        p_name = param_info["name"]
+        p_val = param_info["initial_val"]
         # Calculate parameter value from percentage to perturb
         perturbed_val = p_val * (1 + percentage / 100)
         # Create tuple and add it to list of tuples

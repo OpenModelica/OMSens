@@ -11,6 +11,7 @@ import running.run_omc as omc_runner
 import filesystem.files_aux
 import mos_writer.calculate_sensitivities_mos_writer as sens_mos_writer
 
+
 class TestsRunOMC(unittest.TestCase):
     # setup y teardown de los tests
     def setUp(self):
@@ -44,7 +45,7 @@ class TestsRunOMC(unittest.TestCase):
                     self.fail("The file {0} is an invalid test file. It raised the following exception:\n {1}".format(
                         test_file_path, error_msg))
 
-    def test_indiv_sens_from_json_with_correct_data_runs_correctly(self):
+    def test_indiv_sens_from_json_with_correct_data_simulates_correctly(self):
         # Write simple model to temp dir
         mo_file_name = "model.mo"
         mo_file_path = os.path.join(self._temp_dir, mo_file_name)
@@ -101,7 +102,11 @@ valid_json_skeleton = \
        "percentage":5,
        "start_time":0,
        "stop_time":3,
-       "param_names":["param_name"],
-       "param_vals":[-1],
-       "vars_to_analyze":["x"]
+       "vars_to_analyze":["x"],
+       "params_info_list": [
+           {{
+               "name":"param_name",
+               "initial_val":-1
+           }}
+       ]
     }}"""

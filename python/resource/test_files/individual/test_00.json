@@ -1,11 +1,21 @@
 {
-  "model_name":"BouncingBall",
-  "model_mo_path":"resource/BouncingBall.mo",
-  "vars_to_analyze":["h"],
-  "percentage":5,
-  "start_time":0,
-  "stop_time":3,
-  "param_names":["e","g"],
-  "param_vals":[ 0.7, 9.81]
+  "model_name": "BouncingBall",
+  "model_mo_path": "resource/BouncingBall.mo",
+  "vars_to_analyze": [
+    "h"
+  ],
+  "percentage": 5,
+  "start_time": 0,
+  "stop_time": 3,
+  "params_info_list": [
+    {
+      "name": "e",
+      "initial_val": 0.7
+    },
+    {
+      "name": "g",
+      "initial_val": 9.81
+    }
+  ]
 }
 
