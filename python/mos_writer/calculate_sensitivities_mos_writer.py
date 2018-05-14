@@ -2,9 +2,13 @@
 import platform
 import json
 import os
+import logging
+
 # Mine
 import filesystem.files_aux as files_aux
 from settings import settings_world3_sweep as world3_settings
+
+logger = logging.getLogger("--SensMosWriter--")  # this modules logger
 
 # Posibles lv para el omc_logger:
 # LOG_DEBUG: muestra todos los valores leidos del .xml (3k lineas)
@@ -58,19 +62,27 @@ def readJSON(json_file_path):
 
 def createMos(mo_file, model_name, params_info_list, percentage, output_mos_path, startTime, stopTime,
               csv_file_name_modelica_function, std_run_filename=None):
+    # Create mos script that is OMC compatible
     load_and_build_str = strForLoadingAndBuilding(mo_file, model_name, startTime, stopTime)
+    run_std_run_str = strStandardRun(model_name, std_run_filename)
+    perturbate_param_and_run_str = strForPerturbateParamAndRun(params_info_list, model_name, percentage,
+                                                               csv_file_name_modelica_function, omc_logger_flags)
+
+    # Join the different strs into one
+    final_str = load_and_build_str + run_std_run_str + perturbate_param_and_run_str
+    # Write final string to file
+    files_aux.writeStrToFile(final_str, output_mos_path)
+    return 0
+
+
+def strStandardRun(model_name, std_run_filename):
     if std_run_filename:
         # If we need to run the standard run alongside the other simulations:
         run_std_run_str = strForRunStdRun(model_name, std_run_filename, omc_logger_flags)
     else:
         # If no std run needs to be run, just put it's str as empty
         run_std_run_str = ""
-    perturbate_param_and_run_str = strForPerturbateParamAndRun(params_info_list, model_name, percentage,
-                                                               csv_file_name_modelica_function, omc_logger_flags)
-
-    final_str = load_and_build_str + run_std_run_str + perturbate_param_and_run_str
-    files_aux.writeStrToFile(final_str, output_mos_path)
-    return 0
+    return run_std_run_str
 
 
 def strForRunStdRun(model_name, std_run_filename, omc_logger_flags):
@@ -92,48 +104,68 @@ def strForPerturbateParamAndRun(params_info_list, model_name, percentage, csv_fi
     temp_str = ""
     # Get the strings for all but the last parameter
     for i in range(len(params_info_list) - 1):
-        # Get param info from dict
-        param_name = params_info_list[i]["name"]
-        param_default = params_info_list[i]["initial_val"]
-        # Calculate param new value from initial value and percentage
-        param_new_value = param_default * (1 + percentage / 100)
-        # Human readable comment in resulting .mos
-        comment_tag_str = "\n// Perturbing parameter: {param_name}".format(param_name=param_name)
-        # Simulation file name
-        filename_and_cmd_defs_str = strForFilenameAndCmdDefs(csv_file_name_modelica_function, param_name, model_name,
-                                                             omc_logger_flags)
-        # Set parameter with new value, run, return parameter to default value
-        set_new_value_str = set_xml_value_skeleton.format(model_name=model_name, param_name=param_name,
-                                                          param_val=param_new_value)
-        run_cmd_str = run_system_command_str + "\n"
-        set_default_value_back_str = set_xml_value_skeleton.format(model_name=model_name, param_name=param_name,
-                                                                   param_val=param_default)
-        # Join the "perturb, run, de-perturb" strs into one
-        this_param_str = "\n".join([set_new_value_str, run_cmd_str, set_default_value_back_str])
-        # Join all the strs into one
-        temp_str = temp_str + comment_tag_str + filename_and_cmd_defs_str + this_param_str
-    # Make the string of the last parameter on its own so we don't add a "setInitXML" at the end which ofuscates the
+        pos = i
+        include_param_val_rollback = True
+        this_param_str = strForParamPerturbationForParamInPosition(
+            csv_file_name_modelica_function, include_param_val_rollback, model_name, omc_logger_flags, params_info_list,
+            percentage, pos)
+        temp_str = temp_str + this_param_str
+    # Make the string of the last parameter on its own so we don't add a "setInitXML" at the end which obfuscates the
     # last output of the script run
-    param_name = params_info_list[-1]["name"]
-    param_default = params_info_list[-1]["initial_val"]
+    pos = -1
+    include_param_val_rollback = False
+    this_param_str = strForParamPerturbationForParamInPosition(
+        csv_file_name_modelica_function, include_param_val_rollback, model_name, omc_logger_flags, params_info_list,
+        percentage, pos)
+    temp_str = temp_str + this_param_str
+
+    perturbate_param_and_run_str = temp_str
+    return perturbate_param_and_run_str
+
+
+def strForParamPerturbationForParamInPosition(csv_file_name_modelica_function, include_param_val_rollback, model_name,
+                                              omc_logger_flags, params_info_list, percentage, pos):
+    param_default, param_name, param_new_value = paramInfoForPos(params_info_list, percentage, pos)
+    # Include the roll back of the param val to default because this is not the last param
+    this_param_str = strForParamPerturbationFromParamInfo(
+        csv_file_name_modelica_function, model_name, omc_logger_flags, param_default, param_name, param_new_value,
+        include_param_val_rollback)
+    # Join all the strs into one
+    return this_param_str
+
+
+def paramInfoForPos(params_info_list, percentage, pos):
+    param_info_dict = params_info_list[pos]
+    param_name = param_info_dict["name"]
+    param_default = param_info_dict["initial_val"]
     # Calculate param new value from initial value and percentage
     param_new_value = param_default * (1 + percentage / 100)
+    return param_default, param_name, param_new_value
+
+
+def strForParamPerturbationFromParamInfo(csv_file_name_modelica_function, model_name, omc_logger_flags, param_default,
+                                         param_name,
+                                         param_new_value, include_param_val_rollback):
     # Human readable comment in resulting .mos
-    comment_tag_str = "\n// Perturbing parameter: {param_name}".format(param_name=param_name)
+    comment_tag_str = "// Perturbing parameter: {param_name}".format(param_name=param_name)
     # Simulation file name
     filename_and_cmd_defs_str = strForFilenameAndCmdDefs(csv_file_name_modelica_function, param_name, model_name,
                                                          omc_logger_flags)
     # Set parameter with new value, run, return parameter to default value
     set_new_value_str = set_xml_value_skeleton.format(model_name=model_name, param_name=param_name,
                                                       param_val=param_new_value)
-    run_cmd_str = run_system_command_str + "\n"
+    run_cmd_str = run_system_command_str
+    set_default_value_back_str = set_xml_value_skeleton.format(model_name=model_name, param_name=param_name,
+                                                               param_val=param_default)
     # Join the "perturb, run, de-perturb" strs into one
-    this_param_str = "\n".join([set_new_value_str, run_cmd_str])
-    # Join all the strs into one
-    temp_str = temp_str + comment_tag_str + filename_and_cmd_defs_str + this_param_str
-
-    perturbate_param_and_run_str = temp_str
-    return perturbate_param_and_run_str
+    base_strs_to_include = [comment_tag_str, filename_and_cmd_defs_str, set_new_value_str, run_cmd_str]
+    # See if we have to include or not the xml init rollback
+    if include_param_val_rollback:
+        strs_to_include = base_strs_to_include + [set_default_value_back_str]
+    else:
+        strs_to_include = base_strs_to_include
+    this_param_str = "\n".join(strs_to_include)
+    return this_param_str
 
 
 def strForLoadingAndBuilding(mo_file, model_name, startTime, stopTime):
