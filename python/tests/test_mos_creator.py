@@ -57,8 +57,13 @@ class TestsRunOMC(unittest.TestCase):
             if re.match('.*param_name.*\.csv$', x):
                 files_matching_regex.append(x)
         if len(files_matching_regex) != 1:
-            error_msg = "There is more than one CSV file matching with the param_name."
-            self.fail(error_msg)
+            if len(files_matching_regex) > 1:
+                error_msg = "There is more than one CSV file matching with the param_name."
+                self.fail(error_msg)
+            if len(files_matching_regex) < 1:
+                error_msg = "We couldn't find the CSV file with the param perturbed run results. Check that the " \
+                            "executable could be run (make sure /tmp is executable) "
+                self.fail(error_msg)
 
 
 # The following test requires that we test by hand if the parameter exists or not. OM doesn't fail if we try to set
