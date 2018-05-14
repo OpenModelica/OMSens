@@ -10,6 +10,7 @@ import filesystem.files_aux as files_aux
 import mos_writer.calculate_sensitivities_mos_writer
 import running.run_omc
 # Setup logging
+import settings.gral_settings
 from settings import settings_world3_sweep as world3_settings
 
 logger = logging.getLogger("-Individual Sens Calculator-")
@@ -50,7 +51,7 @@ def main():
         "stopTime": full_json["stop_time"],
         "parameters_to_perturbate_tuples": parameters_to_perturbate_tuples,
         "output_mos_path": output_mos_path,
-        "csv_file_name_modelica_function": world3_settings.calc_sens_csv_file_name_function,
+        "csv_file_name_modelica_function": settings.gral_settings.calc_sens_csv_file_name_function,
         "std_run_filename": std_run_filename,
     }
     # Call .mos creator
@@ -107,7 +108,7 @@ def csvPathAndParameterNameForFolderAndParametersInfo(output_folder_path, parame
     perturbed_csvs_path_and_info_pairs = []
     for param_info in parameters_info:
         param_name = param_info[0]
-        csv_name = world3_settings.calc_sens_csv_file_name_function(param_name)
+        csv_name = settings.gral_settings.calc_sens_csv_file_name_function(param_name)
         csv_path = os.path.join(output_folder_path, csv_name)
         perturbed_csvs_path_and_info_pairs.append((csv_path, param_info))
     return perturbed_csvs_path_and_info_pairs

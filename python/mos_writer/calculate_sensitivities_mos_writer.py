@@ -6,13 +6,14 @@ import platform
 
 # Mine
 import filesystem.files_aux as files_aux
+import settings.gral_settings
 from settings import settings_world3_sweep as world3_settings
 
 logger = logging.getLogger("--SensMosWriter--")  # this modules logger
 
 # Posibles lv para el omc_logger:
-# LOG_DEBUG: muestra todos los valores leidos del .xml (3k lineas)
-# LOG_SOLVER: muestra informacion sobre la jacobiana
+# LOG_DEBUG: shows all .xml read values (3k lines)
+# LOG_SOLVER: show jacobian matrix info
 # omc_logger_flags = "-w -lv=LOG_SOLVER"
 # omc_logger_flags = "-w"
 omc_logger_flags = ""
@@ -36,7 +37,7 @@ def mosCreationArgsFromJSON(json_file_path, output_mos_path, std_run_filename):
         "params_info_list": full_json["params_info_list"],
         "percentage": full_json["percentage"],
         "output_mos_path": output_mos_path,
-        "csv_file_name_modelica_function": world3_settings.calc_sens_csv_file_name_function,
+        "csv_file_name_modelica_function": settings.gral_settings.calc_sens_csv_file_name_function,
         "std_run_filename": std_run_filename,
     }
     return mos_creator_kwargs
@@ -174,16 +175,8 @@ def strForLoadingAndBuilding(mo_file, model_name, startTime, stopTime):
     return load_and_build_str
 
 
-def removeSpecialCharactersTo(param_name):
-    wo_left_bracket = param_name.replace("[", "_bracket_")
-    wo_both_brackets = wo_left_bracket.replace("]", "_bracket")
-    standarized_param_name = wo_both_brackets
-    return standarized_param_name
-
-
 def strForFilenameAndCmdDefs(csv_file_name_modelica_function, param_name, model_name, omc_logger_flags):
-    standarized_param_name = removeSpecialCharactersTo(param_name)
-    file_name_str = "file_name_i := " + '"' + csv_file_name_modelica_function(standarized_param_name) + '";'
+    file_name_str = "file_name_i := " + '"' + csv_file_name_modelica_function(param_name) + '";'
     # cmd str
     cmd_str = ""
     if platform.system() == "Linux":

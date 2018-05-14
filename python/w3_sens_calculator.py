@@ -2,6 +2,7 @@ import logging  # en reemplazo de los prints
 import os
 import sys
 
+import settings.gral_settings
 from individual_sens_calculator import csvPathAndParameterNameForFolderAndParametersInfo
 
 logger = logging.getLogger("--World3 Sensitivities Calculator--") #un logger especifico para este modulo
@@ -86,7 +87,9 @@ def runModelSweepingParametersInIsolation(percentage, startTime, stopTime, scens
     scen_num = scens_to_run[0] # only one scenario for now
     assert len(scens_to_run)==1, "Only one scenario for now"
     model_name = world3_settings._world3_scenario_model_skeleton.format(scen_num=scen_num) #global
-    mos_writer.calculate_sensitivities_mos_writer.createMos(mo_file,model_name,parameters_to_perturbate_tuples,output_mos_path,startTime,stopTime, world3_settings.calc_sens_csv_file_name_function)
+    mos_writer.calculate_sensitivities_mos_writer.createMos(mo_file, model_name, parameters_to_perturbate_tuples,
+                                                            output_mos_path, startTime, stopTime,
+                                                            settings.gral_settings.calc_sens_csv_file_name_function)
     logger.info("Running Modelica with specified information")
     running.run_omc.runMosScript(output_mos_path)
     perturbed_csvs_path_and_info_pairs = csvPathAndParameterNameForFolderAndParametersInfo(output_folder_path,
