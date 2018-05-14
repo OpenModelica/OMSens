@@ -5,12 +5,11 @@ import shutil
 import tempfile
 import unittest
 
-import filesystem.files_aux
-import mos_writer.calculate_sensitivities_mos_writer as sens_mos_writer
+import io
 # Ours
 import running.run_omc as omc_runner
-from settings import settings_world3_sweep as world3_settings
-
+import filesystem.files_aux
+import mos_writer.calculate_sensitivities_mos_writer as sens_mos_writer
 
 class TestsRunOMC(unittest.TestCase):
     # setup y teardown de los tests
@@ -45,7 +44,7 @@ class TestsRunOMC(unittest.TestCase):
                     self.fail("The file {0} is an invalid test file. It raised the following exception:\n {1}".format(
                         test_file_path, error_msg))
 
-    def test_indiv_sens_from_json_with_correct_data(self):
+    def test_indiv_sens_from_json_with_correct_data_runs_correctly(self):
         # Write simple model to temp dir
         mo_file_name = "model.mo"
         mo_file_path = os.path.join(self._temp_dir, mo_file_name)
@@ -54,19 +53,13 @@ class TestsRunOMC(unittest.TestCase):
         output_mos_name = "script.mos"
         output_mos_path = os.path.join(self._temp_dir, output_mos_name)
         std_run_filename = "std_run.csv"
+        # Set json string dynamically
+        valid_json_str = valid_json_skeleton.format(mo_file_path=mo_file_path)
+        # We have to write the json to file because for some reason the StringIO wrapper isn't working here
+        json_file_path = os.path.join(self._temp_dir, "test.json")
+        filesystem.files_aux.writeStrToFile(valid_json_str, json_file_path)
         # Prepare mos creator arguments
-        mos_creator_kwargs = {
-            "model_name": "Model",
-            "mo_file": mo_file_path,
-            "startTime": 0,
-            "stopTime": 2,
-            "parameters_to_perturbate_tuples": [("param_name", -1, 5)],
-            "output_mos_path": output_mos_path,
-            "csv_file_name_modelica_function": world3_settings.calc_sens_csv_file_name_function,
-            "std_run_filename": std_run_filename,
-        }
-        # Call .mos creator
-        sens_mos_writer.createMos(**mos_creator_kwargs)
+        sens_mos_writer.createMosFromJSON(json_file_path, output_mos_path, std_run_filename)
         process_output = omc_runner.runMosScript(output_mos_path)
         error_line = process_output.splitlines()[-1]
         # Assert that the script ends without error
@@ -90,34 +83,7 @@ class TestsRunOMC(unittest.TestCase):
 # The following test requires that we test by hand if the parameter exists or not. OM doesn't fail if we try to set
 #  a parameter that doesn't exist
 # def test_indiv_sens_from_json_fails_if_incorrect_param_name(self):
-#     # Write simple model to temp dir
-#     mo_file_name = "model.mo"
-#     mo_file_path = os.path.join(self._temp_dir, mo_file_name)
-#     filesystem.files_aux.writeStrToFile(model_str, mo_file_path)
-#     # Define names and paths for the other things
-#     output_mos_name = "script.mos"
-#     output_mos_path = os.path.join(self._temp_dir, output_mos_name)
-#     std_run_filename = "std_run.csv"
-#     # Prepare mos creator arguments
-#     mos_creator_kwargs = {
-#         "model_name": "Model",
-#         "mo_file": mo_file_path,
-#         "startTime": 0,
-#         "stopTime": 2,
-#         "parameters_to_perturbate_tuples": [("a", -1, 5)],
-#         "output_mos_path": output_mos_path,
-#         "csv_file_name_modelica_function": world3_settings.calc_sens_csv_file_name_function,
-#         "std_run_filename": std_run_filename,
-#     }
-#     # Call .mos creator
-#     sens_mos_writer.createMos(**mos_creator_kwargs)
-#     process_output = omc_runner.runMosScript(output_mos_path)
-#     error_line = process_output.splitlines()[-1]
-#     # Assert that the script ends without error
-#     if error_line != "false":
-#         error_msg = "The script should fail but it doesn't."
-#         self.fail(error_msg)
-
+#   pass
 
 model_str = \
     """
@@ -128,3 +94,14 @@ model_str = \
       der(x) = param_name*x;
     end Model;
     """
+valid_json_skeleton = \
+    """{{
+       "model_name": "Model",
+       "model_mo_path": "{mo_file_path}",
+       "percentage":5,
+       "start_time":0,
+       "stop_time":3,
+       "param_names":["param_name"],
+       "param_vals":[-1],
+       "vars_to_analyze":["x"]
+    }}"""
