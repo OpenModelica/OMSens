@@ -5,6 +5,7 @@ import pandas  # dataframes
 import unicodedata  # slugifying file names
 import re  # regular expressions
 import logging
+import filesystem.files_aux as files_aux
 
 logger = logging.getLogger("--ParameterSensAnalysis--")  # this modules logger
 
@@ -17,11 +18,16 @@ def completeIndividualSensAnalysis(perturbed_csvs_path_and_info_pairs, target_va
                                                                  perturbed_csvs_path_and_info_pairs,
                                                                  rms_first_year, rms_last_year, specific_year,
                                                                  std_run_csv_path, target_vars)
-    # Initialize dict with run infos paths, it will have one key per var
-    run_infos_paths = writeRunInfosAndReturnThePaths(output_folder_analyses_path, percentage_perturbed, rms_first_year,
+    # Create folder for complete sensitivity info per var
+    vars_sens_info_folder_name = "vars_sens_info"
+    vars_sens_info_folder_path = os.path.join(output_folder_analyses_path, vars_sens_info_folder_name)
+    files_aux.makeFolderWithPath(vars_sens_info_folder_path)
+
+    # Run infos paths, a dict with vars as keys and values the paths to their respective sens info
+    run_infos_paths = writeRunInfosAndReturnThePaths(vars_sens_info_folder_path, percentage_perturbed, rms_first_year,
                                                      rms_last_year, specific_year, target_vars, sens_to_params_per_var)
     # Add run infos paths to main dict with paths
-    analysis_files_paths["run_infos_per_var"] = run_infos_paths
+    analysis_files_paths["vars_sens_info"] = run_infos_paths
     return analysis_files_paths
 
 

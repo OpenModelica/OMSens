@@ -37,7 +37,7 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
         # Run analysis from simulation info
         analysis_files_paths = analysis.indiv_sens.completeIndividualSensAnalysis(**analyze_csvs_kwargs)
         # Test that that the resulting run info includes the basic info: all param names, default and perturbed vals, the variable and its value
-        run_infos_per_var = analysis_files_paths["run_infos_per_var"]
+        vars_sens_info = analysis_files_paths["vars_sens_info"]
         params_strs = [str(x) for param_info_tuple in analyze_csvs_kwargs["perturbed_csvs_path_and_info_pairs"] for x in param_info_tuple[1]]
         # Method results for the run being tested:
         g_rel_method_per_var = {
@@ -47,7 +47,7 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
         # Run info csvs:
         for t_var in analyze_csvs_kwargs["target_vars"]:
             # Read file into memory as str
-            run_info_path = run_infos_per_var[t_var]
+            run_info_path = vars_sens_info[t_var]
             run_info_str  = filesystem.files_aux.readStrFromFile(run_info_path)
             # Get the list of strings that the file must include
             strs_to_include = params_strs + g_rel_method_per_var[t_var]

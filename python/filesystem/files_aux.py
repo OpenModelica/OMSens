@@ -19,6 +19,10 @@ def makeOutputPath(folder_name="modelica_output"):
     return timestamp_dir
 
 
+def makeFolderWithPath(dest_path):
+    if not os.path.exists(dest_path):
+        os.makedirs(dest_path)
+
 def makeDirFromCurrentTimestamp(dest_path):
     logger.debug("Making timestamp dir")
     if not os.path.exists(dest_path):
