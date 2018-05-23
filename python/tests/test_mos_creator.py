@@ -69,6 +69,7 @@ class TestsRunOMC(unittest.TestCase):
         # Assert that there's a file containing the substring of the param of the model in the temp dir
         files_matching_regex = []
         for x in os.listdir(self._temp_dir):
+            # Get the list of files with filename containing the param name
             if re.match('.*param_name.*\.csv$', x):
                 files_matching_regex.append(x)
         if len(files_matching_regex) != 1:
