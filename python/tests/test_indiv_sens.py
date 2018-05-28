@@ -43,6 +43,7 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
         g_rel_method_per_var = {
             "h": [ "251928", "001858"],
         }
+        # Test sens info files
         # Iterate the results testing that they include the necessary information
         # Run info csvs:
         for t_var in analyze_csvs_kwargs["target_vars"]:
@@ -54,7 +55,20 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
             # Check that the strs are included
             for s in strs_to_include:
                 if s not in run_info_str:
-                    self.fail("The file should but doesn't include the string {0}.".format(s))
+                    self.fail("The sens info file should but doesn't include the string {0}.".format(s))
+        # Test sens matrices files
+        methods_correct_vals_tuples = [("rel", "251928"), ("rms", "04251")]
+        sens_mats_paths_dict = analysis_files_paths["sens_matrices"]
+        for method_name, str_to_include in methods_correct_vals_tuples:
+            # Get path for this method's matrix
+            mat_path = sens_mats_paths_dict[method_name]
+            # Read file into memory as str
+            mat_str = filesystem.files_aux.readStrFromFile(mat_path)
+            # Check that the strs are included
+            if str_to_include not in mat_str:
+                self.fail("The matrix file should but doesn't include the string {0}.".format(str_to_include))
+
+
 
     def test_different_shapes_raises_error(self):
         # For RMS we need all of the simulation results (std run and perturbed runs) to have the same amount of rows.

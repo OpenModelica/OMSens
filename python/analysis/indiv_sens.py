@@ -18,19 +18,117 @@ def completeIndividualSensAnalysis(perturbed_csvs_path_and_info_pairs, target_va
                                                                  perturbed_csvs_path_and_info_pairs,
                                                                  rms_first_year, rms_last_year, specific_year,
                                                                  std_run_csv_path, target_vars)
+    # Complete sensitivity information for each variable
+    vars_sens_infos_paths = sensitivitiesInformationPathsPerVariable(output_folder_analyses_path, percentage_perturbed,
+                                                                     rms_first_year, rms_last_year,
+                                                                     sens_to_params_per_var, specific_year, target_vars)
+    # Sensitivities matrices of "param/var" per method
+    sens_matrices_folder_path = generateAndWriteSensMatricesPerMethod(output_folder_analyses_path, rms_first_year,
+                                                                      rms_last_year,
+                                                                      sens_to_params_per_var)
+    # Add paths to main dict with paths
+    analysis_files_paths["vars_sens_info"] = vars_sens_infos_paths
+    analysis_files_paths["sens_matrices"] = sens_matrices_folder_path
+    return analysis_files_paths
+
+
+def generateAndWriteSensMatricesPerMethod(output_folder_analyses_path, rms_first_year, rms_last_year,
+                                          sens_to_params_per_var):
+    sens_matrices_folder_path = makeFolderForMethodsMatricesFiles(output_folder_analyses_path)
+    methods_records_dict = generateMatrixRecordsForEachSensitivityMethod(rms_first_year, rms_last_year,
+                                                                         sens_to_params_per_var)
+    df_rel_matrix_trans, df_rms_matrix_trans = methodsDataframesFromRecordsDict(methods_records_dict)
+    # Write the matrices to file
+    sens_matrices_paths = writeMethodsMatricesToFiles(df_rel_matrix_trans, df_rms_matrix_trans,
+                                                      sens_matrices_folder_path)
+    return sens_matrices_paths
+
+
+def makeFolderForMethodsMatricesFiles(output_folder_analyses_path):
+    # Create folder for matrices per method
+    sens_matrices_folder_name = "sens_matrices_per_method"
+    sens_matrices_folder_path = os.path.join(output_folder_analyses_path, sens_matrices_folder_name)
+    files_aux.makeFolderWithPath(sens_matrices_folder_path)
+    return sens_matrices_folder_path
+
+
+def generateMatrixRecordsForEachSensitivityMethod(rms_first_year, rms_last_year, sens_to_params_per_var):
+    # Initialize the dict that will have the records (rows of the matrix) for each method
+    methods_records_dict = {"Rel": [], "RMS": []}
+    # Generate the records (row of the matrix) from the sensitivities of the params vs vars
+    for var_name in sens_to_params_per_var:
+        rel_method_record, rms_method_record = methodsRecordsForVariable(rms_first_year, rms_last_year,
+                                                                         sens_to_params_per_var, var_name)
+        # Add the records from the methods to their respective keys in the final dict
+        methods_records_dict["Rel"].append(rel_method_record)
+        methods_records_dict["RMS"].append(rms_method_record)
+    return methods_records_dict
+
+
+def methodsRecordsForVariable(rms_first_year, rms_last_year, sens_to_params_per_var, var_name):
+    # Get the sens info associated with this variable
+    params_sens_to_var = sens_to_params_per_var[var_name]
+    # Initialize the records for this variable. Each record corresponds to a variable and has information of its
+    #   sensitivity to each parameter according to a given sensitivity method
+    rel_method_record = {"parameter/variable": var_name}
+    rms_method_record = {"parameter/variable": var_name}
+    # Iterate the parameters adding for each one its information for each sensitivity method
+    for param_name in params_sens_to_var:
+        addParamsMethodsValsToVarsRecords(param_name, params_sens_to_var, rel_method_record, rms_first_year,
+                                          rms_last_year, rms_method_record)
+    return rel_method_record, rms_method_record
+
+
+def addParamsMethodsValsToVarsRecords(param_name, params_sens_to_var, rel_method_record, rms_first_year, rms_last_year,
+                                      rms_method_record):
+    var_vs_param_sens = params_sens_to_var[param_name]
+    # Get relative method info
+    rel_method_val = var_vs_param_sens["(new-std)/std"]
+    # Add it to its respective record
+    rel_method_record[param_name] = rel_method_val
+    # Get RMS method info
+    rms_method_val = var_vs_param_sens["root_mean_square_{0}_to_{1}".format(rms_first_year, rms_last_year)]
+    # Add it to its respective record
+    rms_method_record[param_name] = rms_method_val
+
+
+def methodsDataframesFromRecordsDict(methods_records_dict):
+    # Generate dataframes from the matrices
+    df_rel_matrix = pandas.DataFrame.from_records(methods_records_dict["Rel"], index="parameter/variable")
+    df_rms_matrix = pandas.DataFrame.from_records(methods_records_dict["RMS"], index="parameter/variable")
+    # Transpose the matrices so we have the parameters as rows and the variables as columns
+    df_rel_matrix_trans = df_rel_matrix.transpose()
+    df_rms_matrix_trans = df_rms_matrix.transpose()
+    return df_rel_matrix_trans, df_rms_matrix_trans
+
+
+def writeMethodsMatricesToFiles(df_rel_matrix_trans, df_rms_matrix_trans, sens_matrices_folder_path):
+    # Write the relative method matrix to file
+    rel_mat_name = "relative_method_matrix.csv"
+    rel_mat_path = os.path.join(sens_matrices_folder_path, rel_mat_name)
+    df_rel_matrix_trans.to_csv(rel_mat_path)
+    # Write the RMS method matrix to file
+    rms_mat_name = "rms_method_matrix.csv"
+    rms_mat_path = os.path.join(sens_matrices_folder_path, rms_mat_name)
+    df_rms_matrix_trans.to_csv(rms_mat_path)
+    return {
+        "rel": rel_mat_path,
+        "rms": rms_mat_path,
+    }
+
+
+def sensitivitiesInformationPathsPerVariable(output_folder_analyses_path, percentage_perturbed, rms_first_year,
+                                             rms_last_year, sens_to_params_per_var, specific_year, target_vars):
     # Create folder for complete sensitivity info per var
     vars_sens_info_folder_name = "vars_sens_info"
     vars_sens_info_folder_path = os.path.join(output_folder_analyses_path, vars_sens_info_folder_name)
     files_aux.makeFolderWithPath(vars_sens_info_folder_path)
-
     # Run infos paths, a dict with vars as keys and values the paths to their respective sens info
     vars_sens_infos_paths = writeRunInfosAndReturnThePaths(vars_sens_info_folder_path, percentage_perturbed,
                                                            rms_first_year,
-                                                           rms_last_year, specific_year, target_vars, sens_to_params_per_var)
-    # Matrices paths. These may be used for heatmaps, for example
-    # Add run infos paths to main dict with paths
-    analysis_files_paths["vars_sens_info"] = vars_sens_infos_paths
-    return analysis_files_paths
+                                                           rms_last_year, specific_year, target_vars,
+                                                           sens_to_params_per_var)
+    return vars_sens_infos_paths
 
 
 def analysisPerParamPerturbedForEachVar(percentage_perturbed, perturbed_csvs_path_and_info_pairs, rms_first_year,
@@ -164,8 +262,9 @@ def varSensAnalysisInfodefaultColsOrder(percentage_perturbed, specific_year, rms
 def dataFrameWithSensAnalysisForVar(sens_to_params_per_var, target_var, columns_order):
     # Get sensitivities corresponding to this variable
     var_sens_per_param = sens_to_params_per_var[target_var]
-    # Create records from the sens to be used in the dataframe
+    # Make records from the sens to be used in the dataframe
     var_sens_per_param_records = [v for k, v in var_sens_per_param.items()]
+    # Create dataframe from the records
     df_run_info = pandas.DataFrame.from_records(var_sens_per_param_records, columns=columns_order)
     # Sort by diff column so we get the "most different" up top
     df_run_info = df_run_info.sort_values(by="ABS((new-std)/std)", ascending=False)
