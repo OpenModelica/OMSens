@@ -7,7 +7,6 @@ import platform
 # Mine
 import filesystem.files_aux as files_aux
 import settings.gral_settings
-from settings import settings_world3_sweep as world3_settings
 
 logger = logging.getLogger("--SensMosWriter--")  # this modules logger
 
@@ -20,13 +19,39 @@ omc_logger_flags = ""
 
 
 def createMosFromJSON(json_file_path, output_mos_path, std_run_filename):
-    mos_creator_kwargs = mosCreationArgsFromJSON(json_file_path, output_mos_path, std_run_filename)
-    createMos(**mos_creator_kwargs)
-    return 0
-
-
-def mosCreationArgsFromJSON(json_file_path, output_mos_path, std_run_filename):
+    # Read json
     full_json = readJSON(json_file_path)
+    mos_creator_kwargs = mosCreationArgsFromJSON(full_json, output_mos_path, std_run_filename)
+    createMos(**mos_creator_kwargs)
+    # TODO: The following results should be returned by the "createMos" function but it needs to be reified first
+    #   cont. of TODO: This works until we change the assumed convention inside createMos.
+    # TODO: It should also be an object named "MosScriptResults" or something of the sort.
+    mos_script_params_info_dict = {}
+    # Get the function that we use to have a convention of CSV names for perturbed parameters simulations results.
+    #  TODO: This function should be removed in the future in favor of just returning the file name in this function
+    csv_file_name_modelica_function = settings.gral_settings.calc_sens_csv_file_name_function
+    percentage = full_json["percentage"]
+    for param_perturb_specs in full_json["params_info_list"]:
+        # Gather perturbation specs for this param
+        param_name = param_perturb_specs["name"]
+        initial_val = param_perturb_specs["initial_val"]
+        # Create param info dict for output
+        param_info_in_mos = {
+            "simu_file_name": csv_file_name_modelica_function(param_name),
+            "std_val": initial_val,
+            "perturbed_val": initial_val * (1 + percentage / 100),
+        }
+        # Add param info for this param to the dict with all params infos
+        mos_script_params_info_dict[param_name] = param_info_in_mos
+    mos_script_info_dict = {
+        "perturbed_runs": mos_script_params_info_dict,
+        # TODO: The filename should be output of the mos creator function. It shouldn't be an input.
+        "std_run_filename": std_run_filename,
+    }
+    return mos_script_info_dict
+
+
+def mosCreationArgsFromJSON(full_json, output_mos_path, std_run_filename):
     mo_file_path = moFilePathFromJSONMoPath(full_json["model_mo_path"])
     # Set .mos creator arguments
     mos_creator_kwargs = {

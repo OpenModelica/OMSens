@@ -1,4 +1,5 @@
 # STD
+import argparse
 import json
 import logging  # instead of prints
 import os
@@ -11,7 +12,6 @@ import mos_writer.calculate_sensitivities_mos_writer as sens_mos_writer
 import running.run_omc
 # Setup logging
 import settings.gral_settings
-import argparse
 
 logger = logging.getLogger("-Individual Sens Calculator-")
 
@@ -19,17 +19,14 @@ logger = logging.getLogger("-Individual Sens Calculator-")
 def main():
     # Logging settings
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
-    # json_file_path = getCommandLineArguments()
+    json_file_path = getCommandLineArguments()
     # Args
-    json_file_path = "resource/test_files/individual/test_00.json"
     output_mos_name = "indiv_sens_sims.mos"
     std_run_filename = "std_run.csv"
     output_folder_path, output_mos_path, std_run_path = filesPathsInOutputFolder(output_mos_name, std_run_filename)
     sens_mos_writer.createMosFromJSON(json_file_path, output_mos_path, std_run_filename)
     # Run .mos
-    # ADAPTAR INFO PARA QUE DIGA TODA LA INFO A CORRER (modelo, path, etc):
     # logger.info("Calculating empirical parameter sensitivities for percentage {perc}, for all of the differentiable variables in W3 and target year {year_target}".format(perc=full_json["percentage"])
-    # ADAPTAR INFO PARA QUE DIGA TODA LA INFO A CORRER (modelo, path, etc)^
     logger.info("Running Modelica with specified information")
     running.run_omc.runMosScript(output_mos_path)
     # Read json
