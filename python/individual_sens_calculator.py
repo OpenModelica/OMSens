@@ -14,6 +14,7 @@ import running.run_omc
 import settings.gral_settings
 
 logger = logging.getLogger("-Individual Sens Calculator-")
+script_description = "Calculate variables sensitivities to parameters when perturbed in isolation"
 
 
 def main():
@@ -24,29 +25,28 @@ def main():
     output_mos_name = "indiv_sens_sims.mos"
     std_run_filename = "std_run.csv"
     output_folder_path, output_mos_path, std_run_path = filesPathsInOutputFolder(output_mos_name, std_run_filename)
-    sens_mos_writer.createMosFromJSON(json_file_path, output_mos_path, std_run_filename)
+    mos_info = sens_mos_writer.createMosFromJSON(json_file_path, output_mos_path, std_run_filename)
     # Run .mos
     # logger.info("Calculating empirical parameter sensitivities for percentage {perc}, for all of the differentiable variables in W3 and target year {year_target}".format(perc=full_json["percentage"])
     logger.info("Running Modelica with specified information")
-    mos_info =running.run_omc.runMosScript(output_mos_path)
+    running.run_omc.runMosScript(output_mos_path)
     # Read json
     with open(json_file_path, 'r') as fp:
         full_json = json.load(fp)
-    # Get csvs paths and info pairs
-    perturbed_csvs_path_and_info_pairs = csvPathAndParameterNameForFolderAndParametersInfo(
-        output_folder_path, parameters_to_perturbate_tuples)
-    # Calculate sensitivities
+        # Prepare analysis inputs
+    mos_perturbed_runs_info = mos_info["perturbed_runs"]
     analyze_csvs_kwargs = {
-        "perturbed_csvs_path_and_info_pairs": perturbed_csvs_path_and_info_pairs,
-        "std_run_csv_path": std_run_path,
-        "target_vars": full_json["vars_to_analyze"],
-        "percentage_perturbed": full_json["percentage"],
-        "specific_year": full_json["stop_time"],
-        "output_folder_analyses_path": output_folder_path,
-        "rms_first_year": full_json["start_time"],
-        "rms_last_year": full_json["stop_time"],
+        "perturbed_simus_info"        : mos_perturbed_runs_info,
+        "std_run_csv_path"            : std_run_path,
+        "target_vars"                 : full_json["vars_to_analyze"],
+        "percentage_perturbed"        : full_json["percentage"],
+        "specific_year"               : full_json["stop_time"],
+        "output_folder_analyses_path" : output_folder_path,
+        "rms_first_year"              : full_json["start_time"],
+        "rms_last_year"               : full_json["stop_time"],
     }
     logger.info("Analyzing variable sensitivities to parameters from CSVs")
+    # Calculate sensitivities
     analysis.indiv_sens.completeIndividualSensAnalysis(**analyze_csvs_kwargs)
 
 
