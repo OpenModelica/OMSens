@@ -46,7 +46,7 @@ def createMosFromJSON(json_file_path, output_mos_path, std_run_filename):
     mos_script_info_dict = {
         "perturbed_runs": mos_script_params_info_dict,
         # TODO: The filename should be output of the mos creator function. It shouldn't be an input.
-        "std_run_filename": std_run_filename,
+        "std_run_file_name": std_run_filename,
     }
     return mos_script_info_dict
 

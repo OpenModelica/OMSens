@@ -85,23 +85,32 @@ class TestsRunOMC(unittest.TestCase):
         # Prepare analysis inputs
         mos_perturbed_runs_info = mos_info["perturbed_runs"]
         # Create perturbed runs info list using the dict output form the mos script
-        #  TODO: adapt this test when we stop using tuples inside the analyzer and use proper objects instead
+        #  TODO: adapt this test when we stop using tuples inside the analyzer in favor of using proper objects to represent the info
         perturbed_csvs_path_and_info_pairs = []
         for param_name in mos_perturbed_runs_info:
+            # Gather simulation info from mos
             perturbed_run_info = mos_perturbed_runs_info[param_name]
-
-        [(os.path.join(self._temp_dir, run_info["simu_file_name"]), ()) for run_info in]
-
+            simu_file_name = perturbed_run_info["simu_file_name"]
+            std_val        = perturbed_run_info["std_val"]
+            perturbed_val  = perturbed_run_info["perturbed_val"]
+            # Get simulation file path from its name and the test folder
+            simu_file_path = os.path.join(self._temp_dir,simu_file_name)
+            # Create tuple from using info
+            perturb_tuple = (simu_file_path,(param_name,std_val,perturbed_val))
+            # Add tuple to list
+            perturbed_csvs_path_and_info_pairs.append(perturb_tuple)
+        # Get standard run simulation results file name and get its path using the temp dir
+        std_run_csv_name = mos_info["std_run_file_name"]
+        std_run_csv_path = os.path.join(self._temp_dir,std_run_csv_name)
         analyze_csvs_kwargs = {
-            "perturbed_csvs_path_and_info_pairs": [(StringIO(bb_e_perturbed_str), ('e', 0.7, 0.735)),
-                                                   (StringIO(bb_g_perturbed_str), ('g', 9.81, 10.3005))],
-            "std_run_csv_path": StringIO(bb_std_run_str),
-            "target_vars": ['h'],
-            "percentage_perturbed": 5,
-            "specific_year": 3,
-            "output_folder_analyses_path": self._temp_dir,
-            "rms_first_year": 0,
-            "rms_last_year": 3,
+            "perturbed_csvs_path_and_info_pairs": perturbed_csvs_path_and_info_pairs,
+            "std_run_csv_path"                  : std_run_csv_path,
+            "target_vars"                       : ['x'],
+            "percentage_perturbed"              : 5,
+            "specific_year"                     : 3,
+            "output_folder_analyses_path"       : self._temp_dir,
+            "rms_first_year"                    : 0,
+            "rms_last_year"                     : 3,
         }
         # We only test that it doesn't raise an error. The functional test is in its respective test class
         analysis_files_paths = analysis.indiv_sens.completeIndividualSensAnalysis(**analyze_csvs_kwargs)
@@ -112,6 +121,7 @@ class TestsRunOMC(unittest.TestCase):
 # def test_indiv_sens_from_json_fails_if_incorrect_param_name(self):
 #   pass
 
+# Data used for testing
 model_str = \
     """
     class Model
