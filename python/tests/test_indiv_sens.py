@@ -25,7 +25,21 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
         # Run info. This corresponds to a simulation that perturbed some parameters in isolation. To avoid running the simulation in this test,
         #   we save the simulation's result instead.
         analyze_csvs_kwargs = {
-            "perturbed_csvs_path_and_info_pairs" : [(StringIO(bb_e_perturbed_str), ('e', 0.7, 0.735)), (StringIO(bb_g_perturbed_str), ('g', 9.81, 10.3005))],
+            "perturbed_simus_info"               :
+                {
+                    "e":
+                        {
+                            "simu_file_path": StringIO(bb_e_perturbed_str),
+                            "std_val"       : 0.7,
+                            "perturbed_val" : 0.735,
+                        },
+                    "g":
+                        {
+                            "simu_file_path": StringIO(bb_g_perturbed_str),
+                            "std_val"       : 9.81,
+                            "perturbed_val" : 10.3005,
+                        }
+                },
             "std_run_csv_path"                   : StringIO(bb_std_run_str),
             "target_vars"                        : ['h'],
             "percentage_perturbed"               : 5,
@@ -38,7 +52,7 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
         analysis_files_paths = analysis.indiv_sens.completeIndividualSensAnalysis(**analyze_csvs_kwargs)
         # Test that that the resulting run info includes the basic info: all param names, default and perturbed vals, the variable and its value
         vars_sens_info = analysis_files_paths["vars_sens_info"]
-        params_strs = [str(x) for param_info_tuple in analyze_csvs_kwargs["perturbed_csvs_path_and_info_pairs"] for x in param_info_tuple[1]]
+        params_strs = ["e","g"]
         # Method results for the run being tested:
         g_rel_method_per_var = {
             "h": [ "251928", "001858"],
@@ -74,7 +88,21 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
         # For RMS we need all of the simulation results (std run and perturbed runs) to have the same amount of rows.
         # First sub-test: e has 1 more row
         analyze_csvs_kwargs_1 = {
-            "perturbed_csvs_path_and_info_pairs" : [(StringIO(bb_e_perturbed_2_str), ('e', 0.7, 0.735)), (StringIO(bb_g_perturbed_str), ('g', 9.81, 10.3005))],
+            "perturbed_simus_info"               :
+                {
+                    "e":
+                        {
+                            "simu_file_path": StringIO(bb_e_perturbed_2_str),
+                            "std_val"       : 0.7,
+                            "perturbed_val" : 0.735,
+                        },
+                    "g":
+                        {
+                            "simu_file_path": StringIO(bb_g_perturbed_str),
+                            "std_val"       : 9.81,
+                            "perturbed_val" : 10.3005,
+                        }
+                },
             "std_run_csv_path"                   : StringIO(bb_std_run_str),
             "target_vars"                        : ['h'],
             "percentage_perturbed"               : 5,
@@ -85,7 +113,21 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
         }
         # Second sub-test: g has 1 more row
         analyze_csvs_kwargs_2 = {
-            "perturbed_csvs_path_and_info_pairs" : [(StringIO(bb_e_perturbed_str), ('e', 0.7, 0.735)), (StringIO(bb_g_perturbed_2_str), ('g', 9.81, 10.3005))],
+            "perturbed_simus_info"               :
+                {
+                    "e":
+                        {
+                            "simu_file_path": StringIO(bb_e_perturbed_str),
+                            "std_val"       : 0.7,
+                            "perturbed_val" : 0.735,
+                        },
+                    "g":
+                        {
+                            "simu_file_path": StringIO(bb_g_perturbed_2_str),
+                            "std_val"       : 9.81,
+                            "perturbed_val" : 10.3005,
+                        }
+                },
             "std_run_csv_path"                   : StringIO(bb_std_run_str),
             "target_vars"                        : ['h'],
             "percentage_perturbed"               : 5,
@@ -96,7 +138,21 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
         }
         # Third sub-test: std has 1 more row
         analyze_csvs_kwargs_3 = {
-            "perturbed_csvs_path_and_info_pairs" : [(StringIO(bb_e_perturbed_str), ('e', 0.7, 0.735)), (StringIO(bb_g_perturbed_str), ('g', 9.81, 10.3005))],
+            "perturbed_simus_info"               :
+                {
+                    "e":
+                        {
+                            "simu_file_path": StringIO(bb_e_perturbed_str),
+                            "std_val"       : 0.7,
+                            "perturbed_val" : 0.735,
+                        },
+                    "g":
+                        {
+                            "simu_file_path": StringIO(bb_g_perturbed_2_str),
+                            "std_val"       : 9.81,
+                            "perturbed_val" : 10.3005,
+                        }
+                },
             "std_run_csv_path"                   : StringIO(bb_std_run_2_str),
             "target_vars"                        : ['h'],
             "percentage_perturbed"               : 5,

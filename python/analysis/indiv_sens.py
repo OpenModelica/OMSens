@@ -10,8 +10,21 @@ import filesystem.files_aux as files_aux
 logger = logging.getLogger("--ParameterSensAnalysis--")  # this modules logger
 
 
-def completeIndividualSensAnalysis(perturbed_csvs_path_and_info_pairs, target_vars, percentage_perturbed, specific_year,
+def completeIndividualSensAnalysis(perturbed_simus_info, target_vars, percentage_perturbed, specific_year,
                                    rms_first_year, rms_last_year, std_run_csv_path, output_folder_analyses_path):
+    # Create perturbed runs info list using the dict output form the mos script
+    #  TODO: adapt this function when we stop using tuples inside the analyzer in favor of using proper objects to represent the info
+    perturbed_csvs_path_and_info_pairs = []
+    for param_name in perturbed_simus_info:
+        # Gather simulation info from mos
+        perturbed_run_info = perturbed_simus_info[param_name]
+        simu_file_path = perturbed_run_info["simu_file_path"]
+        std_val        = perturbed_run_info["std_val"]
+        perturbed_val  = perturbed_run_info["perturbed_val"]
+        # Create tuple from using info
+        perturb_tuple = (simu_file_path,(param_name,std_val,perturbed_val))
+        # Add tuple to list
+        perturbed_csvs_path_and_info_pairs.append(perturb_tuple)
     # Initialize result with paths
     analysis_files_paths = {}
     sens_to_params_per_var = analysisPerParamPerturbedForEachVar(percentage_perturbed,

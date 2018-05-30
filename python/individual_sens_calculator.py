@@ -28,7 +28,7 @@ def main():
     # Run .mos
     # logger.info("Calculating empirical parameter sensitivities for percentage {perc}, for all of the differentiable variables in W3 and target year {year_target}".format(perc=full_json["percentage"])
     logger.info("Running Modelica with specified information")
-    running.run_omc.runMosScript(output_mos_path)
+    mos_info =running.run_omc.runMosScript(output_mos_path)
     # Read json
     with open(json_file_path, 'r') as fp:
         full_json = json.load(fp)

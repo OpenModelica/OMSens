@@ -28,8 +28,12 @@ def createMosFromJSON(json_file_path, output_mos_path, std_run_filename):
     # TODO: It should also be an object named "MosScriptResults" or something of the sort.
     mos_script_params_info_dict = {}
     # Get the function that we use to have a convention of CSV names for perturbed parameters simulations results.
-    #  TODO: This function should be removed in the future in favor of just returning the file name in this function
+    #  TODO: This function should be removed in the future in favor of just chossing a file name in this function and
+    #   cont. of TODO:  returning it.
     csv_file_name_modelica_function = settings.gral_settings.calc_sens_csv_file_name_function
+    # Get the path of the mos script to be created so we can return the path to the simulation results instead of just
+    #   their filenames.
+    mos_folder_path = os.path.dirname(output_mos_path)
     percentage = full_json["percentage"]
     for param_perturb_specs in full_json["params_info_list"]:
         # Gather perturbation specs for this param
@@ -37,7 +41,7 @@ def createMosFromJSON(json_file_path, output_mos_path, std_run_filename):
         initial_val = param_perturb_specs["initial_val"]
         # Create param info dict for output
         param_info_in_mos = {
-            "simu_file_name": csv_file_name_modelica_function(param_name),
+            "simu_file_path": os.path.join(mos_folder_path,csv_file_name_modelica_function(param_name)),
             "std_val": initial_val,
             "perturbed_val": initial_val * (1 + percentage / 100),
         }

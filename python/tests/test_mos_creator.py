@@ -84,26 +84,11 @@ class TestsRunOMC(unittest.TestCase):
         #   it may be too much consuming depending on hardware, we take advantage of the simulation in this test.
         # Prepare analysis inputs
         mos_perturbed_runs_info = mos_info["perturbed_runs"]
-        # Create perturbed runs info list using the dict output form the mos script
-        #  TODO: adapt this test when we stop using tuples inside the analyzer in favor of using proper objects to represent the info
-        perturbed_csvs_path_and_info_pairs = []
-        for param_name in mos_perturbed_runs_info:
-            # Gather simulation info from mos
-            perturbed_run_info = mos_perturbed_runs_info[param_name]
-            simu_file_name = perturbed_run_info["simu_file_name"]
-            std_val        = perturbed_run_info["std_val"]
-            perturbed_val  = perturbed_run_info["perturbed_val"]
-            # Get simulation file path from its name and the test folder
-            simu_file_path = os.path.join(self._temp_dir,simu_file_name)
-            # Create tuple from using info
-            perturb_tuple = (simu_file_path,(param_name,std_val,perturbed_val))
-            # Add tuple to list
-            perturbed_csvs_path_and_info_pairs.append(perturb_tuple)
         # Get standard run simulation results file name and get its path using the temp dir
         std_run_csv_name = mos_info["std_run_file_name"]
         std_run_csv_path = os.path.join(self._temp_dir,std_run_csv_name)
         analyze_csvs_kwargs = {
-            "perturbed_csvs_path_and_info_pairs": perturbed_csvs_path_and_info_pairs,
+            "perturbed_simus_info"             : mos_perturbed_runs_info,
             "std_run_csv_path"                  : std_run_csv_path,
             "target_vars"                       : ['x'],
             "percentage_perturbed"              : 5,
