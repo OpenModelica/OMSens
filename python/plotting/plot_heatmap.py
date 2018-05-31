@@ -41,6 +41,7 @@ def readCSVAndPreprocessData(input_matrix_path,columns_to_plot,rows_to_plot):
     # Sort by alphabetical order and/or sum of cells
     data = sortIndicesAndOrColumns(data)
     return data
+
 def plotHeatmapFromData(data,plot_folder_path,plot_title,linthresh,vars_name_to_ID_dict,params_name_to_ID_dict):
     ### Abbreviate parameters and vars to their IDs from world3_specific/(?).py so the info fits better in the heatmap
     # THere are many variables dicts (differentiable, not diferrentiable, differentiable extra, etc)
@@ -64,7 +65,8 @@ def plotHeatmapFromData(data,plot_folder_path,plot_title,linthresh,vars_name_to_
     # Numpy's min and max
     min_of_all = np.nanmin(np_data)
     max_of_all = np.nanmax(np_data)
-    # Calculate the upper and lower limits in the colorbar. This is to make both equals and in that way the middle of the colorbar, where the white color is located, is set to the value 0
+    # Calculate the upper and lower limits in the colorbar. This is to have the 0 located in the middle and both colors
+    #  of equal distribution.
     colorbar_limit_min, colorbar_limit_max = colorbarLimitsFromMinAndMax(min_of_all,max_of_all)
     #
     # Choose  the color scheme:
@@ -76,8 +78,10 @@ def plotHeatmapFromData(data,plot_folder_path,plot_title,linthresh,vars_name_to_
     plot_name ="heatmap_logscale.png"
     fig,ax = initializeFigAndAx(data,abbreviated_indices,abbreviated_columns)
     plotHeatmapInLogarithmicScaleFromFigAxAndData(fig,ax,np_data,colorbar_limit_min,colorbar_limit_max,linthresh,colormap)
+    plotHeatmapInLinearScaleFromFigAxAndData(fig, ax, np_data, colorbar_limit_min, colorbar_limit_max, colormap)
     configurePlotTicks()
-    addHatchesToEmphasizeCertainValues(ax, cells_with_0, cells_with_0_initialkwargs, cells_with_nans, cells_with_nans_initialkwargs)
+    addPatchesToEmphasizeCertainValues(ax, cells_with_0, cells_with_0_initialkwargs, cells_with_nans,
+                                       cells_with_nans_initialkwargs)
     addLegendForPatches(cells_with_0_initialkwargs,cells_with_nans_initialkwargs)
     postProcessingSettings(plot_title)
     saveAndClearPlot(plot_name,plot_folder_path)
@@ -87,7 +91,8 @@ def plotHeatmapFromData(data,plot_folder_path,plot_title,linthresh,vars_name_to_
     fig,ax = initializeFigAndAx(data,abbreviated_indices,abbreviated_columns)
     plotHeatmapInLinearScaleFromFigAxAndData(fig,ax,np_data,colorbar_limit_min,colorbar_limit_max,colormap)
     configurePlotTicks()
-    addHatchesToEmphasizeCertainValues(ax, cells_with_0, cells_with_0_initialkwargs, cells_with_nans, cells_with_nans_initialkwargs)
+    addPatchesToEmphasizeCertainValues(ax, cells_with_0, cells_with_0_initialkwargs, cells_with_nans,
+                                       cells_with_nans_initialkwargs)
     addLegendForPatches(cells_with_0_initialkwargs,cells_with_nans_initialkwargs)
     postProcessingSettings(plot_title)
     saveAndClearPlot(plot_name,plot_folder_path)
@@ -189,9 +194,10 @@ def absForPossibleNaNs(number):
 
 def sortIndicesAndOrColumns(data):
     ### Sort indices by sum of absolute values:
-      # Create a new column with the sum of the absolute values
+    # Create a new column with the sum of the absolute values
     data["abs_sum"] = data.apply(lambda x: sum([absForPossibleNaNs(x[col]) for col in data.columns]),axis=1)
-      # Sort by that column and delete the column (both sort and drop return a new dataframe, so to minimize code lines i put them together)
+    # Sort by that column and delete the column (both "sort" and "drop" return a new dataframe, so to minimize the lines
+    # of code we put them together)
     data = data.sort_values("abs_sum",ascending=False).drop("abs_sum",axis=1)
 
     ### Sort data's indices by alphabetical order
@@ -304,7 +310,9 @@ def chooseColormapFromMin(min_of_all):
         colormap = matplotlib.cm.get_cmap("bwr")
     return colormap
 
-def addHatchesToEmphasizeCertainValues(ax, cells_with_0, cells_with_0_initialkwargs, cells_with_nans, cells_with_nans_initialkwargs):
+
+def addPatchesToEmphasizeCertainValues(ax, cells_with_0, cells_with_0_initialkwargs, cells_with_nans,
+                                       cells_with_nans_initialkwargs):
     # Put an x over cells which have value NaN
     for j, i in np.column_stack(np.where(cells_with_nans)):
         copy_of_dict = dict(cells_with_nans_initialkwargs)
