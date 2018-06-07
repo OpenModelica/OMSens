@@ -14,8 +14,17 @@ import world3_specific.standard_run_params_defaults
 import filesystem.files_aux
 
 
-def main():
-    pass
+def plotHeatmapFromMatrixAsDataFrame(df_matrix):
+    # Since the logarithm of values close to zero tends toward infinity, a small range around zero
+    # needs to be mapped linearly. The parameter linthresh allows the user to specify the size of this range (
+    # -linthresh, linthresh). The size of this range in the colormap is set by linscale. When linscale == 1.0 (the
+    # default), the space used for the positive and negative halves of the linear range will be equal to one decade
+    # in the logarithmic range.
+    linthresh = 1.0
+
+
+# The functions from here on still need to be adapted:
+
 # Central function
 def readCSVMatrixAndPlotHeatmap(input_matrix_path,plot_folder_path,plot_title,columns_to_plot=False,rows_to_plot=False):
     linthresh = 1.0 #Since the logarithm of values close to zero tends toward infinity, a small range around zero needs to be mapped linearly. The parameter linthresh allows the user to specify the size of this range (-linthresh, linthresh). The size of this range in the colormap is set by linscale. When linscale == 1.0 (the default), the space used for the positive and negative halves of the linear range will be equal to one decade in the logarithmic range.
@@ -331,6 +340,3 @@ def addLegendForPatches(cells_with_0_initialkwargs,cells_with_nans_initialkwargs
     cells_with_0_patch_legend = mpatches.Rectangle(**copy_of_dict_0s)
     nans_legend               = mpatches.Rectangle(**copy_of_dict_nans)
     plt.legend(handles=[cells_with_0_patch_legend,nans_legend],loc="upper left", bbox_to_anchor=(1.03, 1.07))
-
-if __name__ == "__main__":
-    main()
