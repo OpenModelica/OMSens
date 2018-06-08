@@ -23,14 +23,19 @@ class Heatmap:
         #   in the logarithmic range.
         # Save input df
         self.df_input = df_input
+        # Manipulate input dataframe
+        df_heatmap = self.manipulateInputDataframe(df_input)
+        # Save the dataframe corresponding to the heatmap to be created
+        self.df_heatmap = df_heatmap
+
+    def manipulateInputDataframe(self, df_input):
         # Make a copy of the input dataframe
         df_heatmap_tmp = df_input.copy()
         # Sort parameters
         df_heatmap_tmp = self.sortIndexBySumOfColumns(df_heatmap_tmp)
         # Sort data's columns by alphabetical order
         df_heatmap_tmp = self.sortColumnsByAlphabeticalOrder(df_heatmap_tmp)
-        # Save the dataframe corresponding to the heatmap to be created
-        self.df_heatmap = df_heatmap_tmp
+        return df_heatmap_tmp
 
     def sortColumnsByAlphabeticalOrder(self, df_heatmap_tmp):
         df_heatmap_tmp = df_heatmap_tmp.sort_index(axis=1)
