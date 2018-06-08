@@ -27,9 +27,14 @@ class Heatmap:
         df_heatmap_tmp = df_input.copy()
         # Sort parameters
         df_heatmap_tmp = self.sortIndexBySumOfColumns(df_heatmap_tmp)
-
-        # Save dataframe to be used for heatmap creation
+        # Sort data's columns by alphabetical order
+        df_heatmap_tmp = self.sortColumnsByAlphabeticalOrder(df_heatmap_tmp)
+        # Save the dataframe corresponding to the heatmap to be created
         self.df_heatmap = df_heatmap_tmp
+
+    def sortColumnsByAlphabeticalOrder(self, df_heatmap_tmp):
+        df_heatmap_tmp = df_heatmap_tmp.sort_index(axis=1)
+        return df_heatmap_tmp
 
     def sortIndexBySumOfColumns(self, df_heatmap_tmp):
         ### Sort indices by sum of absolute values:
