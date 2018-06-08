@@ -13,14 +13,34 @@ logger = logging.getLogger("--Heatmap Plotter--") #un logger especifico para est
 import world3_specific.standard_run_params_defaults
 import filesystem.files_aux
 
+class Heatmap:
+    def __init__(self, df_input, linthresh=1.0):
+        # linthresh:
+        #   Since the logarithm of values close to zero tends toward infinity, a small range around zero
+        #   needs to be mapped linearly. The parameter linthresh allows the user to specify the size of this range (
+        #   -linthresh, linthresh). The size of this range in the colormap is set by linscale. When linscale == 1.0 (the
+        #   default), the space used for the positive and negative halves of the linear range will be equal to one decade
+        #   in the logarithmic range.
+        # Save input df
+        self.df_input = df_input
+        # Sort parameters
+        df_heatmap_tmp = df_input.copy()
+        ### Sort indices by sum of absolute values:
+        # Create a new column with the sum of the absolute values
+        df_heatmap_tmp["abs_sum"] = df_heatmap_tmp.apply(lambda x: sum([absForPossibleNaNs(x[col]) for col in df_heatmap_tmp.columns]),axis=1)
+        # Sort by that column and delete the column (both "sort" and "drop" return a new dataframe, so to minimize the lines
+        # of code we put them together)
+        df_heatmap_tmp = df_heatmap_tmp.sort_values("abs_sum",ascending=False).drop("abs_sum",axis=1)
+
+        # Save dataframe to be used for heatmap creation
+        self.df_heatmap = df_heatmap_tmp
+    def heatmapDataFrame(self):
+        return self.df_heatmap
+
+
 
 def plotHeatmapFromMatrixAsDataFrame(df_matrix):
-    # Since the logarithm of values close to zero tends toward infinity, a small range around zero
-    # needs to be mapped linearly. The parameter linthresh allows the user to specify the size of this range (
-    # -linthresh, linthresh). The size of this range in the colormap is set by linscale. When linscale == 1.0 (the
-    # default), the space used for the positive and negative halves of the linear range will be equal to one decade
-    # in the logarithmic range.
-    linthresh = 1.0
+    pass
 
 
 # The functions from here on still need to be adapted:
