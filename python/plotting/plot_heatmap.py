@@ -23,17 +23,24 @@ class Heatmap:
         #   in the logarithmic range.
         # Save input df
         self.df_input = df_input
-        # Sort parameters
+        # Make a copy of the input dataframe
         df_heatmap_tmp = df_input.copy()
-        ### Sort indices by sum of absolute values:
-        # Create a new column with the sum of the absolute values
-        df_heatmap_tmp["abs_sum"] = df_heatmap_tmp.apply(lambda x: sum([absForPossibleNaNs(x[col]) for col in df_heatmap_tmp.columns]),axis=1)
-        # Sort by that column and delete the column (both "sort" and "drop" return a new dataframe, so to minimize the lines
-        # of code we put them together)
-        df_heatmap_tmp = df_heatmap_tmp.sort_values("abs_sum",ascending=False).drop("abs_sum",axis=1)
+        # Sort parameters
+        df_heatmap_tmp = self.sortIndexBySumOfColumns(df_heatmap_tmp)
 
         # Save dataframe to be used for heatmap creation
         self.df_heatmap = df_heatmap_tmp
+
+    def sortIndexBySumOfColumns(self, df_heatmap_tmp):
+        ### Sort indices by sum of absolute values:
+        # Create a new column with the sum of the absolute values
+        df_heatmap_tmp["abs_sum"] = df_heatmap_tmp.apply(
+            lambda x: sum([absForPossibleNaNs(x[col]) for col in df_heatmap_tmp.columns]), axis=1)
+        # Sort by that column and delete the column (both "sort" and "drop" return a new dataframe, so to minimize the lines
+        # of code we put them together)
+        df_heatmap_tmp = df_heatmap_tmp.sort_values("abs_sum", ascending=False).drop("abs_sum", axis=1)
+        return df_heatmap_tmp
+
     def heatmapDataFrame(self):
         return self.df_heatmap
 
