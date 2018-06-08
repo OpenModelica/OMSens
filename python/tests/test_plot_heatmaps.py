@@ -3,6 +3,7 @@ import shutil  # para borrar el tempdir
 import tempfile  # para crear el tempdir
 import unittest
 import io
+import os
 
 # Std
 import pandas
@@ -58,6 +59,25 @@ class TestPlotHeatmap(unittest.TestCase):
             if heatmap_var != correct_var:
                 error_msg = "The heatmap should have the following vars order:\n {0}\n but instead it has the following:\n {1}".format(correct_params_cols,df_manipulated_cols)
                 self.fail(error_msg)
+
+    def test_heatmap_plot_creates_files_in_folder(self):
+        """ Test that the plot function creates files with plot extensions in the indicated path."""
+        # Get dataframe from test data
+        df_path = io.StringIO(good_df_matrix)
+        df = pandas.read_csv(df_path,index_col=0)
+        # Initialize heatmap
+        heatmap = plot_heatmap.Heatmap(df)
+        # Plot heatmap into temp folder path
+        heatmap.plotInFolder(self._temp_dir)
+        # Get plots extensions regex
+        regex = '.*\.(png|svg)$'
+        # Get list of files from regex
+        files_in_dir = os.listdir(self._temp_dir)
+        plot_files = [x for x in files_in_dir if re.match(regex,x)]
+        # Check that there is at least one plot
+        if len(plot_files)<1:
+            error_msg = "The plot function should create at least one plot file in the destination folder."
+            self.fail(error_msg)
 
 # Test examples
 good_df_matrix = \

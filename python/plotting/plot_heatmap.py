@@ -14,6 +14,7 @@ import world3_specific.standard_run_params_defaults
 import filesystem.files_aux
 
 class Heatmap:
+    # Instance functions
     def __init__(self, df_input, linthresh=1.0):
         # linthresh:
         #   Since the logarithm of values close to zero tends toward infinity, a small range around zero
@@ -28,6 +29,10 @@ class Heatmap:
         # Save the dataframe corresponding to the heatmap to be created
         self.df_heatmap = df_heatmap
 
+    def plotInFolder(self,dest_folder_path):
+        pass
+
+    # Auxs:
     def manipulateInputDataframe(self, df_input):
         # Make a copy of the input dataframe
         df_heatmap_tmp = df_input.copy()
