@@ -4,6 +4,7 @@ import tempfile  # para crear el tempdir
 import unittest
 import io
 import os
+import re
 
 # Std
 import pandas

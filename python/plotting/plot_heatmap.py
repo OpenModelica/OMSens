@@ -30,7 +30,20 @@ class Heatmap:
         self.df_heatmap = df_heatmap
 
     def plotInFolder(self,dest_folder_path):
-        pass
+        # The rows and columns names are the same as in the df for now
+        rows_names = self.df_heatmap.index.values.tolist()
+        cols_names = self.df_heatmap.columns.values.tolist()
+        # Initialize figure and axes with heatmap configurations
+        fig,ax = initializeFigAndAx(self.df_heatmap,rows_names,cols_names)
+        # Plot in figure and ax
+        heatmap_plot = ax.pcolor(self.df_heatmap)
+        # Add the color bar
+        cbar = fig.colorbar(heatmap_plot)
+        # Save plot in folder
+        plot_name = "heatmap.png"
+        plot_path = os.path.join(dest_folder_path,plot_name)
+        plt.savefig(plot_path,bbox_inches='tight')
+        plt.clf()
 
     # Auxs:
     def manipulateInputDataframe(self, df_input):
@@ -59,10 +72,27 @@ class Heatmap:
     def heatmapDataFrame(self):
         return self.df_heatmap
 
-
-
-def plotHeatmapFromMatrixAsDataFrame(df_matrix):
-    pass
+def initializeFigAndAx(data, rows_names, cols_names):
+    # Plot it out
+    fig, ax = plt.subplots()
+    # Set xlim and ylim manually because matplotlib has an internal bug that adds empty columns and rows because it
+    # thinks (wrongly) that there are n+1 rows and m+1 columns
+    ax.set_ylim(0,len(data.index))
+    ax.set_xlim(0,len(data.columns))
+    # Format
+    fig.set_size_inches(10, 11)
+    # put the major ticks at the middle of each cell
+    ax.set_yticks(np.arange(data.shape[0]) + 0.5, minor=False)
+    ax.set_xticks(np.arange(data.shape[1]) + 0.5, minor=False)
+    # want a more natural, table-like display
+    ax.invert_yaxis()
+    ax.xaxis.tick_top()
+    # With abbreviated string names
+    ax.set_xticklabels(cols_names, minor=False, fontsize=14)
+    ax.set_yticklabels(rows_names, minor=False, fontsize=14)
+    # Set the heatmap grid as false
+    ax.grid(False)
+    return fig, ax
 
 
 # The functions from here on still need to be adapted:
@@ -268,34 +298,6 @@ def saveAndClearPlot(plot_name,plot_folder_path):
 
     plt.clf()
 
-def initializeFigAndAx(data,abbreviated_indices,abbreviated_columns):
-    # Plot it out
-    fig, ax = plt.subplots()
-
-    # Set xlim and ylim manually because matplotlib has an internal bug that adds empty columns and rows because it thinks (wrongly) that there are n+1 rows and m+1 columns
-    ax.set_ylim(0,len(data.index))
-    ax.set_xlim(0,len(data.columns))
-
-    # Format
-    fig.set_size_inches(10, 11)
-
-    # put the major ticks at the middle of each cell
-    ax.set_yticks(np.arange(data.shape[0]) + 0.5, minor=False)
-    ax.set_xticks(np.arange(data.shape[1]) + 0.5, minor=False)
-
-    # want a more natural, table-like display
-    ax.invert_yaxis()
-    ax.xaxis.tick_top()
-
-    ## With long string names
-    # ax.set_xticklabels(data.columns, minor=False)
-    # ax.set_yticklabels(data.index, minor=False)
-    ## With abbreviated string names
-    ax.set_xticklabels(abbreviated_columns, minor=False, fontsize=14)
-    ax.set_yticklabels(abbreviated_indices, minor=False, fontsize=14)
-
-    ax.grid(False)
-    return fig,ax
 def plotHeatmapInLogarithmicScaleFromFigAxAndData(fig,ax,np_data,colorbar_limit_min,colorbar_limit_max,linthresh,colormap):
     # Logarithmic scale
     heatmap = ax.pcolor(np_data, cmap=colormap, norm=SymLogNorm(vmin=colorbar_limit_min, vmax=colorbar_limit_max,linthresh=linthresh))
