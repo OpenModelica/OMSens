@@ -43,6 +43,7 @@ class Heatmap:
         plot_name = "heatmap.png"
         plot_path = os.path.join(dest_folder_path,plot_name)
         plt.savefig(plot_path,bbox_inches='tight')
+        # Clear plot in case there are more plots coming
         plt.clf()
 
     # Auxs:
@@ -95,7 +96,7 @@ def initializeFigAndAx(data, rows_names, cols_names):
     return fig, ax
 
 
-# The functions from here on still need to be adapted:
+# The functions from here on still need to be adapted and are deprecated:
 
 # Central function
 def readCSVMatrixAndPlotHeatmap(input_matrix_path,plot_folder_path,plot_title,columns_to_plot=False,rows_to_plot=False):
