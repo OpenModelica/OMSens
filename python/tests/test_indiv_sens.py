@@ -81,6 +81,7 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
             # Check that the strs are included
             if str_to_include not in mat_str:
                 self.fail("The matrix file should but doesn't include the string {0}.".format(str_to_include))
+        # Test heatmap files
 
 
 

@@ -29,6 +29,7 @@ def completeIndividualSensAnalysis(perturbed_simus_info, target_vars, percentage
     sens_matrices_folder_path = generateAndWriteSensMatricesPerMethod(output_folder_analyses_path, rms_first_year,
                                                                       rms_last_year,
                                                                       sens_to_params_per_var)
+    #
     # Add paths to main dict with paths
     analysis_files_paths["vars_sens_info"] = vars_sens_infos_paths
     analysis_files_paths["sens_matrices"] = sens_matrices_folder_path
@@ -200,7 +201,8 @@ def writeRunInfosAndReturnThePaths(output_folder_analyses_path, percentage_pertu
     for target_var in target_vars:
         df_run_info = dataFrameWithSensAnalysisForVar(sens_to_params_per_var, target_var, columns_order)
         # Write sensitivity df to csv file
-        run_info_path = writeRunInfoFromDF(df_run_info, target_var, output_folder_analyses_path)
+        run_info_path = dfPathFromFolderPathAndVarName(output_folder_analyses_path, target_var)
+        df_run_info.to_csv(run_info_path, index=False)
         # Add file path to run infos paths dict
         run_infos_paths[target_var] = run_info_path
     return run_infos_paths
@@ -288,12 +290,10 @@ def dataFrameWithSensAnalysisForVar(sens_to_params_per_var, target_var, columns_
     df_run_info = df_run_info.sort_values(by="ABS((new-std)/std)", ascending=False)
     return df_run_info
 
-
-def writeRunInfoFromDF(df_run_info, target_var, output_folder_analyses_path):
+def dfPathFromFolderPathAndVarName(output_folder_analyses_path, target_var):
     var_name_slugified = slugify(target_var)
     var_sens_csv_file_name = "sens_{0}.csv".format(var_name_slugified)
     output_analysis_path = os.path.join(output_folder_analyses_path, var_sens_csv_file_name)
-    df_run_info.to_csv(output_analysis_path, index=False)
     return output_analysis_path
 
 
