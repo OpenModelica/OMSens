@@ -7,7 +7,7 @@ import unittest
 
 import running.run_omc as omc_runner
 # Mine
-import tests.aux_tests
+import testing.aux_tests
 
 
 class TestsRunOMC(unittest.TestCase):
@@ -55,9 +55,9 @@ class TestsRunOMC(unittest.TestCase):
 ###########
 def createTMPMos(file_str, test_case):
     # Creates mos script in temp folder
-    return tests.aux_tests.createTempFromStrIntoTestCaseTempFolder(file_str, test_case, "script.mos")
+    return testing.aux_tests.createTempFromStrIntoTestCaseTempFolder(file_str, test_case, "script.mos")
     # Creates stand alone tempfile
-    # return tests.aux_tests.createTempFromStrAndAddToTestCase(file_str,test_case,suffix=".mos")
+    # return testing.aux_tests.createTempFromStrAndAddToTestCase(file_str,test_case,suffix=".mos")
 
 
 model_str = \
