@@ -1,0 +1,19 @@
+nparams
+1
+params_names
+nr_resources_init
+params_values
+1000000000000
+lower_bounds
+1000
+upper_bounds
+2000000000000
+stopTime
+2100
+ntarget_vars
+1
+target_vars
+population
+# This line and the ones following it will be ignored. You can use them as documentation
+
+Test 1 param, maximize population, very low and very high bounds for param, stoptime 2100

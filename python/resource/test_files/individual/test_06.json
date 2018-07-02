@@ -1,0 +1,439 @@
+{
+  "test_desc": "Sensitivities of all differentiable params to the first year of the run. Used to compare with dynamic sensitivities",
+  "model_name": "SystemDynamics.WorldDynamics.World3.Scenario_1",
+  "model_mo_path": "resource/sys_dyn/pop_state_var_new/SystemDynamics/package.mo",
+  "vars_to_analyze": [
+    "Arable_Land_Dynamics1.Arable_Land.Integrator1.y",
+    "NR_Resource_Utilization1.P_Nr_Res_Use_Fact_2.Smooth2.Integrator1.y",
+    "Population_Dynamics1.Pop_65plus.Integrator1.y",
+    "NR_Resource_Utilization1.P_Nr_Res_Use_Fact_2.Smooth3.Integrator1.y",
+    "Arable_Land_Dynamics1.Pot_Arable_Land.Integrator1.y",
+    "Arable_Land_Dynamics1.Urban_Ind_Land.Integrator1.y",
+    "NR_Resource_Utilization1.P_Nr_Res_Use_Fact_2.Smooth1.Integrator1.y",
+    "Life_Expectancy1.Eff_Hlth_Serv_PC.Smooth_of_Input.Integrator1.y",
+    "Pollution_Dynamics1.P_PPoll_Gen_Fact_2.Smooth3.Integrator1.y",
+    "Pollution_Dynamics1.Pers_Pollution.Integrator1.y",
+    "Human_Fertility1.Fert_Cont_Facil_PC.Smooth3.Integrator1.y",
+    "Human_Fertility1.Perc_Life_Expectancy.Smooth1.Integrator1.y",
+    "Pollution_Dynamics1.PPoll_Appear_Rate.Smooth1.Integrator1.y",
+    "Pollution_Dynamics1.PPoll_Appear_Rate.Smooth2.Integrator1.y",
+    "Human_Fertility1.Avg_Ind_Out_PC.Smooth_of_Input.Integrator1.y",
+    "NR_Resource_Utilization1.Res_Tech_NRTD.Integrator1.y",
+    "Human_Fertility1.Fert_Cont_Facil_PC.Smooth1.Integrator1.y",
+    "Labor_Utilization1.Labor_Util_Fr_Del.Integrator1.y",
+    "NR_Resource_Utilization1.NR_Resources.Integrator1.y",
+    "Industrial_Investment1.Industrial_Capital.Integrator1.y",
+    "Human_Fertility1.Perc_Life_Expectancy.Smooth3.Integrator1.y",
+    "Human_Fertility1.Del_Ind_Out_PC.Smooth3.Integrator1.y",
+    "Population_Dynamics1.Pop_0_14.Integrator1.y",
+    "Human_Fertility1.Del_Ind_Out_PC.Smooth2.Integrator1.y",
+    "Pollution_Dynamics1.PPoll_Tech_PTD.Integrator1.y",
+    "Pollution_Dynamics1.P_PPoll_Gen_Fact_2.Smooth1.Integrator1.y",
+    "Human_Fertility1.Fert_Cont_Facil_PC.Smooth2.Integrator1.y",
+    "Food_Production1.Perc_Food_Ratio.Integrator1.y",
+    "Human_Fertility1.Del_Ind_Out_PC.Smooth1.Integrator1.y",
+    "Pollution_Dynamics1.P_PPoll_Gen_Fact_2.Smooth2.Integrator1.y",
+    "Population_Dynamics1.Pop_15_44.Integrator1.y",
+    "Food_Production1.Agr_Inp.Integrator1.y",
+    "Pollution_Dynamics1.PPoll_Appear_Rate.Smooth3.Integrator1.y",
+    "Food_Production1.P_Land_Yield_Fact_2.Smooth1.Integrator1.y",
+    "Land_Fertility1.Yield_Tech_LYTD.Integrator1.y",
+    "Human_Fertility1.Perc_Life_Expectancy.Smooth2.Integrator1.y",
+    "Population_Dynamics1.Pop_45_64.Integrator1.y",
+    "Food_Production1.P_Land_Yield_Fact_2.Smooth3.Integrator1.y",
+    "Land_Fertility1.Land_Fertility.Integrator1.y",
+    "Service_Sector_Investment1.Service_Capital.Integrator1.y",
+    "Food_Production1.P_Land_Yield_Fact_2.Smooth2.Integrator1.y",
+    "Population_Dynamics1.pop_state_var_new"
+  ],
+  "percentage": 5,
+  "start_time": 1900,
+  "stop_time": 1901,
+  "params_info_list": [
+    {
+      "name": "agr_inp_init",
+      "initial_val": 5000000000.0
+    },
+    {
+      "name": "agr_mtl_toxic_index",
+      "initial_val": 1.0
+    },
+    {
+      "name": "arable_land_init",
+      "initial_val": 900000000.0
+    },
+    {
+      "name": "assim_half_life_1970",
+      "initial_val": 1.5
+    },
+    {
+      "name": "avg_life_land_norm",
+      "initial_val": 1000.0
+    },
+    {
+      "name": "des_compl_fam_size_norm",
+      "initial_val": 3.8
+    },
+    {
+      "name": "des_food_ratio_dfr",
+      "initial_val": 2.0
+    },
+    {
+      "name": "des_ppoll_index_DPOLX",
+      "initial_val": 1.2
+    },
+    {
+      "name": "des_res_use_rt_DNRUR",
+      "initial_val": 4800000000.0
+    },
+    {
+      "name": "food_short_perc_del",
+      "initial_val": 2.0
+    },
+    {
+      "name": "fr_agr_inp_pers_mtl",
+      "initial_val": 0.001
+    },
+    {
+      "name": "frac_res_pers_mtl",
+      "initial_val": 0.02
+    },
+    {
+      "name": "hlth_serv_impact_del",
+      "initial_val": 20.0
+    },
+    {
+      "name": "income_expect_avg_time",
+      "initial_val": 3.0
+    },
+    {
+      "name": "ind_mtl_emiss_fact",
+      "initial_val": 0.1
+    },
+    {
+      "name": "ind_mtl_toxic_index",
+      "initial_val": 10.0
+    },
+    {
+      "name": "ind_out_in_1970",
+      "initial_val": 790000000000.0
+    },
+    {
+      "name": "ind_out_pc_des",
+      "initial_val": 400.0
+    },
+    {
+      "name": "industrial_capital_init",
+      "initial_val": 210000000000.0
+    },
+    {
+      "name": "inherent_land_fert",
+      "initial_val": 600.0
+    },
+    {
+      "name": "labor_force_partic",
+      "initial_val": 0.75
+    },
+    {
+      "name": "labor_util_fr_del_init",
+      "initial_val": 1.0
+    },
+    {
+      "name": "labor_util_fr_del_time",
+      "initial_val": 2.0
+    },
+    {
+      "name": "land_fertility_init",
+      "initial_val": 600.0
+    },
+    {
+      "name": "land_fr_harvested",
+      "initial_val": 0.7
+    },
+    {
+      "name": "life_expect_norm",
+      "initial_val": 28.0
+    },
+    {
+      "name": "lifet_perc_del",
+      "initial_val": 20.0
+    },
+    {
+      "name": "max_tot_fert_norm",
+      "initial_val": 12.0
+    },
+    {
+      "name": "nr_resources_init",
+      "initial_val": 1000000000000.0
+    },
+    {
+      "name": "p_avg_life_agr_inp_1",
+      "initial_val": 2.0
+    },
+    {
+      "name": "p_avg_life_agr_inp_2",
+      "initial_val": 2.0
+    },
+    {
+      "name": "p_avg_life_ind_cap_1",
+      "initial_val": 14.0
+    },
+    {
+      "name": "p_avg_life_ind_cap_2",
+      "initial_val": 14.0
+    },
+    {
+      "name": "p_avg_life_serv_cap_1",
+      "initial_val": 20.0
+    },
+    {
+      "name": "p_avg_life_serv_cap_2",
+      "initial_val": 20.0
+    },
+    {
+      "name": "p_fioa_cons_const_1",
+      "initial_val": 0.43
+    },
+    {
+      "name": "p_fioa_cons_const_2",
+      "initial_val": 0.43
+    },
+    {
+      "name": "p_fr_cap_al_obt_res_2[1]",
+      "initial_val": 1.0
+    },
+    {
+      "name": "p_fr_cap_al_obt_res_2[2]",
+      "initial_val": 0.2
+    },
+    {
+      "name": "p_fr_cap_al_obt_res_2[3]",
+      "initial_val": 0.1
+    },
+    {
+      "name": "p_fr_cap_al_obt_res_2[4]",
+      "initial_val": 0.05
+    },
+    {
+      "name": "p_fr_cap_al_obt_res_2[5]",
+      "initial_val": 0.05
+    },
+    {
+      "name": "p_fr_cap_al_obt_res_2[6]",
+      "initial_val": 0.05
+    },
+    {
+      "name": "p_fr_cap_al_obt_res_2[7]",
+      "initial_val": 0.05
+    },
+    {
+      "name": "p_fr_cap_al_obt_res_2[8]",
+      "initial_val": 0.05
+    },
+    {
+      "name": "p_fr_cap_al_obt_res_2[9]",
+      "initial_val": 0.05
+    },
+    {
+      "name": "p_fr_cap_al_obt_res_2[10]",
+      "initial_val": 0.05
+    },
+    {
+      "name": "p_fr_cap_al_obt_res_2[11]",
+      "initial_val": 0.05
+    },
+    {
+      "name": "p_ind_cap_out_ratio_1",
+      "initial_val": 3.0
+    },
+    {
+      "name": "p_land_yield_fact_1",
+      "initial_val": 1.0
+    },
+    {
+      "name": "p_nr_res_use_fact_1",
+      "initial_val": 1.0
+    },
+    {
+      "name": "p_ppoll_gen_fact_1",
+      "initial_val": 1.0
+    },
+    {
+      "name": "p_ppoll_tech_chg_mlt[1]",
+      "initial_val": 0.0
+    },
+    {
+      "name": "p_ppoll_tech_chg_mlt[2]",
+      "initial_val": 0.0
+    },
+    {
+      "name": "p_ppoll_tech_chg_mlt[3]",
+      "initial_val": 0.0
+    },
+    {
+      "name": "p_ppoll_tech_chg_mlt[4]",
+      "initial_val": 0.0
+    },
+    {
+      "name": "p_res_tech_chg_mlt[1]",
+      "initial_val": 0.0
+    },
+    {
+      "name": "p_res_tech_chg_mlt[2]",
+      "initial_val": 0.0
+    },
+    {
+      "name": "p_res_tech_chg_mlt[3]",
+      "initial_val": 0.0
+    },
+    {
+      "name": "p_res_tech_chg_mlt[4]",
+      "initial_val": 0.0
+    },
+    {
+      "name": "p_serv_cap_out_ratio_1",
+      "initial_val": 1.0
+    },
+    {
+      "name": "p_serv_cap_out_ratio_2",
+      "initial_val": 1.0
+    },
+    {
+      "name": "p_yield_tech_chg_mlt[1]",
+      "initial_val": 0.0
+    },
+    {
+      "name": "p_yield_tech_chg_mlt[2]",
+      "initial_val": 0.0
+    },
+    {
+      "name": "p_yield_tech_chg_mlt[3]",
+      "initial_val": 0.0
+    },
+    {
+      "name": "p_yield_tech_chg_mlt[4]",
+      "initial_val": 0.0
+    },
+    {
+      "name": "perc_food_ratio_init",
+      "initial_val": 1.0
+    },
+    {
+      "name": "pers_pollution_init",
+      "initial_val": 25000000.0
+    },
+    {
+      "name": "pop1_init",
+      "initial_val": 650000000.0
+    },
+    {
+      "name": "pop2_init",
+      "initial_val": 700000000.0
+    },
+    {
+      "name": "pop3_init",
+      "initial_val": 190000000.0
+    },
+    {
+      "name": "pop4_init",
+      "initial_val": 60000000.0
+    },
+    {
+      "name": "pot_arable_land_init",
+      "initial_val": 2300000000.0
+    },
+    {
+      "name": "pot_arable_land_tot",
+      "initial_val": 3200000000.0
+    },
+    {
+      "name": "ppoll_in_1970",
+      "initial_val": 136000000.0
+    },
+    {
+      "name": "ppoll_tech_init",
+      "initial_val": 1.0
+    },
+    {
+      "name": "ppoll_trans_del",
+      "initial_val": 20.0
+    },
+    {
+      "name": "processing_loss",
+      "initial_val": 0.1
+    },
+    {
+      "name": "reproductive_lifetime",
+      "initial_val": 30.0
+    },
+    {
+      "name": "res_tech_init",
+      "initial_val": 1.0
+    },
+    {
+      "name": "service_capital_init",
+      "initial_val": 144000000000.0
+    },
+    {
+      "name": "social_adj_del",
+      "initial_val": 20.0
+    },
+    {
+      "name": "social_discount",
+      "initial_val": 0.07
+    },
+    {
+      "name": "subsist_food_pc",
+      "initial_val": 230.0
+    },
+    {
+      "name": "t_air_poll_time",
+      "initial_val": 4000.0
+    },
+    {
+      "name": "t_fcaor_time",
+      "initial_val": 4000.0
+    },
+    {
+      "name": "t_fert_cont_eff_time",
+      "initial_val": 4000.0
+    },
+    {
+      "name": "t_ind_equil_time",
+      "initial_val": 4000.0
+    },
+    {
+      "name": "t_land_life_time",
+      "initial_val": 4000.0
+    },
+    {
+      "name": "t_policy_year",
+      "initial_val": 4000.0
+    },
+    {
+      "name": "t_pop_equil_time",
+      "initial_val": 4000.0
+    },
+    {
+      "name": "t_zero_pop_grow_time",
+      "initial_val": 4000.0
+    },
+    {
+      "name": "tech_dev_del_TDD",
+      "initial_val": 20.0
+    },
+    {
+      "name": "urb_ind_land_dev_time",
+      "initial_val": 10.0
+    },
+    {
+      "name": "urban_ind_land_init",
+      "initial_val": 8200000.0
+    },
+    {
+      "name": "yield_tech_init",
+      "initial_val": 1.0
+    }
+  ]
+}
+
