@@ -49,7 +49,8 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
             "rms_last_year"                      : 3,
         }
         # Run analysis from simulation info
-        analysis_files_paths = analysis.indiv_sens.completeIndividualSensAnalysis(**analyze_csvs_kwargs)
+        analysis_results = analysis.indiv_sens.completeIndividualSensAnalysis(**analyze_csvs_kwargs)
+        analysis_files_paths = analysis_results["paths"]
         # Test that that the resulting run info includes the basic info: all param names, default and perturbed vals, the variable and its value
         vars_sens_info = analysis_files_paths["vars_sens_info"]
         params_strs = ["e","g"]

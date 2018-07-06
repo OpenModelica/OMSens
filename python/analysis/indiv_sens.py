@@ -1,10 +1,12 @@
 # Std
-import os  # for os.path
-import math  # for sqrt
-import pandas  # dataframes
-import unicodedata  # slugifying file names
-import re  # regular expressions
 import logging
+import math  # for sqrt
+import os  # for os.path
+import re  # regular expressions
+import unicodedata  # slugifying file names
+
+import pandas  # dataframes
+
 import filesystem.files_aux as files_aux
 
 logger = logging.getLogger("--ParameterSensAnalysis--")  # this modules logger
@@ -33,7 +35,8 @@ def completeIndividualSensAnalysis(perturbed_simus_info, target_vars, percentage
     # Add paths to main dict with paths
     analysis_files_paths["vars_sens_info"] = vars_sens_infos_paths
     analysis_files_paths["sens_matrices"] = sens_matrices_folder_path
-    return analysis_files_paths
+    analysis_results = {"paths": analysis_files_paths}
+    return analysis_results
 
 
 def perturbationAsTuplesFromDict(perturbed_simus_info):
