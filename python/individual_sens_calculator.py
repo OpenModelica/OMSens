@@ -47,8 +47,7 @@ def main():
     }
     logger.info("Analyzing variable sensitivities to parameters from CSVs")
     # Calculate sensitivities
-    analysis.indiv_sens.completeIndividualSensAnalysis(**analyze_csvs_kwargs)
-
+    analysis_results = analysis.indiv_sens.completeIndividualSensAnalysis(**analyze_csvs_kwargs)
 
 def listOfParametersPerturbationInfo(param_names, param_vals, percentage):
     parameters_to_perturbate_tuples = []

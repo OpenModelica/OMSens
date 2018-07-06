@@ -8,6 +8,7 @@ import unicodedata  # slugifying file names
 import pandas  # dataframes
 
 import filesystem.files_aux as files_aux
+import plotting.plot_heatmap as heatmap_f
 
 logger = logging.getLogger("--ParameterSensAnalysis--")  # this modules logger
 
@@ -18,7 +19,6 @@ def completeIndividualSensAnalysis(perturbed_simus_info, target_vars, percentage
     #  TODO: adapt this function when we stop using tuples inside the analyzer in favor of using proper objects to represent the info
     perturbed_csvs_path_and_info_pairs = perturbationAsTuplesFromDict(perturbed_simus_info)
     # Initialize result with paths
-    analysis_files_paths = {}
     sens_to_params_per_var = analysisPerParamPerturbedForEachVar(percentage_perturbed,
                                                                  perturbed_csvs_path_and_info_pairs,
                                                                  rms_first_year, rms_last_year, specific_year,
@@ -34,11 +34,30 @@ def completeIndividualSensAnalysis(perturbed_simus_info, target_vars, percentage
     sens_matrices_folder_path = makeFolderForMethodsMatricesFiles(output_folder_analyses_path)
     sens_matrices_paths = writeMethodsMatricesToFiles(sens_matrices_dfs_dict["Relative"], sens_matrices_dfs_dict["RMS"],
                                                       sens_matrices_folder_path)
-    #
+    # Create folder for heatmapas
+    sens_heatmaps_folder_path = makeFolderForMethodsHeatmapFiles(output_folder_analyses_path)
+    # Iterate indices creating a Heatmap for each
+    for method, df_matrix in sens_matrices_dfs_dict.items():
+        # Create heatmap instance
+        heatmap = heatmap_f.Heatmap(df_matrix)
+        # Plot heatmap into temp folder path
+        plot_name = "{0}_heatmap.png".format(method)
+        plot_path = os.path.join(sens_heatmaps_folder_path, plot_name)
+        heatmap.plotInFolder(plot_path)
+
     # Add paths to main dict with paths
-    analysis_files_paths["vars_sens_info"] = vars_sens_infos_paths
-    analysis_files_paths["sens_matrices"] = sens_matrices_paths
-    analysis_results = {"paths": analysis_files_paths}
+    analysis_files_paths = {
+        "vars_sens_info": vars_sens_infos_paths,
+        "sens_matrices": sens_matrices_paths,
+    }
+    # Add dfs to main dict with dfs
+    analysis_dfs = {
+        "sens_matrices": sens_matrices_dfs_dict,
+    }
+    analysis_results = {
+        "paths": analysis_files_paths,
+        "dfs": analysis_dfs,
+    }
     return analysis_results
 
 
@@ -73,6 +92,14 @@ def generateSensMatricesPerMethod(output_folder_analyses_path, rms_first_year, r
 def makeFolderForMethodsMatricesFiles(output_folder_analyses_path):
     # Create folder for matrices per method
     sens_matrices_folder_name = "sens_matrices_per_method"
+    sens_matrices_folder_path = os.path.join(output_folder_analyses_path, sens_matrices_folder_name)
+    files_aux.makeFolderWithPath(sens_matrices_folder_path)
+    return sens_matrices_folder_path
+
+
+def makeFolderForMethodsHeatmapFiles(output_folder_analyses_path):
+    # Create folder for matrices per method
+    sens_matrices_folder_name = "heatmaps"
     sens_matrices_folder_path = os.path.join(output_folder_analyses_path, sens_matrices_folder_name)
     files_aux.makeFolderWithPath(sens_matrices_folder_path)
     return sens_matrices_folder_path

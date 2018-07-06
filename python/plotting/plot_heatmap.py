@@ -1,12 +1,14 @@
-import matplotlib.pyplot as plt
-from matplotlib.colors import SymLogNorm   # for logarithmic scale
-import matplotlib.ticker                   # to set a special formatter for the ticks in the colorbar (10^1 instead of 0.000(...)*10^11)
-import matplotlib.patches as mpatches  # to add patches to "non transparent" cells
-import pandas as pd
-import numpy as np
+import logging  # en reemplazo de los prints
 import math
 import os
-import logging #en reemplazo de los prints
+
+import matplotlib.patches as mpatches  # to add patches to "non transparent" cells
+import matplotlib.pyplot as plt
+import matplotlib.ticker  # to set a special formatter for the ticks in the colorbar (10^1 instead of 0.000(...)*10^11)
+import numpy as np
+import pandas as pd
+from matplotlib.colors import SymLogNorm  # for logarithmic scale
+
 logger = logging.getLogger("--Heatmap Plotter--") #un logger especifico para este modulo
 
 # Mine
@@ -29,7 +31,7 @@ class Heatmap:
         # Save the dataframe corresponding to the heatmap to be created
         self.df_heatmap = df_heatmap
 
-    def plotInFolder(self,dest_folder_path):
+    def plotInFolder(self, plot_path):
         # The rows and columns names are the same as in the df for now
         rows_names = self.df_heatmap.index.values.tolist()
         cols_names = self.df_heatmap.columns.values.tolist()
@@ -40,8 +42,6 @@ class Heatmap:
         # Add the color bar
         cbar = fig.colorbar(heatmap_plot)
         # Save plot in folder
-        plot_name = "heatmap.png"
-        plot_path = os.path.join(dest_folder_path,plot_name)
         plt.savefig(plot_path,bbox_inches='tight')
         # Clear plot in case there are more plots coming
         plt.clf()

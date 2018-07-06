@@ -1,10 +1,10 @@
 # For tests
-import shutil  # para borrar el tempdir
-import tempfile  # para crear el tempdir
-import unittest
 import io
 import os
 import re
+import shutil  # para borrar el tempdir
+import tempfile  # para crear el tempdir
+import unittest
 
 # Std
 import pandas
@@ -69,7 +69,9 @@ class TestPlotHeatmap(unittest.TestCase):
         # Initialize heatmap
         heatmap = plot_heatmap.Heatmap(df)
         # Plot heatmap into temp folder path
-        heatmap.plotInFolder(self._temp_dir)
+        plot_name = "heatmap.png"
+        plot_path = os.path.join(self._temp_dir, plot_name)
+        heatmap.plotInFolder(plot_path)
         # Get plots extensions regex
         regex = '.*\.(png|svg)$'
         # Get list of files from regex
