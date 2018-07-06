@@ -28,13 +28,16 @@ def completeIndividualSensAnalysis(perturbed_simus_info, target_vars, percentage
                                                                      rms_first_year, rms_last_year,
                                                                      sens_to_params_per_var, specific_year, target_vars)
     # Sensitivities matrices of "param/var" per method
-    sens_matrices_folder_path = generateAndWriteSensMatricesPerMethod(output_folder_analyses_path, rms_first_year,
-                                                                      rms_last_year,
-                                                                      sens_to_params_per_var)
+    sens_matrices_dfs_dict = generateSensMatricesPerMethod(output_folder_analyses_path, rms_first_year,
+                                                           rms_last_year,
+                                                           sens_to_params_per_var)
+    sens_matrices_folder_path = makeFolderForMethodsMatricesFiles(output_folder_analyses_path)
+    sens_matrices_paths = writeMethodsMatricesToFiles(sens_matrices_dfs_dict["Relative"], sens_matrices_dfs_dict["RMS"],
+                                                      sens_matrices_folder_path)
     #
     # Add paths to main dict with paths
     analysis_files_paths["vars_sens_info"] = vars_sens_infos_paths
-    analysis_files_paths["sens_matrices"] = sens_matrices_folder_path
+    analysis_files_paths["sens_matrices"] = sens_matrices_paths
     analysis_results = {"paths": analysis_files_paths}
     return analysis_results
 
@@ -54,16 +57,17 @@ def perturbationAsTuplesFromDict(perturbed_simus_info):
     return perturbed_csvs_path_and_info_pairs
 
 
-def generateAndWriteSensMatricesPerMethod(output_folder_analyses_path, rms_first_year, rms_last_year,
-                                          sens_to_params_per_var):
-    sens_matrices_folder_path = makeFolderForMethodsMatricesFiles(output_folder_analyses_path)
+def generateSensMatricesPerMethod(output_folder_analyses_path, rms_first_year, rms_last_year,
+                                  sens_to_params_per_var):
     methods_records_dict = generateMatrixRecordsForEachSensitivityMethod(rms_first_year, rms_last_year,
                                                                          sens_to_params_per_var)
     df_rel_matrix_trans, df_rms_matrix_trans = methodsDataframesFromRecordsDict(methods_records_dict)
     # Write the matrices to file
-    sens_matrices_paths = writeMethodsMatricesToFiles(df_rel_matrix_trans, df_rms_matrix_trans,
-                                                      sens_matrices_folder_path)
-    return sens_matrices_paths
+    sens_matrices_dfs_dict = {
+        "Relative": df_rel_matrix_trans,
+        "RMS": df_rms_matrix_trans,
+    }
+    return sens_matrices_dfs_dict
 
 
 def makeFolderForMethodsMatricesFiles(output_folder_analyses_path):
