@@ -29,17 +29,29 @@ class Heatmap:
         self.df_input = df_input
         # Manipulate input dataframe (sort columns, rows, etc)
         self.df_heatmap = self.manipulateInputDataframe(df_input)
+        # Define index's heatmap names
+        orig_index_names = self.df_heatmap.index.values.tolist()
+        index_names_prefix = "P."
+        self.index_names_map = shortenStringsWithPrefix(orig_index_names, index_names_prefix)
+        # Define columns' heatmap names
+        orig_cols_names = self.df_heatmap.columns.values.tolist()
+        cols_names_prefix = "V."
+        self.cols_names_map = shortenStringsWithPrefix(orig_cols_names, cols_names_prefix)
         # Define the colorbar upper and lower limits
         self.colorbar_min, self.colorbar_max = colorbarLimitsForDataFrame(self.df_heatmap)
         # Define the colors of the heatmap
         self.colormap = colorMapForDataFrame(self.df_heatmap)
 
     def plotInFolder(self, plot_path):
-        # The rows and columns names are the same as in the df for now
-        rows_names = self.df_heatmap.index.values.tolist()
+        # Get cols and index names from DF and their respective mappings
+        # Index mapped names
+        index_names = self.df_heatmap.index.values.tolist()
+        index_names_mapped = [self.index_names_map[index_name] for index_name in index_names]
+        # Columns mapped names
         cols_names = self.df_heatmap.columns.values.tolist()
+        cols_names_mapped = [self.cols_names_map[col_name] for col_name in cols_names]
         # Initialize figure and axes with heatmap configurations
-        fig,ax = initializeFigAndAx(self.df_heatmap,rows_names,cols_names)
+        fig, ax = initializeFigAndAx(self.df_heatmap, index_names_mapped, cols_names_mapped)
         # Plot heatmap in figure and ax
         heatmap_plot = ax.pcolor(self.df_heatmap, cmap=self.colormap, vmin=self.colorbar_min, vmax=self.colorbar_max)
         # Colorbar from limits
@@ -97,7 +109,7 @@ def initializeFigAndAx(data, rows_names, cols_names):
     ax.invert_yaxis()
     ax.xaxis.tick_top()
     # With abbreviated string names
-    ax.set_xticklabels(cols_names, minor=False, fontsize=14)
+    ax.set_xticklabels(cols_names, minor=False, rotation='vertical', fontsize=14)
     ax.set_yticklabels(rows_names, minor=False, fontsize=14)
     # Set the heatmap grid as false
     ax.grid(False)
@@ -136,6 +148,17 @@ def colorMapForDataFrame(df, colors=200):
         # The following is to get the default colormap and manually set white as it starting value for 0
         colormap = matplotlib.cm.get_cmap("bwr")
     return colormap
+
+
+def shortenStringsWithPrefix(orig_strs, prefix):
+    # Create a dict with dict[str] = shortened_str
+    strs_map = {}
+    for i in range(0, len(orig_strs)):
+        orig_str = orig_strs[i]
+        str_id = i + 1
+        shortened_str = "{0}{1}".format(prefix, str_id)
+        strs_map[orig_str] = shortened_str
+    return strs_map
 
 # The functions from here on still need to be adapted and are deprecated:
 
