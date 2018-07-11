@@ -149,12 +149,13 @@ def colorMapForDataFrame(df, colors=200):
         colormap = matplotlib.cm.get_cmap("bwr")
     return colormap
 
-
 def shortenStringsWithPrefix(orig_strs, prefix):
+    # Sort the strings so they're numbered by alphabetical order
+    orig_strs_sorted = sorted(orig_strs)
     # Create a dict with dict[str] = shortened_str
     strs_map = {}
-    for i in range(0, len(orig_strs)):
-        orig_str = orig_strs[i]
+    for i in range(0, len(orig_strs_sorted)):
+        orig_str = orig_strs_sorted[i]
         str_id = i + 1
         shortened_str = "{0}{1}".format(prefix, str_id)
         strs_map[orig_str] = shortened_str
