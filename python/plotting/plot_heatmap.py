@@ -43,7 +43,7 @@ class Heatmap:
         # Plot heatmap in figure and ax
         heatmap_plot = ax.pcolor(self.df_heatmap, cmap=self.colormap, vmin=self.colorbar_min, vmax=self.colorbar_max)
         # Colorbar from limits
-        increment = (self.colorbar_min - self.colorbar_max) / 20  # 20 ticks
+        increment = (self.colorbar_max - self.colorbar_min) / 20  # 20 ticks
         colorbar_ticks = [self.colorbar_min + i * increment for i in range(0,
                                                                            21)]  # range(0,21) because range doesn't include the upper limit in the range and we have 20 ticks
         cbar = fig.colorbar(heatmap_plot, ticks=colorbar_ticks)
