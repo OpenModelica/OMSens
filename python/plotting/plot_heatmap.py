@@ -24,12 +24,15 @@ class Heatmap:
         #   -linthresh, linthresh). The size of this range in the colormap is set by linscale. When linscale == 1.0 (the
         #   default), the space used for the positive and negative halves of the linear range will be equal to one decade
         #   in the logarithmic range.
+        self.linthresh = linthresh
         # Save input df
         self.df_input = df_input
-        # Manipulate input dataframe
-        df_heatmap = self.manipulateInputDataframe(df_input)
-        # Save the dataframe corresponding to the heatmap to be created
-        self.df_heatmap = df_heatmap
+        # Manipulate input dataframe (sort columns, rows, etc)
+        self.df_heatmap = self.manipulateInputDataframe(df_input)
+        # Define the colorbar upper and lower limits
+        self.colorbar_min, self.colorbar_max = colorbarLimitsForDataFrame(self.df_heatmap)
+        # Define the colors of the heatmap
+        self.colormap = colorMapForDataFrame(self.df_heatmap)
 
     def plotInFolder(self, plot_path):
         # The rows and columns names are the same as in the df for now
@@ -37,10 +40,15 @@ class Heatmap:
         cols_names = self.df_heatmap.columns.values.tolist()
         # Initialize figure and axes with heatmap configurations
         fig,ax = initializeFigAndAx(self.df_heatmap,rows_names,cols_names)
-        # Plot in figure and ax
-        heatmap_plot = ax.pcolor(self.df_heatmap)
-        # Add the color bar
-        cbar = fig.colorbar(heatmap_plot)
+        # Plot heatmap in figure and ax
+        heatmap_plot = ax.pcolor(self.df_heatmap, cmap=self.colormap, vmin=self.colorbar_min, vmax=self.colorbar_max)
+        # Colorbar from limits
+        increment = (self.colorbar_min - self.colorbar_max) / 20  # 20 ticks
+        colorbar_ticks = [self.colorbar_min + i * increment for i in range(0,
+                                                                           21)]  # range(0,21) because range doesn't include the upper limit in the range and we have 20 ticks
+        cbar = fig.colorbar(heatmap_plot, ticks=colorbar_ticks)
+        # Change font size in color bar
+        cbar.ax.tick_params(labelsize=10)
         # Save plot in folder
         plt.savefig(plot_path,bbox_inches='tight')
         # Clear plot in case there are more plots coming
@@ -95,6 +103,39 @@ def initializeFigAndAx(data, rows_names, cols_names):
     ax.grid(False)
     return fig, ax
 
+
+def colorbarLimitsForDataFrame(df):
+    # Get mins and maxs of any cell
+    max_of_all = df.max().max()
+    min_of_all = df.min().min()
+    # Match the colorbar limits to the max of the absolute value of them
+    if max_of_all > abs(min_of_all):
+        colorbar_limit_max = max_of_all
+        colorbar_limit_min = -max_of_all
+    else:
+        colorbar_limit_max = abs(min_of_all)
+        colorbar_limit_min = min_of_all
+    # Set the colorbar limit min to 0 if there are no negative numbers
+    if min_of_all >= 0:
+        colorbar_limit_min = 0
+    return colorbar_limit_min, colorbar_limit_max
+
+
+def colorMapForDataFrame(df, colors=200):
+    # Choose  the color scheme:
+    #    . "blue-white-red"     if there are negative numbers
+    #    . "white-red"   if there are NO negative numbers
+    min_of_all = df.min().min()
+    if min_of_all >= 0:
+        # The following is to get the default colormap and manually set white as it starting value for 0
+        reds_cm = matplotlib.cm.get_cmap("Reds", colors)  # generate a predefined map with amount of  values
+        red_vals = reds_cm(np.arange(colors))  # extract those values as an array
+        red_vals = np.insert(red_vals, 1, [1, 1, 1, 1], axis=0)  # prepend pure white to the list
+        colormap = matplotlib.colors.LinearSegmentedColormap.from_list("newReds", red_vals)
+    else:
+        # The following is to get the default colormap and manually set white as it starting value for 0
+        colormap = matplotlib.cm.get_cmap("bwr")
+    return colormap
 
 # The functions from here on still need to be adapted and are deprecated:
 
@@ -317,6 +358,7 @@ def plotHeatmapInLinearScaleFromFigAxAndData(fig,ax,np_data,colorbar_limit_min,c
     cbar = fig.colorbar(heatmap,ticks=colorbar_ticks)
     # Change font size in color bar
     cbar.ax.tick_params(labelsize=10)
+
 def postProcessingSettings(plot_title):
     # Plot title
     plt.title(plot_title,y=1.08) # change y=... Because the inverted tick labels bug matplotlib and the title and the tick labels are superimposed
