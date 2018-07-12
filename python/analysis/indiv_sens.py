@@ -36,24 +36,31 @@ def completeIndividualSensAnalysis(perturbed_simus_info, target_vars, percentage
                                                       sens_matrices_folder_path)
     # Create folder for heatmapas
     sens_heatmaps_folder_path = makeFolderForMethodsHeatmapFiles(output_folder_analyses_path)
-    # Iterate indices creating a Heatmap for each
+    # Iterate indices creating a Heatmap for each and saving their paths
+    heatmaps_files_paths_per_method = {}
     for method, df_matrix in sens_matrices_dfs_dict.items():
         # Create heatmap instance
         heatmap = heatmap_f.Heatmap(df_matrix)
-        # Plot heatmap into temp folder path
-        plot_name = "{0}_heatmap.png".format(method)
-        plot_path = os.path.join(sens_heatmaps_folder_path, plot_name)
-        heatmap.plotInFolder(plot_path)
+        # Create folder for heatmaps of this method
+        method_heatmap_folder_name = method
+        method_heatmap_folder_path = os.path.join(sens_heatmaps_folder_path, method_heatmap_folder_name)
+        files_aux.makeFolderWithPath(method_heatmap_folder_path)
+        # Plot heatmap into folder path
+        method_heatmap_files_paths = heatmap.plotInFolder(method_heatmap_folder_path)
+        # Add this method's heatmaps to the dict
+        heatmaps_files_paths_per_method[method] = method_heatmap_files_paths
 
-    # Add paths to main dict with paths
+    # Add paths to dict with paths
     analysis_files_paths = {
         "vars_sens_info": vars_sens_infos_paths,
         "sens_matrices": sens_matrices_paths,
+        "heatmaps": heatmaps_files_paths_per_method,
     }
-    # Add dfs to main dict with dfs
+    # Add dfs to  dict with dfs
     analysis_dfs = {
         "sens_matrices": sens_matrices_dfs_dict,
     }
+    # Make main dict with all sub-dicts
     analysis_results = {
         "paths": analysis_files_paths,
         "dfs": analysis_dfs,

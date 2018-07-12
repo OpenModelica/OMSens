@@ -20,11 +20,13 @@ script_description = "Calculate variables sensitivities to parameters when pertu
 def main():
     # Logging settings
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
-    json_file_path = getCommandLineArguments()
+    # Get arguments from command line call
+    json_file_path, root_dest_folder_path = getCommandLineArguments()
     # Args
     output_mos_name = "indiv_sens_sims.mos"
     std_run_filename = "std_run.csv"
-    output_folder_path, output_mos_path, std_run_path = filesPathsInOutputFolder(output_mos_name, std_run_filename)
+    dest_folder_path, output_mos_path, std_run_path = filesPathsInOutputFolder(output_mos_name, std_run_filename,
+                                                                               root_dest_folder_path)
     mos_info = sens_mos_writer.createMosFromJSON(json_file_path, output_mos_path, std_run_filename)
     # Run .mos
     # logger.info("Calculating empirical parameter sensitivities for percentage {perc}, for all of the differentiable variables in W3 and target year {year_target}".format(perc=full_json["percentage"])
@@ -41,14 +43,31 @@ def main():
         "target_vars"                 : full_json["vars_to_analyze"],
         "percentage_perturbed"        : full_json["percentage"],
         "specific_year"               : full_json["stop_time"],
-        "output_folder_analyses_path" : output_folder_path,
+        "output_folder_analyses_path": dest_folder_path,
         "rms_first_year"              : full_json["start_time"],
         "rms_last_year"               : full_json["stop_time"],
     }
     logger.info("Analyzing variable sensitivities to parameters from CSVs")
     # Calculate sensitivities
     analysis_results = analysis.indiv_sens.completeIndividualSensAnalysis(**analyze_csvs_kwargs)
-    return analysis_results
+    # Get the dict with the paths
+    paths_dict = analysis_results["paths"]
+    # Write paths dict as json
+    paths_json_str = json.dumps(paths_dict)
+    paths_json_file_name = "paths.json"
+    paths_json_file_path = os.path.join(dest_folder_path, paths_json_file_name)
+    files_aux.writeStrToFile(paths_json_str, paths_json_file_path)
+    return 0
+
+
+def folderPathForAnalysis(root_dest_folder_path):
+    # Make dest folder path in this projects root if none indicated in command line
+    if not root_dest_folder_path:
+        root_dest_folder_path = files_aux.destPath("indiv_sens_analysis")
+    # Make timestamp sub-folder in root dest folder path
+    dest_folder_path = files_aux.makeDirFromCurrentTimestamp(root_dest_folder_path)
+    return dest_folder_path
+
 
 def listOfParametersPerturbationInfo(param_names, param_vals, percentage):
     parameters_to_perturbate_tuples = []
@@ -62,22 +81,21 @@ def listOfParametersPerturbationInfo(param_names, param_vals, percentage):
     return parameters_to_perturbate_tuples
 
 
-def filesPathsInOutputFolder(output_mos_name, std_run_filename):
-    # Make tmp dir
-    output_folder_path = files_aux.makeOutputPath()
+def filesPathsInOutputFolder(output_mos_name, std_run_filename, root_dest_folder_path):
+    dest_folder_path = folderPathForAnalysis(root_dest_folder_path)
     # .mos script
-    output_mos_path = os.path.join(output_folder_path, output_mos_name)
+    output_mos_path = os.path.join(dest_folder_path, output_mos_name)
     # Standard run csv
-    std_run_path = os.path.join(output_folder_path, std_run_filename)
-    return output_folder_path, output_mos_path, std_run_path
+    std_run_path = os.path.join(dest_folder_path, std_run_filename)
+    return dest_folder_path, output_mos_path, std_run_path
 
 
-def csvPathAndParameterNameForFolderAndParametersInfo(output_folder_path, parameters_info):
+def csvPathAndParameterNameForFolderAndParametersInfo(dest_folder_path, parameters_info):
     perturbed_csvs_path_and_info_pairs = []
     for param_info in parameters_info:
         param_name = param_info[0]
         csv_name = settings.gral_settings.calc_sens_csv_file_name_function(param_name)
-        csv_path = os.path.join(output_folder_path, csv_name)
+        csv_path = os.path.join(dest_folder_path, csv_name)
         perturbed_csvs_path_and_info_pairs.append((csv_path, param_info))
     return perturbed_csvs_path_and_info_pairs
 
@@ -85,8 +103,10 @@ def getCommandLineArguments():
     parser = argparse.ArgumentParser(description=script_description)
     parser.add_argument('test_file_path', metavar='test_file_path',
                         help='The file path to the test file containing the CSVs to plot, the variables, the title, etc.')
+    parser.add_argument('--dest_folder_path', metavar='dest_folder_path',
+                        help='Optional: The destination folder where to write the analysis files')
     args = parser.parse_args()
-    return args.test_file_path
+    return args.test_file_path, args.dest_folder_path
 
 
 # FIRST EXECUTABLE CODE:

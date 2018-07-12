@@ -42,7 +42,7 @@ class Heatmap:
         # Define the colors of the heatmap
         self.colormap = colorMapForDataFrame(self.df_heatmap)
 
-    def plotInFolder(self, plot_path):
+    def plotInFolder(self, plot_folder_path):
         # Get cols and index names from DF and their respective mappings
         # Index mapped names
         index_names = self.df_heatmap.index.values.tolist()
@@ -62,9 +62,30 @@ class Heatmap:
         # Change font size in color bar
         cbar.ax.tick_params(labelsize=10)
         # Save plot in folder
-        plt.savefig(plot_path,bbox_inches='tight')
+        plot_name = "heatmap.png"
+        plot_path = os.path.join(plot_folder_path, plot_name)
+        plt.savefig(plot_path, bbox_inches='tight')
         # Clear plot in case there are more plots coming
         plt.clf()
+
+        # Write mappings to file
+        df_index_mappings = dfFromDict(self.index_names_map)
+        index_mapping_file_name = "index_mappings.csv"
+        index_mapping_file_path = os.path.join(plot_folder_path, index_mapping_file_name)
+        df_index_mappings.to_csv(index_mapping_file_path, index=False)
+
+        df_cols_mappings = dfFromDict(self.cols_names_map)
+        cols_mapping_file_name = "cols_mappings.csv"
+        cols_mapping_file_path = os.path.join(plot_folder_path, cols_mapping_file_name)
+        df_cols_mappings.to_csv(cols_mapping_file_path, index=False)
+        # Return paths for created files
+        paths_dict = {
+            "plot_path": plot_path,
+            "index_mapping_file_path": index_mapping_file_path,
+            "cols_mapping_file_path": cols_mapping_file_path,
+        }
+        return paths_dict
+
 
     # Auxs:
     def manipulateInputDataframe(self, df_input):
@@ -160,6 +181,23 @@ def shortenStringsWithPrefix(orig_strs, prefix):
         shortened_str = "{0}{1}".format(prefix, str_id)
         strs_map[orig_str] = shortened_str
     return strs_map
+
+
+def dfFromDict(strs_mapping):
+    # Set a convention for the column names
+    orig_strs_col_name = "Original"
+    mapped_strs_col_name = "Shortened"
+    # Make a list of dicts, one per mapping
+    rows_dicts_list = []
+    for orig_str, mapped_str in strs_mapping.items():
+        row_dict = {orig_strs_col_name: orig_str, mapped_strs_col_name: mapped_str}
+        rows_dicts_list.append(row_dict)
+    # Create DF from rows_dict
+    df_mapping = pd.DataFrame.from_records(rows_dicts_list)
+    # Order DF with specific order
+    cols_order = [mapped_strs_col_name, orig_strs_col_name]
+    def_mapping_reordered = df_mapping.reindex(columns=cols_order)
+    return def_mapping_reordered
 
 # The functions from here on still need to be adapted and are deprecated:
 

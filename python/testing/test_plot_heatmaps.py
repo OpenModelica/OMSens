@@ -69,9 +69,7 @@ class TestPlotHeatmap(unittest.TestCase):
         # Initialize heatmap
         heatmap = plot_heatmap.Heatmap(df)
         # Plot heatmap into temp folder path
-        plot_name = "heatmap.png"
-        plot_path = os.path.join(self._temp_dir, plot_name)
-        heatmap.plotInFolder(plot_path)
+        heatmap.plotInFolder(self._temp_dir)
         # Get plots extensions regex
         regex = '.*\.(png|svg)$'
         # Get list of files from regex
