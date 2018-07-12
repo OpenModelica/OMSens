@@ -21,12 +21,12 @@ def main():
     # Logging settings
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
     # Get arguments from command line call
-    json_file_path, root_dest_folder_path = getCommandLineArguments()
+    json_file_path, dest_folder_path_arg = getCommandLineArguments()
     # Args
     output_mos_name = "indiv_sens_sims.mos"
     std_run_filename = "std_run.csv"
     dest_folder_path, output_mos_path, std_run_path = filesPathsInOutputFolder(output_mos_name, std_run_filename,
-                                                                               root_dest_folder_path)
+                                                                               dest_folder_path_arg)
     mos_info = sens_mos_writer.createMosFromJSON(json_file_path, output_mos_path, std_run_filename)
     # Run .mos
     # logger.info("Calculating empirical parameter sensitivities for percentage {perc}, for all of the differentiable variables in W3 and target year {year_target}".format(perc=full_json["percentage"])
@@ -60,15 +60,6 @@ def main():
     return 0
 
 
-def folderPathForAnalysis(root_dest_folder_path):
-    # Make dest folder path in this projects root if none indicated in command line
-    if not root_dest_folder_path:
-        root_dest_folder_path = files_aux.destPath("indiv_sens_analysis")
-    # Make timestamp sub-folder in root dest folder path
-    dest_folder_path = files_aux.makeDirFromCurrentTimestamp(root_dest_folder_path)
-    return dest_folder_path
-
-
 def listOfParametersPerturbationInfo(param_names, param_vals, percentage):
     parameters_to_perturbate_tuples = []
     # Iterate parameters name and default info
@@ -81,8 +72,12 @@ def listOfParametersPerturbationInfo(param_names, param_vals, percentage):
     return parameters_to_perturbate_tuples
 
 
-def filesPathsInOutputFolder(output_mos_name, std_run_filename, root_dest_folder_path):
-    dest_folder_path = folderPathForAnalysis(root_dest_folder_path)
+def filesPathsInOutputFolder(output_mos_name, std_run_filename, dest_folder_path_arg):
+    # Make dest folder path in this projects root if none indicated in command line
+    if not dest_folder_path_arg:
+        dest_folder_path = files_aux.makeOutputPath("indiv_sens_analysis")
+    else:
+        dest_folder_path = dest_folder_path_arg
     # .mos script
     output_mos_path = os.path.join(dest_folder_path, output_mos_name)
     # Standard run csv
