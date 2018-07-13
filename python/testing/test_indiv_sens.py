@@ -72,11 +72,10 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
                 if s not in run_info_str:
                     self.fail("The sens info file should but doesn't include the string {0}.".format(s))
         # Test sens matrices files
-        methods_correct_vals_tuples = [("rel", "251928"), ("rms", "04251")]
-        sens_mats_paths_dict = analysis_files_paths["sens_matrices"]
+        methods_correct_vals_tuples = [("Relative", "251928"), ("RMS", "04251")]
         for method_name, str_to_include in methods_correct_vals_tuples:
             # Get path for this method's matrix
-            mat_path = sens_mats_paths_dict[method_name]
+            mat_path = analysis_files_paths["heatmaps"][method_name]["matrix_file_path"]
             # Read file into memory as str
             mat_str = filesystem.files_aux.readStrFromFile(mat_path)
             # Check that the strs are included

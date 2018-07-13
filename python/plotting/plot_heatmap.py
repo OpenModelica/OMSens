@@ -43,6 +43,8 @@ class Heatmap:
         self.colormap = colorMapForDataFrame(self.df_heatmap)
 
     def plotInFolder(self, plot_folder_path):
+        # Write the matrix used in the heatmap to file
+        matrix_file_path = self.writeMatrixDFToFolderPath(plot_folder_path)
         # Get cols and index names from DF and their respective mappings
         # Index mapped names
         index_names = self.df_heatmap.index.values.tolist()
@@ -83,9 +85,15 @@ class Heatmap:
             "plot_path": plot_path,
             "index_mapping_file_path": index_mapping_file_path,
             "cols_mapping_file_path": cols_mapping_file_path,
+            "matrix_file_path": matrix_file_path,
         }
         return paths_dict
 
+    def writeMatrixDFToFolderPath(self, plot_folder_path):
+        matrix_file_name = "matrix.csv"
+        matrix_file_path = os.path.join(plot_folder_path, matrix_file_name)
+        self.df_heatmap.to_csv(matrix_file_path)
+        return matrix_file_path
 
     # Auxs:
     def manipulateInputDataframe(self, df_input):
