@@ -1,14 +1,24 @@
-import os
 import inspect
-from datetime import datetime
-import subprocess
-import re  # regex
 import logging
+import os
+import re  # regex
+import subprocess
+from datetime import datetime
 
 logger = logging.getLogger("--Files aux funcs--")  # un logger especifico para este modulo
 
 
 # Functions to get current directory, create folder, create "tmp" folder to dump results, etc
+def listFilesRecursivelyForRegex(folder_path, regex):
+    # Call walk
+    files = list(os.walk(folder_path))[0][2]
+    # Iterate files keeping only the ones for regex
+    files_list = []
+    for x in files:
+        if re.match(regex, x):
+            files_list.append(x)
+    return files_list
+
 def parentDir(dir_):
     return os.path.dirname(dir_)
 

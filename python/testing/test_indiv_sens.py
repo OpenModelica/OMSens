@@ -82,6 +82,11 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
             if str_to_include not in mat_str:
                 self.fail("The matrix file should but doesn't include the string {0}.".format(str_to_include))
         # Test heatmap files
+        heatmaps_extension_regex = ".*\.png"
+        heatmap_files = filesystem.files_aux.listFilesRecursivelyForRegex(".", heatmaps_extension_regex)
+        if len(heatmap_files) < 1:
+            error_msg = "The run should've created at list one heatmap plot file and it didn't."
+            self.fail(error_msg)
 
 
 
