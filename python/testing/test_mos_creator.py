@@ -5,6 +5,8 @@ import shutil
 import tempfile
 import unittest
 
+import pytest
+
 import analysis.indiv_sens
 import filesystem.files_aux
 import mos_writer.calculate_sensitivities_mos_writer as sens_mos_writer
@@ -45,6 +47,7 @@ class TestsRunOMC(unittest.TestCase):
                     self.fail("The file {0} is an invalid test file. It raised the following exception:\n {1}".format(
                         test_file_path, error_msg))
 
+    @pytest.mark.slow
     def test_indiv_sens_from_json_with_correct_data_simulates_and_analyzescorrectly(self):
         # Write simple model to temp dir
         mo_file_name = "model.mo"
