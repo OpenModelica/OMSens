@@ -1,8 +1,11 @@
 #Std
+import glob
 import shutil  # para borrar el tempdir
 import tempfile  # para crear el tempdir
 import unittest
 from io import StringIO
+
+import numpy
 
 # Mine
 import analysis.indiv_sens
@@ -82,13 +85,18 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
             if str_to_include not in mat_str:
                 self.fail("The matrix file should but doesn't include the string {0}.".format(str_to_include))
         # Test heatmap files
-        heatmaps_extension_regex = ".*\.png"
-        heatmap_files = filesystem.files_aux.listFilesRecursivelyForRegex(".", heatmaps_extension_regex)
+        heatmap_files = list(glob.iglob(self._temp_dir + '/**/*.png', recursive=True))
         if len(heatmap_files) < 1:
             error_msg = "The run should've created at list one heatmap plot file and it didn't."
             self.fail(error_msg)
-
-
+        # Test dataframes in memory
+        methods_correct_vals_tuples = [("Relative", 0.251928), ("RMS", 0.042515)]
+        for method_name, val_to_include in methods_correct_vals_tuples:
+            df_method = analysis_results["dfs"]["sens_matrices"][method_name]
+            includes_val = numpy.isclose(df_method, val_to_include).any()
+            if not includes_val:
+                error_msg = "The method {0} does not include the value {1}".format(method_name, val_to_include)
+                self.fail(error_msg)
 
     def test_different_shapes_raises_error(self):
         # For RMS we need all of the simulation results (std run and perturbed runs) to have the same amount of rows.
