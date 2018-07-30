@@ -84,6 +84,24 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
             # Check that the strs are included
             if str_to_include not in mat_str:
                 self.fail("The matrix file should but doesn't include the string {0}.".format(str_to_include))
+        # Test that the IDs written for heatmap vars and cols include vars and cols, respectively
+        vars_names = ["h"]
+        param_names = ["g", "e"]
+        for method_name in ["Relative", "RMS"]:
+            # Get path for this method's IDs
+            index_IDs_path = analysis_files_paths["heatmaps"][method_name]["index_mapping_file_path"]
+            cols_IDs_path = analysis_files_paths["heatmaps"][method_name]["cols_mapping_file_path"]
+            # Read files into memory as str
+            index_IDs_str = filesystem.files_aux.readStrFromFile(index_IDs_path)
+            cols_IDs_str = filesystem.files_aux.readStrFromFile(cols_IDs_path)
+            # Check that the strs are included
+            for v in vars_names:
+                if v not in cols_IDs_str:
+                    self.fail("The IDs file {0} should but doesn't include the string {1}.".format(cols_IDs_path, v))
+            for param in param_names:
+                if param not in index_IDs_str:
+                    self.fail(
+                        "The IDs file {0} should but doesn't include the string {1}.".format(index_IDs_path, param))
         # Test heatmap files
         heatmap_files = list(glob.iglob(self._temp_dir + '/**/*.png', recursive=True))
         if len(heatmap_files) < 1:
