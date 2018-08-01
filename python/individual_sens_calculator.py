@@ -27,18 +27,18 @@ def main():
     std_run_filename = "std_run.csv"
     dest_folder_path, output_mos_path, std_run_path = filesPathsInOutputFolder(output_mos_name, std_run_filename,
                                                                                dest_folder_path_arg)
+    # Create mos script form JSON and write it in dest folder. It returns the paths of the files it will create: std
+    #   run, simulated runs, etc
     mos_info = sens_mos_writer.createMosFromJSON(json_file_path, output_mos_path, std_run_filename)
-    # Run .mos
-    # logger.info("Calculating empirical parameter sensitivities for percentage {perc}, for all of the differentiable variables in W3 and target year {year_target}".format(perc=full_json["percentage"])
+    # Run mos script
     logger.info("Running Modelica with specified information")
     running.run_omc.runMosScript(output_mos_path)
-    # Read json
+    # Read JSON again (both reads should be refactored into one)
     with open(json_file_path, 'r') as fp:
         full_json = json.load(fp)
-        # Prepare analysis inputs
-    mos_perturbed_runs_info = mos_info["perturbed_runs"]
+    # Prepare analysis inputs from JSON and MOS script info
     analyze_csvs_kwargs = {
-        "perturbed_simus_info"        : mos_perturbed_runs_info,
+        "perturbed_simus_info": mos_info["perturbed_runs"],
         "std_run_csv_path"            : std_run_path,
         "target_vars"                 : full_json["vars_to_analyze"],
         "percentage_perturbed"        : full_json["percentage"],
@@ -57,6 +57,7 @@ def main():
     paths_json_file_name = "paths.json"
     paths_json_file_path = os.path.join(dest_folder_path, paths_json_file_name)
     files_aux.writeStrToFile(paths_json_str, paths_json_file_path)
+    logger.info("Finished. The file {0} has all the the analysis files paths.".format(paths_json_file_path))
     return 0
 
 
