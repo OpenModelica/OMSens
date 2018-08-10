@@ -27,7 +27,11 @@ class TestSweepPlot(unittest.TestCase):
 
     # Tests:
     def test_plot_sweep_doesnt_raise_errors(self):
-        # Read standard run
+        # Create an example sweep
+        sweep = self.sweepExample()
+
+    # Auxs:
+    def sweepExample(self):
         df_std_run = pandas.read_csv(StringIO(bb_std_run_str), index_col=0)
         std_run = SimulationSpecs(StringIO(bb_std_run_str), {}, "BouncingBall", "/path/to/exe")
         # Simulate perturbations by multiplying variables
@@ -51,6 +55,7 @@ class TestSweepPlot(unittest.TestCase):
         sweep_params_swept = ["g"]
         sweep_params_fixed = ["e"]
         sweep = SweepSpecs(sweep_params_swept, sweep_params_fixed, std_run, perturbed_runs)
+        return sweep
 
 
 ###########
