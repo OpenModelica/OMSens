@@ -10,7 +10,7 @@ import plotting.plot_csv as plot_csv
 import settings.gral_settings as gral_settings
 import readme_writer.readme_writer as readme_writer
 import filesystem.files_aux
-import running.run_omc
+import modelica_interface.run_omc as run_omc
 
 
 def createSweepRunAndPlotForModelInfo(mos_script_factory_inst, plot_vars, iterations, output_folder_path,
@@ -28,7 +28,7 @@ def createSweepRunAndPlotForModelInfo(mos_script_factory_inst, plot_vars, iterat
     mos_script_factory_inst.createMosScript()  # argument-less method for now
     writeRunLog(mos_script_factory_inst.initializedSettings(),
                 os.path.join(output_folder_path, gral_settings.omc_creation_settings_filename))
-    running.run_omc.runMosScript(output_mos_path)
+    run_omc.runMosScript(output_mos_path)
     plots_folder_path = os.path.join(output_folder_path, "plots")
     os.makedirs(plots_folder_path)
     sweeping_vars = mos_script_factory_inst.initializedSettings()["sweep_vars"]

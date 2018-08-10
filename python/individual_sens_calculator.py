@@ -9,7 +9,7 @@ import sys
 import analysis.indiv_sens
 import filesystem.files_aux as files_aux
 import mos_writer.calculate_sensitivities_mos_writer as sens_mos_writer
-import running.run_omc
+import modelica_interface.run_omc as run_omc
 # Setup logging
 import settings.gral_settings
 
@@ -31,7 +31,7 @@ def main():
     # Run .mos
     # logger.info("Calculating empirical parameter sensitivities for percentage {perc}, for all of the differentiable variables in W3 and target year {year_target}".format(perc=full_json["percentage"])
     logger.info("Running Modelica with specified information")
-    running.run_omc.runMosScript(output_mos_path)
+    run_omc.runMosScript(output_mos_path)
     # Read json
     with open(json_file_path, 'r') as fp:
         full_json = json.load(fp)

@@ -4,15 +4,9 @@ import sys
 import logging #en reemplazo de los prints
 logger = logging.getLogger("-- Parameters perturbation calculator --") #un logger especifico para este modulo
 # Mine:
-import mos_writer.mos_script_factory as mos_script_factory
-import sweeping.run_and_plot_model as run_and_plot_model
-import filesystem.files_aux as files_aux
 import settings.settings_world3_sweep as world3_settings
-import settings.gral_settings as gral_settings
 import world3_specific.standard_run_params_defaults
 
-import mos_writer.calculate_sensitivities_mos_writer
-import running.run_omc
 
 
 #Aux for GLOBALS:
