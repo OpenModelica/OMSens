@@ -7,12 +7,9 @@ from io import StringIO
 import pandas
 import os
 
-import numpy
-
 # Mine
-import analysis.indiv_sens
-import filesystem.files_aux
-from running.simulation_run_info import SimulationRunInfo
+from running.simulation_run_info import SimulationSpecs
+from running.sweep import SweepSpecs
 
 
 class TestSweepPlot(unittest.TestCase):
@@ -32,8 +29,9 @@ class TestSweepPlot(unittest.TestCase):
     def test_plot_sweep_doesnt_raise_errors(self):
         # Read standard run
         df_std_run = pandas.read_csv(StringIO(bb_std_run_str), index_col=0)
+        std_run = SimulationSpecs(StringIO(bb_std_run_str), {}, "BouncingBall", "/path/to/exe")
         # Simulate perturbations by multiplying variables
-        runs = []
+        perturbed_runs = []
         for i in range(1, 9):
             df_perturbed_i = df_std_run.copy()
             df_perturbed_i["v"] = df_perturbed_i.apply(lambda row: row["v"] * (1 + i / 8), axis=1)
@@ -48,7 +46,11 @@ class TestSweepPlot(unittest.TestCase):
             run_model_name = "BouncingBall"
             # The executable can be anything as we asume it has already been ran
             run_executable = "/path/to/exe"
-            run = SimulationRunInfo(run_output_path, run_parameters_changed, run_model_name, run_executable)
+            run = SimulationSpecs(run_output_path, run_parameters_changed, run_model_name, run_executable)
+            perturbed_runs.append(run)
+        sweep_params_swept = ["g"]
+        sweep_params_fixed = ["e"]
+        sweep = SweepSpecs(sweep_params_swept, sweep_params_fixed, std_run, perturbed_runs)
 
 
 ###########
