@@ -28,7 +28,7 @@ class TestSweepPlot(unittest.TestCase):
     # Tests:
     def test_plot_sweep_doesnt_raise_errors(self):
         # Create an example sweep
-        sweep = self.sweepExample()
+        sweep_specs = self.sweepExample()
 
     # Auxs:
     def sweepExample(self):
@@ -54,8 +54,8 @@ class TestSweepPlot(unittest.TestCase):
             perturbed_runs.append(run)
         sweep_params_swept = ["g"]
         sweep_params_fixed = ["e"]
-        sweep = SweepSpecs(sweep_params_swept, sweep_params_fixed, std_run, perturbed_runs)
-        return sweep
+        sweep_specs = SweepSpecs(sweep_params_swept, sweep_params_fixed, std_run, perturbed_runs)
+        return sweep_specs
 
 
 ###########
