@@ -12,7 +12,7 @@ class SweepSimulationSpecs(SimulationSpecs):
         self.swept_params_info = swept_params_info
 
 
-class SweptParameterInfo():
+class PerturbedParameterInfo():
     def __init__(self, name, default_val, new_val):
         self.name = name
         self.default_val = default_val
