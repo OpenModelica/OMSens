@@ -6,10 +6,12 @@ import unittest
 from io import StringIO
 import pandas
 import os
+import re
 
 # Mine
-from running.simulation_run_info import SimulationSpecs
-from running.sweep import SweepSpecs
+import running.simulation_run_info as simu_run_info
+from running.sweep import ParametersSweepSpecs
+from plotting.plot_sweep import SweepPlot
 
 
 class TestSweepPlot(unittest.TestCase):
@@ -26,14 +28,30 @@ class TestSweepPlot(unittest.TestCase):
             f.close()
 
     # Tests:
-    def test_plot_sweep_doesnt_raise_errors(self):
+    def test_plot_sweep_creates_files_in_folder(self):
         # Create an example sweep
-        sweep_specs = self.sweepExample()
+        sweep_specs, var_name = self.sweepExample()
+        # Initialize sweep plotter
+        sweep_plotter = SweepPlot(sweep_specs)
+        # Plot sweep specs to temp folder
+        sweep_plotter.plotInFolder(var_name, self._temp_dir)
+        # Get plots extensions regex
+        regex = '.*\.(png|svg)$'
+        # Get list of files from regex
+        files_in_dir = os.listdir(self._temp_dir)
+        plot_files = [x for x in files_in_dir if re.match(regex, x)]
+        # Check that there is at least one plot
+        if len(plot_files) < 1:
+            error_msg = "The plot function should create at least one plot file in the destination folder."
+            self.fail(error_msg)
+
 
     # Auxs:
     def sweepExample(self):
+        # Generate dataframe
         df_std_run = pandas.read_csv(StringIO(bb_std_run_str), index_col=0)
-        std_run = SimulationSpecs(StringIO(bb_std_run_str), {}, "BouncingBall", "/path/to/exe")
+        model_name = "BouncingBall"
+        std_run = simu_run_info.SimulationSpecs(StringIO(bb_std_run_str), {}, model_name, "/path/to/exe")
         # Simulate perturbations by multiplying variables
         perturbed_runs = []
         for i in range(1, 9):
@@ -47,15 +65,20 @@ class TestSweepPlot(unittest.TestCase):
                 "e": 1,
                 "g": i,
             }
-            run_model_name = "BouncingBall"
+            swept_param_info = simu_run_info.SweptParameterInfo("g", 0, i)
+            swept_params_info_list = [swept_param_info]
             # The executable can be anything as we asume it has already been ran
             run_executable = "/path/to/exe"
-            run = SimulationSpecs(run_output_path, run_parameters_changed, run_model_name, run_executable)
-            perturbed_runs.append(run)
+            simu_specs = simu_run_info.SweepSimulationSpecs(run_output_path, run_parameters_changed, model_name,
+                                                            run_executable, swept_params_info_list)
+            perturbed_runs.append(simu_specs)
         sweep_params_swept = ["g"]
         sweep_params_fixed = ["e"]
-        sweep_specs = SweepSpecs(sweep_params_swept, sweep_params_fixed, std_run, perturbed_runs)
-        return sweep_specs
+        sweep_specs = ParametersSweepSpecs(model_name, sweep_params_swept, sweep_params_fixed, std_run, perturbed_runs)
+        # Var to analyze
+        var_name = "h"
+        # Returns sweep example objects
+        return sweep_specs, var_name
 
 
 ###########
