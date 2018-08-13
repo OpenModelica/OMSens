@@ -65,7 +65,7 @@ class TestSweepPlot(unittest.TestCase):
                 "e": 1,
                 "g": i,
             }
-            swept_param_info = simu_run_info.SweptParameterInfo("g", 0, i)
+            swept_param_info = simu_run_info.PerturbedParameterInfo("g", 0, i)
             swept_params_info_list = [swept_param_info]
             # The executable can be anything as we asume it has already been ran
             run_executable = "/path/to/exe"
@@ -73,7 +73,7 @@ class TestSweepPlot(unittest.TestCase):
                                                             run_executable, swept_params_info_list)
             perturbed_runs.append(simu_specs)
         sweep_params_swept = ["g"]
-        sweep_params_fixed = ["e"]
+        sweep_params_fixed = [simu_run_info.PerturbedParameterInfo("e", 0, 1)]
         sweep_specs = ParametersSweepSpecs(model_name, sweep_params_swept, sweep_params_fixed, std_run, perturbed_runs)
         # Var to analyze
         var_name = "h"

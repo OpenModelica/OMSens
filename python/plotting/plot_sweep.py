@@ -13,7 +13,7 @@ class SweepPlot():
 
     def plotInFolder(self, var_name, plots_folder_path, extra_ticks=[]):
         plot_path_without_extension = os.path.join(plots_folder_path, var_name)
-        title, subtitle, footer = sweepingPlotTexts(self.sweep_specs, var_name)
+        title, subtitle, footer = self.sweepingPlotTexts(self.sweep_specs, var_name)
         footer_artist = setupPlot("Time", var_name, title, subtitle, footer)
         colors_iter = plotColorsForNumber(len(self.sweep_specs.perturbed_runs))
         # Plot standard run that will be different than the other simulations results
@@ -28,8 +28,7 @@ class SweepPlot():
             plt.plot(df_run["time"], df_run[var_name], linewidth=1, linestyle='-', markersize=0, marker='o',
                      label=label, color=color)
         lgd = plt.legend(loc="center left", fontsize="small", fancybox=True, shadow=True,
-                         bbox_to_anchor=(1, 0.5))  # A la derecha
-        # lgd = plt.legend(loc="center left",fontsize="small",fancybox=True, shadow=True, bbox_to_anchor=(0.5,-0.5)) #Abajo (anda mal)
+                         bbox_to_anchor=(1, 0.5))
         setupXTicks(extra_ticks)
         saveAndClearPlt(plot_path_without_extension, lgd, footer_artist)
 
@@ -46,11 +45,32 @@ class SweepPlot():
             # Get the new val and the perturbation percentage from the default val
             p_perturb_perc = (p_info.default_val / p_info.new_val) * 100
             # Define the string for this param
-            param_str = "{0}={1:.2f} [{2}]".format(p_id, p_info.new_val, p_perturb_perc)
+            param_str = "({0})={1:.2f} [{2}%]".format(p_id, p_info.new_val, p_perturb_perc)
             params_strs_list.append(param_str)
         # Join all the param strs to form the label for this run
         label = " | ".join(params_strs_list)
         return label
+
+    def sweepingPlotTexts(self, sweep_specs, var_name):
+        model_name = sweep_specs.model_name
+        title = "Sweeping Plot for model: {model_name}".format(model_name=model_name)
+        subtitle = "Plotting var: {var_name}".format(var_name=var_name)
+        footer = self.footerFromSweepSpecs(sweep_specs)
+        return (title, subtitle, footer)
+
+    def footerFromSweepSpecs(self, sweep_specs):
+        swept_params_str = self.sweptParamsStr(sweep_specs)
+        fixed_params_str = fixedParamsStr(sweep_specs)
+        footer = "{0}\n{1}".format(swept_params_str, fixed_params_str)
+        return footer
+
+    def sweptParamsStr(self, sweep_specs):
+        swept_params_names = sweep_specs.swept_parameters_names
+        params_with_id_list = ["{0} ({1})".format(p_name, self.swept_params_ids_mapping[p_name]) for p_name in
+                               swept_params_names]
+        joined_params_str = ", ".join(params_with_id_list)
+        swept_params_info_str = "Swept parameters:  \n {0}".format(joined_params_str)
+        return swept_params_info_str
 
     def plotStandardRun(self, var_name, color="black", label="STD_RUN", linestyle="-"):
         # Get simulation specs for std run
@@ -63,7 +83,7 @@ class SweepPlot():
 
 def idsForSweptParams(sweep_specs):
     # Get the parameters that were swept
-    swept_params = sweep_specs.swept_parameters
+    swept_params = sweep_specs.swept_parameters_names
     # Iterate swept parameters assigning each one a numerical id
     swept_params_ids_mapping = {swept_params[i]: i for i in range(len(swept_params))}
     return swept_params_ids_mapping
@@ -75,34 +95,12 @@ def plotColorsForNumber(n_colors):
     return colors_iter
 
 
-def sweptParamsStr(sweep_specs):
-    swept_params = sweep_specs.swept_parameters
-    params_with_id_list = ["{0} ({1})".format(swept_params[i], i) for i in range(0, len(swept_params))]
-    joined_params_str = ", ".join(params_with_id_list)
-    swept_params_info_str = "Swept parameters:  \n {0}".format(joined_params_str)
-    return swept_params_info_str
-
-
 def fixedParamsStr(sweep_specs):
-    len_fixed_params = len(sweep_specs.fixed_parameters)
-    fixed_params_str = "Alongside the swept parameters," \
-                       " {0} parameters were perturbed with a fixed value in all iterations".format(len_fixed_params)
-    return fixed_params_str
-
-
-def sweepingPlotTexts(sweep_specs, var_name):
-    model_name = sweep_specs.model_name
-    title = "Sweeping Plot for model: {model_name}".format(model_name=model_name)
-    subtitle = "Plotting var: {var_name}".format(var_name=var_name)
-    footer = footerFromSweepSpecs(sweep_specs)
-    return (title, subtitle, footer)
-
-
-def footerFromSweepSpecs(sweep_specs):
-    swept_params_str = sweptParamsStr(sweep_specs)
-    fixed_params_str = fixedParamsStr(sweep_specs)
-    footer = "{0}\n{1}".format(swept_params_str, fixed_params_str)
-    return footer
+    fixed_params_info = sweep_specs.fixed_parameters_info
+    params_with_id_list = ["{0}={1}".format(p_info.name, p_info.new_val) for p_info in fixed_params_info]
+    joined_params_str = ", ".join(params_with_id_list)
+    swept_params_info_str = "Constant perturbed parameters:  \n {0}".format(joined_params_str)
+    return swept_params_info_str
 
 
 def setupPlot(x_label, y_label, title, subtitle, footer):
