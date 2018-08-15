@@ -10,8 +10,6 @@ import pytest
 import analysis.indiv_sens
 import filesystem.files_aux
 import mos_writer.calculate_sensitivities_mos_writer as sens_mos_writer
-# Ours
-import running.run_omc as omc_runner
 
 
 class TestsRunOMC(unittest.TestCase):
