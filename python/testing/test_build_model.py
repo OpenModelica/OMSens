@@ -7,6 +7,7 @@ import unittest
 
 # Mine
 import modelica_interface.build_model as build_model
+import filesystem.files_aux as files_aux
 
 
 class TestsBuildModel(unittest.TestCase):
@@ -23,11 +24,13 @@ class TestsBuildModel(unittest.TestCase):
             f.close()
 
     def test_builder_creates_files_in_folder(self):
+        # Write model to temp dir
+        model_file_path = os.path.join(self._temp_dir,"model.mo")
+        files_aux.writeStrToFile(model_str,model_file_path)
         # Test model params
         model_name = "Model"
         start_time = 1
         stop_time  = 2
-
         # 1) Create mos that builds model
         # 1.1) Load Modelica library
         load_modelica_str = "loadModel(Modelica);"
@@ -41,7 +44,7 @@ class TestsBuildModel(unittest.TestCase):
         mos_script_parts = [load_modelica_str, load_model_file_str, build_model_str]
         mos_script_string = "\n".join(mos_script_parts)
         # ADAPTAR LO DE ARRIBA
-        test_model_builder = build_model.ModelicaModelBuilder()
+        test_model_builder = build_model.ModelicaModelBuilder(model_file_path)
         mos_script_path = os.path.join(self._temp_dir,"mos_script.mos")
         test_model_builder.writeMOSScriptToPath(mos_script_path)
         # Get script extensions regex
@@ -56,11 +59,9 @@ class TestsBuildModel(unittest.TestCase):
 
 # Auxs
 model_str = \
-"""loadString("
-class Model
+"""class Model
   parameter Real a=-1;
   Real x(start=1,fixed=true);
 equation
   der(x) = a*x;
-end Model;
-");\n """
+end Model;"""
