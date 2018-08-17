@@ -13,7 +13,7 @@ import mos_writer.parameter_sweep_settings as parameter_sweep_settings
 import mos_writer.mos_script_factory
 import filesystem.files_aux as files_aux
 import settings.gral_settings as gral_settings
-import running.run_omc
+import modelica_interface.run_omc as run_omc
 import sweeping.iterationInfo
 import readme_writer.readme_writer as readme_writer
 import plotting.plot_csv as plot_csv
@@ -53,9 +53,9 @@ def main():
     # nrResourcesInitZXPOWLNoSweepOptimizePop() #no sweep
 #### POST - WORK PACKAGE 3 ####
 # Policies Triggers  with CURVI
-#   policyTriggers_test31_nosweep()  # the parameters are the policy triggers for scenarios 2 to 9. Initial: 2050 
-#   policyTriggers_test32_nosweep()  # the parameters are the policy triggers for scenarios 2 to 9. Initial: 2018 
-#   policyTriggers_test33_nosweep()  # the parameters are the policy triggers for scenarios 2 to 9. Initial: 2034 
+#   policyTriggers_test31_nosweep()  # the parameters are the policy triggers for scenarios 2 to 9. Initial: 2050
+#   policyTriggers_test32_nosweep()  # the parameters are the policy triggers for scenarios 2 to 9. Initial: 2018
+#   policyTriggers_test33_nosweep()  # the parameters are the policy triggers for scenarios 2 to 9. Initial: 2034
     hapzardExperiment()
 
 ##### TESTS DEFINITIONS #####
@@ -189,23 +189,23 @@ def onlyMeasurableInitValsNoSweep5PercOptimizePop():
 # Curvi run:
     # Optimum x0:
 # Param name              & Default         & CurviVal5%       & Curvival5%/Default
-# nr_resources_init       & 1000000000000.0 & 1049999932898.45 & 1.04999993289845   
-# pop2_init               & 700000000.0     & 734997926.769216 & 1.049997038241737  
-# industrial_capital_init & 210000000000.0  & 199500310116.404 & 0.9500014767447809 
-# pot_arable_land_tot     & 3200000000.0    & 3359996768.48028 & 1.0499989901500875 
-# pot_arable_land_init    & 2300000000.0    & 2185022565.87536 & 0.9500098112501565 
-# pop1_init               & 650000000.0     & 682495277.053796 & 1.049992733928917  
-# service_capital_init    & 144000000000.0  & 136865897154.419 & 0.9504576191279097 
-# arable_land_init        & 900000000.0     & 854999989.771129 & 0.9499999886345878 
-# land_fertility_init     & 600.0           & 574.830198743534 & 0.9580503312392232 
-# ppoll_in_1970           & 136000000.0     & 142799625.357823 & 1.0499972452781103 
-# agr_inp_init            & 5000000000.0    & 4765263042.21460 & 0.95305260844292   
-# urban_ind_land_init     & 8200000.0       & 7926983.79713496 & 0.9667053411140195 
-# pop3_init               & 190000000.0     & 190430747.405051 & 1.0022670916055316 
-# pop4_init               & 60000000.0      & 58481379.9505684 & 0.9746896658428067 
-# pers_pollution_init     & 25000000.0      & 25085149.6442214 & 1.003405985768856  
-# des_res_use_rt_DNRUR    & 4800000000.0    & 4753250667.76996 & 0.9902605557854084 
-# ind_out_in_1970         & 790000000000.0  & 790103354230.892 & 1.0001308281403696 
+# nr_resources_init       & 1000000000000.0 & 1049999932898.45 & 1.04999993289845
+# pop2_init               & 700000000.0     & 734997926.769216 & 1.049997038241737
+# industrial_capital_init & 210000000000.0  & 199500310116.404 & 0.9500014767447809
+# pot_arable_land_tot     & 3200000000.0    & 3359996768.48028 & 1.0499989901500875
+# pot_arable_land_init    & 2300000000.0    & 2185022565.87536 & 0.9500098112501565
+# pop1_init               & 650000000.0     & 682495277.053796 & 1.049992733928917
+# service_capital_init    & 144000000000.0  & 136865897154.419 & 0.9504576191279097
+# arable_land_init        & 900000000.0     & 854999989.771129 & 0.9499999886345878
+# land_fertility_init     & 600.0           & 574.830198743534 & 0.9580503312392232
+# ppoll_in_1970           & 136000000.0     & 142799625.357823 & 1.0499972452781103
+# agr_inp_init            & 5000000000.0    & 4765263042.21460 & 0.95305260844292
+# urban_ind_land_init     & 8200000.0       & 7926983.79713496 & 0.9667053411140195
+# pop3_init               & 190000000.0     & 190430747.405051 & 1.0022670916055316
+# pop4_init               & 60000000.0      & 58481379.9505684 & 0.9746896658428067
+# pers_pollution_init     & 25000000.0      & 25085149.6442214 & 1.003405985768856
+# des_res_use_rt_DNRUR    & 4800000000.0    & 4753250667.76996 & 0.9902605557854084
+# ind_out_in_1970         & 790000000000.0  & 790103354230.892 & 1.0001308281403696
 # With:
 #  ier =   2 nfu =  3271 nit =     23
 #  fopt(pop) =    -0.43238705D+10
@@ -1016,7 +1016,7 @@ def setUpSweepsAndRun(sweep_params_settings_list,fixed_params,plot_vars,stopTime
         }
         writeRunLog(run_settings, os.path.join(scen_folder_path,gral_settings.omc_creation_settings_filename))
         # Run
-        running.run_omc.runMosScript(output_mos_tobeExe_path)
+        run_omc.runMosScript(output_mos_tobeExe_path)
         # Get iterations info per param per iteration
         iterationsInfo_list = iterationsInfoForThisRun(sweep_params_settings_list,run_folder_path)
         # Plot desired variables

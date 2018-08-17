@@ -5,7 +5,7 @@ import shutil  # tempdir deletion
 import tempfile  # tempdir creation
 import unittest
 
-import running.run_omc as omc_runner
+import modelica_interface.run_omc as omc_runner
 # Mine
 import testing.aux_tests
 

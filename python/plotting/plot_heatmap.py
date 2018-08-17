@@ -17,7 +17,7 @@ import filesystem.files_aux
 
 class Heatmap:
     # Instance functions
-    def __init__(self, df_input, linthresh=1.0):
+    def __init__(self, df_matrix, linthresh=1.0):
         # linthresh:
         #   Since the logarithm of values close to zero tends toward infinity, a small range around zero
         #   needs to be mapped linearly. The parameter linthresh allows the user to specify the size of this range (
@@ -26,36 +26,37 @@ class Heatmap:
         #   in the logarithmic range.
         self.linthresh = linthresh
         # Save input df
-        self.df_input = df_input
+        self.df_matrix_input = df_matrix
         # Manipulate input dataframe (sort columns, rows, etc)
-        self.df_heatmap = self.manipulateInputDataframe(df_input)
+        self.df_matrix_heatmap = self.manipulateInputDataframe(df_matrix)
         # Define index's heatmap names
-        orig_index_names = self.df_heatmap.index.values.tolist()
+        orig_index_names = self.df_matrix_heatmap.index.values.tolist()
         index_names_prefix = "P."
         self.index_names_map = shortenStringsWithPrefix(orig_index_names, index_names_prefix)
         # Define columns' heatmap names
-        orig_cols_names = self.df_heatmap.columns.values.tolist()
+        orig_cols_names = self.df_matrix_heatmap.columns.values.tolist()
         cols_names_prefix = "V."
         self.cols_names_map = shortenStringsWithPrefix(orig_cols_names, cols_names_prefix)
         # Define the colorbar upper and lower limits
-        self.colorbar_min, self.colorbar_max = colorbarLimitsForDataFrame(self.df_heatmap)
+        self.colorbar_min, self.colorbar_max = colorbarLimitsForDataFrame(self.df_matrix_heatmap)
         # Define the colors of the heatmap
-        self.colormap = colorMapForDataFrame(self.df_heatmap)
+        self.colormap = colorMapForDataFrame(self.df_matrix_heatmap)
 
     def plotInFolder(self, plot_folder_path):
         # Write the matrix used in the heatmap to file
         matrix_file_path = self.writeMatrixDFToFolderPath(plot_folder_path)
         # Get cols and index names from DF and their respective mappings
         # Index mapped names
-        index_names = self.df_heatmap.index.values.tolist()
+        index_names = self.df_matrix_heatmap.index.values.tolist()
         index_names_mapped = [self.index_names_map[index_name] for index_name in index_names]
         # Columns mapped names
-        cols_names = self.df_heatmap.columns.values.tolist()
+        cols_names = self.df_matrix_heatmap.columns.values.tolist()
         cols_names_mapped = [self.cols_names_map[col_name] for col_name in cols_names]
         # Initialize figure and axes with heatmap configurations
-        fig, ax = initializeFigAndAx(self.df_heatmap, index_names_mapped, cols_names_mapped)
+        fig, ax = initializeFigAndAx(self.df_matrix_heatmap, index_names_mapped, cols_names_mapped)
         # Plot heatmap in figure and ax
-        heatmap_plot = ax.pcolor(self.df_heatmap, cmap=self.colormap, vmin=self.colorbar_min, vmax=self.colorbar_max)
+        heatmap_plot = ax.pcolor(self.df_matrix_heatmap, cmap=self.colormap, vmin=self.colorbar_min,
+                                 vmax=self.colorbar_max)
         # Colorbar from limits
         increment = (self.colorbar_max - self.colorbar_min) / 20  # 20 ticks
         colorbar_ticks = [self.colorbar_min + i * increment for i in range(0,
@@ -92,7 +93,7 @@ class Heatmap:
     def writeMatrixDFToFolderPath(self, plot_folder_path):
         matrix_file_name = "matrix.csv"
         matrix_file_path = os.path.join(plot_folder_path, matrix_file_name)
-        self.df_heatmap.to_csv(matrix_file_path)
+        self.df_matrix_heatmap.to_csv(matrix_file_path)
         return matrix_file_path
 
     # Auxs:
@@ -120,7 +121,7 @@ class Heatmap:
         return df_heatmap_tmp
 
     def heatmapDataFrame(self):
-        return self.df_heatmap
+        return self.df_matrix_heatmap
 
 def initializeFigAndAx(data, rows_names, cols_names):
     # Plot it out
