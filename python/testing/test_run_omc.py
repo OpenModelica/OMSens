@@ -5,8 +5,10 @@ import shutil  # tempdir deletion
 import tempfile  # tempdir creation
 import unittest
 
-import modelica_interface.run_omc as omc_runner
+import pytest
+
 # Mine
+import modelica_interface.run_omc as omc_runner
 import testing.aux_tests
 
 
@@ -30,6 +32,7 @@ class TestsRunOMC(unittest.TestCase):
         process_output = omc_runner.runMosScript(mos_path)
         self.assertEqual(process_output, "true\n")
 
+    @pytest.mark.slow
     def test_omc_builds_a_model_correctly(self):
         mos_str = model_str + build_model_str
         mos_path = createTMPMos(mos_str, self)
