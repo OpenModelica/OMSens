@@ -9,7 +9,7 @@ import sys
 import analysis.indiv_sens
 import filesystem.files_aux as files_aux
 import mos_writer.calculate_sensitivities_mos_writer as sens_mos_writer
-import running.run_omc
+import modelica_interface.run_omc as run_omc
 # Setup logging
 import settings.gral_settings
 
@@ -32,8 +32,13 @@ def main():
     mos_info = sens_mos_writer.createMosFromJSON(json_file_path, output_mos_path, std_run_filename)
     # Run mos script
     logger.info("Running Modelica with specified information")
+<<<<<<< HEAD
     running.run_omc.runMosScript(output_mos_path)
     # Read JSON again (both reads should be refactored into one)
+=======
+    run_omc.runMosScript(output_mos_path)
+    # Read json
+>>>>>>> c41cca1605687688524901694774eab65daeaf29
     with open(json_file_path, 'r') as fp:
         full_json = json.load(fp)
     # Prepare analysis inputs from JSON and MOS script info
