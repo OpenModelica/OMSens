@@ -45,8 +45,7 @@ class TestsBuildModel(unittest.TestCase):
         mos_script_string = "\n".join(mos_script_parts)
         # ADAPTAR LO DE ARRIBA
         test_model_builder = build_model.ModelicaModelBuilder(model_name, start_time, stop_time, model_file_path)
-        mos_script_path = os.path.join(self._temp_dir,"mos_script.mos")
-        test_model_builder.writeMOSScriptToPath(mos_script_path)
+        test_model_builder.buildToFolderPath(self._temp_dir)
         # Get script extensions regex
         regex = '.*\.mos$'
         # Get list of files from regex
