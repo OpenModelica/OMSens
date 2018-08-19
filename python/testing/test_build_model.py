@@ -44,7 +44,7 @@ class TestsBuildModel(unittest.TestCase):
         mos_script_parts = [load_modelica_str, load_model_file_str, build_model_str]
         mos_script_string = "\n".join(mos_script_parts)
         # ADAPTAR LO DE ARRIBA
-        test_model_builder = build_model.ModelicaModelBuilder(model_file_path)
+        test_model_builder = build_model.ModelicaModelBuilder(model_name, start_time, stop_time, model_file_path)
         mos_script_path = os.path.join(self._temp_dir,"mos_script.mos")
         test_model_builder.writeMOSScriptToPath(mos_script_path)
         # Get script extensions regex
