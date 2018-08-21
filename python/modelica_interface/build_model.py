@@ -3,6 +3,7 @@ import os
 # Mine
 import filesystem.files_aux as files_aux
 import modelica_interface.run_omc as run_omc
+from modelica_interface.compiled_model import CompiledModelicaModel
 
 
 class ModelicaModelBuilder():
@@ -32,6 +33,12 @@ class ModelicaModelBuilder():
         self.writeMOSScriptToPath(mos_script_path)
         # Run mos script with OMC
         run_omc.runMosScript(mos_script_path)
+        # Get binary path from folder and model name
+        binary_file_path = os.path.join(dest_folder_path, self.model_name)
+        # Initialize compiled model instance from path
+        compiled_model = CompiledModelicaModel(self.model_name, binary_file_path)
+        return compiled_model
+
 
     def mosScriptString(self):
         # This shouldn't be the responsibility of the builder, but for now we leave it here

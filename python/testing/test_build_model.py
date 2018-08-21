@@ -23,7 +23,7 @@ class TestsBuildModel(unittest.TestCase):
         for f in self._temp_files:
             f.close()
 
-    def test_builder_creates_files_in_folder(self):
+    def test_builder_works_correctly_for_correct_inputs(self):
         # Write model to temp dir
         model_file_path = os.path.join(self._temp_dir,"model.mo")
         files_aux.writeStrToFile(model_str,model_file_path)
@@ -33,7 +33,7 @@ class TestsBuildModel(unittest.TestCase):
         stop_time  = 2
         # Initialize and call model builder
         test_model_builder = build_model.ModelicaModelBuilder(model_name, start_time, stop_time, model_file_path)
-        test_model_builder.buildToFolderPath(self._temp_dir)
+        compiled_model = test_model_builder.buildToFolderPath(self._temp_dir)
         # Get script extensions regex
         regex = "{0}".format(model_name)
         # Get list of files from regex
@@ -43,6 +43,8 @@ class TestsBuildModel(unittest.TestCase):
         if len(files_for_regex) < 1:
             error_msg = "The model builder should create at least one file in folder."
             self.fail(error_msg)
+        # Test that the compiled model wrapper instance works correctly
+        compiled_model.setParameterStartValue("a", 0)
 
 # Auxs
 model_str = \
