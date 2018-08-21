@@ -1,6 +1,9 @@
 # Std
 import os
 import xml.etree.ElementTree as ElementTree
+import pandas
+# Mine
+import filesystem.files_aux as files_aux
 
 class CompiledModelicaModel():
     def __init__(self,model_name, binary_file_path):
@@ -31,6 +34,29 @@ class CompiledModelicaModel():
         param_value_element.attrib["start"] = param_val_str
         # Write XML to disk
         self.xml_tree.write(self.xml_file_path)
+
+    def simulate(self, dest_csv_path):
+        # Get folder for binary
+        binary_folder_path = os.path.dirname(self.binary_file_path)
+        # Define command to be called
+        binary_args = "-r={0}".format(dest_csv_path)
+        cmd = "{0} {1}".format(self.binary_file_path, binary_args)
+        # Execute binary with args
+        output = files_aux.callCMDStringInPath(cmd, binary_folder_path)
+        # Define run log file path
+        simu_folder_path = os.path.dirname(dest_csv_path)
+        csv_name = os.path.basename(dest_csv_path)
+        simu_log_name = "run_{0}.txt".format(csv_name)
+        simu_log_path = os.path.join(simu_folder_path, simu_log_name)
+        # Write log to disk
+        output_decoded = output.decode("UTF-8")
+        files_aux.writeStrToFile(output_decoded, simu_log_path)
+        return output_decoded
+
+    def simulateAndReadResults(self, dest_csv_path):
+        self.simulate(dest_csv_path)
+        df_simu = pandas.read_csv(dest_csv_path)
+        return df_simu
 
 # Auxs
 def xmlFilePathForModel(binary_file_path, model_name):

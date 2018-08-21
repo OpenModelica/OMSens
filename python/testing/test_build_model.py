@@ -44,7 +44,15 @@ class TestsBuildModel(unittest.TestCase):
             error_msg = "The model builder should create at least one file in folder."
             self.fail(error_msg)
         # Test that the compiled model wrapper instance works correctly
-        compiled_model.setParameterStartValue("a", 0)
+        compiled_model.setParameterStartValue("a", 1)
+        simulation_path = os.path.join(self._temp_dir, "simu.csv")
+        df_simu = compiled_model.simulateAndReadResults(simulation_path)
+        x_min = df_simu["x"].min()
+        x_max = df_simu["x"].max()
+        # We set the derivative slope as 0 so x should be a constant 1
+        if not (x_min == x_max == 1):
+            error_msg = "The parameter was not changed correctly"
+            self.fail(error_msg)
 
 # Auxs
 model_str = \
