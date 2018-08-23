@@ -1,0 +1,45 @@
+{
+    "model_name": "ModelWithVariousParams",
+    "model_mo_path": "resource/ModelWithVariousParams.mo",
+    "vars_to_analyze": [
+        "outvar1",
+        "outvar2",
+        "outvar3"
+    ],
+    "start_time": 0,
+    "stop_time": 3,
+    "parameters_to_sweep": [
+        {
+            "name"             : "realParam1",
+            "initial_val"      : 1.121,
+            "delta_percentage" : 5,
+            "iterations"       : 3
+        },
+        {
+            "name"             : "realParam2",
+            "initial_val"      : 1.122,
+            "delta_percentage" : 10,
+            "iterations"       : 3
+        },
+        {
+            "name"             : "realParam3",
+            "initial_val"      : 1.123,
+            "delta_percentage" : 15,
+            "iterations"       : 3
+        }
+    ],
+    "parameters_to_assign_fixed_value": [
+        {
+            "name": "intParam1",
+            "value": 102
+        },
+        {
+            "name": "intParam2",
+            "value": 103
+        },
+        {
+            "name": "intParam3",
+            "value": 104
+        }
+    ]
+}
