@@ -32,13 +32,8 @@ def main():
     mos_info = sens_mos_writer.createMosFromJSON(json_file_path, output_mos_path, std_run_filename)
     # Run mos script
     logger.info("Running Modelica with specified information")
-<<<<<<< HEAD
-    running.run_omc.runMosScript(output_mos_path)
-    # Read JSON again (both reads should be refactored into one)
-=======
     run_omc.runMosScript(output_mos_path)
-    # Read json
->>>>>>> c41cca1605687688524901694774eab65daeaf29
+    # Read JSON again (both reads should be refactored into one)
     with open(json_file_path, 'r') as fp:
         full_json = json.load(fp)
     # Prepare analysis inputs from JSON and MOS script info

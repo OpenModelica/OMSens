@@ -44,7 +44,7 @@ class TestsBuildModel(unittest.TestCase):
             error_msg = "The model builder should create at least one file in folder."
             self.fail(error_msg)
         # Test that the compiled model wrapper instance works correctly
-        compiled_model.setParameterStartValue("a", 1)
+        compiled_model.setParameterStartValue("a", 0)
         simulation_path = os.path.join(self._temp_dir, "simu.csv")
         df_simu = compiled_model.simulateAndReadResults(simulation_path)
         x_min = df_simu["x"].min()
