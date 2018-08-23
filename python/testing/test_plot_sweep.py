@@ -10,7 +10,7 @@ import re
 
 # Mine
 import running.simulation_run_info as simu_run_info
-from running.sweep import ParametersSweepSpecs
+from running.sweep import ParametersSweepResults
 from plotting.plot_sweep import SweepPlot
 
 
@@ -74,7 +74,8 @@ class TestSweepPlot(unittest.TestCase):
             perturbed_runs.append(simu_specs)
         sweep_params_swept = ["g"]
         sweep_params_fixed = [simu_run_info.PerturbedParameterInfo("e", 0, 1)]
-        sweep_specs = ParametersSweepSpecs(model_name, sweep_params_swept, sweep_params_fixed, std_run, perturbed_runs)
+        sweep_specs = ParametersSweepResults(model_name, sweep_params_swept, sweep_params_fixed, std_run,
+                                             perturbed_runs)
         # Var to analyze
         var_name = "h"
         # Returns sweep example objects
