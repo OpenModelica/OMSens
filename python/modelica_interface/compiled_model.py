@@ -10,30 +10,23 @@ class CompiledModelicaModel():
         # Attrs from args
         self.model_name = model_name
         self.binary_file_path = binary_file_path
-        # Other attrs
         xml_file_path = xmlFilePathForModel(self.binary_file_path, self.model_name)
         self.xml_file_path = xml_file_path
         # Read XML from XML file
         xml_tree = ElementTree.parse(self.xml_file_path)
         self.xml_tree = xml_tree
+        # Save a copy of the xml with the original values
+        self.default_xml_tree = xml_tree
 
     def setParameterStartValue(self,param_name,param_val):
         # Cast value as string
         param_val_str = str(param_val)
-        # Get XML root
-        root = self.xml_tree.getroot()
-        # Find element with vars and parameters
-        modelvars_element = [e for e in root.getchildren() if e.tag == "ModelVariables"][0]
-        # Find parameter
-        param_element = [x for x in modelvars_element.getchildren()
-                         if x.tag == "ScalarVariable" and
-                         x.attrib["name"] == param_name][0]
-        # Get value element for param
-        param_value_element = param_element.getchildren()[0]
+        param_value_element = valueElementForParamAndXMLTree(param_name, self.xml_tree)
         # Change value
         param_value_element.attrib["start"] = param_val_str
         # Write XML to disk
         self.xml_tree.write(self.xml_file_path)
+
 
     def simulate(self, dest_csv_path):
         # Get folder for binary
@@ -64,3 +57,16 @@ def xmlFilePathForModel(binary_file_path, model_name):
     xml_file_name = "{0}_init.xml".format(model_name)
     xml_file_path = os.path.join(binary_folder_path, xml_file_name)
     return xml_file_path
+
+def valueElementForParamAndXMLTree(param_name, xml_tree):
+    # Get XML root
+    root = xml_tree.getroot()
+    # Find element with vars and parameters
+    modelvars_element = [e for e in root.getchildren() if e.tag == "ModelVariables"][0]
+    # Find parameter
+    param_element = [x for x in modelvars_element.getchildren()
+                     if x.tag == "ScalarVariable" and
+                     x.attrib["name"] == param_name][0]
+    # Get value element for param
+    param_value_element = param_element.getchildren()[0]
+    return param_value_element
