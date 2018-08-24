@@ -19,16 +19,7 @@ class CompiledModelicaModel():
         # Save a copy of the xml with the original values
         self.default_xml_tree = copy.deepcopy(xml_tree)
 
-    def setParameterStartValue(self,param_name,param_val):
-        # Cast value as string
-        param_val_str = str(param_val)
-        # Get XML element for param and its value
-        param_value_element = valueElementForParamAndXMLTree(param_name, self.xml_tree)
-        # Change value
-        param_value_element.attrib["start"] = param_val_str
-        # Write XML to disk
-        self.xml_tree.write(self.xml_file_path)
-
+    # Getters
     def parameterValue(self,param_name):
         # Get XML element for param and its value from the (changed) XML
         xml_tree = self.xml_tree
@@ -41,8 +32,18 @@ class CompiledModelicaModel():
         param_val_casted = parameterValueInModelicaXML(param_name, xml_tree)
         return param_val_casted
 
+    # Setters
+    def setParameterStartValue(self,param_name,param_val):
+        # Cast value as string
+        param_val_str = str(param_val)
+        # Get XML element for param and its value
+        param_value_element = valueElementForParamAndXMLTree(param_name, self.xml_tree)
+        # Change value
+        param_value_element.attrib["start"] = param_val_str
+        # Write XML to disk
+        self.xml_tree.write(self.xml_file_path)
 
-
+    # Other
     def simulate(self, dest_csv_path):
         # Get folder for binary
         binary_folder_path = os.path.dirname(self.binary_file_path)
