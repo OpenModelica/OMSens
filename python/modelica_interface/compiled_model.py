@@ -2,6 +2,7 @@
 import os
 import xml.etree.ElementTree as ElementTree
 import pandas
+import copy
 # Mine
 import filesystem.files_aux as files_aux
 
@@ -16,16 +17,27 @@ class CompiledModelicaModel():
         xml_tree = ElementTree.parse(self.xml_file_path)
         self.xml_tree = xml_tree
         # Save a copy of the xml with the original values
-        self.default_xml_tree = xml_tree
+        self.default_xml_tree = copy.deepcopy(xml_tree)
 
     def setParameterStartValue(self,param_name,param_val):
         # Cast value as string
         param_val_str = str(param_val)
+        # Get XML element for param and its value
         param_value_element = valueElementForParamAndXMLTree(param_name, self.xml_tree)
         # Change value
         param_value_element.attrib["start"] = param_val_str
         # Write XML to disk
         self.xml_tree.write(self.xml_file_path)
+
+    def defaultParameterValue(self,param_name):
+        # Get XML element for param and its value from the original XML
+        param_value_element = valueElementForParamAndXMLTree(param_name, self.default_xml_tree)
+        # Get val from element
+        param_val = param_value_element.attrib["start"]
+        # Cast it to its type
+        if param_value_element.tag == "Real":
+            param_val_casted = float(param_val)
+        return param_val_casted
 
 
     def simulate(self, dest_csv_path):

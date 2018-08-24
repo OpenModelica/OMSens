@@ -53,6 +53,12 @@ class TestsBuildModel(unittest.TestCase):
         if not (x_min == x_max == 1):
             error_msg = "The parameter was not changed correctly"
             self.fail(error_msg)
+        # Test that the default value for the params are backup-ed correctly
+        # We ask for the default value for a so it should be -1
+        param_def_val = compiled_model.defaultParameterValue("a")
+        if not param_def_val == -1:
+            error_msg = "The parameter default value was not backup-ed correctly"
+            self.fail(error_msg)
 
 # Auxs
 model_str = \
