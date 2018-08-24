@@ -6,7 +6,7 @@ class SimulationSpecs():
         self.executable = executable_path
 
 
-class SweepSimulationSpecs(SimulationSpecs):
+class OneSimulationResultFromSweep(SimulationSpecs):
     def __init__(self, output_path, parameters_changed, model_name, executable_path, swept_params_info):
         super().__init__(output_path, parameters_changed, model_name, executable_path)
         self.swept_params_info = swept_params_info

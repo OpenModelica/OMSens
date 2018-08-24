@@ -46,7 +46,7 @@ class TestSweepPlot(unittest.TestCase):
             self.fail(error_msg)
 
 
-    # Auxs:
+# Auxs:
     def sweepExample(self):
         # Generate dataframe
         df_std_run = pandas.read_csv(StringIO(bb_std_run_str), index_col=0)
@@ -67,13 +67,17 @@ class TestSweepPlot(unittest.TestCase):
             }
             swept_param_info = simu_run_info.PerturbedParameterInfo("g", 0, i)
             swept_params_info_list = [swept_param_info]
-            # The executable can be anything as we asume it has already been ran
+            # The executable can be anything as we assume it has already been ran
             run_executable = "/path/to/exe"
-            simu_specs = simu_run_info.SweepSimulationSpecs(run_output_path, run_parameters_changed, model_name,
-                                                            run_executable, swept_params_info_list)
+            # The following object is for one one. We have to save sweep information alongside run information, so
+            #  for now both infos are saved together. In the future, they must be saved separately and one must
+            #  reference the other
+            simu_specs = simu_run_info.OneSimulationResultFromSweep(run_output_path, run_parameters_changed, model_name,
+                                                                    run_executable, swept_params_info_list)
             perturbed_runs.append(simu_specs)
         sweep_params_swept = ["g"]
         sweep_params_fixed = [simu_run_info.PerturbedParameterInfo("e", 0, 1)]
+        # The following object is the sweep in general. That is, for all runs
         sweep_specs = ParametersSweepResults(model_name, sweep_params_swept, sweep_params_fixed, std_run,
                                              perturbed_runs)
         # Var to analyze
