@@ -54,10 +54,16 @@ class TestsBuildModel(unittest.TestCase):
             error_msg = "The parameter was not changed correctly"
             self.fail(error_msg)
         # Test that the default value for the params are backup-ed correctly
-        # We ask for the default value for a so it should be -1
         param_def_val = compiled_model.defaultParameterValue("a")
+        # We ask for the default value for a so it should be -1
         if not param_def_val == -1:
             error_msg = "The parameter default value was not backup-ed correctly"
+            self.fail(error_msg)
+        # Test that the current value for the params is returned correctly
+        param_def_val = compiled_model.parameterValue("a")
+        # We ask for the current value for a so it should be 0
+        if not param_def_val == 0:
+            error_msg = "The parameter current value was not returned correctly"
             self.fail(error_msg)
 
 # Auxs

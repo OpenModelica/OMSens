@@ -29,15 +29,18 @@ class CompiledModelicaModel():
         # Write XML to disk
         self.xml_tree.write(self.xml_file_path)
 
+    def parameterValue(self,param_name):
+        # Get XML element for param and its value from the (changed) XML
+        xml_tree = self.xml_tree
+        param_val_casted = parameterValueInModelicaXML(param_name, xml_tree)
+        return param_val_casted
+
     def defaultParameterValue(self,param_name):
         # Get XML element for param and its value from the original XML
-        param_value_element = valueElementForParamAndXMLTree(param_name, self.default_xml_tree)
-        # Get val from element
-        param_val = param_value_element.attrib["start"]
-        # Cast it to its type
-        if param_value_element.tag == "Real":
-            param_val_casted = float(param_val)
+        xml_tree = self.default_xml_tree
+        param_val_casted = parameterValueInModelicaXML(param_name, xml_tree)
         return param_val_casted
+
 
 
     def simulate(self, dest_csv_path):
@@ -63,12 +66,14 @@ class CompiledModelicaModel():
         df_simu = pandas.read_csv(dest_csv_path)
         return df_simu
 
+
 # Auxs
 def xmlFilePathForModel(binary_file_path, model_name):
     binary_folder_path = os.path.dirname(binary_file_path)
     xml_file_name = "{0}_init.xml".format(model_name)
     xml_file_path = os.path.join(binary_folder_path, xml_file_name)
     return xml_file_path
+
 
 def valueElementForParamAndXMLTree(param_name, xml_tree):
     # Get XML root
@@ -82,3 +87,22 @@ def valueElementForParamAndXMLTree(param_name, xml_tree):
     # Get value element for param
     param_value_element = param_element.getchildren()[0]
     return param_value_element
+
+
+def parameterValueInModelicaXML(param_name, xml_tree):
+    param_value_element = valueElementForParamAndXMLTree(param_name, xml_tree)
+    # Get val from element
+    param_val = param_value_element.attrib["start"]
+    # Cast it to its type
+    param_val_casted = castModelicaValue(param_val, param_value_element)
+    return param_val_casted
+
+
+def castModelicaValue(param_val, param_value_element):
+    modelica_type = param_value_element.tag
+    if modelica_type == "Real":
+        param_val_casted = float(param_val)
+    else:
+        error_msg = "The script has not been yet adapted to cast Modelica types of {0}".format(modelica_type)
+        raise Exception(error_msg)
+    return param_val_casted
