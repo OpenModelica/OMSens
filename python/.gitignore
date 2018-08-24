@@ -6,4 +6,5 @@ tmp/
 **/.idea/modelica_scripts.xml
 **/.idea/modules.xml
 **/.idea/borrame.xml
+**/.idea/python.iml
 **/.mod
