@@ -1,12 +1,13 @@
 # Std
-import math
 import numpy
+import itertools
 # Mine
 import modelica_interface.build_model as build_model
 
 
 class ParametersSweeper():
-    def __init__(self, model_name, model_file_path, start_time, stop_time, perturbation_info_per_param):
+    def __init__(self, model_name, model_file_path, start_time, stop_time, perturbation_info_per_param,
+                 build_folder_path):
         # Save args
         self.model_name = model_name
         self.model_file_path = model_file_path
@@ -15,32 +16,21 @@ class ParametersSweeper():
         self.perturbation_info_per_param = perturbation_info_per_param
         # Initialize builder
         self.model_builder = build_model.ModelicaModelBuilder(model_name, start_time, stop_time, model_file_path)
+        # Build model
+        self.compiled_model = self.model_builder.buildToFolderPath(build_folder_path)
+        # Get the default values for the params to perturb using the compiled model
+        self.params_defaults = self.defaultValuesForParamsToPerturb(self.compiled_model)
+        # Calculate the values per param
+        self.values_per_param = valuesPerParamFromParamsInfos(self.params_defaults, self.perturbation_info_per_param)
+        # Generate all possible combinations
+        params_vals_combinations = dict_product(self.values_per_param)
 
     def runSweep(self, dest_folder_path):
-        # Build model
-        compiled_model = self.model_builder.buildToFolderPath(dest_folder_path)
-        # Get the default values for the params to perturb using the compiled model
-        params_defaults = self.defaultValuesForParamsToPerturb(compiled_model)
-
-        # Calculate the values per param
-        values_per_param = valuesPerParamFromParamsInfos(params_defaults,self.perturbation_info_per_param)
-        # Iterate combinations of parameters values
-
         # Create Sweep Results
         pass
 
-
-    # Instance auxs
-    def _valuesPerParam(self, dest_folder_path):
-        # For now this function is used only for testing
-        # Build model
-        compiled_model = self.model_builder.buildToFolderPath(dest_folder_path)
-        # Get the default values for the params to perturb using the compiled model
-        params_defaults = self.defaultValuesForParamsToPerturb(compiled_model)
-        # Calculate the values per param
-        values_per_param = valuesPerParamFromParamsInfos(params_defaults, self.perturbation_info_per_param)
-
-        return values_per_param
+    def valuesPerParam(self):
+        return self.values_per_param
 
     def defaultValuesForParamsToPerturb(self,compiled_model):
         # Get list of params to perturb
@@ -84,6 +74,10 @@ def valuesForDeltaItersAndDefaultVal(delta_percentage, iterations, def_value):
         # 2 or more iterations, use numpys linspace
         values = numpy.linspace(left_limit, right_limit, iterations)
     return values
+
+
+def dict_product(dict_of_lists):
+    return (dict(zip(dict_of_lists, x)) for x in itertools.product(*dict_of_lists.values()))
 
 
 class ParametersSweepResults():

@@ -25,11 +25,13 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
         for f in self._temp_files:
             f.close()
     # Tests:
-    def test_param_values_are_assigned_as_expected(self):
+    def test_values_subtests(self):
+        # We add several tests in one because we have to build the model each time so we avoid doing it here
         # Initialize sweep example
         sweep_runner = self.sweepSpecsExample()
+        # Test that the values per param are correct
         # Get values for each param
-        vals_per_param = sweep_runner._valuesPerParam(self._temp_dir)
+        vals_per_param = sweep_runner.valuesPerParam()
         correct_vals_per_param = {
             "a": [-1],
             "b": [-0.9, -1.1],
@@ -42,6 +44,16 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
                 if not v1 == v2:
                     error_msg = "The parameter '{0}' has val {1} when it should have val {2}".format(p, v1, v2)
                     self.fail(error_msg)
+        # Test that the values combinations are correct
+        correct_vals_combinations = [
+            {'a': -1, 'b': -0.9, 'c': -0.85},
+            {'a': -1, 'b': -0.9, 'c': -1},
+            {'a': -1, 'b': -0.9, 'c': -1.15},
+            {'a': -1, 'b': -1.1, 'c': -0.85},
+            {'a': -1, 'b': -1.1, 'c': -1},
+            {'a': -1, 'b': -1.1, 'c': -1.15}
+        ]
+
     # Auxs
     def sweepSpecsExample(self):
         model_name = "Model"
@@ -67,7 +79,7 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
             },
         ]
         sweep_runner = running.sweep.ParametersSweeper(model_name, model_file_path, start_time, stop_time,
-                                                       perturbation_info_per_param)
+                                                       perturbation_info_per_param, self._temp_dir)
         return sweep_runner
 
 
