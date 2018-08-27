@@ -30,9 +30,9 @@ class TestSweepPlot(unittest.TestCase):
     # Tests:
     def test_plot_sweep_creates_files_in_folder(self):
         # Create an example sweep
-        sweep_specs, var_name = self.sweepExample()
+        sweep_results, var_name = self.sweepResultsExample()
         # Initialize sweep plotter
-        sweep_plotter = SweepPlot(sweep_specs)
+        sweep_plotter = SweepPlot(sweep_results)
         # Plot sweep specs to temp folder
         sweep_plotter.plotInFolder(var_name, self._temp_dir)
         # Get plots extensions regex
@@ -47,7 +47,7 @@ class TestSweepPlot(unittest.TestCase):
 
 
 # Auxs:
-    def sweepExample(self):
+    def sweepResultsExample(self):
         # Generate dataframe
         df_std_run = pandas.read_csv(StringIO(bb_std_run_str), index_col=0)
         model_name = "BouncingBall"
