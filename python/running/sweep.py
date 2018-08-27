@@ -23,15 +23,19 @@ class ParametersSweeper():
         # Calculate the values per param
         self.values_per_param = valuesPerParamFromParamsInfos(self.params_defaults, self.perturbation_info_per_param)
         # Generate all possible combinations
-        params_vals_combinations = dict_product(self.values_per_param)
+        self.params_vals_combinations = dict_product(self.values_per_param)
 
     def runSweep(self, dest_folder_path):
         # Create Sweep Results
         pass
 
-    def valuesPerParam(self):
+    def valuesPerParameter(self):
         return self.values_per_param
 
+    def parametersValuesCombinations(self):
+        return self.params_vals_combinations
+
+    # Auxs
     def defaultValuesForParamsToPerturb(self,compiled_model):
         # Get list of params to perturb
         params_to_perturb = [ x["name"] for x in self.perturbation_info_per_param ]

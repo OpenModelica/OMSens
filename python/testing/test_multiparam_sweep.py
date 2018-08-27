@@ -31,7 +31,7 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
         sweep_runner = self.sweepSpecsExample()
         # Test that the values per param are correct
         # Get values for each param
-        vals_per_param = sweep_runner.valuesPerParam()
+        vals_per_param = sweep_runner.valuesPerParameter()
         correct_vals_per_param = {
             "a": [-1],
             "b": [-0.9, -1.1],
@@ -44,15 +44,12 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
                 if not v1 == v2:
                     error_msg = "The parameter '{0}' has val {1} when it should have val {2}".format(p, v1, v2)
                     self.fail(error_msg)
-        # Test that the values combinations are correct
-        correct_vals_combinations = [
-            {'a': -1, 'b': -0.9, 'c': -0.85},
-            {'a': -1, 'b': -0.9, 'c': -1},
-            {'a': -1, 'b': -0.9, 'c': -1.15},
-            {'a': -1, 'b': -1.1, 'c': -0.85},
-            {'a': -1, 'b': -1.1, 'c': -1},
-            {'a': -1, 'b': -1.1, 'c': -1.15}
-        ]
+        # Test that the number of combinations are correct
+        vals_combinations_n = len(list(sweep_runner.parametersValuesCombinations()))
+        correct_n_runs = 6
+        if vals_combinations_n != correct_n_runs:
+            error_msg = "The sweep should have {0} runs but it had {1}".format(vals_combinations_n, correct_n_runs)
+            self.fail(error_msg)
 
     # Auxs
     def sweepSpecsExample(self):
