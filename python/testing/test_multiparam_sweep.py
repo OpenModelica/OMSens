@@ -1,15 +1,15 @@
 # Std
 import glob
+import os
 import shutil  # para borrar el tempdir
 import tempfile  # para crear el tempdir
 import unittest
 from io import StringIO
-
 import numpy
 
 # Mine
 import running.sweep
-import filesystem.files_aux
+import filesystem.files_aux as files_aux
 
 
 class TestIndividualSensitivityAnalysis(unittest.TestCase):
@@ -25,52 +25,53 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
         for f in self._temp_files:
             f.close()
     # Tests:
+    def test_param_values_are_assigned_as_expected(self):
+        # Initialize sweep example
+        sweep_runner = self.sweepSpecsExample()
+        # Get values for each param
+        vals_per_param = sweep_runner._valuesPerParam(self._temp_dir)
+        pass
+
+    # Auxs
+    def sweepSpecsExample(self):
+        model_name = "Model"
+        model_file_path = os.path.join(self._temp_dir, "model.mo")
+        files_aux.writeStrToFile(model_str, model_file_path)
+        start_time = 0
+        stop_time = 2
+        perturbation_info_per_param = [
+            {
+                "name": "a",
+                "delta_percentage": 5,
+                "iterations": 1
+            },
+            {
+                "name": "b",
+                "delta_percentage": 10,
+                "iterations": 2
+            },
+            {
+                "name": "c",
+                "delta_percentage": 15,
+                "iterations": 3
+            },
+        ]
+        sweep_runner = running.sweep.ParametersSweeper(model_name, model_file_path, start_time, stop_time,
+                                                       perturbation_info_per_param)
+        return sweep_runner
+
+
 
 
 ###########
 # Globals #
 ###########
-bb_std_run_str = \
-    """"time","h","v","der(h)","der(v)","v_new","flying","impact"
-    0,1,0,0,-9.81,0,1,0
-    1,0.2250597607429705,-2.279940238910565,-2.279940238910565,-9.81,3.100612842801532,1,0
-    2,0.04243354772647411,-0.5463586255141026,-0.5463586255141026,-9.81,1.063510205007515,1,0
-    3,2.101988323055078e-11,0,0,0,0,0,1"""
-
-bb_e_perturbed_str = \
-    """"time","h","v","der(h)","der(v)","v_new","flying","impact"
-    0,1,0,0,-9.81,0,1,0
-    1,0.3100904028764322,-2.124909596770488,-2.124909596770488,-9.81,3.255643484941609,1,0
-    2,0.04233293611696021,0.9167931152103947,0.9167931152103947,-9.81,1.292703301139997,1,0
-    3,2.631538447381662e-11,0,0,0,0,0,1"""
-
-bb_g_perturbed_str = \
-    """"time","h","v","der(h)","der(v)","v_new","flying","impact"
-    0,1,0,0,-10.3005,0,1,0
-    1,0.1657651633154364,-2.584484836337927,-2.584484836337927,-10.3005,3.177182714449088,1,0
-    2,0.003483617140901725,-1.056333590801138,-1.056333590801138,-10.3005,1.089773670982276,1,0
-    3,2.105894579818758e-11,0,0,0,0,0,1"""
-
-bb_std_run_2_str = \
-    """"time","h","v","der(h)","der(v)","v_new","flying","impact"
-    0,1,0,0,-9.81,0,1,0
-    1,0.2250597607429705,-2.279940238910565,-2.279940238910565,-9.81,3.100612842801532,1,0
-    2,0.04243354772647411,-0.5463586255141026,-0.5463586255141026,-9.81,1.063510205007515,1,0
-    2.5,0.14243354772647411,-0.5463586255141026,-0.5463586255141026,-9.81,1.063510205007515,1,0
-    3,2.101988323055078e-11,0,0,0,0,0,1"""
-
-bb_e_perturbed_2_str = \
-    """"time","h","v","der(h)","der(v)","v_new","flying","impact"
-    0,1,0,0,-9.81,0,1,0
-    1,0.3100904028764322,-2.124909596770488,-2.124909596770488,-9.81,3.255643484941609,1,0
-    2,0.04233293611696021,0.9167931152103947,0.9167931152103947,-9.81,1.292703301139997,1,0
-    2.5,0.14233293611696021,0.9167931152103947,0.9167931152103947,-9.81,1.292703301139997,1,0
-    3,2.631538447381662e-11,0,0,0,0,0,1"""
-
-bb_g_perturbed_2_str = \
-    """"time","h","v","der(h)","der(v)","v_new","flying","impact"
-    0,1,0,0,-10.3005,0,1,0
-    1,0.1657651633154364,-2.584484836337927,-2.584484836337927,-10.3005,3.177182714449088,1,0
-    2,0.003483617140901725,-1.056333590801138,-1.056333590801138,-10.3005,1.089773670982276,1,0
-    2.5,0.103483617140901725,-1.056333590801138,-1.056333590801138,-10.3005,1.089773670982276,1,0
-    3,2.105894579818758e-11,0,0,0,0,0,1"""
+model_str = \
+    """class Model
+      parameter Real a=-1;
+      parameter Real b=-1;
+      parameter Real c=-1;
+      Real x(start=1,fixed=true);
+    equation
+      der(x) = a*x + b/2 + c/4;
+    end Model;"""
