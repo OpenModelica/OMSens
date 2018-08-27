@@ -54,22 +54,12 @@ class CompiledModelicaModel():
         cmd = "{0} {1}".format(self.binary_file_path, binary_args)
         # Execute binary with args
         output = files_aux.callCMDStringInPath(cmd, binary_folder_path)
-        # Define run log file path
-        simu_folder_path = os.path.dirname(dest_csv_path)
-        csv_name = os.path.basename(dest_csv_path)
-        simu_log_name = "run_{0}.txt".format(csv_name)
-        simu_log_path = os.path.join(simu_folder_path, simu_log_name)
-        # Write log to disk
+        # Parse log
         output_decoded = output.decode("UTF-8")
-        files_aux.writeStrToFile(output_decoded, simu_log_path)
         # Create simulation results instance
-        # simu_results = simu_run_info.SimulationResults(dest_csv_path,
-        return output_decoded
-
-    def simulateAndReadResults(self, dest_csv_path):
-        self.simulate(dest_csv_path)
-        df_simu = pandas.read_csv(dest_csv_path)
-        return df_simu
+        simu_results = simu_run_info.SimulationResults(dest_csv_path, self.model_name, self.binary_file_path,
+                                                       output_decoded)
+        return simu_results
 
 
 # Auxs

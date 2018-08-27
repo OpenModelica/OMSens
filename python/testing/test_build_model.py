@@ -4,6 +4,7 @@ import re  # regex support
 import shutil  # tempdir deletion
 import tempfile  # tempdir creation
 import unittest
+import pandas
 
 # Mine
 import modelica_interface.build_model as build_model
@@ -46,7 +47,8 @@ class TestsBuildModel(unittest.TestCase):
         # Test that the compiled model wrapper instance works correctly
         compiled_model.setParameterStartValue("a", 0)
         simulation_path = os.path.join(self._temp_dir, "simu.csv")
-        df_simu = compiled_model.simulateAndReadResults(simulation_path)
+        simu_results = compiled_model.simulate(simulation_path)
+        df_simu = pandas.read_csv(simulation_path)
         x_min = df_simu["x"].min()
         x_max = df_simu["x"].max()
         # We set the derivative slope as 0 so x should be a constant 1
