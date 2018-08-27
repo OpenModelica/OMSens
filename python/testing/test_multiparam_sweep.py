@@ -30,8 +30,18 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
         sweep_runner = self.sweepSpecsExample()
         # Get values for each param
         vals_per_param = sweep_runner._valuesPerParam(self._temp_dir)
-        pass
-
+        correct_vals_per_param = {
+            "a": [-1],
+            "b": [-0.9, -1.1],
+            "c": [-0.85, -1, -1.15],
+        }
+        for p in correct_vals_per_param:
+            p_vals = vals_per_param[p]
+            p_correct_vals = correct_vals_per_param[p]
+            for v1, v2 in zip(p_vals, p_correct_vals):
+                if not v1 == v2:
+                    error_msg = "The parameter '{0}' has val {1} when it should have val {2}".format(p, v1, v2)
+                    self.fail(error_msg)
     # Auxs
     def sweepSpecsExample(self):
         model_name = "Model"
