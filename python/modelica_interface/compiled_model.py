@@ -62,6 +62,8 @@ class CompiledModelicaModel():
         # Write log to disk
         output_decoded = output.decode("UTF-8")
         files_aux.writeStrToFile(output_decoded, simu_log_path)
+        # Create simulation results instance
+        # simu_results = simu_run_info.SimulationResults(dest_csv_path,
         return output_decoded
 
     def simulateAndReadResults(self, dest_csv_path):

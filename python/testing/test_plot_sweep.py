@@ -51,7 +51,7 @@ class TestSweepPlot(unittest.TestCase):
         # Generate dataframe
         df_std_run = pandas.read_csv(StringIO(bb_std_run_str), index_col=0)
         model_name = "BouncingBall"
-        std_run = simu_run_info.SimulationResults(StringIO(bb_std_run_str), {}, model_name, "/path/to/exe", "")
+        std_run = simu_run_info.SimulationResults(StringIO(bb_std_run_str), model_name, "/path/to/exe", "")
         # Simulate perturbations by multiplying variables
         perturbed_runs = []
         for i in range(1, 9):
@@ -61,10 +61,6 @@ class TestSweepPlot(unittest.TestCase):
             run_output_path = os.path.join(self._temp_dir, run_output_name)
             df_perturbed_i.to_csv(run_output_path)
             # Pretend that e is always changed to 1 and g is swept in each run
-            run_parameters_changed = {
-                "e": 1,
-                "g": i,
-            }
             swept_param_info = simu_run_info.PerturbedParameterInfo("g", 0, i)
             swept_params_info_list = [swept_param_info]
             # The executable can be anything as we assume it has already been ran
@@ -73,8 +69,7 @@ class TestSweepPlot(unittest.TestCase):
             #  for now both infos are saved together. In the future, they must be saved separately and one must
             #  reference the other
             std_output = ""
-            simu_results = simu_run_info.SimulationResults(run_output_path, run_parameters_changed, model_name,
-                                                           run_executable, std_output)
+            simu_results = simu_run_info.SimulationResults(run_output_path, model_name, run_executable, std_output)
             sweep_iteration_results = sweep.SweepIterationResults(simu_results, swept_params_info_list)
             perturbed_runs.append(sweep_iteration_results)
         sweep_params_swept = ["g"]

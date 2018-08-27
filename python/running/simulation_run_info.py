@@ -1,7 +1,6 @@
 class SimulationResults():
-    def __init__(self, output_path, parameters_changed, model_name, executable_path, std_output):
+    def __init__(self, output_path, model_name, executable_path, std_output):
         self.output_path = output_path
-        self.parameters_changed = parameters_changed
         self.model_name = model_name
         self.executable = executable_path
         self.std_output = std_output
