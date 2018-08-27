@@ -10,7 +10,7 @@ import re
 
 # Mine
 import running.simulation_run_info as simu_run_info
-from running.sweep import ParametersSweepResults
+import running.sweep as sweep
 from plotting.plot_sweep import SweepPlot
 
 
@@ -51,7 +51,7 @@ class TestSweepPlot(unittest.TestCase):
         # Generate dataframe
         df_std_run = pandas.read_csv(StringIO(bb_std_run_str), index_col=0)
         model_name = "BouncingBall"
-        std_run = simu_run_info.SimulationSpecs(StringIO(bb_std_run_str), {}, model_name, "/path/to/exe")
+        std_run = simu_run_info.SimulationResults(StringIO(bb_std_run_str), {}, model_name, "/path/to/exe", "")
         # Simulate perturbations by multiplying variables
         perturbed_runs = []
         for i in range(1, 9):
@@ -72,14 +72,16 @@ class TestSweepPlot(unittest.TestCase):
             # The following object is for one one. We have to save sweep information alongside run information, so
             #  for now both infos are saved together. In the future, they must be saved separately and one must
             #  reference the other
-            simu_specs = simu_run_info.OneSimulationResultFromSweep(run_output_path, run_parameters_changed, model_name,
-                                                                    run_executable, swept_params_info_list)
-            perturbed_runs.append(simu_specs)
+            std_output = ""
+            simu_results = simu_run_info.SimulationResults(run_output_path, run_parameters_changed, model_name,
+                                                           run_executable, std_output)
+            sweep_iteration_results = sweep.SweepIterationResults(simu_results, swept_params_info_list)
+            perturbed_runs.append(sweep_iteration_results)
         sweep_params_swept = ["g"]
         sweep_params_fixed = [simu_run_info.PerturbedParameterInfo("e", 0, 1)]
         # The following object is the sweep in general. That is, for all runs
-        sweep_specs = ParametersSweepResults(model_name, sweep_params_swept, sweep_params_fixed, std_run,
-                                             perturbed_runs)
+        sweep_specs = sweep.ParametersSweepResults(model_name, sweep_params_swept, sweep_params_fixed, std_run,
+                                                   perturbed_runs)
         # Var to analyze
         var_name = "h"
         # Returns sweep example objects

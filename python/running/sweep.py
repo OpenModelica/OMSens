@@ -91,3 +91,9 @@ class ParametersSweepResults():
         self.fixed_parameters_info = fixed_parameters
         self.std_run = std_run
         self.perturbed_runs = perturbed_runs
+
+
+class SweepIterationResults():
+    def __init__(self, simulation_results, swept_params_info):
+        self.simulation_results = simulation_results
+        self.swept_params_info = swept_params_info

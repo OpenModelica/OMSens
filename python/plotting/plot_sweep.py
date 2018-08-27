@@ -20,10 +20,11 @@ class SweepPlot():
         self.plotStandardRun(var_name)
 
         # Plot perturbed simulations from sweep
-        for perturbed_run in self.sweep_specs.perturbed_runs:
-            file_path = perturbed_run.output_path
+        for sweep_iter_results in self.sweep_specs.perturbed_runs:
+            simu_results = sweep_iter_results.simulation_results
+            file_path = simu_results.output_path
             df_run = pandas.read_csv(file_path)
-            label = self.labelForPerturbedRun(perturbed_run)
+            label = self.labelForPerturbedRun(sweep_iter_results)
             color = next(colors_iter)
             plt.plot(df_run["time"], df_run[var_name], linewidth=1, linestyle='-', markersize=0, marker='o',
                      label=label, color=color)

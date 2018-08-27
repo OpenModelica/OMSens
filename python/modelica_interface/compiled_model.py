@@ -3,8 +3,10 @@ import os
 import xml.etree.ElementTree as ElementTree
 import pandas
 import copy
+
 # Mine
 import filesystem.files_aux as files_aux
+import running.simulation_run_info as simu_run_info
 
 class CompiledModelicaModel():
     def __init__(self,model_name, binary_file_path):
