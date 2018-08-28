@@ -67,7 +67,10 @@ class ParametersSweeper():
             sweep_iterations.append(sweep_iter_results)
         # Instantiate sweep results
         swept_params_names = [x["name"] for x in self.perturbation_info_per_param]
-        ParametersSweepResults(self.model_name, [], std_run_results, sweep_iterations)
+        fixed_params = []
+        sweep_results = ParametersSweepResults(self.model_name, swept_params_names, fixed_params, std_run_results,
+                                               sweep_iterations, )
+        return sweep_results
 
     def valuesPerParameter(self):
         return self.values_per_param

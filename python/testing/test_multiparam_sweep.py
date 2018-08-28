@@ -50,6 +50,9 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
         if vals_combinations_n != correct_n_runs:
             error_msg = "The sweep should have {0} runs but it had {1}".format(vals_combinations_n, correct_n_runs)
             self.fail(error_msg)
+        # Test that the sweep "works"
+        sweep_results = sweep_runner.runSweep(self._temp_dir)
+        pass
 
     # Auxs
     def sweepSpecsExample(self):
