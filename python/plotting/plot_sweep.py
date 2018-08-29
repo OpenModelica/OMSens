@@ -7,20 +7,20 @@ import pandas
 import matplotlib.pyplot as plt
 
 class SweepPlot():
-    def __init__(self, sweep_specs):
-        self.sweep_specs = sweep_specs
-        self.swept_params_ids_mapping = idsForSweptParams(sweep_specs)
+    def __init__(self, sweep_results):
+        self.sweep_results = sweep_results
+        self.swept_params_ids_mapping = idsForSweptParams(sweep_results)
 
     def plotInFolder(self, var_name, plots_folder_path, extra_ticks=[]):
         plot_path_without_extension = os.path.join(plots_folder_path, var_name)
-        title, subtitle, footer = self.sweepingPlotTexts(self.sweep_specs, var_name)
+        title, subtitle, footer = self.sweepingPlotTexts(self.sweep_results, var_name)
         footer_artist = setupPlot("Time", var_name, title, subtitle, footer)
-        colors_iter = plotColorsForNumber(len(self.sweep_specs.perturbed_runs))
+        colors_iter = plotColorsForNumber(len(self.sweep_results.perturbed_runs))
         # Plot standard run that will be different than the other simulations results
         self.plotStandardRun(var_name)
 
         # Plot perturbed simulations from sweep
-        for sweep_iter_results in self.sweep_specs.perturbed_runs:
+        for sweep_iter_results in self.sweep_results.perturbed_runs:
             simu_results = sweep_iter_results.simulation_results
             file_path = simu_results.output_path
             df_run = pandas.read_csv(file_path)
@@ -75,7 +75,7 @@ class SweepPlot():
 
     def plotStandardRun(self, var_name, color="black", label="STD_RUN", linestyle="-"):
         # Get simulation specs for std run
-        std_run_specs = self.sweep_specs.std_run
+        std_run_specs = self.sweep_results.std_run
         # Read simulation results from disk
         df_simu = pandas.read_csv(std_run_specs.output_path)
         plt.plot(df_simu["time"], df_simu[var_name], linewidth=1, linestyle=linestyle, markersize=0, marker='o',
