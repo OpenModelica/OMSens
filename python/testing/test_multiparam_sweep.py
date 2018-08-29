@@ -11,6 +11,7 @@ import pathlib
 # Mine
 import running.sweep
 import filesystem.files_aux as files_aux
+import plotting.plot_sweep as plot_sweep
 
 
 class TestIndividualSensitivityAnalysis(unittest.TestCase):
@@ -73,6 +74,16 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
             if not pert_run_path.is_file():
                 error_msg = "A perturbed run was not found in path {0}".format(pert_run_path.absolute())
                 self.fail(error_msg)
+        # Integration test: we take advantage of the model build and sweep in this test and we test integration
+        plot_folder_path = os.path.join(self._temp_dir, "plots")
+        files_aux.makeFolderWithPath(plot_folder_path)
+        sweep_plotter = plot_sweep.SweepPlot(sweep_results)
+        sweep_plotter.plotInFolder("x",plot_folder_path)
+        # Check that the plots folder is not empty
+        files_in_dir = os.listdir(plot_folder_path)
+        if len(files_in_dir) < 1:
+            error_msg = "The sweep + plot didn't make any files in dest folder"
+            self.fail(error_msg)
 
 
     # Auxs
