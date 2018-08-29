@@ -44,9 +44,9 @@ class SweepPlot():
             # Get the ID for that name
             p_id = self.swept_params_ids_mapping[p_name]
             # Get the new val and the perturbation percentage from the default val
-            p_perturb_perc = (p_info.default_val / p_info.new_val) * 100
+            p_perturb_perc_str = perturbationPercentageStringForParam(p_info)
             # Define the string for this param
-            param_str = "({0})={1:.2f} [{2}%]".format(p_id, p_info.new_val, p_perturb_perc)
+            param_str = "({0})={1:.2f} [{2}]".format(p_id, p_info.new_val, p_perturb_perc_str)
             params_strs_list.append(param_str)
         # Join all the param strs to form the label for this run
         label = " | ".join(params_strs_list)
@@ -81,6 +81,21 @@ class SweepPlot():
         plt.plot(df_simu["time"], df_simu[var_name], linewidth=1, linestyle=linestyle, markersize=0, marker='o',
                  label=label, color=color)
 
+
+def strSignForNumber(number):
+    if number == 0:
+        sign_str = ""
+    if number < 0:
+        sign_str = "-"
+    if number > 0:
+        sign_str = "+"
+    return sign_str
+
+def perturbationPercentageStringForParam(p_info):
+    p_perturb_perc = ((p_info.new_val / p_info.default_val) - 1) * 100
+    p_perturb_perc_sign_str = strSignForNumber(p_perturb_perc)
+    p_perturb_perc_str = "{0}{1:.0f}%".format(p_perturb_perc_sign_str, abs(p_perturb_perc))
+    return p_perturb_perc_str
 
 def idsForSweptParams(sweep_specs):
     # Get the parameters that were swept
