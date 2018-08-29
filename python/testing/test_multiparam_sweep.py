@@ -6,6 +6,7 @@ import tempfile  # para crear el tempdir
 import unittest
 from io import StringIO
 import numpy
+import pathlib
 
 # Mine
 import running.sweep
@@ -45,14 +46,27 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
                     error_msg = "The parameter '{0}' has val {1} when it should have val {2}".format(p, v1, v2)
                     self.fail(error_msg)
         # Test that the number of combinations are correct
-        vals_combinations_n = len(list(sweep_runner.parametersValuesCombinations()))
+        vals_combinations_n = len(list(sweep_runner.parametersValuesCombinationsGenerator()))
         correct_n_runs = 6
         if vals_combinations_n != correct_n_runs:
             error_msg = "The sweep should have {0} runs but it had {1}".format(vals_combinations_n, correct_n_runs)
             self.fail(error_msg)
         # Test that the sweep "works"
         sweep_results = sweep_runner.runSweep(self._temp_dir)
-        pass
+        # Check that there is a file in the std run path
+        std_run = sweep_results.std_run
+        std_run_path = pathlib.Path(std_run.output_path)
+        if not std_run_path.is_file():
+            error_msg = "The std run was not found in path {0}".format(std_run_path.absolute())
+            self.fail(error_msg)
+        # Check that there is a file for each perturbed run
+        perturbed_runs = sweep_results.perturbed_runs
+        for pert_run in perturbed_runs:
+            pert_run_path = pathlib.Path(pert_run.simulation_results.output_path)
+            if not pert_run_path.is_file():
+                error_msg = "A perturbed run was not found in path {0}".format(pert_run_path.absolute())
+                self.fail(error_msg)
+
 
     # Auxs
     def sweepSpecsExample(self):

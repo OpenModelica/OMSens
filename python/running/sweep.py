@@ -25,8 +25,6 @@ class ParametersSweeper():
         self.params_defaults = self.defaultValuesForParamsToPerturb(self.compiled_model)
         # Calculate the values per param
         self.values_per_param = valuesPerParamFromParamsInfos(self.params_defaults, self.perturbation_info_per_param)
-        # Generate all possible combinations
-        self.params_vals_combinations = dict_product(self.values_per_param)
 
     def runSweep(self, dest_folder_path):
         # Make folder for runs
@@ -38,13 +36,14 @@ class ParametersSweeper():
         std_run_path = os.path.join(runs_folder_path, std_run_name)
         std_run_results = self.compiled_model.simulate(std_run_path)
         # Make dir for perturbed runs
-        perturbed_runs_folder_name = "runs"
-        perturbed_runs_folder_path = os.path.join(dest_folder_path, perturbed_runs_folder_name)
+        perturbed_runs_folder_name = "perturbed"
+        perturbed_runs_folder_path = os.path.join(runs_folder_path, perturbed_runs_folder_name)
         files_aux.makeFolderWithPath(perturbed_runs_folder_path)
         # Run the different values combinations
         sweep_iterations = []
-        for i in range(len(list(self.params_vals_combinations))):
-            vals_comb = self.params_vals_combinations[i]
+        param_vals_combinations = list(self.parametersValuesCombinationsGenerator())
+        for i in range(len(param_vals_combinations)):
+            vals_comb = param_vals_combinations[i]
             # Perturb the parameters for this iteration
             swept_params_info = []
             for param_name in vals_comb:
@@ -75,8 +74,8 @@ class ParametersSweeper():
     def valuesPerParameter(self):
         return self.values_per_param
 
-    def parametersValuesCombinations(self):
-        return self.params_vals_combinations
+    def parametersValuesCombinationsGenerator(self):
+        return dict_product(self.values_per_param)
 
     # Auxs
     def defaultValuesForParamsToPerturb(self,compiled_model):
