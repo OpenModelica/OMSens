@@ -1,16 +1,15 @@
 # STD
 import argparse
 import json
-import logging  # instead of prints
 import os
 import sys
+import logging
 
 # Ours
 import analysis.indiv_sens
 import filesystem.files_aux as files_aux
 import mos_writer.calculate_sensitivities_mos_writer as sens_mos_writer
 import modelica_interface.run_omc as run_omc
-# Setup logging
 import settings.gral_settings
 
 logger = logging.getLogger("-Individual Sens Calculator-")
@@ -98,7 +97,7 @@ def csvPathAndParameterNameForFolderAndParametersInfo(dest_folder_path, paramete
 def getCommandLineArguments():
     parser = argparse.ArgumentParser(description=script_description)
     parser.add_argument('test_file_path', metavar='test_file_path',
-                        help='The file path to the test file containing the CSVs to plot, the variables, the title, etc.')
+                        help='The path to the file with the experiment specifications.')
     parser.add_argument('--dest_folder_path', metavar='dest_folder_path',
                         help='Optional: The destination folder where to write the analysis files')
     args = parser.parse_args()
