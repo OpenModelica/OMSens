@@ -41,21 +41,16 @@ class ParametersSweeper():
         files_aux.makeFolderWithPath(perturbed_runs_folder_path)
         # Run the different values combinations
         sweep_iterations = []
-        param_vals_combinations = list(self.parametersValuesCombinationsGenerator())
-        for i in range(len(param_vals_combinations)):
-            vals_comb = param_vals_combinations[i]
+        perturbed_params_info = list(self.runsPerturbedParameters())
+        for i in range(len(perturbed_params_info)):
+            swept_params_info = perturbed_params_info[i]
             # Perturb the parameters for this iteration
-            swept_params_info = []
-            for param_name in vals_comb:
-                # Instantiate perturbed params infos
-                param_default_val = self.params_defaults[param_name]
-                param_perturbed_val = vals_comb[param_name]
-                perturbed_param_info = simu_run_info.PerturbedParameterInfo(param_name, param_default_val,
-                                                                            param_perturbed_val)
-                # Save the perturbed param info
-                swept_params_info.append(perturbed_param_info)
+            for perturbed_param_info in swept_params_info:
+                # Disaggregate param info
+                param_name = perturbed_param_info.name
+                new_val    = perturbed_param_info.new_val
                 # Change the value in the model
-                self.compiled_model.setParameterStartValue(param_name, vals_comb[param_name])
+                self.compiled_model.setParameterStartValue(param_name, new_val)
             # Run the simulation
             simu_csv_name = "run_{0}.csv".format(i)
             simu_csv_path = os.path.join(perturbed_runs_folder_path, simu_csv_name)
@@ -74,8 +69,25 @@ class ParametersSweeper():
     def valuesPerParameter(self):
         return self.values_per_param
 
-    def parametersValuesCombinationsGenerator(self):
-        return dict_product(self.values_per_param)
+    def runsPerturbedParameters(self):
+        #Get the cartesian product of all possible values
+        cart_prod_dict = dict_product(self.values_per_param)
+        # Iterate all the combinations instantiating the "PerturbedParameterInfo" objects
+        perturbed_parameters_infos = []
+        for vals_comb in cart_prod_dict:
+            run_perturbed_params = []
+            for param_name in vals_comb:
+                param_default_val = self.params_defaults[param_name]
+                param_perturbed_val = vals_comb[param_name]
+                perturbed_param_info = simu_run_info.PerturbedParameterInfo(param_name, param_default_val,
+                                                                        param_perturbed_val)
+                run_perturbed_params.append(perturbed_param_info)
+            # Before adding this run, check if all params have been perturbed and it's not the std run
+            param_is_default_list = [p.default_val == p.new_val for p in run_perturbed_params]
+            if not all(param_is_default_list):
+                # If at least one parameter has been perturbed, add it to the list
+                perturbed_parameters_infos.append(run_perturbed_params)
+        return perturbed_parameters_infos
 
     # Auxs
     def defaultValuesForParamsToPerturb(self,compiled_model):

@@ -46,7 +46,7 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
                     error_msg = "The parameter '{0}' has val {1} when it should have val {2}".format(p, v1, v2)
                     self.fail(error_msg)
         # Test that the number of combinations are correct
-        vals_combinations_n = len(list(sweep_runner.parametersValuesCombinationsGenerator()))
+        vals_combinations_n = len(list(sweep_runner.runsPerturbedParameters()))
         correct_n_runs = 6
         if vals_combinations_n != correct_n_runs:
             error_msg = "The sweep should have {0} runs but it had {1}".format(vals_combinations_n, correct_n_runs)
