@@ -116,7 +116,7 @@ def valuesForDeltaItersAndDefaultVal(delta_percentage, iterations, def_value):
         values = [def_value]
     elif iterations <= 0:
         # If 0 or less iterations, this should fail
-        pass
+        raise Exception("The #iterations should be >= 1")
     else:
         # 2 or more iterations, use numpys linspace
         values = numpy.linspace(left_limit, right_limit, iterations)
