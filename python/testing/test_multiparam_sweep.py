@@ -53,6 +53,13 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
             self.fail(error_msg)
         # Test that the sweep "works"
         sweep_results = sweep_runner.runSweep(self._temp_dir)
+        # Check that the swept params are correct
+        swept_params = sweep_results.swept_parameters_names
+        correct_swept_params = list(correct_vals_per_param.keys())
+        intersection_swept_params = [i for i,j in zip(swept_params, correct_swept_params) if i == j]
+        if len(intersection_swept_params) != 3:
+            error_msg = "The swept params returned were {0} when they should've been {1}".format(swept_params, correct_swept_params)
+            self.fail(error_msg)
         # Check that there is a file in the std run path
         std_run = sweep_results.std_run
         std_run_path = pathlib.Path(std_run.output_path)
