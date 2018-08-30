@@ -56,7 +56,7 @@ def main():
     paths_json_file_name = "paths.json"
     paths_json_file_path = os.path.join(dest_folder_path, paths_json_file_name)
     files_aux.writeStrToFile(paths_json_str, paths_json_file_path)
-    logger.info("Finished. The file {0} has all the the analysis files paths.".format(paths_json_file_path))
+    logger.info("Finished. The file {0} has all the analysis files paths.".format(paths_json_file_path))
     return 0
 
 
