@@ -32,6 +32,9 @@ class SweepPlot():
                          bbox_to_anchor=(1, 0.5))
         setupXTicks(extra_ticks)
         saveAndClearPlt(plot_path_without_extension, lgd, footer_artist)
+        # Return only the .png plot path for now
+        png_plot_path = "{0}.png".format(plot_path_without_extension)
+        return png_plot_path
 
     def labelForPerturbedRun(self, sweep_simu_specs):
         # Get the info for each swept param (and not also fixed perturbed param)
