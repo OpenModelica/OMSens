@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="exp: 00 indiv sens" type="PythonConfigurationType" factoryName="Python">
-    <module name="modelica_scripts" />
+    <module name="python" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
     <envs>

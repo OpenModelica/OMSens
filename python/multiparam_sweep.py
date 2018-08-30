@@ -47,11 +47,25 @@ def main():
     sweep_results = sweep_runner.runSweep(dest_folder_path)
     # Initialize sweep results plotter
     sweep_plotter = plot_sweep.SweepPlot(sweep_results)
-    # Plot sweep for each var
+    # Make folder for plots
     plot_folder_path = os.path.join(dest_folder_path, "plots")
     files_aux.makeFolderWithPath(plot_folder_path)
+    # Plot sweep for each var
+    vars_plots_paths = {}
     for var_name in full_json["vars_to_analyze"]:
-        sweep_plotter.plotInFolder(var_name, plot_folder_path)
+        plot_path = sweep_plotter.plotInFolder(var_name, plot_folder_path)
+        vars_plots_paths[var_name] = plot_path
+    # Add sweep plots to paths dict
+    paths_dict = \
+        {
+            "sweep_plots": vars_plots_paths,
+        }
+    # Write paths dict as json
+    paths_json_str = json.dumps(paths_dict, sort_keys=True, indent=2)
+    paths_json_file_name = "paths.json"
+    paths_json_file_path = os.path.join(dest_folder_path, paths_json_file_name)
+    files_aux.writeStrToFile(paths_json_str, paths_json_file_path)
+    logger.info("Finished. The file {0} has all the sweep files paths.".format(paths_json_file_path))
 
 
 # Auxs
