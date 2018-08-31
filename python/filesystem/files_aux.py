@@ -1,3 +1,4 @@
+import shutil
 import inspect
 import logging
 import os
@@ -67,7 +68,16 @@ def callCMDStringInPath(command, path):
 def removeFilesWithRegexAndPath(regex, folder_path):
     for x in os.listdir(folder_path):
         if re.match(regex, x):
-            os.remove(os.path.join(folder_path, x))
+            file_path = os.path.join(folder_path, x)
+            if os.path.isfile(file_path):
+                # If it's a file, call file deleter
+                os.remove(file_path)
+            elif os.path.isdir(file_path):
+                # If it's a folder, call folder deleter
+                shutil.rmtree(file_path)
+            else:
+                error_msg ="The file in path {0} to delete is neither a file or a folder".format(x)
+                raise Exception(error_msg)
 
 
 def readStrFromFile(file_path):
