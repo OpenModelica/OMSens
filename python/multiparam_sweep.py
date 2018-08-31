@@ -27,6 +27,10 @@ def main():
         dest_folder_path = dest_folder_path_arg
 
     # Read JSON again (both reads should be refactored into one)
+    sweepAndPlotFromJSON(dest_folder_path, json_file_path)
+
+
+def sweepAndPlotFromJSON(dest_folder_path, json_file_path):
     with open(json_file_path, 'r') as fp:
         full_json = json.load(fp)
     # Prepare sweep init args
@@ -76,8 +80,10 @@ def moFilePathFromJSONMoPath(json_mo_path):
         # If it's already an absolute path, there's nothing to do
         mo_file_path = json_mo_path
     else:
-        # If it's a relative path, make it absolute
-        mo_file_path = os.path.abspath(json_mo_path)
+        # If it's a relative path, make it a relative path from the project root
+        project_root_path = files_aux.projectRoot()
+        relative_to_project_root_path = os.path.join(project_root_path, json_mo_path)
+        mo_file_path = os.path.abspath(relative_to_project_root_path)
     return mo_file_path
 
 def getCommandLineArguments():
