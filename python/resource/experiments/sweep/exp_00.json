@@ -24,19 +24,5 @@
             "delta_percentage" : 15,
             "iterations"       : 3
         }
-    ],
-    "parameters_to_assign_fixed_value": [
-        {
-            "name": "intParam1",
-            "value": 102
-        },
-        {
-            "name": "intParam2",
-            "value": 103
-        },
-        {
-            "name": "intParam3",
-            "value": 104
-        }
     ]
 }
