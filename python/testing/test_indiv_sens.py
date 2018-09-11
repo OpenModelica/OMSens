@@ -26,38 +26,38 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
             f.close()
 
 # Aux model
-def isolatedPerturbationModelExample(self):
-    model_name = "Model"
-    model_file_path = os.path.join(self._temp_dir, "model.mo")
-    files_aux.writeStrToFile(model_str, model_file_path)
-    start_time = 0
-    stop_time = 2
-    parameters_to_perturb = ["a", "b", "c"]
-    perc_perturb = 5
-    build_folder_path = self._temp_dir
-    # Initialize param perturber
-    params_perturbator = indiv_sens.ParametersIsolatedPerturbator(model_name, model_file_path, start_time,
-                                                                  stop_time, parameters_to_perturb, perc_perturb,
-                                                                  build_folder_path)
-    return params_perturbator
+    def isolatedPerturbationModelExample(self):
+        model_name = "Model"
+        model_file_path = os.path.join(self._temp_dir, "model.mo")
+        files_aux.writeStrToFile(model_str, model_file_path)
+        start_time = 0
+        stop_time = 2
+        parameters_to_perturb = ["a", "b", "c"]
+        perc_perturb = 5
+        build_folder_path = self._temp_dir
+        # Initialize param perturber
+        params_perturbator = indiv_sens.ParametersIsolatedPerturbator(model_name, model_file_path, start_time,
+                                                                      stop_time, parameters_to_perturb, perc_perturb,
+                                                                      build_folder_path)
+        return params_perturbator
 # Tests:
-def test_params_are_assigned_right_val(self):
-    # Get perturbation for test example
-    params_perturbator = self.isolatedPerturbationModelExample()
-    # Get vals to be used per parameter in the simulations
-    values_per_param = params_perturbator.values_per_param
-    # Confirm that the values are correct
-    correct_vals_per_param = {
-        "a": -1.05,
-        "b": -1.05,
-        "c": -1.05,
-    }
-    for param in correct_vals_per_param:
-        val = values_per_param[param]
-        correct_val = correct_vals_per_param[param]
-        if not numpy.isclose(val, correct_val):
-            error_msg = "The perturbed value {0} should be {1} but it isn't.".format(val, correct_val)
-            self.fail(error_msg)
+    def test_params_are_assigned_right_val(self):
+        # Get perturbation for test example
+        params_perturbator = self.isolatedPerturbationModelExample()
+        # Get vals to be used per parameter in the simulations
+        values_per_param = params_perturbator.values_per_param
+        # Confirm that the values are correct
+        correct_vals_per_param = {
+            "a": -1.05,
+            "b": -1.05,
+            "c": -1.05,
+        }
+        for param in correct_vals_per_param:
+            val = values_per_param[param]
+            correct_val = correct_vals_per_param[param]
+            if not numpy.isclose(val, correct_val):
+                error_msg = "The perturbed value {0} should be {1} but it isn't.".format(val, correct_val)
+                self.fail(error_msg)
 
 
 
