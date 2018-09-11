@@ -48,9 +48,9 @@ def test_params_are_assigned_right_val(self):
     values_per_param = params_perturbator.values_per_param
     # Confirm that the values are correct
     correct_vals_per_param = {
-        "a": [-1.05],
-        "b": [-1.05],
-        "c": [-1.05],
+        "a": -1.05,
+        "b": -1.05,
+        "c": -1.05,
     }
     for param in correct_vals_per_param:
         val = values_per_param[param]
