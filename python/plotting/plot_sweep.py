@@ -96,7 +96,7 @@ def perturbationPercentageStringForParam(p_info):
         # If the divisor is not 0, calculate the percentage accordingly
         p_perturb_perc = ((p_info.new_val / p_info.default_val) - 1) * 100
         p_perturb_perc_sign_str = strSignForNumber(p_perturb_perc)
-        p_perturb_perc_str = "{0}{1:.0f}%".format(p_perturb_perc_sign_str, abs(p_perturb_perc))
+        p_perturb_perc_str = "{0}{1:.4g}%".format(p_perturb_perc_sign_str, abs(p_perturb_perc))
     else:
         # If the divisor is 0, there's nothing we can do. Just return a trivial string
         p_perturb_perc_str = "!"

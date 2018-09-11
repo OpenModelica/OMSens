@@ -35,7 +35,7 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
         # Get values for each param
         vals_per_param = sweep_runner.valuesPerParameter()
         correct_vals_per_param = {
-            "a": [-1],
+            "a": [-0.95, -1.05],
             "b": [-0.9, -1.1],
             "c": [-0.85, -1, -1.15],
         }
@@ -48,9 +48,9 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
                     self.fail(error_msg)
         # Test that the number of combinations are correct
         vals_combinations_n = len(list(sweep_runner.runsPerturbedParameters()))
-        correct_n_runs = 6
+        correct_n_runs = 12
         if vals_combinations_n != correct_n_runs:
-            error_msg = "The sweep should have {0} runs but it had {1}".format(vals_combinations_n, correct_n_runs)
+            error_msg = "The sweep should have {0} runs but it had {1}".format(correct_n_runs, vals_combinations_n)
             self.fail(error_msg)
         # Test that the sweep "works"
         sweep_results = sweep_runner.runSweep(self._temp_dir)
@@ -97,7 +97,7 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
             {
                 "name": "a",
                 "delta_percentage": 5,
-                "iterations": 1
+                "iterations": 2
             },
             {
                 "name": "b",
