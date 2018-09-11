@@ -1,5 +1,6 @@
 #Std
 import glob
+import os
 import shutil  # para borrar el tempdir
 import tempfile  # para crear el tempdir
 import unittest
@@ -8,8 +9,8 @@ from io import StringIO
 import numpy
 
 # Mine
-import analysis.indiv_sens
-import filesystem.files_aux
+import analysis.indiv_sens as indiv_sens
+import filesystem.files_aux as files_aux
 
 
 class TestIndividualSensitivityAnalysis(unittest.TestCase):
@@ -23,7 +24,43 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
         shutil.rmtree(self._temp_dir)
         for f in self._temp_files:
             f.close()
+
+# Aux model
+def isolatedPerturbationModelExample(self):
+    model_name = "Model"
+    model_file_path = os.path.join(self._temp_dir, "model.mo")
+    files_aux.writeStrToFile(model_str, model_file_path)
+    start_time = 0
+    stop_time = 2
+    parameters_to_perturb = ["a", "b", "c"]
+    perc_perturb = 5
+    build_folder_path = self._temp_dir
+    # Initialize param perturber
+    params_perturbator = indiv_sens.ParametersIsolatedPerturbator(model_name, model_file_path, start_time,
+                                                                  stop_time, parameters_to_perturb, perc_perturb,
+                                                                  build_folder_path)
+    return params_perturbator
 # Tests:
+def test_params_are_assigned_right_val(self):
+    # Get perturbation for test example
+    params_perturbator = self.isolatedPerturbationModelExample()
+    # Get vals to be used per parameter in the simulations
+    values_per_param = params_perturbator.values_per_param
+    # Confirm that the values are correct
+    correct_vals_per_param = {
+        "a": [-1.05],
+        "b": [-1.05],
+        "c": [-1.05],
+    }
+    for param in correct_vals_per_param:
+        val = values_per_param[param]
+        correct_val = correct_vals_per_param[param]
+        if not numpy.isclose(val, correct_val):
+            error_msg = "The perturbed value {0} should be {1} but it isn't.".format(val, correct_val)
+            self.fail(error_msg)
+
+
+
     def test_sens_run_gives_correct_results(self):
         # Run info. This corresponds to a simulation that perturbed some parameters in isolation. To avoid running the simulation in this test,
         #   we save the simulation's result instead.
@@ -52,7 +89,7 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
             "rms_last_year"                      : 3,
         }
         # Run analysis from simulation info
-        analysis_results = analysis.indiv_sens.completeIndividualSensAnalysis(**analyze_csvs_kwargs)
+        analysis_results = indiv_sens.completeIndividualSensAnalysis(**analyze_csvs_kwargs)
         analysis_files_paths = analysis_results["paths"]
         # Test that that the resulting run info includes the basic info: all param names, default and perturbed vals, the variable and its value
         vars_sens_info = analysis_files_paths["vars_sens_info"]
@@ -67,7 +104,7 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
         for t_var in analyze_csvs_kwargs["target_vars"]:
             # Read file into memory as str
             run_info_path = vars_sens_info[t_var]
-            run_info_str  = filesystem.files_aux.readStrFromFile(run_info_path)
+            run_info_str = files_aux.readStrFromFile(run_info_path)
             # Get the list of strings that the file must include
             strs_to_include = params_strs + g_rel_method_per_var[t_var]
             # Check that the strs are included
@@ -80,7 +117,7 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
             # Get path for this method's matrix
             mat_path = analysis_files_paths["heatmaps"][method_name]["matrix_file_path"]
             # Read file into memory as str
-            mat_str = filesystem.files_aux.readStrFromFile(mat_path)
+            mat_str = files_aux.readStrFromFile(mat_path)
             # Check that the strs are included
             if str_to_include not in mat_str:
                 self.fail("The matrix file should but doesn't include the string {0}.".format(str_to_include))
@@ -92,8 +129,8 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
             index_IDs_path = analysis_files_paths["heatmaps"][method_name]["index_mapping_file_path"]
             cols_IDs_path = analysis_files_paths["heatmaps"][method_name]["cols_mapping_file_path"]
             # Read files into memory as str
-            index_IDs_str = filesystem.files_aux.readStrFromFile(index_IDs_path)
-            cols_IDs_str = filesystem.files_aux.readStrFromFile(cols_IDs_path)
+            index_IDs_str = files_aux.readStrFromFile(index_IDs_path)
+            cols_IDs_str = files_aux.readStrFromFile(cols_IDs_path)
             # Check that the strs are included
             for v in vars_names:
                 if v not in cols_IDs_str:
@@ -194,9 +231,12 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
             "rms_last_year"                      : 3,
         }
         # Run with the 3 kwargs and assert that all of them raise an exception
-        self.assertRaises(analysis.indiv_sens.InvalidSimulationResultsException,analysis.indiv_sens.completeIndividualSensAnalysis,**analyze_csvs_kwargs_1)
-        self.assertRaises(analysis.indiv_sens.InvalidSimulationResultsException,analysis.indiv_sens.completeIndividualSensAnalysis,**analyze_csvs_kwargs_2)
-        self.assertRaises(analysis.indiv_sens.InvalidSimulationResultsException,analysis.indiv_sens.completeIndividualSensAnalysis,**analyze_csvs_kwargs_3)
+        self.assertRaises(indiv_sens.InvalidSimulationResultsException, indiv_sens.completeIndividualSensAnalysis,
+                          **analyze_csvs_kwargs_1)
+        self.assertRaises(indiv_sens.InvalidSimulationResultsException, indiv_sens.completeIndividualSensAnalysis,
+                          **analyze_csvs_kwargs_2)
+        self.assertRaises(indiv_sens.InvalidSimulationResultsException, indiv_sens.completeIndividualSensAnalysis,
+                          **analyze_csvs_kwargs_3)
 
 
 
@@ -247,3 +287,13 @@ bb_g_perturbed_2_str = \
 2,0.003483617140901725,-1.056333590801138,-1.056333590801138,-10.3005,1.089773670982276,1,0
 2.5,0.103483617140901725,-1.056333590801138,-1.056333590801138,-10.3005,1.089773670982276,1,0
 3,2.105894579818758e-11,0,0,0,0,0,1"""
+
+model_str = \
+    """class Model
+      parameter Real a=-1;
+      parameter Real b=-1;
+      parameter Real c=-1;
+      Real x(start=1,fixed=true);
+    equation
+      der(x) = a*x + b/2 + c/4;
+    end Model;"""

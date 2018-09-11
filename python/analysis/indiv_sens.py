@@ -9,9 +9,61 @@ import pandas  # dataframes
 
 import filesystem.files_aux as files_aux
 import plotting.plot_heatmap as heatmap_f
+import modelica_interface.build_model as build_model
 
 logger = logging.getLogger("--ParameterSensAnalysis--")  # this modules logger
 
+
+class ParametersIsolatedPerturbator():
+    def __init__(self, model_name, model_file_path, start_time, stop_time, parameters, perc_perturb, build_folder_path):
+        # Save args
+        self.model_name = model_name
+        self.model_file_path = model_file_path
+        self.start_time = start_time
+        self.stop_time = stop_time
+        self.parameters = parameters
+        self.perc_perturb = perc_perturb
+        # Initialize builder
+        self.model_builder = build_model.ModelicaModelBuilder(model_name, start_time, stop_time, model_file_path)
+        # Build model
+        self.compiled_model = self.model_builder.buildToFolderPath(build_folder_path)
+        # Get the default values for the params to perturb using the compiled model
+        self.params_defaults = self.defaultValuesForParamsToPerturb(self.compiled_model)
+        # Calculate the values per param
+        self.values_per_param = perturbedValuePerParam(self.params_defaults, self.parameters, self.perc_perturb)
+
+    # Auxs
+    def defaultValuesForParamsToPerturb(self, compiled_model):
+        # Using the compiled model, ask for the default value of each one
+        params_defaults = {}
+        for p in self.parameters:
+            p_def_val = compiled_model.defaultParameterValue(p)
+            params_defaults[p] = p_def_val
+        return params_defaults
+
+
+def perturbedValuePerParam(params_defaults, parameters, perc_perturb):
+    value_per_param = {}
+    for param_name in parameters:
+        # Disaggregate param info
+        def_value = params_defaults[param_name]
+        perturbed_val = def_value * (1 + perc_perturb / 100)
+        value_per_param[param_name] = perturbed_val
+    return value_per_param
+
+
+def valuesForPerturbationPercentage(perc_perturb, def_val):
+    # Get limits
+    left_limit = def_val * (1 - perc_perturb / 100)
+    right_limit = def_val * (1 + perc_perturb / 100)
+    # Get middle values (not on borders)
+    n_middle_values = n_iters - 2
+    limits_distance = right_limit - left_limit
+    iterations_delta = limits_distance / (n_middle_values + 1)
+    middle_values = [left_limit + iterations_delta * i for i in range(1, n_middle_values + 1)]
+    # Return limits and middle values
+    values = [left_limit] + middle_values + [right_limit]
+    return values
 
 def completeIndividualSensAnalysis(perturbed_simus_info, target_vars, percentage_perturbed, specific_year,
                                    rms_first_year, rms_last_year, std_run_csv_path, output_folder_analyses_path):
