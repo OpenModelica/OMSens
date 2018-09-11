@@ -117,20 +117,17 @@ def valuesPerParamFromParamsInfos(params_defaults, perturbation_info_per_param):
     return values_per_param
 
 
-def valuesForDeltaItersAndDefaultVal(delta_percentage, iterations, def_value):
+def valuesForDeltaItersAndDefaultVal(perc_perturb, n_iters, def_val):
     # Get limits
-    left_limit = def_value * (1 - delta_percentage / 100)
-    right_limit = def_value * (1 + delta_percentage / 100)
-    # Organize different cases for #iters
-    if iterations == 1:
-        # If 1 iteration, then include only the default value
-        values = [def_value]
-    elif iterations <= 0:
-        # If 0 or less iterations, this should fail
-        raise Exception("The #iterations should be >= 1")
-    else:
-        # 2 or more iterations, use numpys linspace
-        values = numpy.linspace(left_limit, right_limit, iterations)
+    left_limit = def_val * (1 - perc_perturb / 100)
+    right_limit = def_val * (1 + perc_perturb / 100)
+    # Get middle values (not on borders)
+    n_middle_values = n_iters - 2
+    limits_distance = right_limit - left_limit
+    iterations_delta = limits_distance / (n_middle_values + 1)
+    middle_values = [left_limit + iterations_delta * i for i in range(1, n_middle_values + 1)]
+    # Return limits and middle values
+    values = [left_limit] + middle_values + [right_limit]
     return values
 
 
