@@ -35,16 +35,30 @@ def main():
     # Read JSON again (both reads should be refactored into one)
     with open(json_file_path, 'r') as fp:
         full_json = json.load(fp)
+    # Prepare kwargs for perturbator
+    perturbations_folder_name = "simulation"
+    perturbations_folder_path = os.path.join(dest_folder_path,perturbations_folder_name)
+    perturbator_kwargs = {
+        "model_name"        : full_json["model_name"],
+        "model_file_path"   : full_json["model_mo_path"],
+        "start_time"        : full_json["start_time"],
+        "stop_time"         : full_json["stop_time"],
+        "parameters"        : full_json["parameters"],
+        "perc_perturb"      : full_json["percentage"],
+        "build_folder_path" : perturbations_folder_path,
+    }
+    isolated_perturbations_results = analysis.indiv_sens.ParametersIsolatedPerturbator(**perturbator_kwargs)
     # Prepare analysis inputs from JSON and MOS script info
+    analysis_folder_name = "simulation"
+    analysis_folder_path = os.path.join(dest_folder_path,analysis_folder_name)
     analyze_csvs_kwargs = {
-        "perturbed_simus_info": mos_info["perturbed_runs"],
-        "std_run_csv_path"            : std_run_path,
-        "target_vars"                 : full_json["vars_to_analyze"],
-        "percentage_perturbed"        : full_json["percentage"],
-        "specific_year"               : full_json["stop_time"],
-        "output_folder_analyses_path": dest_folder_path,
-        "rms_first_year"              : full_json["start_time"],
-        "rms_last_year"               : full_json["stop_time"],
+        "isolated_perturbations_results" : isolated_perturbations_results
+        "target_vars"                    : full_json["vars_to_analyze"],
+        "percentage_perturbed"           : full_json["percentage"],
+        "specific_year"                  : full_json["stop_time"],
+        "output_folder_analyses_path"    : analysis_folder_path,
+        "rms_first_year"                 : full_json["start_time"],
+        "rms_last_year"                  : full_json["stop_time"],
     }
     logger.info("Analyzing variable sensitivities to parameters from CSVs")
     # Calculate sensitivities
