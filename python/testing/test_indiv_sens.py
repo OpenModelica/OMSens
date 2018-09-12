@@ -5,6 +5,7 @@ import shutil  # para borrar el tempdir
 import tempfile  # para crear el tempdir
 import unittest
 from io import StringIO
+import pathlib
 
 import numpy
 
@@ -59,11 +60,25 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
                 error_msg = "The perturbed value {0} should be {1} but it isn't.".format(val, correct_val)
                 self.fail(error_msg)
         # Test that the run creates at least one .csv
-        params_perturbator.runSimulations(self._temp_dir)
+        isolated_perturbations_results = params_perturbator.runSimulations(self._temp_dir)
         csv_files = list(glob.iglob(self._temp_dir + '/**/*.csv', recursive=True))
         if len(csv_files) < 1:
             error_msg = "The run should've created at list one CSV file and it didn't."
             self.fail(error_msg)
+        # Check that there is a file in the std run path
+        std_run = isolated_perturbations_results.std_run
+        std_run_path = pathlib.Path(std_run.output_path)
+        if not std_run_path.is_file():
+            error_msg = "The std run was not found in path {0}".format(std_run_path.absolute())
+            self.fail(error_msg)
+        # Check that there is a file for each perturbed run
+        runs_per_parameter = isolated_perturbations_results.runs_per_parameter
+        for param_name in runs_per_parameter:
+            pert_run = runs_per_parameter[param_name]
+            pert_run_path = pathlib.Path(pert_run.output_path)
+            if not pert_run_path.is_file():
+                error_msg = "A perturbed run was not found in path {0}".format(pert_run_path.absolute())
+                self.fail(error_msg)
 
 
 

@@ -63,6 +63,10 @@ class ParametersIsolatedPerturbator():
             # Save the simulation results for this perturbed parameter
             runs_per_parameter[param_name] = simu_results
             i=i+1
+        # Prepare the results instance
+        isolated_perturbations_results = IsolatedPerturbationsResults(self.model_name, std_run_results,
+                                                                      runs_per_parameter)
+        return isolated_perturbations_results
 
 
     # Auxs
@@ -73,6 +77,13 @@ class ParametersIsolatedPerturbator():
             p_def_val = compiled_model.defaultParameterValue(p)
             params_defaults[p] = p_def_val
         return params_defaults
+
+
+class IsolatedPerturbationsResults():
+    def __init__(self,model_name, std_run, runs_per_parameter):
+        self.model_name = model_name
+        self.std_run = std_run
+        self.runs_per_parameter = runs_per_parameter
 
 
 
