@@ -41,12 +41,12 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
                                                                       build_folder_path)
         return params_perturbator
 # Tests:
-    def test_params_are_assigned_right_val(self):
+    def test_multiple_tests(self):
         # Get perturbation for test example
         params_perturbator = self.isolatedPerturbationModelExample()
         # Get vals to be used per parameter in the simulations
         values_per_param = params_perturbator.values_per_param
-        # Confirm that the values are correct
+        # Test that the values are correct
         correct_vals_per_param = {
             "a": -1.05,
             "b": -1.05,
@@ -58,6 +58,12 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
             if not numpy.isclose(val, correct_val):
                 error_msg = "The perturbed value {0} should be {1} but it isn't.".format(val, correct_val)
                 self.fail(error_msg)
+        # Test that the run creates at least one .csv
+        params_perturbator.runSimulations(self._temp_dir)
+        csv_files = list(glob.iglob(self._temp_dir + '/**/*.csv', recursive=True))
+        if len(csv_files) < 1:
+            error_msg = "The run should've created at list one CSV file and it didn't."
+            self.fail(error_msg)
 
 
 

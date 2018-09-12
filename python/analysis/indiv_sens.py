@@ -32,6 +32,39 @@ class ParametersIsolatedPerturbator():
         # Calculate the values per param
         self.values_per_param = perturbedValuePerParam(self.params_defaults, self.parameters, self.perc_perturb)
 
+    def runSimulations(self,dest_folder_path):
+        # Make folder for runs
+        runs_folder_name = "runs"
+        runs_folder_path = os.path.join(dest_folder_path, runs_folder_name)
+        files_aux.makeFolderWithPath(runs_folder_path)
+        # Run STD run
+        std_run_name = "std_run.csv"
+        std_run_path = os.path.join(runs_folder_path, std_run_name)
+        std_run_results = self.compiled_model.simulate(std_run_path)
+        # Make dir for perturbed runs
+        perturbed_runs_folder_name = "perturbed"
+        perturbed_runs_folder_path = os.path.join(runs_folder_path, perturbed_runs_folder_name)
+        files_aux.makeFolderWithPath(perturbed_runs_folder_path)
+        # Run the simulations for each parameter perturbed in isolation
+        runs_per_parameter = {}
+        i = 0
+        for param_name in self.values_per_param:
+            # Get param info for its run
+            param_default_val = self.params_defaults[param_name]
+            param_perturbed_val = self.values_per_param[param_name]
+            # Perturb the parameter
+            self.compiled_model.setParameterStartValue(param_name, param_perturbed_val)
+            # Run the simulation
+            simu_csv_name = "run_{0}.csv".format(i)
+            simu_csv_path = os.path.join(perturbed_runs_folder_path, simu_csv_name)
+            simu_results = self.compiled_model.simulate(simu_csv_path)
+            # Return the parameter to its original value
+            self.compiled_model.setParameterStartValue(param_name, param_default_val)
+            # Save the simulation results for this perturbed parameter
+            runs_per_parameter[param_name] = simu_results
+            i=i+1
+
+
     # Auxs
     def defaultValuesForParamsToPerturb(self, compiled_model):
         # Using the compiled model, ask for the default value of each one
@@ -40,6 +73,7 @@ class ParametersIsolatedPerturbator():
             p_def_val = compiled_model.defaultParameterValue(p)
             params_defaults[p] = p_def_val
         return params_defaults
+
 
 
 def perturbedValuePerParam(params_defaults, parameters, perc_perturb):
@@ -51,19 +85,6 @@ def perturbedValuePerParam(params_defaults, parameters, perc_perturb):
         value_per_param[param_name] = perturbed_val
     return value_per_param
 
-
-def valuesForPerturbationPercentage(perc_perturb, def_val):
-    # Get limits
-    left_limit = def_val * (1 - perc_perturb / 100)
-    right_limit = def_val * (1 + perc_perturb / 100)
-    # Get middle values (not on borders)
-    n_middle_values = n_iters - 2
-    limits_distance = right_limit - left_limit
-    iterations_delta = limits_distance / (n_middle_values + 1)
-    middle_values = [left_limit + iterations_delta * i for i in range(1, n_middle_values + 1)]
-    # Return limits and middle values
-    values = [left_limit] + middle_values + [right_limit]
-    return values
 
 def completeIndividualSensAnalysis(perturbed_simus_info, target_vars, percentage_perturbed, specific_year,
                                    rms_first_year, rms_last_year, std_run_csv_path, output_folder_analyses_path):
