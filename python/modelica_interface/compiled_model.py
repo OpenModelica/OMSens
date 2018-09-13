@@ -46,12 +46,12 @@ class CompiledModelicaModel():
         self.xml_tree.write(self.xml_file_path)
 
     # Other
-    def simulate(self, dest_csv_path):
+    def simulate(self, dest_csv_path, flags=""):
         # Get folder for binary
         binary_folder_path = os.path.dirname(self.binary_file_path)
         # Define command to be called
         binary_args = "-r={0}".format(dest_csv_path)
-        cmd = "{0} {1}".format(self.binary_file_path, binary_args)
+        cmd = "{0} {1} {2}".format(self.binary_file_path, binary_args, flags)
         # Execute binary with args
         output = files_aux.callCMDStringInPath(cmd, binary_folder_path)
         # Parse log

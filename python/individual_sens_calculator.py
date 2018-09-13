@@ -26,31 +26,32 @@ def main():
     std_run_filename = "std_run.csv"
     dest_folder_path, output_mos_path, std_run_path = filesPathsInOutputFolder(output_mos_name, std_run_filename,
                                                                                dest_folder_path_arg)
-    # Create mos script form JSON and write it in dest folder. It returns the paths of the files it will create: std
-    #   run, simulated runs, etc
-    mos_info = sens_mos_writer.createMosFromJSON(json_file_path, output_mos_path, std_run_filename)
-    # Run mos script
-    logger.info("Running Modelica with specified information")
-    run_omc.runMosScript(output_mos_path)
-    # Read JSON again (both reads should be refactored into one)
+    # Read JSON
     with open(json_file_path, 'r') as fp:
         full_json = json.load(fp)
     # Prepare kwargs for perturbator
     perturbations_folder_name = "simulation"
     perturbations_folder_path = os.path.join(dest_folder_path,perturbations_folder_name)
+    files_aux.makeFolderWithPath(perturbations_folder_path)
+    model_file_path = moFilePathFromJSONMoPath(full_json["model_mo_path"])
     perturbator_kwargs = {
         "model_name"        : full_json["model_name"],
-        "model_file_path"   : full_json["model_mo_path"],
+        "model_file_path"   : model_file_path,
         "start_time"        : full_json["start_time"],
         "stop_time"         : full_json["stop_time"],
-        "parameters"        : full_json["parameters"],
+        "parameters"        : full_json["parameters_to_perturb"],
         "perc_perturb"      : full_json["percentage"],
         "build_folder_path" : perturbations_folder_path,
     }
-    isolated_perturbations_results = analysis.indiv_sens.ParametersIsolatedPerturbator(**perturbator_kwargs)
-    # Prepare analysis inputs from JSON and MOS script info
-    analysis_folder_name = "simulation"
+    # Initialize perturbator
+    perturbator = analysis.indiv_sens.ParametersIsolatedPerturbator(**perturbator_kwargs)
+    # Run simulations using perturbator
+    logger.info("Running Modelica with specified information")
+    isolated_perturbations_results = perturbator.runSimulations(perturbations_folder_path)
+    # Prepare analysis inputs from JSON and simulations results
+    analysis_folder_name = "analysis"
     analysis_folder_path = os.path.join(dest_folder_path,analysis_folder_name)
+    files_aux.makeFolderWithPath(analysis_folder_path)
     analyze_csvs_kwargs = {
         "isolated_perturbations_results" : isolated_perturbations_results,
         "target_vars"                    : full_json["vars_to_analyze"],
@@ -116,6 +117,17 @@ def getCommandLineArguments():
                         help='Optional: The destination folder where to write the analysis files')
     args = parser.parse_args()
     return args.test_file_path, args.dest_folder_path
+
+def moFilePathFromJSONMoPath(json_mo_path):
+    # Check if it's absolute path or relative path and act accordingly
+    is_abs_path = os.path.isabs(json_mo_path)
+    if is_abs_path:
+        # If it's already an absolute path, there's nothing to do
+        mo_file_path = json_mo_path
+    else:
+        # If it's a relative path, make it absolute
+        mo_file_path = os.path.abspath(json_mo_path)
+    return mo_file_path
 
 
 # FIRST EXECUTABLE CODE:

@@ -41,7 +41,7 @@ class ParametersIsolatedPerturbator():
         # Run STD run
         std_run_name = "std_run.csv"
         std_run_path = os.path.join(runs_folder_path, std_run_name)
-        std_run_results = self.compiled_model.simulate(std_run_path)
+        std_run_results = self.compiled_model.simulate(std_run_path, "-noEventEmit")
         # Make dir for perturbed runs
         perturbed_runs_folder_name = "perturbed"
         perturbed_runs_folder_path = os.path.join(runs_folder_path, perturbed_runs_folder_name)
@@ -58,7 +58,7 @@ class ParametersIsolatedPerturbator():
             # Run the simulation
             simu_csv_name = "run_{0}.csv".format(i)
             simu_csv_path = os.path.join(perturbed_runs_folder_path, simu_csv_name)
-            simu_results = self.compiled_model.simulate(simu_csv_path)
+            simu_results = self.compiled_model.simulate(simu_csv_path, "-noEventEmit")
             # Return the parameter to its original value
             self.compiled_model.setParameterStartValue(param_name, param_default_val)
             # Save the simulation results for this perturbed parameter
@@ -153,14 +153,14 @@ def completeIndividualSensAnalysis(isolated_perturbations_results, target_vars, 
 
 
 def perturbationAsTuplesFromDict(isolated_perturbations_results):
-    runs_per_parameter = isolated_perturbations_results.runs_per_parameterr
+    runs_per_parameter = isolated_perturbations_results.runs_per_parameter
     perturbed_csvs_path_and_info_pairs = []
     for param_name in runs_per_parameter:
         # Gather simulation info from mos
-        pert_run = runs_per_parameter[param_name]
-        simu_file_path = pert_run["simu_file_path"]
-        std_val = pert_run["std_val"]
-        perturbed_val = pert_run["perturbed_val"]
+        pert_run_info = runs_per_parameter[param_name]
+        simu_file_path = pert_run_info.simu_results.output_path
+        std_val = pert_run_info.pert_param_info.default_val
+        perturbed_val = pert_run_info.pert_param_info.new_val
         # Create tuple from using info
         perturb_tuple = (simu_file_path, (param_name, std_val, perturbed_val))
         # Add tuple to list
@@ -260,20 +260,23 @@ def analysisPerParamPerturbedForEachVar(isolated_perturbations_results, percenta
     std_run_csv_path = isolated_perturbations_results.std_run.output_path
     df_std_run = pandas.read_csv(std_run_csv_path, index_col=0)
     # Iterate simulations for each parameter perturbed in isolation
-    for param_name in isolated_perturbations_results:
-        param_perturbed_run = isolated_perturbations_results[param_name]
-        analyzeParamResultsForEachVar(df_std_run, param_perturbed_run, percentage_perturbed, rms_first_year,
+    perturbed_runs = isolated_perturbations_results.runs_per_parameter
+    for param_name in perturbed_runs:
+        pert_run_info = perturbed_runs[param_name]
+        analyzeParamResultsForEachVar(df_std_run, pert_run_info, percentage_perturbed, rms_first_year,
                                       rms_last_year, specific_year, target_vars, sens_to_params_per_var)
     return sens_to_params_per_var
 
 
-def analyzeParamResultsForEachVar(df_std_run, param_perturbed_run, percentage_perturbed, rms_first_year,
+def analyzeParamResultsForEachVar(df_std_run, pert_run_info, percentage_perturbed, rms_first_year,
                                   rms_last_year, specific_year, target_vars, sens_to_params_per_var):
     # Read perturbed parameter csv
-    param_csv_path = param_perturbed_run.output_path
+    param_csv_path = pert_run_info.simu_results.output_path
     df_param_perturbed = pandas.read_csv(param_csv_path, index_col=0)
     # Get param info such as name, default value, etc
-    param_name, param_default, param_new_value = extractParamInfo(param_info)
+    param_name       = pert_run_info.pert_param_info.name
+    param_default    = pert_run_info.pert_param_info.default_val
+    param_new_value  = pert_run_info.pert_param_info.new_val
     # Iterate variables getting the values in the perturbed param csv
     for target_var in target_vars:
         analyzeVarFromPerturbedParamResults(df_param_perturbed, df_std_run, param_csv_path, param_default,
@@ -335,14 +338,6 @@ def rootMeanSquareForVar(df_std_run, df_param_perturbed, rms_first_year, rms_las
     mean_diff_squared = diff_squared.mean()
     rms = math.sqrt(mean_diff_squared)
     return rms
-
-
-def extractParamInfo(param_info):
-    param_name = param_info[0]
-    param_default = param_info[1]
-    param_new_value = param_info[2]
-    return param_name, param_default, param_new_value
-
 
 def varAnalysisForPerturbedParam(df_std_run, df_param_perturbed, target_var, specific_year, rms_first_year,
                                  rms_last_year):
