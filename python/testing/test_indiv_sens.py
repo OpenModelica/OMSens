@@ -74,8 +74,9 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
         # Check that there is a file for each perturbed run
         runs_per_parameter = isolated_perturbations_results.runs_per_parameter
         for param_name in runs_per_parameter:
-            pert_run = runs_per_parameter[param_name]
-            pert_run_path = pathlib.Path(pert_run.output_path)
+            pert_run_info = runs_per_parameter[param_name]
+            pert_run_simu_results = pert_run_info.simu_results
+            pert_run_path = pathlib.Path(pert_run_simu_results.output_path)
             if not pert_run_path.is_file():
                 error_msg = "A perturbed run was not found in path {0}".format(pert_run_path.absolute())
                 self.fail(error_msg)

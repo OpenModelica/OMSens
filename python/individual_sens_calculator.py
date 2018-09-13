@@ -52,7 +52,7 @@ def main():
     analysis_folder_name = "simulation"
     analysis_folder_path = os.path.join(dest_folder_path,analysis_folder_name)
     analyze_csvs_kwargs = {
-        "isolated_perturbations_results" : isolated_perturbations_results
+        "isolated_perturbations_results" : isolated_perturbations_results,
         "target_vars"                    : full_json["vars_to_analyze"],
         "percentage_perturbed"           : full_json["percentage"],
         "specific_year"                  : full_json["stop_time"],

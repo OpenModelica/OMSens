@@ -10,6 +10,7 @@ import pandas  # dataframes
 import filesystem.files_aux as files_aux
 import plotting.plot_heatmap as heatmap_f
 import modelica_interface.build_model as build_model
+import running.simulation_run_info as simu_run_info
 
 logger = logging.getLogger("--ParameterSensAnalysis--")  # this modules logger
 
@@ -61,9 +62,10 @@ class ParametersIsolatedPerturbator():
             # Return the parameter to its original value
             self.compiled_model.setParameterStartValue(param_name, param_default_val)
             # Save the simulation results for this perturbed parameter
-            runs_per_parameter[param_name] = simu_results
             perturbed_param_info = simu_run_info.PerturbedParameterInfo(param_name, param_default_val,
                                                                         param_perturbed_val)
+            iter_results = OneParameterPerturbedResults(simu_results, perturbed_param_info)
+            runs_per_parameter[param_name] = iter_results
             i=i+1
         # Prepare the results instance
         isolated_perturbations_results = IsolatedPerturbationsResults(self.model_name, std_run_results,
@@ -87,7 +89,10 @@ class IsolatedPerturbationsResults():
         self.std_run = std_run
         self.runs_per_parameter = runs_per_parameter
 
-
+class OneParameterPerturbedResults():
+    def __init__(self, simu_results, pert_param_info):
+        self.simu_results = simu_results
+        self.pert_param_info = pert_param_info
 
 def perturbedValuePerParam(params_defaults, parameters, perc_perturb):
     value_per_param = {}
