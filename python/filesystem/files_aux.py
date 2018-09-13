@@ -51,6 +51,19 @@ def tmpPath():
     return os.path.join(parentdir, "tmp")
     # return os.path.join(currentdir,"tmp")
 
+def moFilePathFromJSONMoPath(json_mo_path):
+    # Check if it's absolute path or relative path and act accordingly
+    is_abs_path = os.path.isabs(json_mo_path)
+    if is_abs_path:
+        # If it's already an absolute path, there's nothing to do
+        mo_file_path = json_mo_path
+    else:
+        # If it's a relative path, make it a relative path from the project root
+        project_root_path = projectRoot()
+        relative_to_project_root_path = os.path.join(project_root_path, json_mo_path)
+        mo_file_path = os.path.abspath(relative_to_project_root_path)
+    return mo_file_path
+
 
 # Functions to modify filesystem:
 def writeStrToFile(str_, file_path):

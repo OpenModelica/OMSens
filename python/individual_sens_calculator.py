@@ -31,7 +31,7 @@ def perturbateAndAnalyzeFromJsonToPath(json_file_path, dest_folder_path):
     # Read JSON
     with open(json_file_path, 'r') as fp:
         full_json = json.load(fp)
-    model_file_path = moFilePathFromJSONMoPath(full_json["model_mo_path"])
+    model_file_path = files_aux.moFilePathFromJSONMoPath(full_json["model_mo_path"])
     perturbateAndAnalyze_kwargs = {
         "model_name"            : full_json["model_name"],
         "model_file_path"       : model_file_path,
@@ -131,17 +131,6 @@ def getCommandLineArguments():
                         help='Optional: The destination folder where to write the analysis files')
     args = parser.parse_args()
     return args.test_file_path, args.dest_folder_path
-
-def moFilePathFromJSONMoPath(json_mo_path):
-    # Check if it's absolute path or relative path and act accordingly
-    is_abs_path = os.path.isabs(json_mo_path)
-    if is_abs_path:
-        # If it's already an absolute path, there's nothing to do
-        mo_file_path = json_mo_path
-    else:
-        # If it's a relative path, make it absolute
-        mo_file_path = os.path.abspath(json_mo_path)
-    return mo_file_path
 
 
 # FIRST EXECUTABLE CODE:
