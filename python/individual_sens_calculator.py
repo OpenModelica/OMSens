@@ -23,26 +23,46 @@ def main():
     json_file_path, dest_folder_path_arg = getCommandLineArguments()
     # Args
     dest_folder_path = finalDestFolderPath( dest_folder_path_arg)
-    perturbateAndAnalyzeFromJsonToPath(dest_folder_path, json_file_path)
+    perturbateAndAnalyzeFromJsonToPath(json_file_path, dest_folder_path)
     return 0
 
 
-def perturbateAndAnalyzeFromJsonToPath(dest_folder_path, json_file_path):
+def perturbateAndAnalyzeFromJsonToPath(json_file_path, dest_folder_path):
     # Read JSON
     with open(json_file_path, 'r') as fp:
         full_json = json.load(fp)
-    # Prepare kwargs for perturbator
+    model_file_path = moFilePathFromJSONMoPath(full_json["model_mo_path"])
+    perturbateAndAnalyze_kwargs = {
+        "model_name"            : full_json["model_name"],
+        "model_file_path"       : model_file_path,
+        "start_time"            : full_json["start_time"],
+        "stop_time"             : full_json["stop_time"],
+        "parameters_to_perturb" : full_json["parameters_to_perturb"],
+        "percentage"            : full_json["percentage"],
+        "target_vars"           : full_json["vars_to_analyze"],
+        "dest_folder_path"      : dest_folder_path,
+    }
+    perturbateAndAnalyze(**perturbateAndAnalyze_kwargs)
+
+
+def perturbateAndAnalyze( model_name, model_file_path, start_time, stop_time, parameters_to_perturb, percentage,
+                              target_vars, dest_folder_path ):
+    # Create simulations folder
     perturbations_folder_name = "simulation"
     perturbations_folder_path = os.path.join(dest_folder_path, perturbations_folder_name)
     files_aux.makeFolderWithPath(perturbations_folder_path)
-    model_file_path = moFilePathFromJSONMoPath(full_json["model_mo_path"])
+    # Create analysis folder
+    analysis_folder_name = "analysis"
+    analysis_folder_path = os.path.join(dest_folder_path, analysis_folder_name)
+    files_aux.makeFolderWithPath(analysis_folder_path)
+    # Prepare kwargs for perturbator
     perturbator_kwargs = {
-        "model_name": full_json["model_name"],
+        "model_name": model_name,
         "model_file_path": model_file_path,
-        "start_time": full_json["start_time"],
-        "stop_time": full_json["stop_time"],
-        "parameters": full_json["parameters_to_perturb"],
-        "perc_perturb": full_json["percentage"],
+        "start_time": start_time,
+        "stop_time": stop_time,
+        "parameters": parameters_to_perturb,
+        "perc_perturb": percentage,
         "build_folder_path": perturbations_folder_path,
     }
     # Initialize perturbator
@@ -50,18 +70,14 @@ def perturbateAndAnalyzeFromJsonToPath(dest_folder_path, json_file_path):
     # Run simulations using perturbator
     logger.info("Running Modelica with specified information")
     isolated_perturbations_results = perturbator.runSimulations(perturbations_folder_path)
-    # Prepare analysis inputs from JSON and simulations results
-    analysis_folder_name = "analysis"
-    analysis_folder_path = os.path.join(dest_folder_path, analysis_folder_name)
-    files_aux.makeFolderWithPath(analysis_folder_path)
     analyze_csvs_kwargs = {
         "isolated_perturbations_results": isolated_perturbations_results,
-        "target_vars": full_json["vars_to_analyze"],
-        "percentage_perturbed": full_json["percentage"],
-        "specific_year": full_json["stop_time"],
+        "target_vars": target_vars,
+        "percentage_perturbed": percentage,
+        "specific_year": stop_time,
         "output_folder_analyses_path": analysis_folder_path,
-        "rms_first_year": full_json["start_time"],
-        "rms_last_year": full_json["stop_time"],
+        "rms_first_year": start_time,
+        "rms_last_year": stop_time,
     }
     logger.info("Analyzing variable sensitivities to parameters from CSVs")
     # Calculate sensitivities
