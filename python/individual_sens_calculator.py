@@ -22,26 +22,28 @@ def main():
     # Get arguments from command line call
     json_file_path, dest_folder_path_arg = getCommandLineArguments()
     # Args
-    output_mos_name = "indiv_sens_sims.mos"
-    std_run_filename = "std_run.csv"
-    dest_folder_path, output_mos_path, std_run_path = filesPathsInOutputFolder(output_mos_name, std_run_filename,
-                                                                               dest_folder_path_arg)
+    dest_folder_path = finalDestFolderPath( dest_folder_path_arg)
+    perturbateAndAnalyzeFromJsonToPath(dest_folder_path, json_file_path)
+    return 0
+
+
+def perturbateAndAnalyzeFromJsonToPath(dest_folder_path, json_file_path):
     # Read JSON
     with open(json_file_path, 'r') as fp:
         full_json = json.load(fp)
     # Prepare kwargs for perturbator
     perturbations_folder_name = "simulation"
-    perturbations_folder_path = os.path.join(dest_folder_path,perturbations_folder_name)
+    perturbations_folder_path = os.path.join(dest_folder_path, perturbations_folder_name)
     files_aux.makeFolderWithPath(perturbations_folder_path)
     model_file_path = moFilePathFromJSONMoPath(full_json["model_mo_path"])
     perturbator_kwargs = {
-        "model_name"        : full_json["model_name"],
-        "model_file_path"   : model_file_path,
-        "start_time"        : full_json["start_time"],
-        "stop_time"         : full_json["stop_time"],
-        "parameters"        : full_json["parameters_to_perturb"],
-        "perc_perturb"      : full_json["percentage"],
-        "build_folder_path" : perturbations_folder_path,
+        "model_name": full_json["model_name"],
+        "model_file_path": model_file_path,
+        "start_time": full_json["start_time"],
+        "stop_time": full_json["stop_time"],
+        "parameters": full_json["parameters_to_perturb"],
+        "perc_perturb": full_json["percentage"],
+        "build_folder_path": perturbations_folder_path,
     }
     # Initialize perturbator
     perturbator = analysis.indiv_sens.ParametersIsolatedPerturbator(**perturbator_kwargs)
@@ -50,16 +52,16 @@ def main():
     isolated_perturbations_results = perturbator.runSimulations(perturbations_folder_path)
     # Prepare analysis inputs from JSON and simulations results
     analysis_folder_name = "analysis"
-    analysis_folder_path = os.path.join(dest_folder_path,analysis_folder_name)
+    analysis_folder_path = os.path.join(dest_folder_path, analysis_folder_name)
     files_aux.makeFolderWithPath(analysis_folder_path)
     analyze_csvs_kwargs = {
-        "isolated_perturbations_results" : isolated_perturbations_results,
-        "target_vars"                    : full_json["vars_to_analyze"],
-        "percentage_perturbed"           : full_json["percentage"],
-        "specific_year"                  : full_json["stop_time"],
-        "output_folder_analyses_path"    : analysis_folder_path,
-        "rms_first_year"                 : full_json["start_time"],
-        "rms_last_year"                  : full_json["stop_time"],
+        "isolated_perturbations_results": isolated_perturbations_results,
+        "target_vars": full_json["vars_to_analyze"],
+        "percentage_perturbed": full_json["percentage"],
+        "specific_year": full_json["stop_time"],
+        "output_folder_analyses_path": analysis_folder_path,
+        "rms_first_year": full_json["start_time"],
+        "rms_last_year": full_json["stop_time"],
     }
     logger.info("Analyzing variable sensitivities to parameters from CSVs")
     # Calculate sensitivities
@@ -72,7 +74,6 @@ def main():
     paths_json_file_path = os.path.join(dest_folder_path, paths_json_file_name)
     files_aux.writeStrToFile(paths_json_str, paths_json_file_path)
     logger.info("Finished. The file {0} has all the analysis files paths.".format(paths_json_file_path))
-    return 0
 
 
 def listOfParametersPerturbationInfo(param_names, param_vals, percentage):
@@ -87,17 +88,14 @@ def listOfParametersPerturbationInfo(param_names, param_vals, percentage):
     return parameters_to_perturbate_tuples
 
 
-def filesPathsInOutputFolder(output_mos_name, std_run_filename, dest_folder_path_arg):
+def finalDestFolderPath(dest_folder_path_arg):
     # Make dest folder path in this projects root if none indicated in command line
     if not dest_folder_path_arg:
         dest_folder_path = files_aux.makeOutputPath("indiv_sens_analysis")
     else:
         dest_folder_path = dest_folder_path_arg
     # .mos script
-    output_mos_path = os.path.join(dest_folder_path, output_mos_name)
-    # Standard run csv
-    std_run_path = os.path.join(dest_folder_path, std_run_filename)
-    return dest_folder_path, output_mos_path, std_run_path
+    return dest_folder_path
 
 
 def csvPathAndParameterNameForFolderAndParametersInfo(dest_folder_path, parameters_info):
