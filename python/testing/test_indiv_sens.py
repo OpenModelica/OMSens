@@ -12,6 +12,8 @@ import numpy
 # Mine
 import analysis.indiv_sens as indiv_sens
 import filesystem.files_aux as files_aux
+import individual_sens_calculator
+import running.simulation_run_info as simu_run_info
 
 
 class TestIndividualSensitivityAnalysis(unittest.TestCase):
@@ -28,6 +30,15 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
 
 # Aux model
     def isolatedPerturbationModelExample(self):
+        build_folder_path, model_file_path, model_name, parameters_to_perturb, perc_perturb, start_time, stop_time = \
+            self.modelExample()
+        # Initialize param perturber
+        params_perturbator = indiv_sens.ParametersIsolatedPerturbator(model_name, model_file_path, start_time,
+                                                                      stop_time, parameters_to_perturb, perc_perturb,
+                                                                      build_folder_path)
+        return params_perturbator
+
+    def modelExample(self):
         model_name = "Model"
         model_file_path = os.path.join(self._temp_dir, "model.mo")
         files_aux.writeStrToFile(model_str, model_file_path)
@@ -36,11 +47,8 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
         parameters_to_perturb = ["a", "b", "c"]
         perc_perturb = 5
         build_folder_path = self._temp_dir
-        # Initialize param perturber
-        params_perturbator = indiv_sens.ParametersIsolatedPerturbator(model_name, model_file_path, start_time,
-                                                                      stop_time, parameters_to_perturb, perc_perturb,
-                                                                      build_folder_path)
-        return params_perturbator
+        return build_folder_path, model_file_path, model_name, parameters_to_perturb, perc_perturb, start_time, stop_time
+
 # Tests:
     def test_multiple_tests(self):
         # Get perturbation for test example
@@ -80,29 +88,29 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
             if not pert_run_path.is_file():
                 error_msg = "A perturbed run was not found in path {0}".format(pert_run_path.absolute())
                 self.fail(error_msg)
+        # Above was for the perturbation, below is for the analysis
 
-
+    def test_perturbation_and_analysis_integration(self):
+        build_folder_path, model_file_path, model_name, parameters_to_perturb, perc_perturb, start_time, stop_time = \
+            self.modelExample()
+        perturbateAndAnalyze_kwargs = {
+            "model_name"            : model_name,
+            "model_file_path"       : model_file_path,
+            "start_time"            : start_time,
+            "stop_time"             : stop_time,
+            "parameters_to_perturb" : parameters_to_perturb,
+            "percentage"            : perc_perturb,
+            "target_vars"           : "x",
+            "dest_folder_path"      : build_folder_path,
+        }
+        individual_sens_calculator.perturbateAndAnalyze(**perturbateAndAnalyze_kwargs)
 
     def test_sens_run_gives_correct_results(self):
         # Run info. This corresponds to a simulation that perturbed some parameters in isolation. To avoid running the simulation in this test,
         #   we save the simulation's result instead.
+        isolated_perturbations_results = validPerturbationExample()
         analyze_csvs_kwargs = {
-            "perturbed_simus_info"               :
-                {
-                    "e":
-                        {
-                            "simu_file_path": StringIO(bb_e_perturbed_str),
-                            "std_val"       : 0.7,
-                            "perturbed_val" : 0.735,
-                        },
-                    "g":
-                        {
-                            "simu_file_path": StringIO(bb_g_perturbed_str),
-                            "std_val"       : 9.81,
-                            "perturbed_val" : 10.3005,
-                        }
-                },
-            "std_run_csv_path"                   : StringIO(bb_std_run_str),
+            "isolated_perturbations_results": isolated_perturbations_results,
             "target_vars"                        : ['h'],
             "percentage_perturbed"               : 5,
             "specific_year"                      : 3,
@@ -176,91 +184,116 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
                 self.fail(error_msg)
 
     def test_different_shapes_raises_error(self):
-        # For RMS we need all of the simulation results (std run and perturbed runs) to have the same amount of rows.
-        # First sub-test: e has 1 more row
-        analyze_csvs_kwargs_1 = {
-            "perturbed_simus_info"               :
-                {
-                    "e":
-                        {
-                            "simu_file_path": StringIO(bb_e_perturbed_2_str),
-                            "std_val"       : 0.7,
-                            "perturbed_val" : 0.735,
-                        },
-                    "g":
-                        {
-                            "simu_file_path": StringIO(bb_g_perturbed_str),
-                            "std_val"       : 9.81,
-                            "perturbed_val" : 10.3005,
-                        }
-                },
-            "std_run_csv_path"                   : StringIO(bb_std_run_str),
-            "target_vars"                        : ['h'],
-            "percentage_perturbed"               : 5,
-            "specific_year"                      : 3,
-            "output_folder_analyses_path"        : self._temp_dir,
-            "rms_first_year"                     : 0,
-            "rms_last_year"                      : 3,
-        }
-        # Second sub-test: g has 1 more row
-        analyze_csvs_kwargs_2 = {
-            "perturbed_simus_info"               :
-                {
-                    "e":
-                        {
-                            "simu_file_path": StringIO(bb_e_perturbed_str),
-                            "std_val"       : 0.7,
-                            "perturbed_val" : 0.735,
-                        },
-                    "g":
-                        {
-                            "simu_file_path": StringIO(bb_g_perturbed_2_str),
-                            "std_val"       : 9.81,
-                            "perturbed_val" : 10.3005,
-                        }
-                },
-            "std_run_csv_path"                   : StringIO(bb_std_run_str),
-            "target_vars"                        : ['h'],
-            "percentage_perturbed"               : 5,
-            "specific_year"                      : 3,
-            "output_folder_analyses_path"        : self._temp_dir,
-            "rms_first_year"                     : 0,
-            "rms_last_year"                      : 3,
-        }
-        # Third sub-test: std has 1 more row
-        analyze_csvs_kwargs_3 = {
-            "perturbed_simus_info"               :
-                {
-                    "e":
-                        {
-                            "simu_file_path": StringIO(bb_e_perturbed_str),
-                            "std_val"       : 0.7,
-                            "perturbed_val" : 0.735,
-                        },
-                    "g":
-                        {
-                            "simu_file_path": StringIO(bb_g_perturbed_2_str),
-                            "std_val"       : 9.81,
-                            "perturbed_val" : 10.3005,
-                        }
-                },
-            "std_run_csv_path"                   : StringIO(bb_std_run_2_str),
-            "target_vars"                        : ['h'],
-            "percentage_perturbed"               : 5,
-            "specific_year"                      : 3,
-            "output_folder_analyses_path"        : self._temp_dir,
-            "rms_first_year"                     : 0,
-            "rms_last_year"                      : 3,
-        }
-        # Run with the 3 kwargs and assert that all of them raise an exception
-        self.assertRaises(indiv_sens.InvalidSimulationResultsException, indiv_sens.completeIndividualSensAnalysis,
-                          **analyze_csvs_kwargs_1)
-        self.assertRaises(indiv_sens.InvalidSimulationResultsException, indiv_sens.completeIndividualSensAnalysis,
-                          **analyze_csvs_kwargs_2)
-        self.assertRaises(indiv_sens.InvalidSimulationResultsException, indiv_sens.completeIndividualSensAnalysis,
-                          **analyze_csvs_kwargs_3)
+            # For RMS we need all of the simulation results (std run and perturbed runs) to have the same amount of rows.
+            # Base kwargs that will be modified for each case:
+            analyze_csvs_kwargs_base = {
+                "isolated_perturbations_results"     : validPerturbationExample(),
+                "target_vars"                        : ['h'],
+                "percentage_perturbed"               : 5,
+                "specific_year"                      : 3,
+                "output_folder_analyses_path"        : self._temp_dir,
+                "rms_first_year"                     : 0,
+                "rms_last_year"                      : 3,
+            }
+            # First sub-test: e has 1 more row
+            isolated_perturbations_results_1 = eHasOneMoreRowPerturbationExample()
+            analyze_csvs_kwargs_1 = analyze_csvs_kwargs_base.copy()
+            analyze_csvs_kwargs_1["isolated_perturbations_results"] = isolated_perturbations_results_1
+            self.assertRaises(indiv_sens.InvalidSimulationResultsException, indiv_sens.completeIndividualSensAnalysis,
+                              **analyze_csvs_kwargs_1)
+            # Second sub-test: g has 1 more row
+            isolated_perturbations_results_2 = gHasOneMoreRowPerturbationExample()
+            analyze_csvs_kwargs_2 = analyze_csvs_kwargs_base.copy()
+            analyze_csvs_kwargs_2["isolated_perturbations_results"] = isolated_perturbations_results_2
+            self.assertRaises(indiv_sens.InvalidSimulationResultsException, indiv_sens.completeIndividualSensAnalysis,
+                              **analyze_csvs_kwargs_2)
+            # Third sub-test: std has 1 more row
+            isolated_perturbations_results_3 = stdRunHasOneMoreRowPerturbationExample()
+            analyze_csvs_kwargs_3 = analyze_csvs_kwargs_base.copy()
+            analyze_csvs_kwargs_3["isolated_perturbations_results"] = isolated_perturbations_results_3
+            self.assertRaises(indiv_sens.InvalidSimulationResultsException, indiv_sens.completeIndividualSensAnalysis,
+                              **analyze_csvs_kwargs_3)
+
+# Auxs
+def validPerturbatorInternalresults():
+    model_name = "BouncingBall"
+    std_run_results = simu_run_info.SimulationResults(StringIO(bb_std_run_str), "BouncingBall", "/path/to/exe",
+                                                      "output")
+    # Prepare "e" parameter run
+    e_perturbed_param_info = simu_run_info.PerturbedParameterInfo("e", 0.7, 0.735)
+    e_run_results = simu_run_info.SimulationResults(StringIO(bb_e_perturbed_str), "BouncingBall", "/path/to/exe",
+                                                    "output")
+    # Prepare "g" parameter run
+    g_perturbed_param_info = simu_run_info.PerturbedParameterInfo("g", 9.81, 10.3005)
+    g_run_results = simu_run_info.SimulationResults(StringIO(bb_g_perturbed_str), "BouncingBall", "/path/to/exe",
+                                                    "output")
+    return e_perturbed_param_info, e_run_results, g_perturbed_param_info, g_run_results, model_name, std_run_results
 
 
+def validPerturbationExample():
+    e_perturbed_param_info, e_run_results, g_perturbed_param_info, g_run_results, model_name, std_run_results = validPerturbatorInternalresults()
+    e_iter_results = indiv_sens.OneParameterPerturbedResults(e_run_results, e_perturbed_param_info)
+    g_iter_results = indiv_sens.OneParameterPerturbedResults(g_run_results, g_perturbed_param_info)
+    runs_per_parameter = {
+        "e": e_iter_results,
+        "g": g_iter_results,
+    }
+    # Prepare perturbator results using above instances
+    isolated_perturbations_results = indiv_sens.IsolatedPerturbationsResults(model_name, std_run_results,
+                                                                             runs_per_parameter)
+    return isolated_perturbations_results
+
+def eHasOneMoreRowPerturbationExample():
+    # Get valid results
+    e_perturbed_param_info, e_run_results, g_perturbed_param_info, g_run_results, model_name, std_run_results = validPerturbatorInternalresults()
+    # Replace the e run results with invalid results
+    e_run_results = simu_run_info.SimulationResults(StringIO(bb_e_perturbed_2_str), "BouncingBall", "/path/to/exe",
+                                                    "output")
+    # Prepare perturbator results using above instances
+    e_iter_results = indiv_sens.OneParameterPerturbedResults(e_run_results, e_perturbed_param_info)
+    g_iter_results = indiv_sens.OneParameterPerturbedResults(g_run_results, g_perturbed_param_info)
+    runs_per_parameter = {
+        "e": e_iter_results,
+        "g": g_iter_results,
+    }
+    isolated_perturbations_results = indiv_sens.IsolatedPerturbationsResults(model_name, std_run_results,
+                                                                             runs_per_parameter)
+    return isolated_perturbations_results
+
+
+def gHasOneMoreRowPerturbationExample():
+    # Get valid results
+    e_perturbed_param_info, e_run_results, g_perturbed_param_info, g_run_results, model_name, std_run_results = validPerturbatorInternalresults()
+    # Replace the g run results with invalid results
+    g_run_results = simu_run_info.SimulationResults(StringIO(bb_g_perturbed_2_str), "BouncingBall", "/path/to/exe",
+                                                    "output")
+    # Prepare perturbator results using above instances
+    e_iter_results = indiv_sens.OneParameterPerturbedResults(e_run_results, e_perturbed_param_info)
+    g_iter_results = indiv_sens.OneParameterPerturbedResults(g_run_results, g_perturbed_param_info)
+    runs_per_parameter = {
+        "e": e_iter_results,
+        "g": g_iter_results,
+    }
+    isolated_perturbations_results = indiv_sens.IsolatedPerturbationsResults(model_name, std_run_results,
+                                                                             runs_per_parameter)
+    return isolated_perturbations_results
+
+def stdRunHasOneMoreRowPerturbationExample():
+    # Get valid results
+    e_perturbed_param_info, e_run_results, g_perturbed_param_info, g_run_results, model_name, std_run_results = validPerturbatorInternalresults()
+    # Replace the std run results with invalid results
+    std_run_results = simu_run_info.SimulationResults(StringIO(bb_std_run_2_str), "BouncingBall", "/path/to/exe",
+                                                      "output")
+    # Prepare perturbator results using above instances
+    e_iter_results = indiv_sens.OneParameterPerturbedResults(e_run_results, e_perturbed_param_info)
+    g_iter_results = indiv_sens.OneParameterPerturbedResults(g_run_results, g_perturbed_param_info)
+    runs_per_parameter = {
+        "e": e_iter_results,
+        "g": g_iter_results,
+    }
+    isolated_perturbations_results = indiv_sens.IsolatedPerturbationsResults(model_name, std_run_results,
+                                                                             runs_per_parameter)
+    return isolated_perturbations_results
 
 ###########
 # Globals #
