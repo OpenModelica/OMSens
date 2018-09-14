@@ -7,15 +7,6 @@
   "percentage": 5,
   "start_time": 0,
   "stop_time": 3,
-  "params_info_list": [
-    {
-      "name": "e",
-      "initial_val": 0.7
-    },
-    {
-      "name": "g",
-      "initial_val": 9.81
-    }
-  ]
+  "parameters_to_perturb": [ "e", "g"]
 }
 

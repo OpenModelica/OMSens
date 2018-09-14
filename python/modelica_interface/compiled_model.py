@@ -3,8 +3,10 @@ import os
 import xml.etree.ElementTree as ElementTree
 import pandas
 import copy
+
 # Mine
 import filesystem.files_aux as files_aux
+import running.simulation_run_info as simu_run_info
 
 class CompiledModelicaModel():
     def __init__(self,model_name, binary_file_path):
@@ -44,28 +46,20 @@ class CompiledModelicaModel():
         self.xml_tree.write(self.xml_file_path)
 
     # Other
-    def simulate(self, dest_csv_path):
+    def simulate(self, dest_csv_path, flags=""):
         # Get folder for binary
         binary_folder_path = os.path.dirname(self.binary_file_path)
         # Define command to be called
         binary_args = "-r={0}".format(dest_csv_path)
-        cmd = "{0} {1}".format(self.binary_file_path, binary_args)
+        cmd = "{0} {1} {2}".format(self.binary_file_path, binary_args, flags)
         # Execute binary with args
         output = files_aux.callCMDStringInPath(cmd, binary_folder_path)
-        # Define run log file path
-        simu_folder_path = os.path.dirname(dest_csv_path)
-        csv_name = os.path.basename(dest_csv_path)
-        simu_log_name = "run_{0}.txt".format(csv_name)
-        simu_log_path = os.path.join(simu_folder_path, simu_log_name)
-        # Write log to disk
+        # Parse log
         output_decoded = output.decode("UTF-8")
-        files_aux.writeStrToFile(output_decoded, simu_log_path)
-        return output_decoded
-
-    def simulateAndReadResults(self, dest_csv_path):
-        self.simulate(dest_csv_path)
-        df_simu = pandas.read_csv(dest_csv_path)
-        return df_simu
+        # Create simulation results instance
+        simu_results = simu_run_info.SimulationResults(dest_csv_path, self.model_name, self.binary_file_path,
+                                                       output_decoded)
+        return simu_results
 
 
 # Auxs

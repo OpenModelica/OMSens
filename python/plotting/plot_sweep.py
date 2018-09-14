@@ -7,23 +7,24 @@ import pandas
 import matplotlib.pyplot as plt
 
 class SweepPlot():
-    def __init__(self, sweep_specs):
-        self.sweep_specs = sweep_specs
-        self.swept_params_ids_mapping = idsForSweptParams(sweep_specs)
+    def __init__(self, sweep_results):
+        self.sweep_results = sweep_results
+        self.swept_params_ids_mapping = idsForSweptParams(sweep_results)
 
     def plotInFolder(self, var_name, plots_folder_path, extra_ticks=[]):
         plot_path_without_extension = os.path.join(plots_folder_path, var_name)
-        title, subtitle, footer = self.sweepingPlotTexts(self.sweep_specs, var_name)
+        title, subtitle, footer = self.sweepingPlotTexts(self.sweep_results, var_name)
         footer_artist = setupPlot("Time", var_name, title, subtitle, footer)
-        colors_iter = plotColorsForNumber(len(self.sweep_specs.perturbed_runs))
+        colors_iter = plotColorsForNumber(len(self.sweep_results.perturbed_runs))
         # Plot standard run that will be different than the other simulations results
         self.plotStandardRun(var_name)
 
         # Plot perturbed simulations from sweep
-        for perturbed_run in self.sweep_specs.perturbed_runs:
-            file_path = perturbed_run.output_path
+        for sweep_iter_results in self.sweep_results.perturbed_runs:
+            simu_results = sweep_iter_results.simulation_results
+            file_path = simu_results.output_path
             df_run = pandas.read_csv(file_path)
-            label = self.labelForPerturbedRun(perturbed_run)
+            label = self.labelForPerturbedRun(sweep_iter_results)
             color = next(colors_iter)
             plt.plot(df_run["time"], df_run[var_name], linewidth=1, linestyle='-', markersize=0, marker='o',
                      label=label, color=color)
@@ -31,6 +32,9 @@ class SweepPlot():
                          bbox_to_anchor=(1, 0.5))
         setupXTicks(extra_ticks)
         saveAndClearPlt(plot_path_without_extension, lgd, footer_artist)
+        # Return only the .png plot path for now
+        png_plot_path = "{0}.png".format(plot_path_without_extension)
+        return png_plot_path
 
     def labelForPerturbedRun(self, sweep_simu_specs):
         # Get the info for each swept param (and not also fixed perturbed param)
@@ -43,9 +47,9 @@ class SweepPlot():
             # Get the ID for that name
             p_id = self.swept_params_ids_mapping[p_name]
             # Get the new val and the perturbation percentage from the default val
-            p_perturb_perc = (p_info.default_val / p_info.new_val) * 100
+            p_perturb_perc_str = perturbationPercentageStringForParam(p_info)
             # Define the string for this param
-            param_str = "({0})={1:.2f} [{2}%]".format(p_id, p_info.new_val, p_perturb_perc)
+            param_str = "({0})={1:.2f} [{2}]".format(p_id, p_info.new_val, p_perturb_perc_str)
             params_strs_list.append(param_str)
         # Join all the param strs to form the label for this run
         label = " | ".join(params_strs_list)
@@ -74,12 +78,32 @@ class SweepPlot():
 
     def plotStandardRun(self, var_name, color="black", label="STD_RUN", linestyle="-"):
         # Get simulation specs for std run
-        std_run_specs = self.sweep_specs.std_run
+        std_run_specs = self.sweep_results.std_run
         # Read simulation results from disk
         df_simu = pandas.read_csv(std_run_specs.output_path)
         plt.plot(df_simu["time"], df_simu[var_name], linewidth=1, linestyle=linestyle, markersize=0, marker='o',
                  label=label, color=color)
 
+
+def strSignForNumber(number):
+    if number == 0:
+        sign_str = ""
+    if number < 0:
+        sign_str = "-"
+    if number > 0:
+        sign_str = "+"
+    return sign_str
+
+def perturbationPercentageStringForParam(p_info):
+    if p_info.default_val != 0:
+        # If the divisor is not 0, calculate the percentage accordingly
+        p_perturb_perc = ((p_info.new_val / p_info.default_val) - 1) * 100
+        p_perturb_perc_sign_str = strSignForNumber(p_perturb_perc)
+        p_perturb_perc_str = "{0}{1:.4g}%".format(p_perturb_perc_sign_str, abs(p_perturb_perc))
+    else:
+        # If the divisor is 0, there's nothing we can do. Just return a trivial string
+        p_perturb_perc_str = "!"
+    return p_perturb_perc_str
 
 def idsForSweptParams(sweep_specs):
     # Get the parameters that were swept

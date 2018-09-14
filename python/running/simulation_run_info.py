@@ -1,15 +1,9 @@
-class SimulationSpecs():
-    def __init__(self, output_path, parameters_changed, model_name, executable_path):
+class SimulationResults():
+    def __init__(self, output_path, model_name, executable_path, std_output):
         self.output_path = output_path
-        self.parameters_changed = parameters_changed
         self.model_name = model_name
         self.executable = executable_path
-
-
-class OneSimulationResultFromSweep(SimulationSpecs):
-    def __init__(self, output_path, parameters_changed, model_name, executable_path, swept_params_info):
-        super().__init__(output_path, parameters_changed, model_name, executable_path)
-        self.swept_params_info = swept_params_info
+        self.std_output = std_output
 
 
 class PerturbedParameterInfo():

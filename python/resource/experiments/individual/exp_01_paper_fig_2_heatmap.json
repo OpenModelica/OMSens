@@ -49,87 +49,27 @@
   "percentage": 5,
   "start_time": 1900,
   "stop_time": 2100,
-  "params_info_list": [
-    {
-      "name": "p_fioa_cons_const_1",
-      "initial_val": 0.43
-    },
-    {
-      "name": "p_ind_cap_out_ratio_1",
-      "initial_val": 3.0
-    },
-    {
-      "name": "p_avg_life_ind_cap_1",
-      "initial_val": 14.0
-    },
-    {
-      "name": "reproductive_lifetime",
-      "initial_val": 30.0
-    },
-    {
-      "name": "des_compl_fam_size_norm",
-      "initial_val": 3.8
-    },
-    {
-      "name": "p_serv_cap_out_ratio_1",
-      "initial_val": 1.0
-    },
-    {
-      "name": "land_fr_harvested",
-      "initial_val": 0.7
-    },
-    {
-      "name": "inherent_land_fert",
-      "initial_val": 600.0
-    },
-    {
-      "name": "nr_resources_init",
-      "initial_val": 1000000000000.0
-    },
-    {
-      "name": "p_land_yield_fact_1",
-      "initial_val": 1.0
-    },
-    {
-      "name": "p_nr_res_use_fact_1",
-      "initial_val": 1.0
-    },
-    {
-      "name": "pot_arable_land_init",
-      "initial_val": 2300000000.0
-    },
-    {
-      "name": "max_tot_fert_norm",
-      "initial_val": 12.0
-    },
-    {
-      "name": "subsist_food_pc",
-      "initial_val": 230.0
-    },
-    {
-      "name": "pot_arable_land_tot",
-      "initial_val": 3200000000.0
-    },
-    {
-      "name": "industrial_capital_init",
-      "initial_val": 210000000000.0
-    },
-    {
-      "name": "p_avg_life_serv_cap_1",
-      "initial_val": 20.0
-    },
-    {
-      "name": "arable_land_init",
-      "initial_val": 900000000.0
-    },
-    {
-      "name": "pop2_init",
-      "initial_val": 700000000.0
-    },
-    {
-      "name": "land_fertility_init",
-      "initial_val": 600.0
-    }
+  "parameters_to_perturb": [
+     "p_fioa_cons_const_1",
+     "p_ind_cap_out_ratio_1",
+     "p_avg_life_ind_cap_1",
+     "reproductive_lifetime",
+     "des_compl_fam_size_norm",
+     "p_serv_cap_out_ratio_1",
+     "land_fr_harvested",
+     "inherent_land_fert",
+     "nr_resources_init",
+     "p_land_yield_fact_1",
+     "p_nr_res_use_fact_1",
+     "pot_arable_land_init",
+     "max_tot_fert_norm",
+     "subsist_food_pc",
+     "pot_arable_land_tot",
+     "industrial_capital_init",
+     "p_avg_life_serv_cap_1",
+     "arable_land_init",
+     "pop2_init",
+     "land_fertility_init"
   ]
 }
 

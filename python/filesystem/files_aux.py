@@ -1,3 +1,4 @@
+import shutil
 import inspect
 import logging
 import os
@@ -50,6 +51,19 @@ def tmpPath():
     return os.path.join(parentdir, "tmp")
     # return os.path.join(currentdir,"tmp")
 
+def moFilePathFromJSONMoPath(json_mo_path):
+    # Check if it's absolute path or relative path and act accordingly
+    is_abs_path = os.path.isabs(json_mo_path)
+    if is_abs_path:
+        # If it's already an absolute path, there's nothing to do
+        mo_file_path = json_mo_path
+    else:
+        # If it's a relative path, make it a relative path from the project root
+        project_root_path = projectRoot()
+        relative_to_project_root_path = os.path.join(project_root_path, json_mo_path)
+        mo_file_path = os.path.abspath(relative_to_project_root_path)
+    return mo_file_path
+
 
 # Functions to modify filesystem:
 def writeStrToFile(str_, file_path):
@@ -67,7 +81,16 @@ def callCMDStringInPath(command, path):
 def removeFilesWithRegexAndPath(regex, folder_path):
     for x in os.listdir(folder_path):
         if re.match(regex, x):
-            os.remove(os.path.join(folder_path, x))
+            file_path = os.path.join(folder_path, x)
+            if os.path.isfile(file_path):
+                # If it's a file, call file deleter
+                os.remove(file_path)
+            elif os.path.isdir(file_path):
+                # If it's a folder, call folder deleter
+                shutil.rmtree(file_path)
+            else:
+                error_msg ="The file in path {0} to delete is neither a file or a folder".format(x)
+                raise Exception(error_msg)
 
 
 def readStrFromFile(file_path):

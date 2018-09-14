@@ -1,0 +1,21 @@
+{
+  "model_name": "SystemDynamics.WorldDynamics.World3.Scenario_1",
+  "model_mo_path": "resource/sys_dyn/pw_fix/SystemDynamics/package.mo",
+  "vars_to_analyze": [
+    "population"
+  ],
+  "start_time": 1900,
+  "stop_time": 2500,
+  "parameters_to_sweep": [
+    {
+      "name"             : "p_land_yield_fact_1",
+      "delta_percentage" : 5,
+      "iterations"       : 3
+    },
+    {
+      "name"             : "p_avg_life_ind_cap_1",
+      "delta_percentage" : 5,
+      "iterations"       : 3
+    }
+  ]
+}
