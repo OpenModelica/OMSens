@@ -67,6 +67,11 @@ class TestsBuildModel(unittest.TestCase):
         if not param_def_val == 0:
             error_msg = "The parameter current value was not returned correctly"
             self.fail(error_msg)
+        # Test that the "quickSimulate" function returns the right value
+        x_quick_simu = compiled_model.quickSimulate("x")
+        if not (x_quick_simu == 1):
+            error_msg = "The quick simulation didn't return the right value"
+            self.fail(error_msg)
 
 # Auxs
 model_str = \

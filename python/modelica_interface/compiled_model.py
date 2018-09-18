@@ -61,6 +61,23 @@ class CompiledModelicaModel():
                                                        output_decoded)
         return simu_results
 
+    def quickSimulate(self,var_name):
+        # Get folder for binary
+        binary_folder_path = os.path.dirname(self.binary_file_path)
+        # Define command to be called
+        binary_args = "-output {0}".format(var_name)
+        flags = "-lv=-LOG_SUCCESS"
+        cmd = "{0} {1} {2}".format(self.binary_file_path, binary_args, flags)
+        # Execute binary with args
+        output = files_aux.callCMDStringInPath(cmd, binary_folder_path)
+        # Decode stdout
+        output_decoded = output.decode("UTF-8")
+        # Parse output to get results
+        var_output_str = output_decoded.split(",")[1]
+        var_val_str = var_output_str.split("=")[1]
+        var_val = float(var_val_str)
+        return var_val
+
 
 # Auxs
 def xmlFilePathForModel(binary_file_path, model_name):
