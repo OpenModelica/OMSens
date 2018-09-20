@@ -1,0 +1,19 @@
+nparams
+12
+params_names
+max_tot_fert_norm p_fioa_cons_const_1 p_ind_cap_out_ratio_1 p_serv_cap_out_ratio_1 life_expect_norm des_compl_fam_size_norm industrial_capital_init p_land_yield_fact_1 p_nr_res_use_fact_1 reproductive_lifetime subsist_food_pc p_avg_life_ind_cap_1
+params_values
+12.0 0.43 3.0 1.0 28.0 3.8 210000000000.0 1.0 1.0 30.0 230.0 14.0
+lower_bounds
+11.399999999999999 0.4085 2.8499999999999996 0.95 26.599999999999998 3.61 199500000000.0 0.95 0.95 28.5 218.5 13.299999999999999
+upper_bounds
+12.600000000000001 0.4515 3.1500000000000004 1.05 29.400000000000002 3.9899999999999998 220500000000.0 1.05 1.05 31.5 241.5 14.700000000000001
+stopTime
+2100
+ntarget_vars
+1
+target_vars
+population
+# This line and the ones following it will be ignored. You can use them as documentation
+Top 12 Relative 5% perturbing here 5%
+
