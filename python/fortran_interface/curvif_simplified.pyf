@@ -1,0 +1,29 @@
+!    -*- f90 -*-
+! Note: the context of this file is case sensitive.
+
+python module __user__routines
+    interface
+        function obj_func(n,x,f)
+            integer, intent(in) :: n
+            double precision dimension(n),intent(in) :: x
+            double precision,intent(out) :: f
+        end function obj_func
+    end interface
+end python module __user__routines
+
+python module curvif_simplified ! in 
+    interface  ! in :curvif_simplified
+        subroutine curvif_simplified(x0,obj_func,x_opt,f_opt,epsilon,n) ! in :curvif_simplified:Curvif_simplified.f90
+            use __user__routines
+            double precision dimension(n),intent(in) :: x0
+            external obj_func
+            double precision dimension(n),intent(out),depend(n) :: x_opt
+            double precision intent(out) :: f_opt
+            double precision :: epsilon
+            integer, optional,intent(in),check(len(x0)>=n),depend(x0) :: n=len(x0)
+        end subroutine curvif_simplified
+    end interface 
+end python module curvif_simplified
+
+! This file was auto-generated with f2py (version:2).
+! See http://cens.ioc.ee/projects/f2py2e/
