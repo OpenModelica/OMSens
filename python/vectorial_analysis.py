@@ -27,6 +27,18 @@ def main():
     res = minimize(fun, x0, method='L-BFGS-B', bounds=bnds)
     print(res)
 
+# CURVI VERSION, NEEDS TO BE ADAPTED TO ABOVE FORMAT WITH BNDS, EPSILON, ETC
+# # Std
+# import numpy
+# # Project
+# import fortran_interface.curvif_simplified as curvif_simplified
+# x0 = numpy.array([1,1])
+# obj_func = lambda x: -(x[0] + x[1])
+# epsilon = 0.001
+# x_opt,f_opt = curvif_simplified.curvif_simplified(x0,obj_func,epsilon)
+# print("x_opt:",x_opt)
+# print("f_opt:",f_opt)
+
 
 def createObjectiveFunctionForModel(model_name, start_time, stop_time, model_file_path, param_names, target_var_name,
                                     build_folder_path):

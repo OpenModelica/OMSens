@@ -1,8 +1,8 @@
-subroutine curvif_simplified(x0, obj_func, x_opt, f_opt, epsilon, n)
+subroutine curvif_simplified(x0, obj_func, epsilon, n, x_opt, f_opt)
     ! Declarations
     implicit none
     integer, intent(in) :: n
-    double precision :: obj_func, epsilon, bl(n), bu(n), wa(9*n+n*(n+1)/2+n*n+max(7*n-n*(n+1)/2,0))
+    double precision :: epsilon, bl(n), bu(n), wa(9*n+n*(n+1)/2+n*n+max(7*n-n*(n+1)/2,0))
 !    double precision :: fopt_tmp
     double precision, intent(in) :: x0(n)
     double precision, intent(out) :: f_opt, x_opt(n)
@@ -17,6 +17,12 @@ subroutine curvif_simplified(x0, obj_func, x_opt, f_opt, epsilon, n)
     kmax=3        ! hessian is recomputed after kmax iterations
     DO i=1,n
         jbound(i)=3      ! 3 if the ith variable has both upper and lower bounds
+    end do
+    do i=1,n
+        ! Lower bounds: -5% than default
+        bl(i) = x0(i)*0.95
+        ! Upper bounds: +5% than default
+        bu(i) = x0(i)*1.05
     end do
 
     ! Call curvi:
