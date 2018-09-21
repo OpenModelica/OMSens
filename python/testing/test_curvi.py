@@ -30,12 +30,31 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
     def test_curvi_finds_minimum_of_cuadratic(self):
         curvi_mod = self.tryToImportCurviModule()
         x0, obj_func, epsilon = cuadraticFuncArgs()
-        x_opt,f_opt = curvi_mod.curvif_simplified(x0,obj_func,epsilon)
-        if not numpy.isclose(x_opt,0):
-            error_msg = "x_opt should be close to {0} but instead it is {1}".format(0,x_opt)
+        lower_bounds = [-2]
+        upper_bounds = [2]
+        x_opt,f_opt = curvi_mod.curvif_simplified(x0,obj_func,lower_bounds,upper_bounds,epsilon)
+        correct_x_opt = [0]
+        if not numpy.isclose(x_opt,correct_x_opt):
+            error_msg = "x_opt should be close to {0} but instead it is {1}".format(correct_x_opt,x_opt)
             self.fail(error_msg)
-        if not numpy.isclose(f_opt,0):
-            error_msg = "f_opt should be close to {0} but instead it is {1}".format(0,f_opt)
+        correct_f_opt = 0
+        if not numpy.isclose(f_opt,correct_f_opt):
+            error_msg = "f_opt should be close to {0} but instead it is {1}".format(correct_f_opt,f_opt)
+            self.fail(error_msg)
+
+    def test_curvi_bounds_work(self):
+        curvi_mod = self.tryToImportCurviModule()
+        x0, obj_func, epsilon = cuadraticFuncArgs()
+        lower_bounds = [0.5]
+        upper_bounds = [1]
+        x_opt,f_opt = curvi_mod.curvif_simplified(x0,obj_func,lower_bounds,upper_bounds,epsilon)
+        correct_x_opt = [0.5]
+        if not numpy.isclose(x_opt,correct_x_opt):
+            error_msg = "x_opt should be close to {0} but instead it is {1}".format(correct_x_opt,x_opt)
+            self.fail(error_msg)
+        correct_f_opt = 0.25
+        if not numpy.isclose(f_opt,correct_f_opt,0.0001):
+            error_msg = "f_opt should be close to {0} but instead it is {1}".format(correct_f_opt,f_opt)
             self.fail(error_msg)
 
     # Auxs:
@@ -51,5 +70,5 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
 def cuadraticFuncArgs():
     x0 = numpy.array([1])
     obj_func = lambda x: x**2
-    epsilon = 0.001
+    epsilon = 0.0001
     return x0, obj_func, epsilon

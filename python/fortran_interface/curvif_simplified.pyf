@@ -13,9 +13,9 @@ end python module __user__routines
 
 python module curvif_simplified ! in 
     interface  ! in :curvif_simplified
-        subroutine curvif_simplified(x0,obj_func,epsilon,n,x_opt,f_opt) ! in :curvif_simplified:Curvif_simplified.f90
+        subroutine curvif_simplified(x0,obj_func,lower_bounds,upper_bounds,epsilon,n,x_opt,f_opt) ! in :curvif_simplified:Curvif_simplified.f90
             use __user__routines
-            double precision dimension(n),intent(in) :: x0
+            double precision dimension(n),intent(in) :: x0, lower_bounds, upper_bounds
             external obj_func
             double precision :: epsilon
             integer, optional,intent(in),check(len(x0)>=n),depend(x0) :: n=len(x0)
