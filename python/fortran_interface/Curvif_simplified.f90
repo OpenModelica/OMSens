@@ -11,7 +11,7 @@ subroutine curvif_simplified(x0, obj_func, epsilon, n, x_opt, f_opt)
 
     ! Initialize CURVI inputs that are used with the same value for every test
 !    epsilon=1.d-10! tolerance for the stopping criterion.
-    ibound=1      ! 1 if constrained problem
+    ibound=0      ! 1 if constrained problem
     nfu=0         ! max number of calls to fu
     idiff=2       ! idiff = 2  central differences
     kmax=3        ! hessian is recomputed after kmax iterations
