@@ -57,7 +57,7 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
             error_msg = "x_opt should be close to {0} but instead it is {1}".format(correct_x_opt,x_opt)
             self.fail(error_msg)
         correct_f_opt = 0.25
-        if not numpy.isclose(f_opt,correct_f_opt,0.0001):
+        if not numpy.isclose(f_opt,correct_f_opt, atol=0.0001):
             error_msg = "f_opt should be close to {0} but instead it is {1}".format(correct_f_opt,f_opt)
             self.fail(error_msg)
 
@@ -86,6 +86,42 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
                         "X_permissive: {0}. X_strict: {1}".format(f_opt_permissive, f_opt_strict)
             self.fail(error_msg)
 
+    def test_curvi_x0_of_size_larger_than_one(self):
+        curvi_mod = self.tryToImportCurviModule()
+        # Get base args for an example function
+        x0, obj_func, epsilon, lower_bounds, upper_bounds  = baseCuadraticFuncArgsForVectorOf4()
+        # Call curvi
+        x_opt,f_opt = curvi_mod.curvif_simplified(x0,obj_func,lower_bounds,upper_bounds,epsilon)
+        # Check results
+        correct_x_opt = [0, 0, 0, 0]
+        x_distance_to_origin = sum([x_opt[i] - correct_x_opt[i] for i in range(4)])
+        if not numpy.isclose(x_distance_to_origin,0,atol=0.00001):
+            error_msg = "x_opt distnace should be close to {0}" \
+                        " but instead it is {1}".format(0,x_distance_to_origin)
+            self.fail(error_msg)
+        correct_f_opt = 0
+        if not numpy.isclose(f_opt,correct_f_opt, atol=0.00001):
+            error_msg = "f_opt should be close to {0} but instead it is {1}".format(correct_f_opt,f_opt)
+            self.fail(error_msg)
+
+    def test_curvi_max_instead_of_min(self):
+        curvi_mod = self.tryToImportCurviModule()
+        # Get base args for an example function
+        x0, obj_func, epsilon, lower_bounds, upper_bounds  = baseCuadraticFuncArgs()
+        # Replace objective function to maximize instead of minimizing
+        obj_func = lambda x: -x**2
+        # Call curvi
+        x_opt,f_opt = curvi_mod.curvif_simplified(x0,obj_func,lower_bounds,upper_bounds,epsilon)
+        # Check results
+        correct_x_opt_abs = [2]
+        if not numpy.isclose(abs(x_opt),correct_x_opt_abs):
+            error_msg = "abs(x_opt) should be close to {0} but instead it is {1}".format(correct_x_opt_abs,abs(x_opt))
+            self.fail(error_msg)
+        correct_f_opt = -4
+        if not numpy.isclose(f_opt,correct_f_opt):
+            error_msg = "f_opt should be close to {0} but instead it is {1}".format(correct_f_opt,f_opt)
+            self.fail(error_msg)
+
 
     # Auxs:
     def tryToImportCurviModule(self):
@@ -103,4 +139,12 @@ def baseCuadraticFuncArgs():
     epsilon = 0.0001
     lower_bounds = [-2]
     upper_bounds = [2]
+    return x0, obj_func, epsilon, lower_bounds, upper_bounds
+
+def baseCuadraticFuncArgsForVectorOf4():
+    x0 = numpy.array([1,-1,2,-2])
+    obj_func = lambda x: sum([x_i**2 for x_i in x])
+    epsilon = 0.0001
+    lower_bounds = 4*[-2]
+    upper_bounds = 4*[2]
     return x0, obj_func, epsilon, lower_bounds, upper_bounds
