@@ -57,7 +57,7 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
             error_msg = "x_opt should be close to {0} but instead it is {1}".format(correct_x_opt,x_opt)
             self.fail(error_msg)
         correct_f_opt = 0.25
-        if not numpy.isclose(f_opt,correct_f_opt, atol=0.0001):
+        if not numpy.isclose(f_opt,correct_f_opt, atol=epsilon):
             error_msg = "f_opt should be close to {0} but instead it is {1}".format(correct_f_opt,f_opt)
             self.fail(error_msg)
 
@@ -95,12 +95,12 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
         # Check results
         correct_x_opt = [0, 0, 0, 0]
         x_distance_to_origin = sum([x_opt[i] - correct_x_opt[i] for i in range(4)])
-        if not numpy.isclose(x_distance_to_origin,0,atol=0.00001):
+        if not numpy.isclose(x_distance_to_origin,0,atol=epsilon):
             error_msg = "x_opt distance should be close to {0}" \
                         " but instead it is {1}".format(0,x_distance_to_origin)
             self.fail(error_msg)
         correct_f_opt = 0
-        if not numpy.isclose(f_opt,correct_f_opt, atol=0.00001):
+        if not numpy.isclose(f_opt,correct_f_opt, atol=epsilon):
             error_msg = "f_opt should be close to {0} but instead it is {1}".format(correct_f_opt,f_opt)
             self.fail(error_msg)
 
