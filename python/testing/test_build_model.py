@@ -62,15 +62,21 @@ class TestsBuildModel(unittest.TestCase):
             error_msg = "The parameter default value was not backup-ed correctly"
             self.fail(error_msg)
         # Test that the current value for the params is returned correctly
-        param_def_val = compiled_model.parameterValue("a")
+        param_val = compiled_model.parameterValue("a")
         # We ask for the current value for a so it should be 0
-        if not param_def_val == 0:
+        if not param_val == 0:
             error_msg = "The parameter current value was not returned correctly"
             self.fail(error_msg)
         # Test that the "quickSimulate" function returns the right value
         x_quick_simu = compiled_model.quickSimulate("x")
         if not (x_quick_simu == 1):
             error_msg = "The quick simulation didn't return the right value"
+            self.fail(error_msg)
+        # Test that the "set everything back to defaults" works
+        compiled_model.restoreAllParametersToDefaultValues()
+        param_val = compiled_model.parameterValue("a")
+        if not param_val == -1:
+            error_msg = "The parameter default value was not restored correctly"
             self.fail(error_msg)
 
 # Auxs

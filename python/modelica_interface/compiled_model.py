@@ -78,6 +78,12 @@ class CompiledModelicaModel():
         var_val = float(var_val_str)
         return var_val
 
+    def restoreAllParametersToDefaultValues(self):
+        # Set the default xml tree as the model xml tree
+        self.xml_tree = self.default_xml_tree
+        # Save a copy of the xml with the original values so we can change the xml tree freely again
+        self.default_xml_tree = copy.deepcopy(self.xml_tree)
+
 
 # Auxs
 def xmlFilePathForModel(binary_file_path, model_name):
