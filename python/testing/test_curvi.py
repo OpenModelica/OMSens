@@ -61,6 +61,9 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
             error_msg = "f_opt should be close to {0} but instead it is {1}".format(correct_f_opt,f_opt)
             self.fail(error_msg)
 
+    # IMPORTANT!: the following test depends on CURVI's implementation! If by "chance" it finds the optimum in one of
+    #  the iterations, then the epsilon to choose is irrelevant. BE CAREFUL WITH HOW TO INTERPRET THE FAILS OF THIS
+    #  TEST!
     def test_curvi_epsilon_works(self):
         curvi_mod = self.tryToImportCurviModule()
         # Get base args for an example function
