@@ -42,6 +42,19 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
                                                            build_folder_path)
         # Run optimizer
         x_opt_dict, f_opt = model_optimizer.optimize(lower_bounds, upper_bounds, epsilon)
+        # Check that it optimized correctly the X
+        correct_x_opt = -2
+        x_opt = x_opt_dict["a"]
+        if not numpy.isclose(correct_x_opt,x_opt,atol=epsilon):
+            error_msg = "x_opt distance should be close to {0}" \
+                        " but instead it is {1}".format(correct_x_opt,x_opt)
+            self.fail(error_msg)
+        # Check that it optimized correctly the f_opt
+        correct_f_opt = 0
+        if not numpy.isclose(correct_f_opt,f_opt,atol=epsilon):
+            error_msg = "f(x) should be close to {0}" \
+                        " but instead it is {1}".format(correct_f_opt,f_opt)
+            self.fail(error_msg)
 
 
 

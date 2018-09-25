@@ -22,10 +22,16 @@ class ModelOptimizer():
                                                         max_or_min)
     def optimize(self, lower_bounds, upper_bounds, epsilon):
         # Run the optimizer
-        x_opt,f_opt = curvi_mod.curvif_simplified(self.x0,self.obj_func,lower_bounds,upper_bounds,
+        x_opt,f_opt_internal = curvi_mod.curvif_simplified(self.x0,self.obj_func,lower_bounds,upper_bounds,
                                                   epsilon)
         # Organize the parameters values in a dict
         x_opt_dict = {self.parameters_to_perturb[i]:x_opt[i] for i in range(len(self.parameters_to_perturb))}
+        # If we were maximizing, we have to multiply again by -1
+        if self.max_or_min == "max":
+            f_opt = -f_opt_internal
+        else:
+            # If we were minimizing, the internal f(x) will be the final one
+            f_opt = f_opt_internal
         return x_opt_dict, f_opt
 
 # Auxs
@@ -42,9 +48,9 @@ def createObjectiveFunctionForModel(compiled_model, param_names, target_var_name
         var_val = compiled_model.quickSimulate(target_var_name)
         # Assign a sign depending if maximizing or minimizing
         if max_or_min == "max":
-            obj_func_val = var_val
-        elif max_or_min == "min":
             obj_func_val = -var_val
+        elif max_or_min == "min":
+            obj_func_val = var_val
         return obj_func_val
 
     return objectiveFunction
