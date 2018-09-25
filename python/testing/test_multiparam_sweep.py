@@ -14,7 +14,7 @@ import filesystem.files_aux as files_aux
 import plotting.plot_sweep as plot_sweep
 
 
-class TestIndividualSensitivityAnalysis(unittest.TestCase):
+class TestMultiparameterSweep(unittest.TestCase):
     # setup y teardown de los tests
     def setUp(self):
         # Create tempdir and save its path
