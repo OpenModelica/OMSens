@@ -122,6 +122,27 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
             error_msg = "f_opt should be close to {0} but instead it is {1}".format(correct_f_opt,f_opt)
             self.fail(error_msg)
 
+    def test_curvi_irrelevant_dimension(self):
+        curvi_mod = self.tryToImportCurviModule()
+        # Define a function that ignores one of the dimensions
+        x0 = numpy.array([1,43])
+        obj_func = lambda x: x[0]**2
+        epsilon = 0.0001
+        lower_bounds = [-2,-100]
+        upper_bounds = [2,100]
+        # Call curvi
+        x_opt,f_opt = curvi_mod.curvif_simplified(x0,obj_func,lower_bounds,upper_bounds,epsilon)
+        # Check results
+        correct_x_opt_first = 0
+        x_opt_first = x_opt[0]
+        if not numpy.isclose(x_opt_first,correct_x_opt_first):
+            error_msg = "x_opt[0] should be close to {0} but instead it is {1}".format(correct_x_opt_first,x_opt_first)
+            self.fail(error_msg)
+        correct_f_opt = 0
+        if not numpy.isclose(f_opt,correct_f_opt):
+            error_msg = "f_opt should be close to {0} but instead it is {1}".format(correct_f_opt,f_opt)
+            self.fail(error_msg)
+
 
     # Auxs:
     def tryToImportCurviModule(self):
