@@ -58,7 +58,7 @@ def createObjectiveFunctionForModel(compiled_model, param_names, target_var_name
         var_val = compiled_model.quickSimulate(target_var_name)
         # Log simu result
         x_str = ", ".join([str(x) for x in params_vals])
-        logging_str = "f(x) = {0}. x vector: {1}".format(var_val, x_str)
+        logging_str = "\n   x: {1}\n   f(x) = {0}".format(var_val, x_str)
         logger.info(logging_str)
         # Assign a sign depending if maximizing or minimizing
         if max_or_min == "max":
