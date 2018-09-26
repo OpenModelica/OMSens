@@ -10,7 +10,7 @@ import filesystem.files_aux as files_aux
 import running.sweep
 import plotting.plot_sweep as plot_sweep
 
-logger = logging.getLogger("-Individual Sens Calculator-")
+logger = logging.getLogger("-Multiparameter Sweep-")
 script_description = "Run a multiparemeter sweep and plot the results"
 
 
