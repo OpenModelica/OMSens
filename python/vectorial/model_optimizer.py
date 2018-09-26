@@ -16,14 +16,19 @@ class ModelOptimizer():
         # Initialize builder
         model_builder = build_model.ModelicaModelBuilder(model_name, start_time, stop_time, model_file_path)
         # Build model
-        compiled_model = model_builder.buildToFolderPath(build_folder_path)
-        self.x0       = [compiled_model.defaultParameterValue(p) for p in parameters_to_perturb]
-        self.obj_func = createObjectiveFunctionForModel(compiled_model, parameters_to_perturb, target_var_name,
+        self.compiled_model = model_builder.buildToFolderPath(build_folder_path)
+        self.x0       = [self.compiled_model.defaultParameterValue(p) for p in parameters_to_perturb]
+        self.obj_func = createObjectiveFunctionForModel(self.compiled_model, parameters_to_perturb, target_var_name,
                                                         max_or_min)
-    def optimize(self, lower_bounds, upper_bounds, epsilon):
+    def optimize(self, percentage, epsilon):
+        # Calculate bounds from percentage
+        lower_bounds = [x*(1 - percentage/100) for x in self.x0]
+        upper_bounds = [x*(1 + percentage/100) for x in self.x0]
         # Run the optimizer
         x_opt,f_opt_internal = curvi_mod.curvif_simplified(self.x0,self.obj_func,lower_bounds,upper_bounds,
                                                   epsilon)
+        # Restore defaults of the values changed by curvi
+        self.compiled_model.restoreAllParametersToDefaultValues()
         # Organize the parameters values in a dict
         x_opt_dict = {self.parameters_to_perturb[i]:x_opt[i] for i in range(len(self.parameters_to_perturb))}
         # If we were maximizing, we have to multiply again by -1

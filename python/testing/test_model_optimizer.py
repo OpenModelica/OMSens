@@ -30,18 +30,18 @@ class TestVectorialSensitivityAnalysis(unittest.TestCase):
     def test_one_param_min(self):
         # Get the base arguments for the 3 params example
         model_name, start_time, stop_time, model_file_path, target_var_name, parameters_to_perturb, \
-               lower_bounds, upper_bounds, max_or_min, epsilon, build_folder_path = \
+               percentage, max_or_min, epsilon, build_folder_path = \
             self.threeParamsModelOptimizerBaseArgsExample()
         # Replace the args so we only minimize one
         parameters_to_perturb = ["a"]
-        lower_bounds = [-2]
-        upper_bounds = [2]
+        percentage = 300
+
         # Initialize optimizer
         model_optimizer = model_optimizer_f.ModelOptimizer(model_name, start_time, stop_time, model_file_path,
                                                            target_var_name, parameters_to_perturb, max_or_min,
                                                            build_folder_path)
         # Run optimizer
-        x_opt_dict, f_opt = model_optimizer.optimize(lower_bounds, upper_bounds, epsilon)
+        x_opt_dict, f_opt = model_optimizer.optimize(percentage, epsilon)
         # Check that it optimized correctly the X
         correct_x_opt = -2
         x_opt = x_opt_dict["a"]
@@ -59,19 +59,18 @@ class TestVectorialSensitivityAnalysis(unittest.TestCase):
     def test_one_param_max(self):
         # Get the base arguments for the 3 params example
         model_name, start_time, stop_time, model_file_path, target_var_name, parameters_to_perturb, \
-        lower_bounds, upper_bounds, max_or_min, epsilon, build_folder_path = \
+        percentage, max_or_min, epsilon, build_folder_path = \
             self.threeParamsModelOptimizerBaseArgsExample()
         # Replace the args so we only maximize one
         parameters_to_perturb = ["a"]
-        lower_bounds = [-2]
-        upper_bounds = [2]
+        percentage = 100
         max_or_min = "max"
         # Initialize optimizer
         model_optimizer = model_optimizer_f.ModelOptimizer(model_name, start_time, stop_time, model_file_path,
                                                            target_var_name, parameters_to_perturb, max_or_min,
                                                            build_folder_path)
         # Run optimizer
-        x_opt_dict, f_opt = model_optimizer.optimize(lower_bounds, upper_bounds, epsilon)
+        x_opt_dict, f_opt = model_optimizer.optimize(percentage, epsilon)
         # Check that it optimized correctly the X
         correct_x_opt = 2
         x_opt = x_opt_dict["a"]
@@ -80,7 +79,7 @@ class TestVectorialSensitivityAnalysis(unittest.TestCase):
                         " but instead it is {1}".format(correct_x_opt,x_opt)
             self.fail(error_msg)
         # Check that it optimized correctly the f_opt
-        correct_f_opt = 8
+        correct_f_opt = 12
         if not numpy.isclose(correct_f_opt,f_opt,atol=epsilon):
             error_msg = "f(x) should be close to {0}" \
                         " but instead it is {1}".format(correct_f_opt,f_opt)
@@ -89,14 +88,15 @@ class TestVectorialSensitivityAnalysis(unittest.TestCase):
     def test_multiple_params(self):
         # Get the base arguments for the 3 params example
         model_name, start_time, stop_time, model_file_path, target_var_name, parameters_to_perturb, \
-        lower_bounds, upper_bounds, max_or_min, epsilon, build_folder_path = \
+        percentage, max_or_min, epsilon, build_folder_path = \
             self.threeParamsModelOptimizerBaseArgsExample()
         # Initialize optimizer
         model_optimizer = model_optimizer_f.ModelOptimizer(model_name, start_time, stop_time, model_file_path,
                                                            target_var_name, parameters_to_perturb, max_or_min,
                                                            build_folder_path)
         # Run optimizer
-        x_opt_dict, f_opt = model_optimizer.optimize(lower_bounds, upper_bounds, epsilon)
+        percentage = 300
+        x_opt_dict, f_opt = model_optimizer.optimize(percentage, epsilon)
         # Check that it optimized correctly the X
         correct_x_opt_dict = {p:-2 for p in ["a", "b", "c"]}
         x_distance_to_correct_x = sum([x_opt_dict[p] - correct_x_opt_dict[p] for p in x_opt_dict])
@@ -105,7 +105,7 @@ class TestVectorialSensitivityAnalysis(unittest.TestCase):
                         .format(x_distance_to_correct_x)
             self.fail(error_msg)
         # Check that it optimized correctly the f_opt
-        correct_f_opt = -12
+        correct_f_opt = -18
         if not numpy.isclose(correct_f_opt,f_opt,atol=epsilon):
             error_msg = "f(x) should be close to {0}" \
                         " but instead it is {1}".format(correct_f_opt,f_opt)
@@ -114,18 +114,17 @@ class TestVectorialSensitivityAnalysis(unittest.TestCase):
     def test_lower_bounds_work(self):
         # Get the base arguments for the 3 params example
         model_name, start_time, stop_time, model_file_path, target_var_name, parameters_to_perturb, \
-        lower_bounds, upper_bounds, max_or_min, epsilon, build_folder_path = \
+        percentage, max_or_min, epsilon, build_folder_path = \
             self.threeParamsModelOptimizerBaseArgsExample()
         # Replace the args so we only minimize one
         parameters_to_perturb = ["a"]
-        lower_bounds = [-3]
-        upper_bounds = [2]
+        percentage = 400
         # Initialize optimizer
         model_optimizer = model_optimizer_f.ModelOptimizer(model_name, start_time, stop_time, model_file_path,
                                                            target_var_name, parameters_to_perturb, max_or_min,
                                                            build_folder_path)
         # Run optimizer
-        x_opt_dict, f_opt = model_optimizer.optimize(lower_bounds, upper_bounds, epsilon)
+        x_opt_dict, f_opt = model_optimizer.optimize(percentage, epsilon)
         # Check that it optimized correctly the X
         correct_x_opt = -3
         x_opt = x_opt_dict["a"]
@@ -137,19 +136,18 @@ class TestVectorialSensitivityAnalysis(unittest.TestCase):
     def test_upper_bounds_work(self):
         # Get the base arguments for the 3 params example
         model_name, start_time, stop_time, model_file_path, target_var_name, parameters_to_perturb, \
-        lower_bounds, upper_bounds, max_or_min, epsilon, build_folder_path = \
+        percentage, max_or_min, epsilon, build_folder_path = \
             self.threeParamsModelOptimizerBaseArgsExample()
         # Replace the args so we only minimize one
         parameters_to_perturb = ["a"]
-        lower_bounds = [-2]
-        upper_bounds = [4]
         max_or_min = "max"
+        percentage = 300
         # Initialize optimizer
         model_optimizer = model_optimizer_f.ModelOptimizer(model_name, start_time, stop_time, model_file_path,
                                                            target_var_name, parameters_to_perturb, max_or_min,
                                                            build_folder_path)
         # Run optimizer
-        x_opt_dict, f_opt = model_optimizer.optimize(lower_bounds, upper_bounds, epsilon)
+        x_opt_dict, f_opt = model_optimizer.optimize(percentage, epsilon)
         # Check that it optimized correctly the X
         correct_x_opt = 4
         x_opt = x_opt_dict["a"]
@@ -164,12 +162,11 @@ class TestVectorialSensitivityAnalysis(unittest.TestCase):
     def test_epsilon_works(self):
         # Get the base arguments for the 3 params example
         model_name, start_time, stop_time, model_file_path, target_var_name, parameters_to_perturb, \
-        lower_bounds, upper_bounds, max_or_min, epsilon, build_folder_path = \
+        percentage, max_or_min, epsilon, build_folder_path = \
             self.threeParamsModelOptimizerBaseArgsExample()
         # Replace the args so we only minimize one
         parameters_to_perturb = ["d"]
-        lower_bounds = [-100]
-        upper_bounds = [100000]
+        percentage = 1000
         target_var_name = "y"
         # Initialize optimizer
         model_optimizer = model_optimizer_f.ModelOptimizer(model_name, start_time, stop_time, model_file_path,
@@ -177,10 +174,10 @@ class TestVectorialSensitivityAnalysis(unittest.TestCase):
                                                            build_folder_path)
         # Run optimizer with permissive epsilon
         epsilon_permissive = 0.1
-        x_opt_dict_permissive, f_opt_permissive = model_optimizer.optimize(lower_bounds, upper_bounds, epsilon_permissive)
+        x_opt_dict_permissive, f_opt_permissive = model_optimizer.optimize(percentage, epsilon_permissive)
         # Run optimizer with strict epsilon
         epsilon_strict = 0.0001
-        x_opt_dict_strict, f_opt_strict = model_optimizer.optimize(lower_bounds, upper_bounds, epsilon_strict)
+        x_opt_dict_strict, f_opt_strict = model_optimizer.optimize(percentage, epsilon_strict)
         # Check that it optimized correctly the X
         x_opt_distance_permissive = abs(x_opt_dict_permissive["d"])
         x_opt_distance_strict     = abs(x_opt_dict_strict["d"])
@@ -195,16 +192,15 @@ class TestVectorialSensitivityAnalysis(unittest.TestCase):
         model_file_path = os.path.join(self._temp_dir, "model.mo")
         files_aux.writeStrToFile(model_str, model_file_path)
         start_time = 0
-        stop_time = 5
+        stop_time = 3
         target_var_name = "x"
         parameters_to_perturb = ["a", "b", "c"]
-        lower_bounds = [-2, -2, -2]
-        upper_bounds = [ 2,  2,  2]
+        percentage = 5
         max_or_min = "min"
         epsilon = 0.001
         build_folder_path = self._temp_dir
         return model_name, start_time, stop_time, model_file_path, target_var_name, parameters_to_perturb,\
-               lower_bounds, upper_bounds, max_or_min, epsilon, build_folder_path
+               percentage, max_or_min, epsilon, build_folder_path
 
 
 
