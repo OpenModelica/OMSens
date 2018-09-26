@@ -1,5 +1,10 @@
+# Std
+import logging  # instead of prints
+# Project
 import modelica_interface.build_model as build_model
 import fortran_interface.curvif_simplified as curvi_mod
+# Logging config
+logger = logging.getLogger("ModelOptimizer")
 
 class ModelOptimizer():
     def __init__(self, model_name, start_time, stop_time, model_file_path, target_var_name,
@@ -51,6 +56,10 @@ def createObjectiveFunctionForModel(compiled_model, param_names, target_var_name
             compiled_model.setParameterStartValue(p_name, p_val)
         # Run the simulation
         var_val = compiled_model.quickSimulate(target_var_name)
+        # Log simu result
+        x_str = ", ".join([str(x) for x in params_vals])
+        logging_str = "f(x) = {0}. x vector: {1}".format(var_val, x_str)
+        logger.info(logging_str)
         # Assign a sign depending if maximizing or minimizing
         if max_or_min == "max":
             obj_func_val = -var_val
