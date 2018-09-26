@@ -50,29 +50,17 @@ def analyzeFromJSON(dest_folder_path, json_file_path):
     model_optimizer = model_optimizer_f.ModelOptimizer(**optim_kwargs)
     # Run optimization
     x_opt_dict, f_opt = model_optimizer.optimize(full_json["percentage"], full_json["epsilon"])
-    # BORRAR:
-    # # Initialize sweep results plotter
-    # sweep_plotter = plot_sweep.SweepPlot(sweep_results)
-    # # Make folder for plots
-    # plot_folder_path = os.path.join(dest_folder_path, "plots")
-    # files_aux.makeFolderWithPath(plot_folder_path)
-    # # Plot sweep for each var
-    # vars_plots_paths = {}
-    # for var_name in full_json["vars_to_analyze"]:
-    #     plot_path = sweep_plotter.plotInFolder(var_name, plot_folder_path)
-    #     vars_plots_paths[var_name] = plot_path
-    # # Add sweep plots to paths dict
-    # paths_dict = \
-    #     {
-    #         "sweep_plots": vars_plots_paths,
-    #     }
-    # # Write paths dict as json
-    # paths_json_str = json.dumps(paths_dict, sort_keys=True, indent=2)
-    # paths_json_file_name = "paths.json"
-    # paths_json_file_path = os.path.join(dest_folder_path, paths_json_file_name)
-    # files_aux.writeStrToFile(paths_json_str, paths_json_file_path)
-    # logger.info("Finished. The file {0} has all the sweep files paths.".format(paths_json_file_path))
-    # # BORRAR^
+    # Prepare JSON output dict
+    optim_json_dict = {
+        "x_opt": x_opt_dict,
+        "f(x)_opt": f_opt,
+    }
+    # Write dict as json
+    optim_json_str = json.dumps(optim_json_dict, sort_keys=True, indent=2)
+    optim_json_file_name = "optim_results.json"
+    optim_json_file_path = os.path.join(dest_folder_path, optim_json_file_name)
+    files_aux.writeStrToFile(optim_json_str, optim_json_file_path)
+    logger.info("Finished. The file {0} has the optimization results.".format(optim_json_file_path))
 
 
 # Auxs
