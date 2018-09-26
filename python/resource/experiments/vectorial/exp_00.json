@@ -1,0 +1,11 @@
+{
+  "model_name"            : "ModelWithVariousParams",
+  "model_mo_path"         : "resource/ModelWithVariousParams.mo",
+  "start_time"            : 0,
+  "stop_time"             : 3,
+  "target_var_name"       : "outvar1",
+  "parameters_to_perturb" : ["realParam1", "realParam2","realParam3"],
+  "max_or_min"            : "min",
+  "percentage"            : 5,
+  "epsilon"               : 0.01
+}
