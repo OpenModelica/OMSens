@@ -32,8 +32,6 @@ class ModelOptimizer():
         # Run the optimizer
         x_opt,f_opt_internal = curvi_mod.curvif_simplified(self.x0,self.obj_func,lower_bounds,upper_bounds,
                                                   epsilon)
-        # Restore defaults of the values changed by curvi
-        self.compiled_model.restoreAllParametersToDefaultValues()
         # Organize the parameters values in a dict
         x_opt_dict = {self.parameters_to_perturb[i]:x_opt[i] for i in range(len(self.parameters_to_perturb))}
         # If we were maximizing, we have to multiply again by -1
@@ -49,13 +47,10 @@ def createObjectiveFunctionForModel(compiled_model, param_names, target_var_name
     # We initialize a function with "dynamic hardcoded variables". It will have this variables fixed with the value
     #  from execution context of the function that defined it
     def objectiveFunction(params_vals):
-        # Set the values for each respective parameter
-        for i in range(len(param_names)):
-            p_name = param_names[i]
-            p_val = params_vals[i]
-            compiled_model.setParameterStartValue(p_name, p_val)
-        # Run the simulation
-        var_val = compiled_model.quickSimulate(target_var_name)
+        # Organize param vals
+        params_vals_dict = {p_name:p_val for p_name,p_val in zip(param_names, params_vals)}
+        # Run a quick simulation
+        var_val = compiled_model.quickSimulate(target_var_name, params_vals_dict)
         # Log simu result
         x_str = ", ".join([str(x) for x in params_vals])
         logging_str = "\n   x: {1}\n   f(x) = {0}".format(var_val, x_str)
