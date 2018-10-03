@@ -5,6 +5,7 @@ import shutil  # tempdir deletion
 import tempfile  # tempdir creation
 import unittest
 import pandas
+import numpy
 
 # Mine
 import modelica_interface.build_model as build_model
@@ -78,12 +79,28 @@ class TestsBuildModel(unittest.TestCase):
         if not param_val == -1:
             error_msg = "The parameter default value was not restored correctly"
             self.fail(error_msg)
+        # Test that quick simulate with params values works
+        params_vals = {"a":4, "b":1}
+        x_quick_simu = compiled_model.quickSimulate("x", params_vals)
+        # We set the derivative slope as 0 so x should be a constant 1
+        if not (x_quick_simu == 5):
+            error_msg = "The parameter was not changed correctly"
+            self.fail(error_msg)
+        # Test that subsequent quick simulations initialize params correctly
+        params_vals = {"a":4, "b":0}
+        x_quick_simu = compiled_model.quickSimulate("x", params_vals)
+        # We set the derivative slope as 0 so x should be a constant 1
+        if not (x_quick_simu == 1):
+            error_msg = "The parameter was not changed correctly"
+            self.fail(error_msg)
+
 
 # Auxs
 model_str = \
 """class Model
   parameter Real a=-1;
+  parameter Real b=1;
   Real x(start=1,fixed=true);
 equation
-  der(x) = a*x;
+  der(x) = a*b;
 end Model;"""

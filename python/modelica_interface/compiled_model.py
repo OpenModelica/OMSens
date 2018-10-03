@@ -61,13 +61,25 @@ class CompiledModelicaModel():
                                                        output_decoded)
         return simu_results
 
-    def quickSimulate(self,var_name):
+    def quickSimulate(self, var_name, params_vals_dict=None):
         # Get folder for binary
         binary_folder_path = os.path.dirname(self.binary_file_path)
+        # Define file that will override parameters start value
+        if params_vals_dict:
+            override_str = overrrideStringFromParamsDict(params_vals_dict)
+            # Write str to disk
+            override_file_name = "override.txt"
+            override_file_path = os.path.join(binary_folder_path, override_file_name)
+            files_aux.writeStrToFile(override_str, override_file_path)
+            override_flag = "-overrideFile={0}".format(override_file_name)
+        else:
+            override_flag = ""
         # Define command to be called
-        binary_args = "-output {0}".format(var_name)
-        flags = "-lv=-LOG_SUCCESS"
-        cmd = "{0} {1} {2}".format(self.binary_file_path, binary_args, flags)
+        output_flag = "-output {0}".format(var_name)
+        minimal_output_flag = "-lv=-LOG_SUCCESS"
+        flags_list = [output_flag, override_flag, minimal_output_flag]
+        flags_str = " ".join(flags_list)
+        cmd = "{0} {1}".format(self.binary_file_path, flags_str)
         # Execute binary with args
         output = files_aux.callCMDStringInPath(cmd, binary_folder_path)
         # Decode stdout
@@ -124,3 +136,10 @@ def castModelicaValue(param_val, param_value_element):
         error_msg = "The script has not been yet adapted to cast Modelica types of {0}".format(modelica_type)
         raise Exception(error_msg)
     return param_val_casted
+
+def overrrideStringFromParamsDict(params_vals_dict):
+    lines = ["{0}={1}".format(p_name,p_val) for p_name,p_val in params_vals_dict.items()]
+    joined_lines = "\n".join(lines)
+    # Add a newline at the end
+    joined_lines_newline = joined_lines + "\n"
+    return joined_lines_newline
