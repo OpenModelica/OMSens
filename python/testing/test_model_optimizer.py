@@ -1,15 +1,12 @@
 # Std
-import glob
 import os
 import shutil  # para borrar el tempdir
 import tempfile  # para crear el tempdir
 import unittest
-from io import StringIO
 import numpy
-import pathlib
+import pytest
 
 # Mine
-import modelica_interface.build_model as build_model
 import filesystem.files_aux as files_aux
 import vectorial.model_optimizer as model_optimizer_f
 
@@ -56,6 +53,7 @@ class TestVectorialSensitivityAnalysis(unittest.TestCase):
                         " but instead it is {1}".format(correct_f_opt,f_opt)
             self.fail(error_msg)
 
+    @pytest.mark.slow
     def test_one_param_max(self):
         # Get the base arguments for the 3 params example
         model_name, start_time, stop_time, model_file_path, target_var_name, parameters_to_perturb, \
@@ -85,6 +83,7 @@ class TestVectorialSensitivityAnalysis(unittest.TestCase):
                         " but instead it is {1}".format(correct_f_opt,f_opt)
             self.fail(error_msg)
 
+    @pytest.mark.slow
     def test_multiple_params(self):
         # Get the base arguments for the 3 params example
         model_name, start_time, stop_time, model_file_path, target_var_name, parameters_to_perturb, \
@@ -111,6 +110,7 @@ class TestVectorialSensitivityAnalysis(unittest.TestCase):
                         " but instead it is {1}".format(correct_f_opt,f_opt)
             self.fail(error_msg)
 
+    @pytest.mark.slow
     def test_lower_bounds_work(self):
         # Get the base arguments for the 3 params example
         model_name, start_time, stop_time, model_file_path, target_var_name, parameters_to_perturb, \
@@ -133,6 +133,7 @@ class TestVectorialSensitivityAnalysis(unittest.TestCase):
                         " but instead it is {1}".format(correct_x_opt,x_opt)
             self.fail(error_msg)
 
+    @pytest.mark.slow
     def test_upper_bounds_work(self):
         # Get the base arguments for the 3 params example
         model_name, start_time, stop_time, model_file_path, target_var_name, parameters_to_perturb, \
@@ -159,6 +160,7 @@ class TestVectorialSensitivityAnalysis(unittest.TestCase):
     # IMPORTANT!: the following test depends on CURVI's implementation! If by "chance" it finds the optimum in one of
     #  the iterations, then the epsilon to choose is irrelevant. BE CAREFUL WITH HOW TO INTERPRET THE FAILS OF THIS
     #  TEST!
+    @pytest.mark.slow
     def test_epsilon_works(self):
         # Get the base arguments for the 3 params example
         model_name, start_time, stop_time, model_file_path, target_var_name, parameters_to_perturb, \
