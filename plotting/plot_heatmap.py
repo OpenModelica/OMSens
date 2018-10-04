@@ -2,6 +2,8 @@ import logging  # en reemplazo de los prints
 import math
 import os
 
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.patches as mpatches  # to add patches to "non transparent" cells
 import matplotlib.pyplot as plt
 import matplotlib.ticker  # to set a special formatter for the ticks in the colorbar (10^1 instead of 0.000(...)*10^11)

@@ -3,6 +3,8 @@ import os
 import logging #en reemplazo de los prints
 logger = logging.getLogger("--CSV Plotter--") #un logger especifico para este modulo
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib #for configuration
 import matplotlib.ticker as ticker
