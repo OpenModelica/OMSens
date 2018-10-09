@@ -38,7 +38,8 @@ class TestVectorialSensitivityAnalysis(unittest.TestCase):
                                                            target_var_name, parameters_to_perturb, max_or_min,
                                                            build_folder_path)
         # Run optimizer
-        x_opt_dict, f_opt = model_optimizer.optimize(percentage, epsilon)
+        optim_result = model_optimizer.optimize(percentage, epsilon)
+        x_opt_dict, f_opt = optim_result.x_opt, optim_result.f_x_opt
         # Check that it optimized correctly the X
         correct_x_opt = -2
         x_opt = x_opt_dict["a"]
@@ -51,6 +52,31 @@ class TestVectorialSensitivityAnalysis(unittest.TestCase):
         if not numpy.isclose(correct_f_opt,f_opt,atol=epsilon):
             error_msg = "f(x) should be close to {0}" \
                         " but instead it is {1}".format(correct_f_opt,f_opt)
+            self.fail(error_msg)
+        # Check x0
+        correct_x0 = [1]
+        optim_x0 = optim_result.x0
+        for val, correct_val in zip(optim_x0,correct_x0):
+            if not numpy.isclose(val,correct_val):
+                error_msg = "x0: the value {0} should be {1}".format(val,correct_val)
+                self.fail(error_msg)
+        # Check f(x0)
+        correct_f_x0 = 9
+        optim_f_x0 = optim_result.f_x0
+        if not numpy.isclose(optim_f_x0, correct_f_x0):
+            error_msg = "f(x0): the value {0} should be {1}".format(optim_f_x0,correct_f_x0)
+            self.fail(error_msg)
+        # Check stoptime
+        correct_stoptime = 3
+        optim_stoptime = optim_result.stop_time
+        if not numpy.isclose(optim_stoptime, correct_stoptime):
+            error_msg = "stoptime: the value {0} should be {1}".format(optim_stoptime,correct_stoptime)
+            self.fail(error_msg)
+        # Check variable name
+        correct_varname = "x"
+        optim_varname = optim_result.variable_name
+        if not optim_varname == correct_varname:
+            error_msg = "var name: the value {0} should be {1}".format(optim_varname,correct_varname)
             self.fail(error_msg)
 
     @pytest.mark.slow
@@ -68,7 +94,8 @@ class TestVectorialSensitivityAnalysis(unittest.TestCase):
                                                            target_var_name, parameters_to_perturb, max_or_min,
                                                            build_folder_path)
         # Run optimizer
-        x_opt_dict, f_opt = model_optimizer.optimize(percentage, epsilon)
+        optim_result = model_optimizer.optimize(percentage, epsilon)
+        x_opt_dict, f_opt = optim_result.x_opt, optim_result.f_x_opt
         # Check that it optimized correctly the X
         correct_x_opt = 2
         x_opt = x_opt_dict["a"]
@@ -95,7 +122,8 @@ class TestVectorialSensitivityAnalysis(unittest.TestCase):
                                                            build_folder_path)
         # Run optimizer
         percentage = 300
-        x_opt_dict, f_opt = model_optimizer.optimize(percentage, epsilon)
+        optim_result = model_optimizer.optimize(percentage, epsilon)
+        x_opt_dict, f_opt = optim_result.x_opt, optim_result.f_x_opt
         # Check that it optimized correctly the X
         correct_x_opt_dict = {p:-2 for p in ["a", "b", "c"]}
         x_distance_to_correct_x = sum([x_opt_dict[p] - correct_x_opt_dict[p] for p in x_opt_dict])
@@ -124,7 +152,8 @@ class TestVectorialSensitivityAnalysis(unittest.TestCase):
                                                            target_var_name, parameters_to_perturb, max_or_min,
                                                            build_folder_path)
         # Run optimizer
-        x_opt_dict, f_opt = model_optimizer.optimize(percentage, epsilon)
+        optim_result = model_optimizer.optimize(percentage, epsilon)
+        x_opt_dict, f_opt = optim_result.x_opt, optim_result.f_x_opt
         # Check that it optimized correctly the X
         correct_x_opt = -3
         x_opt = x_opt_dict["a"]
@@ -148,7 +177,8 @@ class TestVectorialSensitivityAnalysis(unittest.TestCase):
                                                            target_var_name, parameters_to_perturb, max_or_min,
                                                            build_folder_path)
         # Run optimizer
-        x_opt_dict, f_opt = model_optimizer.optimize(percentage, epsilon)
+        optim_result = model_optimizer.optimize(percentage, epsilon)
+        x_opt_dict, f_opt = optim_result.x_opt, optim_result.f_x_opt
         # Check that it optimized correctly the X
         correct_x_opt = 4
         x_opt = x_opt_dict["a"]
@@ -176,10 +206,12 @@ class TestVectorialSensitivityAnalysis(unittest.TestCase):
                                                            build_folder_path)
         # Run optimizer with permissive epsilon
         epsilon_permissive = 0.1
-        x_opt_dict_permissive, f_opt_permissive = model_optimizer.optimize(percentage, epsilon_permissive)
+        optim_result_permissive = model_optimizer.optimize(percentage, epsilon_permissive)
+        x_opt_dict_permissive, f_opt_permissive = optim_result_permissive.x_opt, optim_result_permissive.f_x_opt
         # Run optimizer with strict epsilon
         epsilon_strict = 0.0001
-        x_opt_dict_strict, f_opt_strict = model_optimizer.optimize(percentage, epsilon_strict)
+        optim_result_strict = model_optimizer.optimize(percentage, epsilon_strict)
+        x_opt_dict_strict, f_opt_strict = optim_result_strict.x_opt, optim_result_strict.f_x_opt
         # Check that it optimized correctly the X
         x_opt_distance_permissive = abs(x_opt_dict_permissive["d"])
         x_opt_distance_strict     = abs(x_opt_dict_strict["d"])

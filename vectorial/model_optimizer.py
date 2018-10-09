@@ -2,6 +2,7 @@
 import logging  # instead of prints
 # Project
 import modelica_interface.build_model as build_model
+import vectorial.optimization_result as optimization_result
 import fortran_interface.curvif_simplified as curvi_mod
 # Logging config
 logger = logging.getLogger("ModelOptimizer")
@@ -26,6 +27,8 @@ class ModelOptimizer():
         self.obj_func = createObjectiveFunctionForModel(self.compiled_model, parameters_to_perturb, target_var_name,
                                                         max_or_min)
     def optimize(self, percentage, epsilon):
+        # Run a standard simulation to have f(x0) before optimizing
+        f_x0 = self.compiled_model.quickSimulate(self.target_var_name)
         # Calculate bounds from percentage
         lower_bounds = [x*(1 - percentage/100) for x in self.x0]
         upper_bounds = [x*(1 + percentage/100) for x in self.x0]
@@ -40,7 +43,11 @@ class ModelOptimizer():
         else:
             # If we were minimizing, the internal f(x) will be the final one
             f_opt = f_opt_internal
-        return x_opt_dict, f_opt
+        # Initialize optimization result object
+        optim_result = optimization_result.ModelOptimizationResult(self.x0, x_opt_dict, f_x0, f_opt, self.stop_time,
+                                                                   self.target_var_name)
+        # Return optimization result
+        return optim_result
 
 # Auxs
 def createObjectiveFunctionForModel(compiled_model, param_names, target_var_name, max_or_min):
