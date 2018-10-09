@@ -78,6 +78,13 @@ class TestVectorialSensitivityAnalysis(unittest.TestCase):
         if not optim_varname == correct_varname:
             error_msg = "var name: the value {0} should be {1}".format(optim_varname,correct_varname)
             self.fail(error_msg)
+        # Check epsilon
+        correct_epsilon = epsilon
+        optim_epsilon = optim_result.epsilon
+        if not optim_epsilon == correct_epsilon:
+            error_msg = "var name: the value {0} should be {1}".format(optim_epsilon,correct_epsilon)
+            self.fail(error_msg)
+
 
     @pytest.mark.slow
     def test_one_param_max(self):

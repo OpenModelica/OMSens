@@ -23,7 +23,8 @@ class ModelOptimizer():
         model_builder = build_model.ModelicaModelBuilder(model_name, start_time, stop_time, model_file_path)
         # Build model
         self.compiled_model = model_builder.buildToFolderPath(build_folder_path)
-        self.x0       = [self.compiled_model.defaultParameterValue(p) for p in parameters_to_perturb]
+        self.x0_dict  = {p:self.compiled_model.defaultParameterValue(p) for p in parameters_to_perturb}
+        self.x0       = [self.x0_dict[p] for p in parameters_to_perturb]
         self.obj_func = createObjectiveFunctionForModel(self.compiled_model, parameters_to_perturb, target_var_name,
                                                         max_or_min)
     def optimize(self, percentage, epsilon):
@@ -44,7 +45,7 @@ class ModelOptimizer():
             # If we were minimizing, the internal f(x) will be the final one
             f_opt = f_opt_internal
         # Initialize optimization result object
-        optim_result = optimization_result.ModelOptimizationResult(self.x0, x_opt_dict, f_x0, f_opt, self.stop_time,
+        optim_result = optimization_result.ModelOptimizationResult(self.x0_dict, x_opt_dict, f_x0, f_opt, self.stop_time,
                                                                    self.target_var_name)
         # Return optimization result
         return optim_result

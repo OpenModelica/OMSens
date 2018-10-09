@@ -50,11 +50,15 @@ def analyzeFromJSON(dest_folder_path, json_file_path):
     model_optimizer = model_optimizer_f.ModelOptimizer(**optim_kwargs)
     # Run optimization
     optim_result = model_optimizer.optimize(full_json["percentage"], full_json["epsilon"])
-    x_opt_dict, f_opt = optim_result.x_opt, optim_result.f_x_opt
     # Prepare JSON output dict
     optim_json_dict = {
-        "x_opt": x_opt_dict,
-        "f(x)_opt": f_opt,
+        "x0"       : optim_result.x0,
+        "x_opt"    : optim_result.x_opt,
+        "f(x0)"    : optim_result.f_x0,
+        "f(x)_opt" : optim_result.f_x_opt,
+        "stop_time": optim_result.stop_time,
+        "variable" : optim_result.variable_name,
+
     }
     # Write dict as json
     optim_json_str = json.dumps(optim_json_dict, sort_keys=True, indent=2)
