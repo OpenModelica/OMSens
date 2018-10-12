@@ -62,7 +62,7 @@ def analyzeFromJSON(dest_folder_path, json_file_path):
     }
     # Write dict as json
     optim_json_str = json.dumps(optim_json_dict, sort_keys=True, indent=2)
-    optim_json_file_name = "optim_results.json"
+    optim_json_file_name = "result.json"
     optim_json_file_path = os.path.join(dest_folder_path, optim_json_file_name)
     files_aux.writeStrToFile(optim_json_str, optim_json_file_path)
     logger.info("Finished. The file {0} has the optimization results.".format(optim_json_file_path))

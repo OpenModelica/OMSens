@@ -86,7 +86,7 @@ def perturbateAndAnalyze( model_name, model_file_path, start_time, stop_time, pa
     paths_dict = analysis_results["paths"]
     # Write paths dict as json
     paths_json_str = json.dumps(paths_dict, sort_keys=True, indent=2)
-    paths_json_file_name = "paths.json"
+    paths_json_file_name = "result.json"
     paths_json_file_path = os.path.join(dest_folder_path, paths_json_file_name)
     files_aux.writeStrToFile(paths_json_str, paths_json_file_path)
     logger.info("Finished. The file {0} has all the analysis files paths.".format(paths_json_file_path))
