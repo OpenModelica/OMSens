@@ -93,6 +93,7 @@ class TestMultiparameterSweep(unittest.TestCase):
         files_aux.writeStrToFile(model_str, model_file_path)
         start_time = 0
         stop_time = 2
+        fixed_params = [{"name":"d", "value":1}]
         perturbation_info_per_param = [
             {
                 "name": "a",
@@ -111,7 +112,7 @@ class TestMultiparameterSweep(unittest.TestCase):
             },
         ]
         sweep_runner = running.sweep.ParametersSweeper(model_name, model_file_path, start_time, stop_time,
-                                                       perturbation_info_per_param, self._temp_dir)
+                                                       perturbation_info_per_param, fixed_params, self._temp_dir)
         return sweep_runner
 
 
@@ -125,7 +126,10 @@ model_str = \
       parameter Real a=-1;
       parameter Real b=-1;
       parameter Real c=-1;
+      parameter Real d=-1;
       Real x(start=1,fixed=true);
+      Real y;
     equation
       der(x) = a*x + b/2 + c/4;
+      y = -1;
     end Model;"""
