@@ -15,11 +15,11 @@ class PlotSetupSpecs():
 
 
 class PlotLineSpecs():
-    def __init__(self, df, x_var, y_var, line_width, linestyle, markersize, marker, label, color):
+    def __init__(self, df, x_var, y_var, linewidth, linestyle, markersize, marker, label, color):
         self.df         = df
         self.x_var      = x_var
         self.y_var      = y_var
-        self.line_width = line_width
+        self.linewidth = linewidth
         self.linestyle  = linestyle
         self.markersize = markersize
         self.marker     = marker

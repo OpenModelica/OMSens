@@ -21,11 +21,11 @@ class SweepPlot():
         # Define setup specs
         setup_specs = plotSetupSpecsForSweep(var_name, extra_ticks)
 
+        # ADAPTAR (BORRAR/MOVER A LinesPlotter)
         plot_path_without_extension = os.path.join(plots_folder_path, var_name)
-        footer_artist = setupPlot("Time", var_name, title, subtitle, footer)
         colors_iter = plotColorsForNumber(len(self.sweep_results.perturbed_runs))
-        # Plot standard run that will be different than the other simulations results
-        self.plotStandardRun(var_name)
+        # Define standard run line specs that will be different than the other simulations results
+        std_run_line_specs = self.standardRunLineSpecs(var_name)
 
         # Plot perturbed simulations from sweep
         for sweep_iter_results in self.sweep_results.perturbed_runs:
@@ -43,6 +43,7 @@ class SweepPlot():
         # Return only the .png plot path for now
         png_plot_path = "{0}.png".format(plot_path_without_extension)
         return png_plot_path
+        # ADAPTAR^ (BORRAR/MOVER A LinesPlotter)
 
     def plotSetupSpecsForSweep(self, var_name, extra_ticks):
         # Get the info for the plot setup specs
@@ -99,13 +100,33 @@ class SweepPlot():
         swept_params_info_str = "Swept parameters:  \n {0}".format(joined_params_str)
         return swept_params_info_str
 
-    def plotStandardRun(self, var_name, color="black", label="STD_RUN", linestyle="-"):
+    def standardRunLineSpecs(self, var_name):
+        # Prepare information
         # Get simulation specs for std run
         std_run_specs = self.sweep_results.std_run
         # Read simulation results from disk
         df_simu = pandas.read_csv(std_run_specs.output_path)
-        plt.plot(df_simu["time"], df_simu[var_name], linewidth=1, linestyle=linestyle, markersize=0, marker='o',
-                 label=label, color=color)
+        # Define conventions
+        x_var      = "time"
+        linewidth  = 1
+        linestyle  = "-"
+        markersize = 0
+        marker     = 'o'
+        label      = "STD_RUN"
+        color      = "black"
+        # Initialize plot line specs
+        line_specs = plot_specs.PlotLineSpecs(
+            df        = df_simu,
+            x_var     = x_var,
+            y_var     = var_name,
+            linewidth = linewidth,
+            linestyle = linestyle,
+            markersize= markersize,
+            marker    = marker,
+            label     = label,
+            color     = color,
+        )
+        return line_specs
 
 
 def strSignForNumber(number):
@@ -150,17 +171,6 @@ def fixedParamsStr(sweep_specs):
     return swept_params_info_str
 
 
-def setupPlot(x_label, y_label, title, subtitle, footer):
-    plt.style.use('fivethirtyeight')
-    plt.gca().set_position([0.10, 0.15, 0.80, 0.77])
-    plt.xlabel(x_label)
-    plt.title(title + "\n" + subtitle, fontsize=14, y=1.08)
-    plt.ylabel(y_label)
-    plt.ticklabel_format(useOffset=False)  # So it doesn't use an offset on the x axis
-    footer_artist = plt.annotate(footer, (1, 0), (0, -70), xycoords='axes fraction', textcoords='offset points',
-                                 va='top', horizontalalignment='right')
-    plt.margins(x=0.1, y=0.1)  # increase buffer so points falling on it are plotted
-    return footer_artist
 
 
 def setupXTicks(extra_ticks):
