@@ -53,7 +53,7 @@ class TestMultiparameterSweep(unittest.TestCase):
             error_msg = "The sweep should have {0} runs but it had {1}".format(correct_n_runs, vals_combinations_n)
             self.fail(error_msg)
         # Test that the sweep "works"
-        sweep_results = sweep_runner.runSweep(self._temp_dir,simu_flags="step")
+        sweep_results = sweep_runner.runSweep(self._temp_dir)
         # Check that the swept params are correct<
         swept_params = sweep_results.swept_parameters_names
         correct_swept_params = list(correct_vals_per_param.keys())

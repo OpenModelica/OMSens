@@ -132,24 +132,6 @@ def perturbationInfoForFixedParams(params_defaults, fixed_params_raw):
         fixed_params.append(perturbed_param_info)
     return fixed_params
 
-# BORRAR:
-    perturbed_parameters_infos = []
-    for vals_comb in cart_prod_dict:
-        run_perturbed_params = []
-        for param_name in vals_comb:
-            param_default_val = self.params_defaults[param_name]
-            param_perturbed_val = vals_comb[param_name]
-            perturbed_param_info = simu_run_info.PerturbedParameterInfo(param_name, param_default_val,
-                                                                        param_perturbed_val)
-            run_perturbed_params.append(perturbed_param_info)
-        # Before adding this run, check if all params have been perturbed and it's not the std run
-        param_is_default_list = [p.default_val == p.new_val for p in run_perturbed_params]
-        if not all(param_is_default_list):
-            # If at least one parameter has been perturbed, add it to the list
-            perturbed_parameters_infos.append(run_perturbed_params)
-    return perturbed_parameters_infos
-# BORRAR^
-
 
 def sweepValuesPerParamFromParamsInfos(params_defaults, perturbation_info_per_param):
     values_per_param = {}
