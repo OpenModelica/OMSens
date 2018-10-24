@@ -53,8 +53,8 @@ class TestMultiparameterSweep(unittest.TestCase):
             error_msg = "The sweep should have {0} runs but it had {1}".format(correct_n_runs, vals_combinations_n)
             self.fail(error_msg)
         # Test that the sweep "works"
-        sweep_results = sweep_runner.runSweep(self._temp_dir)
-        # Check that the swept params are correct
+        sweep_results = sweep_runner.runSweep(self._temp_dir,simu_flags="step")
+        # Check that the swept params are correct<
         swept_params = sweep_results.swept_parameters_names
         correct_swept_params = list(correct_vals_per_param.keys())
         intersection_swept_params = [i for i,j in zip(swept_params, correct_swept_params) if i == j]
@@ -78,7 +78,7 @@ class TestMultiparameterSweep(unittest.TestCase):
         plot_folder_path = os.path.join(self._temp_dir, "plots")
         files_aux.makeFolderWithPath(plot_folder_path)
         sweep_plotter = plot_sweep.SweepPlot(sweep_results)
-        sweep_plotter.plotInFolder("x",plot_folder_path)
+        sweep_plotter.plotInFolder("xa",plot_folder_path)
         # Check that the plots folder is not empty
         files_in_dir = os.listdir(plot_folder_path)
         if len(files_in_dir) < 1:
@@ -127,9 +127,13 @@ model_str = \
       parameter Real b=-1;
       parameter Real c=-1;
       parameter Real d=-1;
-      Real x(start=1,fixed=true);
+      Real xa;
+      Real xb;
+      Real xc;
       Real y;
     equation
-      der(x) = a*x + b/2 + c/4;
-      y = -1;
+      der(xa) = a;
+      der(xb) = b;
+      der(xc) = c;
+      der(y)  = d;
     end Model;"""

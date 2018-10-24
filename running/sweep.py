@@ -30,7 +30,7 @@ class ParametersSweeper():
         # Parse the fixed params
         self.fixed_params = perturbationInfoForFixedParams(self.params_defaults, self.fixed_params_raw)
 
-    def runSweep(self, dest_folder_path):
+    def runSweep(self, dest_folder_path, simu_flags=""):
         # Make folder for runs
         runs_folder_name = "runs"
         runs_folder_path = os.path.join(dest_folder_path, runs_folder_name)
@@ -64,7 +64,7 @@ class ParametersSweeper():
             # Run the simulation
             simu_csv_name = "run_{0}.csv".format(i)
             simu_csv_path = os.path.join(perturbed_runs_folder_path, simu_csv_name)
-            simu_results = self.compiled_model.simulate(simu_csv_path)
+            simu_results = self.compiled_model.simulate(simu_csv_path, simu_flags)
             # Instantiate sweep iteration results
             sweep_iter_results = SweepIterationResults(simu_results, swept_params_info)
             # Add results to list

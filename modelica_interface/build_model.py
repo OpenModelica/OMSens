@@ -15,7 +15,7 @@ class ModelicaModelBuilder():
         """print("Loading model in path {model_file_path}");\n"""
         """loadFile("{model_file_path}"); getErrorString();\n"""
         """print("Building model {model_name}");\n"""
-        """buildModel({model_name}, startTime={startTime},stopTime={stopTime},outputFormat="csv"); getErrorString();"""
+        """buildModel({model_name}, startTime={startTime},stopTime={stopTime},outputFormat="csv", numberOfIntervals={numberOfIntervals}); getErrorString();"""
     )
 
     def __init__(self, model_name, start_time, stop_time, model_file_path):
@@ -27,7 +27,7 @@ class ModelicaModelBuilder():
         # Hardcoded attrs
         self.mos_script_file_name = "builder.mos"
 
-    def buildToFolderPath(self,dest_folder_path):
+    def buildToFolderPath(self,dest_folder_path, numberOfIntervals=300):
         # Write .mos script to folder
         mos_script_path = os.path.join(dest_folder_path, self.mos_script_file_name)
         self.writeMOSScriptToPath(mos_script_path)
