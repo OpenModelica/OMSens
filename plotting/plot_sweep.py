@@ -2,20 +2,26 @@
 import os
 import numpy
 import pandas
-
-# Mine
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
+# Project
+import plotting.plot_lines as plot_lines
+import plotting.plot_specs as plot_specs
+
 class SweepPlot():
     def __init__(self, sweep_results):
+        # Save args
         self.sweep_results = sweep_results
+        # Get swept params ids
         self.swept_params_ids_mapping = idsForSweptParams(sweep_results)
 
     def plotInFolder(self, var_name, plots_folder_path, extra_ticks=[]):
+        # Define setup specs
+        setup_specs = plotSetupSpecsForSweep(var_name, extra_ticks)
+
         plot_path_without_extension = os.path.join(plots_folder_path, var_name)
-        title, subtitle, footer = self.sweepingPlotTexts(self.sweep_results, var_name)
         footer_artist = setupPlot("Time", var_name, title, subtitle, footer)
         colors_iter = plotColorsForNumber(len(self.sweep_results.perturbed_runs))
         # Plot standard run that will be different than the other simulations results
@@ -37,6 +43,21 @@ class SweepPlot():
         # Return only the .png plot path for now
         png_plot_path = "{0}.png".format(plot_path_without_extension)
         return png_plot_path
+
+    def plotSetupSpecsForSweep(self, var_name, extra_ticks):
+        # Get the info for the plot setup specs
+        title, subtitle, footer = self.sweepingPlotTexts(self.sweep_results, var_name)
+        y_label = "Time"
+        # Initialize the plot setup specs
+        setup_specs = plot_specs.PlotSetupSpecs(
+            title       = title,
+            subtitle    = subtitle,
+            footer      = footer,
+            x_label     = var_name,
+            y_label     = y_label ,
+            extra_ticks = extra_ticks
+        )
+        return setup_specs
 
     def labelForPerturbedRun(self, sweep_simu_specs):
         # Get the info for each swept param (and not also fixed perturbed param)

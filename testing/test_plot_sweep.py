@@ -1,5 +1,4 @@
 # Std
-import glob
 import shutil  # para borrar el tempdir
 import tempfile  # para crear el tempdir
 import unittest
