@@ -12,7 +12,7 @@ import multiparam_sweep
 import individual_sens_calculator
 
 
-class TestsRunOMC(unittest.TestCase):
+class TestsPredefinedJSONFiles(unittest.TestCase):
     # setup y teardown de los tests
     def setUp(self):
         # Create tempdir and save its path

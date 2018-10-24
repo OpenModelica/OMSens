@@ -37,12 +37,13 @@ def sweepAndPlotFromJSON(dest_folder_path, json_file_path):
     model_mo_path = files_aux.moFilePathFromJSONMoPath(full_json["model_mo_path"])
     sweep_kwargs = \
         {
-            "model_name": full_json["model_name"],
-            "model_file_path": model_mo_path,
-            "start_time": full_json["start_time"],
-            "stop_time": full_json["stop_time"],
-            "perturbation_info_per_param": full_json["parameters_to_sweep"],
-            "build_folder_path": dest_folder_path,
+            "model_name"                  : full_json["model_name"],
+            "model_file_path"             : model_mo_path,
+            "start_time"                  : full_json["start_time"],
+            "stop_time"                   : full_json["stop_time"],
+            "perturbation_info_per_param" : full_json["parameters_to_sweep"],
+            "fixed_params"                : full_json["fixed_params"],
+            "build_folder_path"           : dest_folder_path,
 
         }
     # Initialize sweeper

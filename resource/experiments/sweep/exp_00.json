@@ -8,12 +8,13 @@
     ],
     "start_time": 0,
     "stop_time": 3,
+    "fixed_params": [
+    {
+        "name"  : "realParam1",
+        "value" : 5
+    }
+    ],
     "parameters_to_sweep": [
-        {
-            "name"             : "realParam1",
-            "delta_percentage" : 5,
-            "iterations"       : 3
-        },
         {
             "name"             : "realParam2",
             "delta_percentage" : 10,

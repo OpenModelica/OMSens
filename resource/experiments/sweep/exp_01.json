@@ -6,12 +6,13 @@
   ],
   "start_time": 1900,
   "stop_time": 2500,
-  "parameters_to_sweep": [
+  "fixed_params": [
     {
-      "name"             : "p_land_yield_fact_1",
-      "delta_percentage" : 5,
-      "iterations"       : 3
-    },
+      "name"  : "p_land_yield_fact_1",
+      "value" : 5
+    }
+  ],
+  "parameters_to_sweep": [
     {
       "name"             : "p_avg_life_ind_cap_1",
       "delta_percentage" : 5,
