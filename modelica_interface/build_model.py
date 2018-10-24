@@ -18,13 +18,13 @@ class ModelicaModelBuilder():
         """buildModel({model_name}, startTime={startTime},stopTime={stopTime},outputFormat="csv", numberOfIntervals={numberOfIntervals}); getErrorString();"""
     )
 
-    def __init__(self, model_name, start_time, stop_time, model_file_path, numberOfIntervals=300):
+    def __init__(self, model_name, start_time, stop_time, model_file_path, number_of_intervals=300):
         # Attrs from args
         self.model_name        = model_name
         self.start_time        = start_time
         self.stop_time         = stop_time
         self.model_file_path   = model_file_path
-        self.numberOfIntervals = numberOfIntervals
+        self.number_of_intervals = number_of_intervals
         # Hardcoded attrs
         self.mos_script_file_name = "builder.mos"
 
@@ -46,7 +46,7 @@ class ModelicaModelBuilder():
         mos_script_str = self.mos_script_skeleton.format(model_file_path   = self.model_file_path,
                                                          model_name        = self.model_name,
                                                          startTime         = self.start_time,
-                                                         numberOfIntervals = self.numberOfIntervals,
+                                                         numberOfIntervals = self.number_of_intervals,
                                                          stopTime          = self.stop_time)
         return mos_script_str
 

@@ -10,7 +10,7 @@ import running.simulation_run_info as simu_run_info
 
 class ParametersSweeper():
     def __init__(self, model_name, model_file_path, start_time, stop_time, perturbation_info_per_param, fixed_params,
-                 build_folder_path):
+                 build_folder_path, number_of_intervals = 300):
         # Save args
         self.model_name = model_name
         self.model_file_path = model_file_path
@@ -19,7 +19,8 @@ class ParametersSweeper():
         self.perturbation_info_per_param = perturbation_info_per_param
         self.fixed_params_raw = fixed_params
         # Initialize builder
-        self.model_builder = build_model.ModelicaModelBuilder(model_name, start_time, stop_time, model_file_path)
+        self.model_builder = build_model.ModelicaModelBuilder(model_name, start_time, stop_time, model_file_path,
+                                                              number_of_intervals)
         # Build model
         self.compiled_model = self.model_builder.buildToFolderPath(build_folder_path)
         # Get the default values for the params to perturb using the compiled model

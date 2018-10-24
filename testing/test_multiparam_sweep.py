@@ -4,9 +4,9 @@ import os
 import shutil  # para borrar el tempdir
 import tempfile  # para crear el tempdir
 import unittest
-from io import StringIO
-import numpy
 import pathlib
+import pandas
+import numpy
 
 # Mine
 import running.sweep
@@ -61,19 +61,56 @@ class TestMultiparameterSweep(unittest.TestCase):
         if len(intersection_swept_params) != 3:
             error_msg = "The swept params returned were {0} when they should've been {1}".format(swept_params, correct_swept_params)
             self.fail(error_msg)
-        # Check that there is a file in the std run path
+        # Check that the std run has the correct values
+        variables = ["xa", "xb", "xc", "y"]
+        vars_std_val = -1
         std_run = sweep_results.std_run
-        std_run_path = pathlib.Path(std_run.output_path)
-        if not std_run_path.is_file():
-            error_msg = "The std run was not found in path {0}".format(std_run_path.absolute())
-            self.fail(error_msg)
-        # Check that there is a file for each perturbed run
+        std_run_path = std_run.output_path
+        df_std = pandas.read_csv(std_run_path,index_col=0)
+        df_std_last_row = df_std.iloc[-1]
+        for var in variables:
+            var_val = df_std_last_row[var]
+            if not numpy.isclose(var_val, vars_std_val):
+                error_msg = "The variable {0} should have value {1} but it has value {2} standard run" \
+                    .format(var, vars_std_val, var_val)
+                self.fail(error_msg)
+        # Define matches between parameters and variables in the model
+        param_var_match = {
+            "a" : "xa",
+            "b" : "xb",
+            "c" : "xc",
+            "d" : "y",
+        }
+        # Save the fixed params info
+        fixed_params = sweep_results.fixed_parameters_info
+        # Check that the perturbed runs have the correct values
         perturbed_runs = sweep_results.perturbed_runs
         for pert_run in perturbed_runs:
-            pert_run_path = pathlib.Path(pert_run.simulation_results.output_path)
-            if not pert_run_path.is_file():
-                error_msg = "A perturbed run was not found in path {0}".format(pert_run_path.absolute())
-                self.fail(error_msg)
+            # Get run .csv path
+            run_csv_path  = pert_run.simulation_results.output_path
+            # Get df for run simulation
+            df_pert_run = pandas.read_csv(run_csv_path, index_col=0)
+            df_last_row = df_pert_run.iloc[-1]
+            params_info_pert_run = pert_run.swept_params_info
+            for param_info in params_info_pert_run:
+                p_name = param_info.name
+                var_for_param = param_var_match[p_name]
+                p_new_val = param_info.new_val
+                df_var_val = df_last_row[var_for_param]
+                if not numpy.isclose(df_var_val, p_new_val):
+                    error_msg = "The variable {0} should have value {1} but it has value {2} in run with path {3}"\
+                        .format(var_for_param, p_new_val, df_var_val, run_csv_path)
+                    self.fail(error_msg)
+            # Check the fixed params
+            for fixed_p in fixed_params:
+                p_name = fixed_p.name
+                var_for_param = param_var_match[p_name]
+                p_new_val = fixed_p.new_val
+                df_var_val = df_last_row[var_for_param]
+                if not numpy.isclose(df_var_val, p_new_val):
+                    error_msg = "The variable {0} should have value {1} but it has value {2} in run with path {3}" \
+                        .format(var_for_param, p_new_val, df_var_val, run_csv_path)
+                    self.fail(error_msg)
         # Integration test: we take advantage of the model build and sweep in this test and we test integration
         plot_folder_path = os.path.join(self._temp_dir, "plots")
         files_aux.makeFolderWithPath(plot_folder_path)
@@ -92,7 +129,7 @@ class TestMultiparameterSweep(unittest.TestCase):
         model_file_path = os.path.join(self._temp_dir, "model.mo")
         files_aux.writeStrToFile(model_str, model_file_path)
         start_time = 0
-        stop_time = 2
+        stop_time = 1
         fixed_params = [{"name":"d", "value":1}]
         perturbation_info_per_param = [
             {
@@ -112,7 +149,8 @@ class TestMultiparameterSweep(unittest.TestCase):
             },
         ]
         sweep_runner = running.sweep.ParametersSweeper(model_name, model_file_path, start_time, stop_time,
-                                                       perturbation_info_per_param, fixed_params, self._temp_dir)
+                                                       perturbation_info_per_param, fixed_params, self._temp_dir,
+                                                       number_of_intervals=2)
         return sweep_runner
 
 
