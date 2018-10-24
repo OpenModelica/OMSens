@@ -18,15 +18,31 @@ class SweepPlot():
         self.swept_params_ids_mapping = idsForSweptParams(sweep_results)
 
     def plotInFolder(self, var_name, plots_folder_path, extra_ticks=[]):
-        # Define setup specs
-        setup_specs = plotSetupSpecsForSweep(var_name, extra_ticks)
-
-        # ADAPTAR (BORRAR/MOVER A LinesPlotter)
+        # Define plot file name base
         plot_path_without_extension = os.path.join(plots_folder_path, var_name)
-        colors_iter = plotColorsForNumber(len(self.sweep_results.perturbed_runs))
+        # Define setup specs
+        setup_specs = self.plotSetupSpecsForSweep(var_name, extra_ticks)
+
+        # Make a list of all lines specs
+        lines_specs = []
         # Define standard run line specs that will be different than the other simulations results
         std_run_line_specs = self.standardRunLineSpecs(var_name)
+        # Add it to the lines specs
+        lines_specs.append(std_run_line_specs)
 
+        # Define what colors to use for lines that aren't std run
+        colors_iter = plotColorsForNumber(len(self.sweep_results.perturbed_runs))
+
+        # Initialize plot_specs
+        sweep_plot_specs = plot_specs.PlotSpecs(setup_specs, lines_specs)
+        # Initialize lines plotter
+        lines_plotter = plot_lines.LinesPlotter(sweep_plot_specs)
+        # Plot
+        lines_plotter.plotInPath(plot_path_without_extension)
+
+
+
+        # ADAPTAR: (BORRAR/MOVER A LinesPlotter)
         # Plot perturbed simulations from sweep
         for sweep_iter_results in self.sweep_results.perturbed_runs:
             simu_results = sweep_iter_results.simulation_results

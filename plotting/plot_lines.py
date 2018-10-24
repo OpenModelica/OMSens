@@ -12,7 +12,7 @@ class LinesPlotter():
     def __init__(self, plot_specs):
         self.plot_specs = plot_specs
 
-    def plotInPath(self, plot_path):
+    def plotInPath(self, plot_path_without_extension):
         footer_artist = setupPlot(self.plot_specs.setup_specs)
 
 
