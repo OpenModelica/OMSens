@@ -56,7 +56,8 @@ class TestVectorialSensitivityAnalysis(unittest.TestCase):
         # Check x0
         correct_x0 = [1]
         optim_x0 = optim_result.x0
-        for val, correct_val in zip(optim_x0,correct_x0):
+        for p_name, correct_val in zip(optim_x0,correct_x0):
+            val = optim_x0[p_name]
             if not numpy.isclose(val,correct_val):
                 error_msg = "x0: the value {0} should be {1}".format(val,correct_val)
                 self.fail(error_msg)
@@ -77,12 +78,6 @@ class TestVectorialSensitivityAnalysis(unittest.TestCase):
         optim_varname = optim_result.variable_name
         if not optim_varname == correct_varname:
             error_msg = "var name: the value {0} should be {1}".format(optim_varname,correct_varname)
-            self.fail(error_msg)
-        # Check epsilon
-        correct_epsilon = epsilon
-        optim_epsilon = optim_result.epsilon
-        if not optim_epsilon == correct_epsilon:
-            error_msg = "var name: the value {0} should be {1}".format(optim_epsilon,correct_epsilon)
             self.fail(error_msg)
 
 
