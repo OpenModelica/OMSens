@@ -34,6 +34,7 @@ def plotLineSpec(line_spec):
              linestyle=line_spec.linestyle,
              markersize=line_spec.markersize,
              marker=line_spec.marker,
+             label=line_spec.label,
              color=line_spec.color
     )
 
