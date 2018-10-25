@@ -31,18 +31,17 @@ class TestSweepPlot(unittest.TestCase):
         optim_res = self.optimizationResultsExample()
         # Initialize sweep plotter
         sweep_plotter = VectorialPlotter(optim_res)
-
-        # # Plot sweep specs to temp folder
-        # sweep_plotter.plotInFolder(var_name, self._temp_dir)
-        # # Get plots extensions regex
-        # regex = '.*\.(png|svg)$'
-        # # Get list of files from regex
-        # files_in_dir = os.listdir(self._temp_dir)
-        # plot_files = [x for x in files_in_dir if re.match(regex, x)]
-        # # Check that there is at least one plot
-        # if len(plot_files) < 1:
-        #     error_msg = "The plot function should create at least one plot file in the destination folder."
-        #     self.fail(error_msg)
+        # Plot sweep specs to temp folder
+        sweep_plotter.plotInFolder(self._temp_dir)
+        # Get plots extensions regex
+        regex = '.*\.(png|svg)$'
+        # Get list of files from regex
+        files_in_dir = os.listdir(self._temp_dir)
+        plot_files = [x for x in files_in_dir if re.match(regex, x)]
+        # Check that there is at least one plot
+        if len(plot_files) < 1:
+            error_msg = "The plot function should create at least one plot file in the destination folder."
+            self.fail(error_msg)
 
 
     # Auxs:

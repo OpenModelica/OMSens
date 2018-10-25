@@ -5,9 +5,12 @@ import argparse
 import logging  # instead of prints
 import json
 import filesystem.files_aux as files_aux
+import pandas
 
-# Mine
+# Project
 import vectorial.model_optimizer as model_optimizer_f
+import modelica_interface.build_model as build_model
+import plotting.plot_vectorial as plot_vect_f
 
 logger = logging.getLogger("-Vectorial Sens Calculator-")
 script_description = "Find parameters values that maximize or minimize a variable"
@@ -50,18 +53,49 @@ def analyzeFromJSON(dest_folder_path, json_file_path):
     model_optimizer = model_optimizer_f.ModelOptimizer(**optim_kwargs)
     # Run optimization
     optim_result = model_optimizer.optimize(full_json["percentage"], full_json["epsilon"])
+    # We compile the model again for now to avoid having remnants of the optimization in its compiled model
+    # Initialize builder
+    model_builder = build_model.ModelicaModelBuilder(full_json["model_name"], full_json["start_time"],
+                                                     full_json["stop_time"], model_mo_path)
+    # Make sub-folder for plots
+    plots_folder_name = "plots"
+    plots_folder_path = os.path.join(dest_folder_path,plots_folder_name)
+    files_aux.makeFolderWithPath(plots_folder_path)
+    # Make sub-folder for new model
+    model_folder_name = "aux"
+    model_folder_path = os.path.join(plots_folder_path,model_folder_name)
+    files_aux.makeFolderWithPath(model_folder_path)
+    # Build model
+    compiled_model = model_builder.buildToFolderPath(model_folder_path)
+    # Simulate model for x0
+    x0_csv_name = "x0_run.csv"
+    x0_csv_path = os.path.join(model_folder_path,x0_csv_name)
+    x0_simu_result = compiled_model.simulate(x0_csv_path)
+    # Simulate model for x_opt
+    x_opt_csv_name = "x0_run.csv"
+    x_opt_csv_path = os.path.join(model_folder_path,x_opt_csv_name)
+    x_opt_simu_result = compiled_model.simulate(x_opt_csv_path)
+    # Read df from CSVs
+    df_x0_run = pandas.read_csv(x0_csv_path)
+    df_x_opt_run = pandas.read_csv(x0_csv_path)
+    # Initialize plotter
+    vect_plotter = plot_vect_f.VectorialPlotter(optim_result, df_x0_run, df_x_opt_run)
+    # Plot in folder
+    plot_path = vect_plotter.plotInFolder(plots_folder_path)
+
+
     # Prepare JSON output dict
-    optim_json_dict = {
+    vect_json_dict = {
         "x0"       : optim_result.x0,
         "x_opt"    : optim_result.x_opt,
         "f(x0)"    : optim_result.f_x0,
         "f(x)_opt" : optim_result.f_x_opt,
         "stop_time": optim_result.stop_time,
         "variable" : optim_result.variable_name,
-
+        "plot_path": plot_path,
     }
     # Write dict as json
-    optim_json_str = json.dumps(optim_json_dict, sort_keys=True, indent=2)
+    optim_json_str = json.dumps(vect_json_dict, sort_keys=True, indent=2)
     optim_json_file_name = "result.json"
     optim_json_file_path = os.path.join(dest_folder_path, optim_json_file_name)
     files_aux.writeStrToFile(optim_json_str, optim_json_file_path)

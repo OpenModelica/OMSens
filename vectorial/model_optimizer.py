@@ -27,6 +27,7 @@ class ModelOptimizer():
         self.x0       = [self.x0_dict[p] for p in parameters_to_perturb]
         self.obj_func = createObjectiveFunctionForModel(self.compiled_model, parameters_to_perturb, target_var_name,
                                                         max_or_min)
+
     def optimize(self, percentage, epsilon):
         # Run a standard simulation to have f(x0) before optimizing
         f_x0 = self.compiled_model.quickSimulate(self.target_var_name)
