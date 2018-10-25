@@ -14,8 +14,10 @@ class LinesPlotter():
 
     def plotInPath(self, plot_path_without_extension):
         footer_artist = setupPlot(self.plot_specs.setup_specs)
-        # ADAPTAR: (BORRAR/MOVER A LinesPlotter)
 
+        # Plot lines
+        for line_spec in self.plot_specs.lines_specs:
+            plotLineSpec(line_spec)
         # Define legend
         lgd = plt.legend(loc="center left", fontsize="small", fancybox=True, shadow=True,
                          bbox_to_anchor=(1, 0.5))
@@ -23,7 +25,17 @@ class LinesPlotter():
         # Post-line-plot setup
         setupXTicks(self.plot_specs.setup_specs.extra_ticks)
         saveAndClearPlt(plot_path_without_extension, lgd, footer_artist)
-        # ADAPTAR^ (BORRAR/MOVER A LinesPlotter)
+
+
+def plotLineSpec(line_spec):
+    plt.plot(line_spec.df[line_spec.x_var],
+             line_spec.df[line_spec.y_var],
+             linewidth=line_spec.linewidth,
+             linestyle=line_spec.linestyle,
+             markersize=line_spec.markersize,
+             marker=line_spec.marker,
+             color=line_spec.color
+    )
 
 
 def setupPlot(setup_specs):

@@ -31,7 +31,7 @@ class SweepPlot():
         lines_specs.append(std_run_line_specs)
 
         # Define what colors to use for lines that aren't std run
-        colors_iter = plotColorsForNumber(len(self.sweep_results.perturbed_runs))
+        colors_iter = colorsForNumberOfRuns(len(self.sweep_results.perturbed_runs))
         # Iterate the sweep simulations initializing the respective line specs
         for sweep_iter_results in self.sweep_results.perturbed_runs:
             # Initialize line spec for perturbed run
@@ -189,7 +189,7 @@ def idsForSweptParams(sweep_specs):
     return swept_params_ids_mapping
 
 
-def plotColorsForNumber(n_colors):
+def colorsForNumberOfRuns(n_colors):
     colors_list = plt.get_cmap('jet')(numpy.linspace(0, 1.0, n_colors))
     colors_iter = iter(colors_list)
     return colors_iter
