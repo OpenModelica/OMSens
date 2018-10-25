@@ -10,7 +10,7 @@ import re
 # Mine
 import running.simulation_run_info as simu_run_info
 import running.sweep as sweep
-from plotting.plot_sweep import SweepPlot
+from plotting.plot_sweep import SweepPlotter
 
 
 class TestSweepPlot(unittest.TestCase):
@@ -31,7 +31,7 @@ class TestSweepPlot(unittest.TestCase):
         # Create an example sweep
         sweep_results, var_name = self.sweepResultsExample()
         # Initialize sweep plotter
-        sweep_plotter = SweepPlot(sweep_results)
+        sweep_plotter = SweepPlotter(sweep_results)
         # Plot sweep specs to temp folder
         sweep_plotter.plotInFolder(var_name, self._temp_dir)
         # Get plots extensions regex

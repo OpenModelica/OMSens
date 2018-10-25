@@ -114,7 +114,7 @@ class TestMultiparameterSweep(unittest.TestCase):
         # Integration test: we take advantage of the model build and sweep in this test and we test integration
         plot_folder_path = os.path.join(self._temp_dir, "plots")
         files_aux.makeFolderWithPath(plot_folder_path)
-        sweep_plotter = plot_sweep.SweepPlot(sweep_results)
+        sweep_plotter = plot_sweep.SweepPlotter(sweep_results)
         sweep_plotter.plotInFolder("xa",plot_folder_path)
         # Check that the plots folder is not empty
         files_in_dir = os.listdir(plot_folder_path)

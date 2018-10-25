@@ -51,7 +51,7 @@ def sweepAndPlotFromJSON(dest_folder_path, json_file_path):
     # Run sweep
     sweep_results = sweep_runner.runSweep(dest_folder_path)
     # Initialize sweep results plotter
-    sweep_plotter = plot_sweep.SweepPlot(sweep_results)
+    sweep_plotter = plot_sweep.SweepPlotter(sweep_results)
     # Make folder for plots
     plot_folder_path = os.path.join(dest_folder_path, "plots")
     files_aux.makeFolderWithPath(plot_folder_path)

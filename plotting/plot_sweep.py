@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import plotting.plot_lines as plot_lines
 import plotting.plot_specs as plot_specs
 
-class SweepPlot():
+class SweepPlotter():
     def __init__(self, sweep_results):
         # Save args
         self.sweep_results = sweep_results
