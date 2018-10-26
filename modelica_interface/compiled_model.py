@@ -95,6 +95,8 @@ class CompiledModelicaModel():
         self.xml_tree = self.default_xml_tree
         # Save a copy of the xml with the original values so we can change the xml tree freely again
         self.default_xml_tree = copy.deepcopy(self.xml_tree)
+        # Write XML to disk
+        self.xml_tree.write(self.xml_file_path)
 
 
 # Auxs
