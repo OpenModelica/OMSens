@@ -90,9 +90,11 @@ class VectorialPlotter():
 
     def plotSetupSpecs(self, extra_ticks):
         # Get the info for the plot setup specs
-        title, subtitle, footer = ("","","") # empty for now
+        title    = "Comparison between Standard and Optimum runs"
+        subtitle = "variable: {0}".format(self.optim_result.variable_name)
+        footer   = self.footerStr()
         x_label = "Time"
-        y_label = self.optim_result.variable_name
+        y_label = ""
         # Initialize the plot setup specs
         setup_specs = plot_specs.PlotSetupSpecs(
             title       = title,
@@ -103,3 +105,17 @@ class VectorialPlotter():
             extra_ticks = extra_ticks
         )
         return setup_specs
+
+    def footerStr(self):
+        # Get x_opt to minimize syntax cluttering
+        x_opt = self.optim_result.x_opt
+        # Define footer first line
+        footer_first_line = "Optimum values:"
+        # Get strings per params
+        params_strs = ["{0}={1:.2f}".format(p_name,p_val) for p_name,p_val in x_opt.items()]
+        # Join strings per param
+        all_params_str = ", ".join(params_strs)
+        # Join all lines
+        lines = [footer_first_line,all_params_str]
+        footer = "\n".join(lines)
+        return footer
