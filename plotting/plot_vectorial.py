@@ -113,8 +113,12 @@ class VectorialPlotter():
         footer_first_line = "Optimum values:"
         # Get strings per params
         params_strs = ["{0}={1:.2f}".format(p_name,p_val) for p_name,p_val in x_opt.items()]
-        # Join strings per param
-        all_params_str = ", ".join(params_strs)
+        # Divide the params in chunks to have many short lines in the plot instead of one long one
+        group_size = 3
+        params_groups_raw_strs = [params_strs[i:i + group_size] for i in range(0, len(params_strs), group_size)]
+        params_groups_strs =  [", ".join(group_strs) for group_strs in params_groups_raw_strs]
+        # Join all groups strs
+        all_params_str = "\n".join(params_groups_strs)
         # Join all lines
         lines = [footer_first_line,all_params_str]
         footer = "\n".join(lines)
