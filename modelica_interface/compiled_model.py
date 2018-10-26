@@ -46,46 +46,25 @@ class CompiledModelicaModel():
         self.xml_tree.write(self.xml_file_path)
 
     # Other
-    def simulate(self, dest_csv_path, flags=""):
-        # Get folder for binary
-        binary_folder_path = os.path.dirname(self.binary_file_path)
-        # Define command to be called
-        binary_args = "-r={0}".format(dest_csv_path)
-        cmd = "{0} {1} {2}".format(self.binary_file_path, binary_args, flags)
-        # Execute binary with args
-        output = files_aux.callCMDStringInPath(cmd, binary_folder_path)
-        # Parse log
-        output_decoded = output.decode("UTF-8")
-        # Create simulation results instance
-        simu_results = simu_run_info.SimulationResults(dest_csv_path, self.model_name, self.binary_file_path,
-                                                       output_decoded)
+    def simulate(self, dest_csv_path, params_vals_dict=None, flags=""):
+        # Set flags
+        file_output_flag = "-r={0}".format(dest_csv_path)
+        flags = [file_output_flag]
+        # Call command
+        output = self._BaseSimulate(flags, params_vals_dict)
+        # Parse output to get results
+        simu_results = simu_run_info.SimulationResults(dest_csv_path, self.model_name, self.binary_file_path, output)
         return simu_results
 
     def quickSimulate(self, var_name, params_vals_dict=None):
-        # Get folder for binary
-        binary_folder_path = os.path.dirname(self.binary_file_path)
-        # Define file that will override parameters start value
-        if params_vals_dict:
-            override_str = overrrideStringFromParamsDict(params_vals_dict)
-            # Write str to disk
-            override_file_name = "override.txt"
-            override_file_path = os.path.join(binary_folder_path, override_file_name)
-            files_aux.writeStrToFile(override_str, override_file_path)
-            override_flag = "-overrideFile={0}".format(override_file_name)
-        else:
-            override_flag = ""
-        # Define command to be called
+        # Set flags
         output_flag = "-output {0}".format(var_name)
         minimal_output_flag = "-lv=-LOG_SUCCESS"
-        flags_list = [output_flag, override_flag, minimal_output_flag]
-        flags_str = " ".join(flags_list)
-        cmd = "{0} {1}".format(self.binary_file_path, flags_str)
-        # Execute binary with args
-        output = files_aux.callCMDStringInPath(cmd, binary_folder_path)
-        # Decode stdout
-        output_decoded = output.decode("UTF-8")
+        flags = [output_flag, minimal_output_flag]
+        # Call command
+        output = self._BaseSimulate(flags, params_vals_dict)
         # Parse output to get results
-        var_output_str = output_decoded.split(",")[1]
+        var_output_str = output.split(",")[1]
         var_val_str = var_output_str.split("=")[1]
         var_val = float(var_val_str)
         return var_val
@@ -97,6 +76,34 @@ class CompiledModelicaModel():
         self.default_xml_tree = copy.deepcopy(self.xml_tree)
         # Write XML to disk
         self.xml_tree.write(self.xml_file_path)
+
+    def _BaseSimulate(self, flags, params_vals_dict=None):
+        # Get folder for binary
+        binary_folder_path = os.path.dirname(self.binary_file_path)
+        # Define flag that will override parameters start value
+        override_flag = self.overrideFlagFromParamsVals(binary_folder_path, params_vals_dict)
+        # Add override flag to other flags
+        all_flags = flags + [override_flag]
+        # Define command to be called
+        flags_str = " ".join(all_flags)
+        cmd = "{0} {1}".format(self.binary_file_path, flags_str)
+        # Execute binary with args
+        output = files_aux.callCMDStringInPath(cmd, binary_folder_path)
+        # Decode stdout
+        output_decoded = output.decode("UTF-8")
+        return output_decoded
+
+    def overrideFlagFromParamsVals(self, binary_folder_path, params_vals_dict):
+        if params_vals_dict:
+            override_str = overrrideStringFromParamsDict(params_vals_dict)
+            # Write str to disk
+            override_file_name = "override.txt"
+            override_file_path = os.path.join(binary_folder_path, override_file_name)
+            files_aux.writeStrToFile(override_str, override_file_path)
+            override_flag = "-overrideFile={0}".format(override_file_name)
+        else:
+            override_flag = ""
+        return override_flag
 
 
 # Auxs

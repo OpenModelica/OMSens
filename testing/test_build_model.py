@@ -82,7 +82,7 @@ class TestsBuildModel(unittest.TestCase):
         # Test that quick simulate with params values works
         params_vals = {"a":4, "b":1}
         x_quick_simu = compiled_model.quickSimulate("x", params_vals)
-        # We set the derivative slope as 0 so x should be a constant 1
+        # Check return value
         if not (x_quick_simu == 5):
             error_msg = "The parameter was not changed correctly"
             self.fail(error_msg)
@@ -109,6 +109,17 @@ class TestsBuildModel(unittest.TestCase):
         #   should not change the value for subsequent simulations
         if not numpy.isclose(x_last,0):
             error_msg = "The parameter default was modified"
+            self.fail(error_msg)
+        # Test that simulate changes parameters as args correctly
+        params_vals = {"a":4, "b":1}
+        simulation_path_3 = os.path.join(self._temp_dir, "simu_3.csv")
+        simu_results_3 = compiled_model.simulate(simulation_path_3, params_vals)
+        df_simu_3 = pandas.read_csv(simulation_path_3)
+        df_simu_3_last_row = df_simu_3.iloc[-1]
+        x_last_3 = df_simu_3_last_row["x"]
+        # Check value
+        if not numpy.isclose(x_last_3,5):
+            error_msg = "The parameter was not changed correctly"
             self.fail(error_msg)
 
 
