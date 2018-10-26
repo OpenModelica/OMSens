@@ -91,8 +91,8 @@ class VectorialPlotter():
     def plotSetupSpecs(self, extra_ticks):
         # Get the info for the plot setup specs
         title, subtitle, footer = ("","","") # empty for now
-        x_label = self.optim_result.variable_name
-        y_label = "Time"
+        x_label = "Time"
+        y_label = self.optim_result.variable_name
         # Initialize the plot setup specs
         setup_specs = plot_specs.PlotSetupSpecs(
             title       = title,

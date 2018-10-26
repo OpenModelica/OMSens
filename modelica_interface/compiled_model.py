@@ -46,10 +46,10 @@ class CompiledModelicaModel():
         self.xml_tree.write(self.xml_file_path)
 
     # Other
-    def simulate(self, dest_csv_path, params_vals_dict=None, flags=""):
+    def simulate(self, dest_csv_path, params_vals_dict=None, optional_flags=""):
         # Set flags
         file_output_flag = "-r={0}".format(dest_csv_path)
-        flags = [file_output_flag]
+        flags = [file_output_flag, optional_flags]
         # Call command
         output = self._BaseSimulate(flags, params_vals_dict)
         # Parse output to get results

@@ -70,14 +70,14 @@ def analyzeFromJSON(dest_folder_path, json_file_path):
     # Simulate model for x0
     x0_csv_name = "x0_run.csv"
     x0_csv_path = os.path.join(model_folder_path,x0_csv_name)
-    x0_simu_result = compiled_model.simulate(x0_csv_path)
+    x0_simu_result = compiled_model.simulate(x0_csv_path, params_vals_dict=optim_result.x0)
     # Simulate model for x_opt
-    x_opt_csv_name = "x0_run.csv"
+    x_opt_csv_name = "x_opt_run.csv"
     x_opt_csv_path = os.path.join(model_folder_path,x_opt_csv_name)
-    x_opt_simu_result = compiled_model.simulate(x_opt_csv_path)
+    x_opt_simu_result = compiled_model.simulate(x_opt_csv_path, params_vals_dict=optim_result.x_opt)
     # Read df from CSVs
     df_x0_run = pandas.read_csv(x0_csv_path)
-    df_x_opt_run = pandas.read_csv(x0_csv_path)
+    df_x_opt_run = pandas.read_csv(x_opt_csv_path)
     # Initialize plotter
     vect_plotter = plot_vect_f.VectorialPlotter(optim_result, df_x0_run, df_x_opt_run)
     # Plot in folder
