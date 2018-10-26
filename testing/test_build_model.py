@@ -93,6 +93,23 @@ class TestsBuildModel(unittest.TestCase):
         if not (x_quick_simu == 1):
             error_msg = "The parameter was not changed correctly"
             self.fail(error_msg)
+        # Test that the parameters change inside a quickSimulate don't change the parameter on the model for
+        #   subsequent simulations
+        param_val = compiled_model.parameterValue("a")
+        if not param_val == -1:
+            error_msg = "The parameter default value was modified."
+            self.fail(error_msg)
+        # Test that a simulate after changing parameters as arguments inside quickSimulate works correctly
+        simulation_path_2 = os.path.join(self._temp_dir, "simu_2.csv")
+        simu_results_2 = compiled_model.simulate(simulation_path_2)
+        df_simu_2 = pandas.read_csv(simulation_path_2)
+        df_simu_2_last_row = df_simu_2.iloc[-1]
+        x_last = df_simu_2_last_row["x"]
+        # The parameters changes included in the simulation (and not using "setParameterValue" or similar)
+        #   should not change the value for subsequent simulations
+        if not numpy.isclose(x_last,0):
+            error_msg = "The parameter default was modified"
+            self.fail(error_msg)
 
 
 # Auxs
