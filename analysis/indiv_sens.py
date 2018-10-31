@@ -41,7 +41,8 @@ class ParametersIsolatedPerturbator():
         # Run STD run
         std_run_name = "std_run.csv"
         std_run_path = os.path.join(runs_folder_path, std_run_name)
-        std_run_results = self.compiled_model.simulate(std_run_path, "-noEventEmit")
+        flags = "-noEventEmit"
+        std_run_results = self.compiled_model.simulate(std_run_path, optional_flags=flags)
         # Make dir for perturbed runs
         perturbed_runs_folder_name = "perturbed"
         perturbed_runs_folder_path = os.path.join(runs_folder_path, perturbed_runs_folder_name)
@@ -58,7 +59,8 @@ class ParametersIsolatedPerturbator():
             # Run the simulation
             simu_csv_name = "run_{0}.csv".format(i)
             simu_csv_path = os.path.join(perturbed_runs_folder_path, simu_csv_name)
-            simu_results = self.compiled_model.simulate(simu_csv_path, "-noEventEmit")
+            flags = "-noEventEmit"
+            simu_results = self.compiled_model.simulate(simu_csv_path, optional_flags=flags)
             # Return the parameter to its original value
             self.compiled_model.setParameterStartValue(param_name, param_default_val)
             # Save the simulation results for this perturbed parameter
