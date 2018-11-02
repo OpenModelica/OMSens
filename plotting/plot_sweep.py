@@ -141,7 +141,7 @@ class SweepPlotter():
         # Define conventions
         x_var      = "time"
         linewidth  = 1
-        linestyle  = "-"
+        linestyle  = ":"
         markersize = 0
         marker     = 'o'
         label      = "STD_RUN"
