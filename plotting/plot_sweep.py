@@ -80,13 +80,14 @@ class SweepPlotter():
     def plotSetupSpecsForSweep(self, var_name, extra_ticks):
         # Get the info for the plot setup specs
         title, subtitle, footer = self.sweepingPlotTexts(self.sweep_results, var_name)
-        y_label = "Time"
+        x_label = "Time"
+        y_label = ""
         # Initialize the plot setup specs
         setup_specs = plot_specs.PlotSetupSpecs(
             title       = title,
             subtitle    = subtitle,
             footer      = footer,
-            x_label     = var_name,
+            x_label     = x_label,
             y_label     = y_label ,
             extra_ticks = extra_ticks
         )
