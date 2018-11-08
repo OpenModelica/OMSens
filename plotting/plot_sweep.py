@@ -25,10 +25,6 @@ class SweepPlotter():
 
         # Make a list of all lines specs
         lines_specs = []
-        # Define standard run line specs that will be different than the other simulations results
-        std_run_line_specs = self.standardRunLineSpecs(var_name)
-        # Add it to the lines specs
-        lines_specs.append(std_run_line_specs)
 
         # Define what colors to use for lines that aren't std run
         colors_iter = colorsForNumberOfRuns(len(self.sweep_results.perturbed_runs))
@@ -37,6 +33,11 @@ class SweepPlotter():
             # Initialize line spec for perturbed run
             pert_run_line_specs = self.lineSpecForPerturbedRun(colors_iter, sweep_iter_results, var_name)
             lines_specs.append(pert_run_line_specs)
+
+        # Define standard run line specs that will be different than the other simulations results
+        std_run_line_specs = self.standardRunLineSpecs(var_name)
+        # Add it to the lines specs
+        lines_specs.append(std_run_line_specs)
 
         # Initialize plot_specs
         sweep_plot_specs = plot_specs.PlotSpecs(setup_specs, lines_specs)
@@ -141,7 +142,7 @@ class SweepPlotter():
         df_simu = pandas.read_csv(std_run_specs.output_path)
         # Define conventions
         x_var      = "time"
-        linewidth  = 1
+        linewidth  = 4
         linestyle  = ":"
         markersize = 0
         marker     = 'o'
