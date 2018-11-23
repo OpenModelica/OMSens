@@ -1,6 +1,7 @@
 c ********************************************************************
 c     This is the file curvif.for using only function values
-c  Ale: Según Hugo: El paquete completo incluye los archivos CURVIf (éste), CURVIg, y CURVIh según se tengan solamente valores de la función, o además gradientes y hessianos respectivamente
+c     El paquete completo incluye los archivos CURVIf (éste), CURVIg, y CURVIh según se tengan solamente valores de la función, 
+c     o además gradientes y hessianos respectivamente
 c ---------------------------------------------------------------------
       subroutine curvif(fu, n, x0, fopt, eps, ibound,
      *                  jbound, bl, bu, wa, nfu, nit, idiff, kmax, ier)
@@ -47,8 +48,8 @@ c
 c       nfu:  maximum number of function evaluations. If equal to
 c             zero, the default value of 5000*n is used.
 c
-c     idiff:  Choose forward or central differences.  Forward
-c            differences require fewer function evaluations and
+c     idiff:  Choose forward or central differences. Forward
+c             differences require fewer function evaluations and
 c             should be favored unless the problem is exceedingly
 c             difficult.
 c             idiff = 1  forward differences
