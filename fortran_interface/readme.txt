@@ -4,6 +4,6 @@ Steps for now:
 2) Using:
    a) Curvi compiled files from prev point(s)
    b) Curvi wrapper f90 file
-   c) Curvi wrapper pyf file touched by me
+   c) Curvi wrapper pyf modified by Ale
    Run:
     f2py -c -I. Curvif.o Rutf.o Rut.o -m curvif_simplified curvif_simplified.pyf Curvif_simplified.f90
