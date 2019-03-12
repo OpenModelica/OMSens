@@ -1,6 +1,5 @@
 # Std
-import os
-import numpy
+import six
 import pandas
 
 # Mine
@@ -28,16 +27,54 @@ class LinesPlotter():
 
 
 def plotLineSpec(line_spec):
-    plt.plot(line_spec.df[line_spec.x_var],
-             line_spec.df[line_spec.y_var],
-             linewidth=line_spec.linewidth,
-             linestyle=line_spec.linestyle,
-             markersize=line_spec.markersize,
-             marker=line_spec.marker,
-             label=line_spec.label,
-             color=line_spec.color
-    )
+    x_data          = xDataForLineSpec(line_spec)
+    y_data          = line_spec.df[line_spec.y_var]
+    linewidth       = line_spec.linewidth
+    linestyle       = line_spec.linestyle
+    markersize      = line_spec.markersize
+    marker          = line_spec.marker
+    label           = line_spec.label
+    color           = line_spec.color
 
+    # Call plotting function
+    plt.plot(x_data, y_data,
+             linewidth = linewidth,
+             linestyle = linestyle,
+             markersize = markersize,
+             marker = marker,
+             label = label,
+             color = color,
+             )
+
+def xDataForLineSpec(line_spec):
+    # Check if its a column or the index
+    if line_spec.x_var:
+        x_data = line_spec.df[line_spec.x_var]
+    else:
+        # If no column is included, return the index
+        index  = line_spec.df.index
+        x_data = tryTimestampOrNumberForList(index)
+    return x_data
+
+def tryTimestampOrNumberForList(orig_index):
+    # There's no way in python to ask if an object is a number, so we just try
+    # to use it as a timestamp and if it fails then it's a number
+    try:
+        # For now, we just assume that if it's not an int, it's a timestamp that knows to respond to "year"
+        final_index = [x.year for x in orig_index]
+    except AttributeError:
+        # If it can't respond to year, ask if it's a string
+        # Get the first cell
+        first_cell = orig_index[0]
+        if isinstance(first_cell, six.string_types):
+            # If it's a string, assume it's a timestamp and convert it to pandas datetime
+            orig_index_datetime = pandas.to_datetime(orig_index)
+            # Get the year from the timestamp
+            final_index = [x.year for x in orig_index_datetime]
+        else:
+            # Assume it's a number and matplotlib can plot it
+            final_index = orig_index
+    return final_index
 
 def setupPlot(setup_specs):
     plt.style.use('fivethirtyeight')
