@@ -41,7 +41,7 @@ class VectorialPlotter():
     def perturbedRunSpecs(self):
         # Prepare info
         df         = self.df_x_opt_run
-        x_var      = "time"
+        x_var      = ""
         y_var      = self.optim_result.variable_name
         linewidth  = 1
         linestyle  = "-"
@@ -66,7 +66,7 @@ class VectorialPlotter():
     def standardRunLineSpecs(self):
         # Prepare info
         df         = self.df_x0_run
-        x_var      = "time"
+        x_var      = ""
         y_var      = self.optim_result.variable_name
         linewidth  = 1
         linestyle  = "-"
