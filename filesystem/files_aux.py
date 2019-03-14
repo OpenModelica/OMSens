@@ -74,13 +74,13 @@ def writeStrToFile(str_, file_path):
 
 def callCMDStringInPath(command, path):
     # shell=True
-    # process = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True, cwd=path)
+    process = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True, cwd=path)
     # shell=False
-    # Make list of strings splitting by whitespaces
-    args = command.split(" ")
-    # Remove invalid args
-    args_cleaned = [x for x in args if x != ""]
-    process = subprocess.Popen(args_cleaned, stdout=subprocess.PIPE, shell=False, cwd=path)
+    # # Make list of strings splitting by whitespaces
+    # args = command.split(" ")
+    # # Remove invalid args
+    # args_cleaned = [x for x in args if x != ""]
+    # process = subprocess.Popen(args_cleaned, stdout=subprocess.PIPE, shell=False, cwd=path)
     output = process.communicate()[0]
     return output
 
