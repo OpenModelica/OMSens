@@ -42,8 +42,10 @@ class ModelicaModelBuilder():
 
 
     def mosScriptString(self):
+        # There should be no backslashes (\) in paths, even in Windows
+        file_path_wo_bslashes = self.model_file_path.replace("\\", "/")
         # This shouldn't be the responsibility of the builder, but for now we leave it here
-        mos_script_str = self.mos_script_skeleton.format(model_file_path   = self.model_file_path,
+        mos_script_str = self.mos_script_skeleton.format(model_file_path   = file_path_wo_bslashes,
                                                          model_name        = self.model_name,
                                                          startTime         = self.start_time,
                                                          numberOfIntervals = self.number_of_intervals,

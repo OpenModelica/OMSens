@@ -30,7 +30,9 @@ def makeDirFromCurrentTimestamp(dest_path):
     if not os.path.exists(dest_path):
         os.makedirs(dest_path)
     dateAndTime = datetime.now()
-    new_folder_path = os.path.join(dest_path, dateAndTime.strftime('%Y-%m-%d/%H_%M_%S'))
+    date = dateAndTime.strftime('%Y-%m-%d')
+    time = dateAndTime.strftime('%H_%M_%S')
+    new_folder_path = os.path.join(dest_path, date, time)
     os.makedirs(new_folder_path)
     return new_folder_path
 
