@@ -62,7 +62,7 @@ def analyzeFromJSON(dest_folder_path, json_file_path):
     plots_folder_path = os.path.join(dest_folder_path,plots_folder_name)
     files_aux.makeFolderWithPath(plots_folder_path)
     # Make sub-folder for new model
-    model_folder_name = "aux"
+    model_folder_name = "aux_folder" # in Windows we can't use "aux" for folder names
     model_folder_path = os.path.join(plots_folder_path,model_folder_name)
     files_aux.makeFolderWithPath(model_folder_path)
     # Build model
