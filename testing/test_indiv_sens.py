@@ -21,7 +21,9 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
     def setUp(self):
         #Create tempdir and save its path
         self._temp_dir = tempfile.mkdtemp()
-        self._temp_files = [] #each test case can create individual files
+        # each test case can create individual files
+        self._temp_files = []
+
     def tearDown(self):
         pass
         shutil.rmtree(self._temp_dir)

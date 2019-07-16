@@ -76,9 +76,11 @@ def sweepAndPlotFromJSON(dest_folder_path, json_file_path):
 # Auxs
 def getCommandLineArguments():
     parser = argparse.ArgumentParser(description=script_description)
-    parser.add_argument('test_file_path', metavar='test_file_path',
+    parser.add_argument('test_file_path',
+                        metavar='test_file_path',
                         help='The path to the file with the experiment specifications.')
-    parser.add_argument('--dest_folder_path', metavar='dest_folder_path',
+    parser.add_argument('--dest_folder_path',
+                        metavar='dest_folder_path',
                         help='Optional: The destination folder where to write the sweep files')
     args = parser.parse_args()
     return args.test_file_path, args.dest_folder_path

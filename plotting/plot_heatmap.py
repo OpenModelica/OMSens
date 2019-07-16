@@ -17,6 +17,7 @@ logger = logging.getLogger("--Heatmap Plotter--") #un logger especifico para est
 import world3_specific.standard_run_params_defaults
 import filesystem.files_aux
 
+
 class Heatmap:
     # Instance functions
     def __init__(self, df_matrix, linthresh=1.0):
@@ -60,9 +61,11 @@ class Heatmap:
         heatmap_plot = ax.pcolor(self.df_matrix_heatmap, cmap=self.colormap, vmin=self.colorbar_min,
                                  vmax=self.colorbar_max)
         # Colorbar from limits
-        increment = (self.colorbar_max - self.colorbar_min) / 20  # 20 ticks
-        colorbar_ticks = [self.colorbar_min + i * increment for i in range(0,
-                                                                           21)]  # range(0,21) because range doesn't include the upper limit in the range and we have 20 ticks
+        # 20 ticks
+        increment = (self.colorbar_max - self.colorbar_min) / 20
+
+        # range(0,21) because range doesn't include the upper limit in the range and we have 20 ticks
+        colorbar_ticks = [self.colorbar_min + i * increment for i in range(0, 21)]
         cbar = fig.colorbar(heatmap_plot, ticks=colorbar_ticks)
         # Change font size in color bar
         cbar.ax.tick_params(labelsize=10)
@@ -125,15 +128,19 @@ class Heatmap:
     def heatmapDataFrame(self):
         return self.df_matrix_heatmap
 
+
 def initializeFigAndAx(data, rows_names, cols_names):
     # Plot it out
     fig, ax = plt.subplots()
     # Set xlim and ylim manually because matplotlib has an internal bug that adds empty columns and rows because it
     # thinks (wrongly) that there are n+1 rows and m+1 columns
-    ax.set_ylim(0,len(data.index))
-    ax.set_xlim(0,len(data.columns))
+    ax.set_ylim(0, len(data.index))
+    ax.set_xlim(0, len(data.columns))
+
     # Format
-    fig.set_size_inches(10, 11)
+    # fig.set_size_inches(10, 11)
+    fig.set_size_inches(5, 5)
+
     # put the major ticks at the middle of each cell
     ax.set_yticks(np.arange(data.shape[0]) + 0.5, minor=False)
     ax.set_xticks(np.arange(data.shape[1]) + 0.5, minor=False)
