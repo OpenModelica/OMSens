@@ -1,28 +1,30 @@
+import sys
+sys.path.append('/home/omsens/Documents/OMSens/')
+
 # STD
 import argparse
 import json
 import os
-import sys
 import logging
+
+logger = logging.getLogger("-Individual Sens Calculator-")
+script_description = "Calculate variables sensitivities to parameters when perturbed in isolation and plot the results"
+logger.info("INDIVIDUAL SENS CALCULATOR")
 
 # Ours
 import analysis.indiv_sens
 import filesystem.files_aux as files_aux
-import mos_writer.calculate_sensitivities_mos_writer as sens_mos_writer
-import modelica_interface.run_omc as run_omc
 import settings.gral_settings
-
-logger = logging.getLogger("-Individual Sens Calculator-")
-script_description = "Calculate variables sensitivities to parameters when perturbed in isolation"
 
 
 def main():
+
     # Logging settings
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
     # Get arguments from command line call
     json_file_path, dest_folder_path_arg = getCommandLineArguments()
     # Args
-    dest_folder_path = finalDestFolderPath( dest_folder_path_arg)
+    dest_folder_path = finalDestFolderPath(dest_folder_path_arg)
     perturbateAndAnalyzeFromJsonToPath(json_file_path, dest_folder_path)
     return 0
 
@@ -122,6 +124,7 @@ def csvPathAndParameterNameForFolderAndParametersInfo(dest_folder_path, paramete
         csv_path = os.path.join(dest_folder_path, csv_name)
         perturbed_csvs_path_and_info_pairs.append((csv_path, param_info))
     return perturbed_csvs_path_and_info_pairs
+
 
 def getCommandLineArguments():
     parser = argparse.ArgumentParser(description=script_description)

@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 from matplotlib.colors import SymLogNorm  # for logarithmic scale
 
-logger = logging.getLogger("--Heatmap Plotter--") #un logger especifico para este modulo
+logger = logging.getLogger("--Heatmap Plotter--")
 
 # Mine
 import world3_specific.standard_run_params_defaults

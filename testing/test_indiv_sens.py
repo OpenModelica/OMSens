@@ -12,7 +12,7 @@ import numpy
 # Mine
 import analysis.indiv_sens as indiv_sens
 import filesystem.files_aux as files_aux
-import individual_sens_calculator
+from callable_methods import individual_sens_calculator
 import running.simulation_run_info as simu_run_info
 
 

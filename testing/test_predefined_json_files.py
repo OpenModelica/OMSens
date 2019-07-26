@@ -1,6 +1,5 @@
 # Standard
 import os
-import re
 import shutil
 import tempfile
 import unittest
@@ -8,8 +7,7 @@ import unittest
 import pytest
 
 import filesystem.files_aux
-import multiparam_sweep
-import individual_sens_calculator
+from callable_methods import multiparam_sweep, individual_sens_calculator
 
 
 class TestsPredefinedJSONFiles(unittest.TestCase):
@@ -54,7 +52,7 @@ class TestsPredefinedJSONFiles(unittest.TestCase):
             exp_file_path = os.path.join(exp_files_folder_path, exp_file_name)
             if os.path.isfile(exp_file_path):
                 try:
-                    multiparam_sweep.sweepAndPlotFromJSON(self._temp_dir,exp_file_path)
+                    multiparam_sweep.sweepAndPlotFromJSON(self._temp_dir, exp_file_path)
                     # Remove every file so the next test has the folder clean
                     regex = '.*'
                     filesystem.files_aux.removeFilesWithRegexAndPath(regex, self._temp_dir)

@@ -1,6 +1,8 @@
+import sys
+sys.path.append('/home/omsens/Documents/OMSens/')
+
 # Std
 import os
-import sys
 import argparse
 import logging  # instead of prints
 import json
@@ -13,7 +15,7 @@ import modelica_interface.build_model as build_model
 import plotting.plot_vectorial as plot_vect_f
 
 logger = logging.getLogger("-Vectorial Sens Calculator-")
-script_description = "Find parameters values that maximize or minimize a variable"
+script_description = "Find parameters values that maximize or minimize a variable and plot the results"
 
 
 # Mine
@@ -111,6 +113,7 @@ def getCommandLineArguments():
                         help='Optional: The destination folder where to write the sweep files')
     args = parser.parse_args()
     return args.test_file_path, args.dest_folder_path
+
 
 # FIRST EXECUTABLE CODE:
 if __name__ == "__main__":

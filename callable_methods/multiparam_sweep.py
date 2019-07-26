@@ -1,6 +1,8 @@
+import sys
+sys.path.append('/home/omsens/Documents/OMSens/')
+
 # Std
 import os
-import sys
 import argparse
 import logging  # instead of prints
 import json
