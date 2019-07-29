@@ -1,3 +1,6 @@
+import sys
+sys.path.append('/home/omsens/Documents/OMSens/')
+
 import matplotlib
 matplotlib.use('Agg')
 import numpy as np
@@ -50,6 +53,7 @@ def main():
     # Set number of bins
     binwidth = 0.1
     bins = np.linspace(np.round(min(vals), 2), np.round(max(vals), 2), 1 / binwidth)
+
     # with open('/home/omsens/Documents/OMSens/callable_methods/zzz.txt', 'w+') as zzz:
     #     # zzz.write(str(bins))
     #     zzz.write(str(1/binwidth) + str(vals))
@@ -61,14 +65,6 @@ def main():
     plt.xlabel(parameter)
     plt.ylabel("Frequency")
     plt.savefig(filename_path)
-
-
-def set_bins(vals):
-    mn = min(vals)
-    mx = max(vals)
-    if mx < 1:
-        return [i for i in range(0, 1, 0.1)]
-    return [i for i in range(0, round(mx, 1))]
 
 
 if __name__ == "__main__":
