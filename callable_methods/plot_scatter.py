@@ -11,8 +11,8 @@ import logging
 import argparse
 import pandas as pd
 
-logger = logging.getLogger("--Histogram Plotter--")
-script_description = "Hst plotter"
+logger = logging.getLogger("--Scatterplot Plotter--")
+script_description = "Scatter plt"
 
 
 def main():
@@ -28,7 +28,7 @@ def main():
                         help='Filename path for output png file')
     parser.add_argument('--parameter',
                         metavar='parameter',
-                        help='Parameter for which to make histogram of values at specified time')
+                        help='Parameter for which to make scatter of values at specified time on the different runs')
     parser.add_argument('--time_value',
                         metavar='time_value',
                         help='Specified time of simulation in which to measure value of specified parameter')
@@ -42,26 +42,21 @@ def main():
     runs_path = args.runs_path + "/" + "perturbed/"
     time_value = args.time_value
 
-    vals = []
+    # Get data (1. get parameter initial value; 2. get parameter value at time t_obs)
+    initial_vals = []
+    final_vals   = []
     for root, directory, files in os.walk(runs_path):
         for filename in files:
             z = pd.read_csv(runs_path + filename, index_col=False).dropna()
 
             # TODO: t_obs == t_final
-            vals.append(float(z[parameter].tolist()[-1]))
-    df = pd.DataFrame({parameter: vals})
-    vals = df[parameter].values
+            initial_val = float(z[parameter].tolist()[0])
+            initial_vals.append(initial_val)
+            final_val = float(z[parameter].tolist()[-1])
+            final_vals.append(final_val)
 
-    # Set number of bins
-    binwidth = 0.1
-    bins = np.linspace(np.round(min(vals), 2), np.round(max(vals), 2), 1 / binwidth)
-
-    # Generate histogram
-    fig = plt.hist(vals, bins=bins)
-
-    plt.title("Time: " + time_value + " & " + "Param: " + parameter)
-    plt.xlabel(parameter)
-    plt.ylabel("Frequency")
+    # Generate scatter plot
+    plt.scatter(initial_vals, final_vals, c='b', alpha=0.5)
     plt.savefig(filename_path)
 
 
