@@ -51,7 +51,7 @@ def sweepAndPlotFromJSON(dest_folder_path, json_file_path):
     # Initialize sweeper
     sweep_runner = running.sweep.ParametersSweeper(**sweep_kwargs)
     # Run sweep
-    sweep_results = sweep_runner.runSweep(dest_folder_path)
+    sweep_results, perturbed_param_run_id_map = sweep_runner.runSweep(dest_folder_path)
     # Initialize sweep results plotter
     sweep_plotter = plot_sweep.SweepPlotter(sweep_results)
     # Make folder for plots
@@ -62,11 +62,12 @@ def sweepAndPlotFromJSON(dest_folder_path, json_file_path):
     for var_name in full_json["vars_to_analyze"]:
         plot_path = sweep_plotter.plotInFolder(var_name, plot_folder_path)
         vars_plots_paths[var_name] = plot_path
+
     # Add sweep plots to paths dict
-    paths_dict = \
-        {
-            "sweep_plots": vars_plots_paths,
-        }
+    paths_dict = {}
+    paths_dict["sweep_plots"] = vars_plots_paths
+    paths_dict["perturbed_param_run_id_map"] = perturbed_param_run_id_map
+
     # Write paths dict as json
     paths_json_str = json.dumps(paths_dict, sort_keys=True, indent=2)
     paths_json_file_name = "result.json"
@@ -86,6 +87,7 @@ def getCommandLineArguments():
                         help='Optional: The destination folder where to write the sweep files')
     args = parser.parse_args()
     return args.test_file_path, args.dest_folder_path
+
 
 # FIRST EXECUTABLE CODE:
 if __name__ == "__main__":

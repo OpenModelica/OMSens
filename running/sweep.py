@@ -10,7 +10,7 @@ import running.simulation_run_info as simu_run_info
 
 class ParametersSweeper():
     def __init__(self, model_name, model_file_path, start_time, stop_time, perturbation_info_per_param, fixed_params,
-                 build_folder_path, number_of_intervals = 300):
+                 build_folder_path, number_of_intervals=300):
         # Save args
         self.model_name = model_name
         self.model_file_path = model_file_path
@@ -53,15 +53,24 @@ class ParametersSweeper():
         # Run the different values combinations
         sweep_iterations = []
         perturbed_params_info = list(self.runsPerturbedParameters())
+
+        perturbed_param_run_id_map = {}
         for i in range(len(perturbed_params_info)):
+            perturbed_param_run_id_str = ""
             swept_params_info = perturbed_params_info[i]
             # Perturb the parameters for this iteration
             for perturbed_param_info in swept_params_info:
+                # Update parameter perturbation
                 # Disaggregate param info
                 param_name = perturbed_param_info.name
                 new_val    = perturbed_param_info.new_val
                 # Change the value in the model
                 self.compiled_model.setParameterStartValue(param_name, new_val)
+                # Append new value and enw name
+                perturbed_param_run_id_str += param_name + ":" + str(round(new_val, 3)) + ","
+            perturbed_param_run_id_str = perturbed_param_run_id_str[:-1]
+            perturbed_param_run_id_map[perturbed_param_run_id_str] = i
+
             # Run the simulation
             simu_csv_name = "run_{0}.csv".format(i)
             simu_csv_path = os.path.join(perturbed_runs_folder_path, simu_csv_name)
@@ -74,7 +83,7 @@ class ParametersSweeper():
         swept_params_names = [x["name"] for x in self.perturbation_info_per_param]
         sweep_results = ParametersSweepResults(self.model_name, swept_params_names, self.fixed_params, std_run_results,
                                                sweep_iterations, )
-        return sweep_results
+        return sweep_results, perturbed_param_run_id_map
 
     def valuesPerParameter(self):
         return self.sweep_values_per_param
