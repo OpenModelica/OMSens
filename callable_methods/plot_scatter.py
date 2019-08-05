@@ -20,6 +20,9 @@ script_description = "Scatter plt"
 
 def main():
 
+    # with open('/home/omsens/Documents/OMSens/callable_methods/test.txt', 'w+') as f:
+    #     f.write("halo")
+
     # 1. Get parameters for plot
     #  result filename path (where to go and fetch the PNG)
     #  input csv file
@@ -33,7 +36,7 @@ def main():
                         metavar='time_value',
                         help='Specified time of simulation in which to measure value of specified parameter')
     parser.add_argument('--results_path',
-                        metavar='runs_path',
+                        metavar='results_paths',
                         help='Results path directory (from where to get simulation results)')
     parser.add_argument('--variable',
                         metavar='variable',
