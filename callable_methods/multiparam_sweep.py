@@ -6,6 +6,7 @@ import os
 import argparse
 import logging  # instead of prints
 import json
+import pandas as pd
 import filesystem.files_aux as files_aux
 
 # Mine
@@ -57,17 +58,29 @@ def sweepAndPlotFromJSON(dest_folder_path, json_file_path):
     # Make folder for plots
     plot_folder_path = os.path.join(dest_folder_path, "plots")
     files_aux.makeFolderWithPath(plot_folder_path)
+
     # Plot sweep for each var
     vars_plots_paths = {}
     for var_name in full_json["vars_to_analyze"]:
         plot_path = sweep_plotter.plotInFolder(var_name, plot_folder_path)
         vars_plots_paths[var_name] = plot_path
 
-    # Add sweep plots to paths dict
-    paths_dict = {}
-    paths_dict["sweep_plots"] = vars_plots_paths
-    paths_dict["perturbed_param_run_id_map"] = perturbed_param_run_id_map
+    # TODO: SAVE parameters & variables in 'parameters_run.csv' and 'variables.csv'
+    # params_df = None
+    # for param_comb, run_id in perturbed_param_run_id_map.items():
+    #     params = {v[0]: v[1] for v in [x.split(":") for x in param_comb.split(",")]}
+    #     params['run_id'] = run_id
+    #     df_row = pd.DataFrame(data=params)
+    #     if params_df is None:
+    #         params_df = df_row
+    #     else:
+    #         params_df.append(df_row)
+    # params_df.to_csv(dest_folder_path + '/' + 'parameters_run.csv', index=False)
 
+    # Add sweep plots to paths dict
+    paths_dict = {
+        "sweep_plots": vars_plots_paths
+    }
     # Write paths dict as json
     paths_json_str = json.dumps(paths_dict, sort_keys=True, indent=2)
     paths_json_file_name = "result.json"

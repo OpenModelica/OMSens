@@ -14,6 +14,9 @@ import pandas as pd
 logger = logging.getLogger("--Scatterplot Plotter--")
 script_description = "Scatter plt"
 
+# with open('/home/omsens/Documents/OMSens/callable_methods/test.txt', 'w+') as f:
+#     f.write(filename_path)
+
 
 def main():
 
@@ -45,6 +48,7 @@ def main():
     # Get data (1. get parameter initial value; 2. get parameter value at time t_obs)
     initial_vals = []
     final_vals   = []
+    run_ids      = []
     for root, directory, files in os.walk(runs_path):
         for filename in files:
             z = pd.read_csv(runs_path + filename, index_col=False).dropna()
@@ -55,8 +59,23 @@ def main():
             final_val = float(z[parameter].tolist()[-1])
             final_vals.append(final_val)
 
+            run_id = filename.split('/')[-1].replace('.csv', '').split('_')[1]
+            run_ids.append(run_id)
+
     # Generate scatter plot
+    plt.title("Variable initial vs. final state (all runs)")
     plt.scatter(initial_vals, final_vals, c='b', alpha=0.5)
+    for i, txt in enumerate(run_ids):
+        plt.annotate(txt,
+                     xy=(initial_vals[i], final_vals[i]),
+                     fontsize=8)
+    min_x_real = round(min(initial_vals), 3)
+    max_x_real = round(max(initial_vals), 3)
+    min_x = min_x_real - .05*(max_x_real-min_x_real)
+    max_x = max_x_real + .05*(max_x_real-min_x_real)
+    xticks = np.linspace(min_x, max_x, 10)
+    plt.xticks(xticks)
+    plt.xlim((min_x, max_x))
     plt.savefig(filename_path)
 
 
