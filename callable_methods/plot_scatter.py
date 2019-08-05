@@ -68,7 +68,12 @@ def plot_parameter(results_path, filename_path, runs_path, variable, parameter):
 
     # TODO: analyze what to do with *_init in parameters saved.
     # TODO: generate groups: each value in x axis corresponds to a different value of 'parameter' in the runs
+    #groups = params_run[['gamma', 'run_id']].groupby(by='gamma')#.agg(list).reset_index()
+    # groups.to_csv('/home/omsens/Documents/results_experiments/test.csv')
+    #groups.to_csv('/home/omsens/Documents/results_experiments/' + parameter + '.csv')
+
     params_run = params_run[params_run.run_id < 6]
+
     run_id_for_parameter = [int(x) for x in params_run['run_id'].tolist()]
 
     # Get data (1. get parameter initial value; 2. get parameter value at time t_obs)
