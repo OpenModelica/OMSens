@@ -25,11 +25,15 @@ def main():
     json_file_path, dest_folder_path_arg = getCommandLineArguments()
     # Args
     dest_folder_path = finalDestFolderPath(dest_folder_path_arg)
+
     perturbateAndAnalyzeFromJsonToPath(json_file_path, dest_folder_path)
     return 0
 
 
 def perturbateAndAnalyzeFromJsonToPath(json_file_path, dest_folder_path):
+
+    dest_folder_path += "/" + "results/"
+
     # Read JSON
     with open(json_file_path, 'r') as fp:
         full_json = json.load(fp)

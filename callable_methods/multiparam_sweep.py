@@ -33,7 +33,9 @@ def main():
     sweepAndPlotFromJSON(dest_folder_path, json_file_path)
 
 
-def sweepAndPlotFromJSON(dest_folder_path, json_file_path):
+def sweepAndPlotFromJSON(dest_folder_path_base, json_file_path):
+
+    dest_folder_path = dest_folder_path_base + "/" + "results/"
     with open(json_file_path, 'r') as fp:
         full_json = json.load(fp)
     # Prepare sweep init args
@@ -46,9 +48,10 @@ def sweepAndPlotFromJSON(dest_folder_path, json_file_path):
             "stop_time"                   : full_json["stop_time"],
             "perturbation_info_per_param" : full_json["parameters_to_sweep"],
             "fixed_params"                : full_json["fixed_params"],
-            "build_folder_path"           : dest_folder_path,
+            "build_folder_path"           : dest_folder_path
 
         }
+
     # Initialize sweeper
     sweep_runner = running.sweep.ParametersSweeper(**sweep_kwargs)
     # Run sweep
@@ -65,17 +68,27 @@ def sweepAndPlotFromJSON(dest_folder_path, json_file_path):
         plot_path = sweep_plotter.plotInFolder(var_name, plot_folder_path)
         vars_plots_paths[var_name] = plot_path
 
-    # TODO: SAVE parameters & variables in 'parameters_run.csv' and 'variables.csv'
-    # params_df = None
-    # for param_comb, run_id in perturbed_param_run_id_map.items():
-    #     params = {v[0]: v[1] for v in [x.split(":") for x in param_comb.split(",")]}
-    #     params['run_id'] = run_id
-    #     df_row = pd.DataFrame(data=params)
-    #     if params_df is None:
-    #         params_df = df_row
-    #     else:
-    #         params_df.append(df_row)
-    # params_df.to_csv(dest_folder_path + '/' + 'parameters_run.csv', index=False)
+    ######
+    # SAVE parameters in 'parameters_run.csv'
+    params_df = pd.DataFrame()
+    for param_comb, run_id in perturbed_param_run_id_map.items():
+        params = {v[0]: v[1] for v in [x.split(":") for x in param_comb.split(",")]}
+        params['run_id'] = run_id
+        df_row = pd.DataFrame(data=params, index=[0])
+
+        if params_df.shape[0] == 0:
+            params_df = df_row
+        else:
+            params_df = params_df.append(df_row)
+        params_df = params_df.reset_index().drop('index', 1)
+    params_df.to_csv(dest_folder_path + '/' + 'parameters_run.csv', index=False)
+
+    ######
+    # Save variables of model in 'variables.csv'
+    with open(dest_folder_path_base + '/' + 'model_info.json') as f:
+        model_info = json.load(f)
+        variables = model_info['aux_variables']
+        pd.DataFrame(columns=variables).to_csv(dest_folder_path + '/' + 'variables.csv', index=False)
 
     # Add sweep plots to paths dict
     paths_dict = {

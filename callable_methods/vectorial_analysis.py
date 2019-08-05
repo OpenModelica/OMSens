@@ -35,6 +35,9 @@ def main():
 
 
 def analyzeFromJSON(dest_folder_path, json_file_path):
+
+    dest_folder_path += "/" + "results/"
+
     with open(json_file_path, 'r') as fp:
         full_json = json.load(fp)
     # Prepare init args
