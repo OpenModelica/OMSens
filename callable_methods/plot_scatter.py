@@ -65,48 +65,39 @@ def main():
 def plot_parameter(results_path, filename_path, runs_path, variable, parameter):
 
     params_run = pd.read_csv(results_path + "/" + "results/parameters_run.csv", index_col=False)
-
-    # TODO: analyze what to do with *_init in parameters saved.
-    # TODO: generate groups: each value in x axis corresponds to a different value of 'parameter' in the runs
-    #groups = params_run[['gamma', 'run_id']].groupby(by='gamma')#.agg(list).reset_index()
-    # groups.to_csv('/home/omsens/Documents/results_experiments/test.csv')
-    #groups.to_csv('/home/omsens/Documents/results_experiments/' + parameter + '.csv')
-
-    params_run = params_run[params_run.run_id < 6]
-
-    run_id_for_parameter = [int(x) for x in params_run['run_id'].tolist()]
+    groups = params_run[[parameter, 'run_id']].groupby(by=parameter)['run_id'].apply(list).reset_index()
 
     # Get data (1. get parameter initial value; 2. get parameter value at time t_obs)
-    initial_vals = []
-    final_vals = []
+    parameter_vals = []
+    variable_final_vals = []
     run_ids = []
     for root, directory, files in os.walk(runs_path):
         for filename in files:
-            run_id = filename.split('/')[-1].replace('.csv', '').split('_')[1]
-            if int(run_id) in run_id_for_parameter:
-                z = pd.read_csv(runs_path + filename, index_col=False).dropna()
+            run_id = int(filename.split('/')[-1].replace('.csv', '').split('_')[1])
 
-                # TODO: t_obs == t_final
-                initial_val = float(z[variable].tolist()[0])
-                initial_vals.append(initial_val)
-                final_val = float(z[variable].tolist()[-1])
-                final_vals.append(final_val)
+            z = pd.read_csv(runs_path + filename, index_col=False).dropna()
 
-                run_ids.append(run_id)
+            # TODO: t_obs == t_final
+            parameter_val = groups[groups.run_id.apply(lambda xs: run_id in xs)][parameter].tolist()[0]
+            # Aproximation of parameter value
+            parameter_vals.append(parameter_val)
+            final_val = float(z[variable].tolist()[-1])
+            variable_final_vals.append(final_val)
+            run_ids.append(run_id)
 
     # Generate scatter plot
     plt.title("Variable initial vs. final state (parameter = " + parameter + ")")
-    plt.scatter(initial_vals, final_vals, c='b', alpha=0.5)
-    for i, txt in enumerate(run_ids):
-        plt.annotate(txt,
-                     xy=(initial_vals[i], final_vals[i]),
+    plt.scatter(parameter_vals, variable_final_vals, c='b', alpha=0.5)
+    for i, run_id in enumerate(run_ids):
+        plt.annotate(str(run_id),
+                     xy=(parameter_vals[i], variable_final_vals[i]),
                      fontsize=8)
-    min_x_real = round(min(initial_vals), 3)
-    max_x_real = round(max(initial_vals), 3)
+    min_x_real = round(min(parameter_vals), 3)
+    max_x_real = round(max(parameter_vals), 3)
     min_x = min_x_real - .05 * (max_x_real - min_x_real)
     max_x = max_x_real + .05 * (max_x_real - min_x_real)
     xticks = np.linspace(min_x, max_x, 10)
-    plt.xticks(xticks)
+    plt.xticks(xticks, rotation=30)
     plt.xlim((min_x, max_x))
     plt.savefig(filename_path)
 
