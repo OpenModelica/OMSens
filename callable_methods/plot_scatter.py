@@ -14,16 +14,27 @@ import pandas as pd
 logger = logging.getLogger("--Scatterplot Plotter--")
 script_description = "Scatter plt"
 
-# with open('/home/omsens/Documents/OMSens/callable_methods/test.txt', 'w+') as f:
-#     f.write(filename_path)
-
 
 def main():
-    # 1. Get parameters for plot
-    #  result filename path (where to go and fetch the PNG)
-    #  input csv file
-    #  t_{obs}: time of simulation for which the histogram will be made
-    #  var    : variable for which the histogram will me made (for it's value on time t=t_{obs})
+    args = parse_arguments()
+
+    filename_path = args.filename_path
+    results_path = args.results_path
+    time_value = args.time_value
+    runs_path = results_path + "/" + "results/runs" + "/" + "perturbed/"
+
+    variable = args.variable
+    parameter = args.parameter
+
+    if parameter is not None:
+        plot_parameter(results_path, filename_path, runs_path, variable, parameter, time_value)
+    elif variable is not None:
+        plot_variable(filename_path, runs_path, variable, time_value)
+    else:
+        raise Exception('EXCEPTION')
+
+
+def parse_arguments():
     parser = argparse.ArgumentParser(description=script_description)
     parser.add_argument('--filename_path',
                         metavar='filename_path',
@@ -41,21 +52,7 @@ def main():
                         metavar='parameter',
                         help='Parameter for which to make scatter of values at specified time on the different runs')
     args = parser.parse_args()
-
-    filename_path = args.filename_path
-    results_path = args.results_path
-    time_value = args.time_value
-    runs_path = results_path + "/" + "results/runs" + "/" + "perturbed/"
-
-    variable = args.variable
-    parameter = args.parameter
-
-    if parameter is not None:
-        plot_parameter(results_path, filename_path, runs_path, variable, parameter, time_value)
-    elif variable is not None:
-        plot_variable(filename_path, runs_path, variable, time_value)
-    else:
-        raise Exception('EXCEPTION')
+    return args
 
 
 def plot_parameter(results_path, filename_path, runs_path, variable, parameter, time_value):

@@ -21,8 +21,25 @@ script_description = "Hst plotter"
 
 
 def main():
+    args = parse_arguments()
 
-    # 1. Get parameters for plot
+    filename_path = args.filename_path
+    results_path = args.results_path
+    time_value = args.time_value
+    runs_path = results_path + "/" + "results/runs" + "/" + "perturbed/"
+
+    parameter = args.parameter
+    variable = args.variable
+
+    if parameter is not None:
+        plot_parameter(results_path, filename_path, runs_path, variable, parameter, time_value)
+    elif variable is not None:
+        plot_variable(filename_path, runs_path, variable, time_value)
+    else:
+        raise Exception('EXCEPTION')
+
+
+def parse_arguments():
     parser = argparse.ArgumentParser(description=script_description)
     parser.add_argument('--filename_path',
                         metavar='filename_path',
@@ -40,21 +57,7 @@ def main():
                         metavar='parameter',
                         help='Parameter for which to make scatter of values at specified time on the different runs')
     args = parser.parse_args()
-
-    filename_path = args.filename_path
-    results_path = args.results_path
-    time_value = args.time_value
-    runs_path = results_path + "/" + "results/runs" + "/" + "perturbed/"
-
-    parameter = args.parameter
-    variable = args.variable
-
-    if parameter is not None:
-        plot_parameter(results_path, filename_path, runs_path, variable, parameter, time_value)
-    elif variable is not None:
-        plot_variable(filename_path, runs_path, variable, time_value)
-    else:
-        raise Exception('EXCEPTION')
+    return args
 
 
 def plot_parameter(results_path, filename_path, runs_path, variable, parameter, time_value):
