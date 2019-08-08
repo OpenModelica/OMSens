@@ -19,10 +19,6 @@ script_description = "Scatter plt"
 
 
 def main():
-
-    # with open('/home/omsens/Documents/OMSens/callable_methods/test.txt', 'w+') as f:
-    #     f.write("halo")
-
     # 1. Get parameters for plot
     #  result filename path (where to go and fetch the PNG)
     #  input csv file
@@ -55,14 +51,14 @@ def main():
     parameter = args.parameter
 
     if parameter is not None:
-        plot_parameter(results_path, filename_path, runs_path, variable, parameter)
+        plot_parameter(results_path, filename_path, runs_path, variable, parameter, time_value)
     elif variable is not None:
-        plot_variable(filename_path, runs_path, variable)
+        plot_variable(filename_path, runs_path, variable, time_value)
     else:
         raise Exception('EXCEPTION')
 
 
-def plot_parameter(results_path, filename_path, runs_path, variable, parameter):
+def plot_parameter(results_path, filename_path, runs_path, variable, parameter, time_value):
 
     params_run = pd.read_csv(results_path + "/" + "results/parameters_run.csv", index_col=False)
     groups = params_run[[parameter, 'run_id']].groupby(by=parameter)['run_id'].apply(list).reset_index()
@@ -77,16 +73,21 @@ def plot_parameter(results_path, filename_path, runs_path, variable, parameter):
 
             z = pd.read_csv(runs_path + filename, index_col=False).dropna()
 
-            # TODO: t_obs == t_final
             parameter_val = groups[groups.run_id.apply(lambda xs: run_id in xs)][parameter].tolist()[0]
             # Aproximation of parameter value
             parameter_vals.append(parameter_val)
-            final_val = float(z[variable].tolist()[-1])
+
+            # t_obs might be != t_final. Get last value of variable in simulation BEFORE t==time_value
+            final_val = z[(z.time < float(time_value))][variable].values.tolist()[-1]
+
             variable_final_vals.append(final_val)
             run_ids.append(run_id)
 
     # Generate scatter plot
-    plt.title("Variable initial vs. final state (parameter = " + parameter + ")")
+    title = "RUNS (" + "Parameter:" + parameter + ")"
+    title += " | "
+    title += "Variable:" + variable + "(t=0)" + " vs. " + variable + "(t=" + str(time_value) + ") "
+    plt.title(title)
     plt.scatter(parameter_vals, variable_final_vals, c='b', alpha=0.5)
     for i, run_id in enumerate(run_ids):
         plt.annotate(str(run_id),
@@ -102,7 +103,7 @@ def plot_parameter(results_path, filename_path, runs_path, variable, parameter):
     plt.savefig(filename_path)
 
 
-def plot_variable(filename_path, runs_path, variable):
+def plot_variable(filename_path, runs_path, variable, time_value):
     # Get data (1. get parameter initial value; 2. get parameter value at time t_obs)
     initial_vals = []
     final_vals   = []
@@ -111,17 +112,19 @@ def plot_variable(filename_path, runs_path, variable):
         for filename in files:
             z = pd.read_csv(runs_path + filename, index_col=False).dropna()
 
-            # TODO: t_obs == t_final
             initial_val = float(z[variable].tolist()[0])
             initial_vals.append(initial_val)
-            final_val = float(z[variable].tolist()[-1])
+
+            # t_obs might be != t_final. Get last value of variable in simulation BEFORE t==time_value
+            final_val = z[(z.time < float(time_value))][variable].values.tolist()[-1]
             final_vals.append(final_val)
 
             run_id = filename.split('/')[-1].replace('.csv', '').split('_')[1]
             run_ids.append(run_id)
 
     # Generate scatter plot
-    plt.title("Variable initial vs. final state (all runs)")
+    title = "ALL RUNS: " + variable + "(t=0)" + " vs. " + variable + "(t=" + str(time_value) + ") "
+    plt.title(title)
     plt.scatter(initial_vals, final_vals, c='b', alpha=0.5)
     for i, txt in enumerate(run_ids):
         plt.annotate(txt,

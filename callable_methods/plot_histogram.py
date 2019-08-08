@@ -4,6 +4,7 @@ sys.path.append('/home/omsens/Documents/OMSens/')
 import matplotlib
 matplotlib.use('Agg')
 import numpy as np
+import math
 import os
 
 import matplotlib.pyplot as plt
@@ -13,6 +14,10 @@ import pandas as pd
 
 logger = logging.getLogger("--Histogram Plotter--")
 script_description = "Hst plotter"
+
+# TODO:
+# 1. errores en QT
+# 2. poner lindos los plots
 
 
 def main():
@@ -45,25 +50,57 @@ def main():
     variable = args.variable
 
     if parameter is not None:
-        # plot_parameter(results_path, filename_path, runs_path, variable, parameter)
-        plot_variable(filename_path, runs_path, variable, time_value)
+        plot_parameter(results_path, filename_path, runs_path, variable, parameter, time_value)
     elif variable is not None:
         plot_variable(filename_path, runs_path, variable, time_value)
     else:
         raise Exception('EXCEPTION')
 
-def plot_parameter():
-    pass
+
+def plot_parameter(results_path, filename_path, runs_path, variable, parameter, time_value):
+
+    params_run = pd.read_csv(results_path + "/" + "results/parameters_run.csv", index_col=False)
+    groups = params_run[[parameter, 'run_id']].groupby(by=parameter)['run_id'].apply(list).reset_index()
+
+    n_groups = len(groups[parameter].unique().tolist())
+    dim = 1
+    for i in [4, 3, 2, 1]:
+        if i**2 >= n_groups:
+            dim = i
+    n_rows = dim
+    n_cols = dim
+
+    # Get data (1. get parameter initial value; 2. get parameter value at time t_obs)
+    param_final_values = {}
+    fig = plt.figure()
+    for i, row in groups.iterrows():
+        param_value = row[parameter]
+        param_final_values[param_value] = []
+        runs_ids = row['run_id']
+        for run_id in runs_ids:
+            z = pd.read_csv(runs_path + '/run_' + str(run_id) + '.csv', index_col=False).dropna()
+            # t_obs might be != t_final. Get last value of variable in simulation BEFORE t==time_value
+            final_val = z[(z.time < float(time_value))][variable].values.tolist()[-1]
+            param_final_values[param_value].append(final_val)
+
+        ax = fig.add_subplot(n_rows, n_cols, i+1)
+        ax.hist(param_final_values[param_value])
+        ax.set_title(parameter + ": " + str(round(param_value, 3)))
+    fig.tight_layout()
+    plt.savefig(filename_path)
 
 
 def plot_variable(filename_path, runs_path, variable, time_value):
+
     vals = []
     for root, directory, files in os.walk(runs_path):
         for filename in files:
             z = pd.read_csv(runs_path + filename, index_col=False).dropna()
 
-            # TODO: t_obs == t_final
-            vals.append(float(z[variable].tolist()[-1]))
+            # t_obs might be != t_final. Get last value of variable in simulation BEFORE t==time_value
+            val = z[(z.time < float(time_value))][variable].values.tolist()[-1]
+
+            vals.append(val)
     df = pd.DataFrame({variable: vals})
     vals = df[variable].values
 
@@ -74,7 +111,8 @@ def plot_variable(filename_path, runs_path, variable, time_value):
     # Generate histogram
     fig = plt.hist(vals, bins=bins)
 
-    plt.title("Time: " + time_value + " & " + "Param: " + variable)
+    title = "Variable:" + variable + "(t=" + str(time_value) + ") "
+    plt.title(title)
     plt.xlabel(variable)
     plt.ylabel("Frequency")
     plt.savefig(filename_path)
