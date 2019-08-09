@@ -89,6 +89,11 @@ def plot_parameter(results_path, filename_path, runs_path, variable, parameter, 
         ax = fig.add_subplot(n_rows, n_cols, i+1)
         ax.hist(param_final_values[param_value])
         ax.set_title(parameter + ": " + str(round(param_value, 3)))
+
+        ax.set_xlabel(variable)
+
+    fig.suptitle("t = " + str(time_value), fontsize=16)
+
     fig.tight_layout()
     plt.savefig(filename_path)
 
@@ -117,7 +122,7 @@ def plot_variable(filename_path, runs_path, variable, time_value):
     title = "Variable:" + variable + "(t=" + str(time_value) + ") "
     plt.title(title)
     plt.xlabel(variable)
-    plt.ylabel("Frequency")
+    plt.ylabel("Number of runs")
     plt.savefig(filename_path)
 
 

@@ -97,6 +97,10 @@ def plot_parameter(results_path, filename_path, runs_path, variable, parameter, 
     xticks = np.linspace(min_x, max_x, 10)
     plt.xticks(xticks, rotation=30)
     plt.xlim((min_x, max_x))
+    plt.xlabel(parameter)
+    plt.ylabel(variable)
+
+    plt.tight_layout()
     plt.savefig(filename_path)
 
 
@@ -134,6 +138,10 @@ def plot_variable(filename_path, runs_path, variable, time_value):
     xticks = np.linspace(min_x, max_x, 10)
     plt.xticks(xticks)
     plt.xlim((min_x, max_x))
+    plt.xlabel(variable)
+    plt.ylabel(variable)
+
+    plt.tight_layout()
     plt.savefig(filename_path)
 
 
