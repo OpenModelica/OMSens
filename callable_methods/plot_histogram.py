@@ -4,20 +4,16 @@ sys.path.append('/home/omsens/Documents/OMSens/')
 import matplotlib
 matplotlib.use('Agg')
 import numpy as np
-import math
 import os
 
 import matplotlib.pyplot as plt
 import logging
 import argparse
 import pandas as pd
+from textwrap import wrap
 
 logger = logging.getLogger("--Histogram Plotter--")
 script_description = "Hst plotter"
-
-# TODO:
-# 1. errores en QT
-# 2. poner lindos los plots
 
 
 def main():
@@ -93,6 +89,7 @@ def plot_parameter(results_path, filename_path, runs_path, variable, parameter, 
         ax.set_xlabel(variable)
 
     fig.suptitle("t = " + str(time_value), fontsize=16)
+    fig.subplots_adjust(top=10)
 
     fig.tight_layout()
     plt.savefig(filename_path)
@@ -120,7 +117,7 @@ def plot_variable(filename_path, runs_path, variable, time_value):
     fig = plt.hist(vals, bins=bins)
 
     title = "Variable:" + variable + "(t=" + str(time_value) + ") "
-    plt.title(title)
+    plt.title("\n".join(wrap(title, 40)))
     plt.xlabel(variable)
     plt.ylabel("Number of runs")
     plt.savefig(filename_path)

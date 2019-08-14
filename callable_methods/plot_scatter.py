@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import logging
 import argparse
 import pandas as pd
+from textwrap import wrap
 
 logger = logging.getLogger("--Scatterplot Plotter--")
 script_description = "Scatter plt"
@@ -84,7 +85,8 @@ def plot_parameter(results_path, filename_path, runs_path, variable, parameter, 
     title = "RUNS (" + "Parameter:" + parameter + ")"
     title += " | "
     title += "Variable:" + variable + "(t=0)" + " vs. " + variable + "(t=" + str(time_value) + ") "
-    plt.title(title)
+    plt.title("\n".join(wrap(title, 40)))
+
     plt.scatter(parameter_vals, variable_final_vals, c='b', alpha=0.5)
     for i, run_id in enumerate(run_ids):
         plt.annotate(str(run_id),
@@ -100,8 +102,8 @@ def plot_parameter(results_path, filename_path, runs_path, variable, parameter, 
     plt.xlabel(parameter)
     plt.ylabel(variable)
 
-    plt.tight_layout()
-    plt.savefig(filename_path)
+    # plt.tight_layout()
+    plt.savefig(filename_path, figsize=(40, 40))
 
 
 def plot_variable(filename_path, runs_path, variable, time_value):
@@ -125,7 +127,8 @@ def plot_variable(filename_path, runs_path, variable, time_value):
 
     # Generate scatter plot
     title = "ALL RUNS: " + variable + "(t=0)" + " vs. " + variable + "(t=" + str(time_value) + ") "
-    plt.title(title)
+    plt.title("\n".join(wrap(title, 40)))
+
     plt.scatter(initial_vals, final_vals, c='b', alpha=0.5)
     for i, txt in enumerate(run_ids):
         plt.annotate(txt,

@@ -19,6 +19,8 @@ script_description = "Run a multiparemeter sweep and plot the results"
 
 # Mine
 def main():
+    print('MULTIPARAMETER SWEEP!!')
+
     # Logging settings
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
     # Get arguments from command line call

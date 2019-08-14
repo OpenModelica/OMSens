@@ -25,7 +25,6 @@ class LinesPlotter():
         setupXTicks(self.plot_specs.setup_specs.extra_ticks)
         saveAndClearPlt(plot_path_without_extension, lgd, footer_artist)
 
-
 def plotLineSpec(line_spec):
     x_data          = xDataForLineSpec(line_spec)
     y_data          = line_spec.df[line_spec.y_var]
