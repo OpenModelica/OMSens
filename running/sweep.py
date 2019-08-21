@@ -6,6 +6,7 @@ import os
 import modelica_interface.build_model as build_model
 import filesystem.files_aux as files_aux
 import running.simulation_run_info as simu_run_info
+import sys
 
 
 class ParametersSweeper():
@@ -59,7 +60,9 @@ class ParametersSweeper():
             perturbed_param_run_id_str = ""
             swept_params_info = perturbed_params_info[i]
             # Perturb the parameters for this iteration
+
             for perturbed_param_info in swept_params_info:
+
                 # Update parameter perturbation
                 # Disaggregate param info
                 param_name = perturbed_param_info.name
@@ -74,6 +77,11 @@ class ParametersSweeper():
             # Run the simulation
             simu_csv_name = "run_{0}.csv".format(i)
             simu_csv_path = os.path.join(perturbed_runs_folder_path, simu_csv_name)
+
+            # TODO: make class to update on percentages
+            print(str(i))
+            sys.stdout.flush()
+
             simu_results = self.compiled_model.simulate(simu_csv_path, simu_flags)
             # Instantiate sweep iteration results
             sweep_iter_results = SweepIterationResults(simu_results, swept_params_info)

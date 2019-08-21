@@ -19,7 +19,13 @@ script_description = "Run a multiparemeter sweep and plot the results"
 
 # Mine
 def main():
-    print('MULTIPARAMETER SWEEP!!')
+
+    with open('/home/omsens/Documents/results_experiments/comunication.csv', 'w+') as f:
+
+        print('MULTIPARAMETER SWEEP!!')
+        sys.stdout.flush()
+
+        f.write('1\n')
 
     # Logging settings
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
@@ -30,6 +36,10 @@ def main():
         dest_folder_path = files_aux.makeOutputPath("multiparameter_sweep")
     else:
         dest_folder_path = dest_folder_path_arg
+
+    # TODO: make class
+    print('1')
+    sys.stdout.flush()
 
     # Read JSON again (both reads should be refactored into one)
     sweepAndPlotFromJSON(dest_folder_path, json_file_path)
