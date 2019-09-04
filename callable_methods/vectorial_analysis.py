@@ -13,15 +13,20 @@ import pandas
 import vectorial.model_optimizer as model_optimizer_f
 import modelica_interface.build_model as build_model
 import plotting.plot_vectorial as plot_vect_f
+from plugin_communication.qt_communicator import QTCommunicator
 
-logger = logging.getLogger("-Vectorial Sens Calculator-")
+# logger = logging.getLogger("-Vectorial Sens Calculator-")
 script_description = "Find parameters values that maximize or minimize a variable and plot the results"
 
 
 # Mine
 def main():
+    communicator = QTCommunicator(100)
+    communicator.set_total_progress_messages(100)
+    communicator.update_completed(5)
+
     # Logging settings
-    logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+    # logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
     # Get arguments from command line call
     json_file_path, dest_folder_path_arg = getCommandLineArguments()
     # Define where to write the results
@@ -104,7 +109,7 @@ def analyzeFromJSON(dest_folder_path, json_file_path):
     optim_json_file_name = "result.json"
     optim_json_file_path = os.path.join(dest_folder_path, optim_json_file_name)
     files_aux.writeStrToFile(optim_json_str, optim_json_file_path)
-    logger.info("Finished. The file {0} has the optimization results.".format(optim_json_file_path))
+    # logger.info("Finished. The file {0} has the optimization results.".format(optim_json_file_path))
 
 
 # Auxs

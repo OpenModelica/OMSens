@@ -7,26 +7,30 @@ import json
 import os
 import logging
 
-logger = logging.getLogger("-Individual Sens Calculator-")
+# logger = logging.getLogger("-Individual Sens Calculator-")
 script_description = "Calculate variables sensitivities to parameters when perturbed in isolation and plot the results"
-logger.info("INDIVIDUAL SENS CALCULATOR")
+# logger.info("INDIVIDUAL SENS CALCULATOR")
 
 # Ours
 import analysis.indiv_sens
 import filesystem.files_aux as files_aux
 import settings.gral_settings
+from plugin_communication.qt_communicator import QTCommunicator
 
 
 def main():
+    communicator = QTCommunicator(100)
+    communicator.set_total_progress_messages(100)
+    communicator.update_completed(5)
 
     # Logging settings
-    logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+    # logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
     # Get arguments from command line call
     json_file_path, dest_folder_path_arg = getCommandLineArguments()
     # Args
     dest_folder_path = finalDestFolderPath(dest_folder_path_arg)
-
     perturbateAndAnalyzeFromJsonToPath(json_file_path, dest_folder_path)
+
     return 0
 
 
@@ -74,7 +78,7 @@ def perturbateAndAnalyze( model_name, model_file_path, start_time, stop_time, pa
     # Initialize perturbator
     perturbator = analysis.indiv_sens.ParametersIsolatedPerturbator(**perturbator_kwargs)
     # Run simulations using perturbator
-    logger.info("Running Modelica with specified information")
+    # logger.info("Running Modelica with specified information")
     isolated_perturbations_results = perturbator.runSimulations(perturbations_folder_path)
     analyze_csvs_kwargs = {
         "isolated_perturbations_results": isolated_perturbations_results,
@@ -85,7 +89,7 @@ def perturbateAndAnalyze( model_name, model_file_path, start_time, stop_time, pa
         "rms_first_year": start_time,
         "rms_last_year": stop_time,
     }
-    logger.info("Analyzing variable sensitivities to parameters from CSVs")
+    # logger.info("Analyzing variable sensitivities to parameters from CSVs")
     # Calculate sensitivities
     analysis_results = analysis.indiv_sens.completeIndividualSensAnalysis(**analyze_csvs_kwargs)
     # Get the dict with the paths
@@ -95,7 +99,7 @@ def perturbateAndAnalyze( model_name, model_file_path, start_time, stop_time, pa
     paths_json_file_name = "result.json"
     paths_json_file_path = os.path.join(dest_folder_path, paths_json_file_name)
     files_aux.writeStrToFile(paths_json_str, paths_json_file_path)
-    logger.info("Finished. The file {0} has all the analysis files paths.".format(paths_json_file_path))
+    # logger.info("Finished. The file {0} has all the analysis files paths.".format(paths_json_file_path))
 
 
 def listOfParametersPerturbationInfo(param_names, param_vals, percentage):

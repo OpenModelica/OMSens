@@ -40,21 +40,23 @@ class ParametersSweeper():
 
         ##########
         # PHASE 1: STD run
-        communicator.set_total_progress_messages(50)
+        communicator.set_total_progress_messages(100)
         std_run_name = "std_run.csv"
         std_run_path = os.path.join(runs_folder_path, std_run_name)
+        communicator.update_completed(1)
         std_run_results = self.compiled_model.simulate(std_run_path)
         communicator.update_completed(1)
 
         ##########
         # PHASE 2: Change the values of the parameters that will be fixed throughout all the runs
-        communicator.set_total_progress_messages(len(self.fixed_params)+1)
+        # self.fixed_params = list(self.fixed_params)
+        communicator.set_total_progress_messages(100)
         for perturbed_param_info in self.fixed_params:
+            # communicator.update_completed(10)
             param_name = perturbed_param_info.name
             new_val = perturbed_param_info.new_val
             # Change the value in the model
             self.compiled_model.setParameterStartValue(param_name, new_val)
-            communicator.update_completed(1)
 
         # Make dir for perturbed runs
         perturbed_runs_folder_name = "perturbed"
@@ -64,7 +66,7 @@ class ParametersSweeper():
         ##########
         # PHASE 3: Execute simulations
         sweep_iterations = []
-        perturbed_params_info = list(self.runsPerturbedParameters())
+        perturbed_params_info = list(self.runsPerturbedParameters(communicator))
         communicator.set_total_progress_messages(len(perturbed_params_info)+1)
         perturbed_param_run_id_map = {}
         for i in range(len(perturbed_params_info)):
@@ -110,12 +112,15 @@ class ParametersSweeper():
     def valuesPerParameter(self):
         return self.sweep_values_per_param
 
-    def runsPerturbedParameters(self):
+    def runsPerturbedParameters(self, communicator):
         #Get the cartesian product of all possible values
         cart_prod_dict = dict_product(self.sweep_values_per_param)
         # Iterate all the combinations instantiating the "PerturbedParameterInfo" objects
         perturbed_parameters_infos = []
+        cart_prod_dict = list(cart_prod_dict)
+        communicator.set_total_progress_messages(len(cart_prod_dict) + 1)
         for vals_comb in cart_prod_dict:
+            communicator.update_completed(1)
             run_perturbed_params = []
             for param_name in vals_comb:
                 param_default_val = self.params_defaults[param_name]
