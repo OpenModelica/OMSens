@@ -44,7 +44,6 @@ class TestSweepPlot(unittest.TestCase):
             error_msg = "The plot function should create at least one plot file in the destination folder."
             self.fail(error_msg)
 
-
 # Auxs:
     def sweepResultsExample(self):
         # Generate dataframe

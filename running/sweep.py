@@ -32,64 +32,78 @@ class ParametersSweeper():
         # Parse the fixed params
         self.fixed_params = perturbationInfoForFixedParams(self.params_defaults, self.fixed_params_raw)
 
-    def runSweep(self, dest_folder_path, simu_flags=""):
+    def runSweep(self, dest_folder_path, communicator=None, simu_flags=""):
         # Make folder for runs
         runs_folder_name = "runs"
         runs_folder_path = os.path.join(dest_folder_path, runs_folder_name)
         files_aux.makeFolderWithPath(runs_folder_path)
-        # Run STD run
+
+        ##########
+        # PHASE 1: STD run
+        communicator.set_total_progress_messages(50)
         std_run_name = "std_run.csv"
         std_run_path = os.path.join(runs_folder_path, std_run_name)
         std_run_results = self.compiled_model.simulate(std_run_path)
-        # Change the values of the parameters that will be fixed throughout all the runss
+        communicator.update_completed(1)
+
+        ##########
+        # PHASE 2: Change the values of the parameters that will be fixed throughout all the runs
+        communicator.set_total_progress_messages(len(self.fixed_params)+1)
         for perturbed_param_info in self.fixed_params:
             param_name = perturbed_param_info.name
-            new_val    = perturbed_param_info.new_val
+            new_val = perturbed_param_info.new_val
             # Change the value in the model
             self.compiled_model.setParameterStartValue(param_name, new_val)
+            communicator.update_completed(1)
+
         # Make dir for perturbed runs
         perturbed_runs_folder_name = "perturbed"
         perturbed_runs_folder_path = os.path.join(runs_folder_path, perturbed_runs_folder_name)
         files_aux.makeFolderWithPath(perturbed_runs_folder_path)
-        # Run the different values combinations
+
+        ##########
+        # PHASE 3: Execute simulations
         sweep_iterations = []
         perturbed_params_info = list(self.runsPerturbedParameters())
-
+        communicator.set_total_progress_messages(len(perturbed_params_info)+1)
         perturbed_param_run_id_map = {}
         for i in range(len(perturbed_params_info)):
+
+            # Finished +1 perturbed parameter
+            communicator.update_completed(1)
+
+            # Simulation
             perturbed_param_run_id_str = ""
             swept_params_info = perturbed_params_info[i]
             # Perturb the parameters for this iteration
-
             for perturbed_param_info in swept_params_info:
 
                 # Update parameter perturbation
                 # Disaggregate param info
                 param_name = perturbed_param_info.name
-                new_val    = perturbed_param_info.new_val
+                new_val = perturbed_param_info.new_val
                 # Change the value in the model
                 self.compiled_model.setParameterStartValue(param_name, new_val)
                 # Append new value and enw name
                 perturbed_param_run_id_str += param_name + ":" + str(round(new_val, 3)) + ","
             perturbed_param_run_id_str = perturbed_param_run_id_str[:-1]
             perturbed_param_run_id_map[perturbed_param_run_id_str] = i
-
             # Run the simulation
             simu_csv_name = "run_{0}.csv".format(i)
             simu_csv_path = os.path.join(perturbed_runs_folder_path, simu_csv_name)
-
-            # TODO: make class to update on percentages
-            print(str(i))
-            sys.stdout.flush()
-
             simu_results = self.compiled_model.simulate(simu_csv_path, simu_flags)
             # Instantiate sweep iteration results
             sweep_iter_results = SweepIterationResults(simu_results, swept_params_info)
             # Add results to list
             sweep_iterations.append(sweep_iter_results)
+        ##########
+        # PHASE 4: Finih
         # Instantiate sweep results
         swept_params_names = [x["name"] for x in self.perturbation_info_per_param]
-        sweep_results = ParametersSweepResults(self.model_name, swept_params_names, self.fixed_params, std_run_results,
+        sweep_results = ParametersSweepResults(self.model_name,
+                                               swept_params_names,
+                                               self.fixed_params,
+                                               std_run_results,
                                                sweep_iterations, )
         return sweep_results, perturbed_param_run_id_map
 
@@ -107,7 +121,7 @@ class ParametersSweeper():
                 param_default_val = self.params_defaults[param_name]
                 param_perturbed_val = vals_comb[param_name]
                 perturbed_param_info = simu_run_info.PerturbedParameterInfo(param_name, param_default_val,
-                                                                        param_perturbed_val)
+                                                                            param_perturbed_val)
                 run_perturbed_params.append(perturbed_param_info)
             # Before adding this run, check if all params have been perturbed and it's not the std run
             param_is_default_list = [p.default_val == p.new_val for p in run_perturbed_params]

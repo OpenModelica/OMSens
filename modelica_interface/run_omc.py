@@ -3,6 +3,7 @@ import os
 import platform
 import logging #en reemplazo de los prints
 logger = logging.getLogger("--Run OMC--") #un logger especifico para este modulo
+
 #Mine
 import settings.gral_settings as gral_settings
 import filesystem.files_aux
@@ -26,7 +27,9 @@ def runMosScript(script_path):
     omc_log_path = os.path.join(folder_path,gral_settings.omc_run_log_filename)
     output_decoded = output.decode("UTF-8")
     writeOMCLog(output_decoded,omc_log_path)
-    logger.debug("OMC Log written to: {omc_log_path}".format(omc_log_path=omc_log_path))
+
+    # TODO: un-comment. Carefully (stdout might be expecting numbers in communicatio with plugin)s
+    # logger.debug("OMC Log written to: {omc_log_path}".format(omc_log_path=omc_log_path))
     removeTemporaryFiles(folder_path)
     return output_decoded
 

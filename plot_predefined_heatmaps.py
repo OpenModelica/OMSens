@@ -6,8 +6,12 @@ logger = logging.getLogger("--Heatmap Plotting script--") #un logger especifico 
 #Mine
 import filesystem.files_aux
 import plotting.plot_heatmap
+
+
 def main():
-    logging.basicConfig(stream=sys.stdout, level=logging.DEBUG) # to show logging info into STDOUT
+    # to show logging info into STDOUT
+    logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
+
     base_path = filesystem.files_aux.makeOutputPath("heatmaps")
     # Generate Theo Sens heatmaps:
     ## Vanilla

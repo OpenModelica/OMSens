@@ -12,20 +12,15 @@ import filesystem.files_aux as files_aux
 # Mine
 import running.sweep
 import plotting.plot_sweep as plot_sweep
+from plugin_communication.qt_communicator import QTCommunicator
 
-logger = logging.getLogger("-Multiparameter Sweep-")
 script_description = "Run a multiparemeter sweep and plot the results"
+# logger = logging.getLogger("-Multiparameter Sweep-")
+# logger.propagate = False
 
 
 # Mine
 def main():
-
-    with open('/home/omsens/Documents/results_experiments/comunication.csv', 'w+') as f:
-
-        print('MULTIPARAMETER SWEEP!!')
-        sys.stdout.flush()
-
-        f.write('1\n')
 
     # Logging settings
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
@@ -37,15 +32,14 @@ def main():
     else:
         dest_folder_path = dest_folder_path_arg
 
-    # TODO: make class
-    print('1')
-    sys.stdout.flush()
+    # Initilize execution & communication with frontend
+    communicator = QTCommunicator(100)
 
     # Read JSON again (both reads should be refactored into one)
-    sweepAndPlotFromJSON(dest_folder_path, json_file_path)
+    sweepAndPlotFromJSON(dest_folder_path, json_file_path, communicator)
 
 
-def sweepAndPlotFromJSON(dest_folder_path_base, json_file_path):
+def sweepAndPlotFromJSON(dest_folder_path_base, json_file_path, communicator):
 
     dest_folder_path = dest_folder_path_base + "/" + "results/"
     with open(json_file_path, 'r') as fp:
@@ -67,7 +61,7 @@ def sweepAndPlotFromJSON(dest_folder_path_base, json_file_path):
     # Initialize sweeper
     sweep_runner = running.sweep.ParametersSweeper(**sweep_kwargs)
     # Run sweep
-    sweep_results, perturbed_param_run_id_map = sweep_runner.runSweep(dest_folder_path)
+    sweep_results, perturbed_param_run_id_map = sweep_runner.runSweep(dest_folder_path, communicator)
     # Initialize sweep results plotter
     sweep_plotter = plot_sweep.SweepPlotter(sweep_results)
     # Make folder for plots
@@ -111,7 +105,7 @@ def sweepAndPlotFromJSON(dest_folder_path_base, json_file_path):
     paths_json_file_name = "result.json"
     paths_json_file_path = os.path.join(dest_folder_path, paths_json_file_name)
     files_aux.writeStrToFile(paths_json_str, paths_json_file_path)
-    logger.info("Finished. The file {0} has all the sweep files paths.".format(paths_json_file_path))
+    # logger.info("Finished. The file {0} has all the sweep files paths.".format(paths_json_file_path))
 
 
 # Auxs
