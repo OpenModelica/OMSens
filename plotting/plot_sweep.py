@@ -9,6 +9,12 @@ import matplotlib.pyplot as plt
 # Project
 import plotting.plot_lines as plot_lines
 import plotting.plot_specs as plot_specs
+import logging
+filehandler = logging.FileHandler("/home/omsens/Documents/results_experiments/logging/todo.log")
+logger = logging.getLogger("plot_in_folder")
+logger.addHandler(filehandler)
+logger.setLevel(logging.DEBUG)
+
 
 class SweepPlotter():
     def __init__(self, sweep_results):
@@ -17,35 +23,22 @@ class SweepPlotter():
         # Get swept params ids
         self.swept_params_ids_mapping = idsForSweptParams(sweep_results)
 
-    def plotInFolder(self, var_name, plots_folder_path, extra_ticks=[]):
-        # Define plot file name base
-        plot_path_without_extension = os.path.join(plots_folder_path, var_name)
-        # Define setup specs
+    def plotInFolder(self, var_name, plot_path_without_extension, extra_ticks=[]):
+        logger.debug('Iteration started')
         setup_specs = self.plotSetupSpecsForSweep(var_name, extra_ticks)
-
-        # Make a list of all lines specs
         lines_specs = []
-
-        # Define what colors to use for lines that aren't std run
         colors_iter = colorsForNumberOfRuns(len(self.sweep_results.perturbed_runs))
-        # Iterate the sweep simulations initializing the respective line specs
         for sweep_iter_results in self.sweep_results.perturbed_runs:
-            # Initialize line spec for perturbed run
             pert_run_line_specs = self.lineSpecForPerturbedRun(colors_iter, sweep_iter_results, var_name)
             lines_specs.append(pert_run_line_specs)
+        logger.debug('Iteration completed')
 
-        # Define standard run line specs that will be different than the other simulations results
         std_run_line_specs = self.standardRunLineSpecs(var_name)
-        # Add it to the lines specs
         lines_specs.append(std_run_line_specs)
-
-        # Initialize plot_specs
         sweep_plot_specs = plot_specs.PlotSpecs(setup_specs, lines_specs)
-        # Initialize lines plotter
         lines_plotter = plot_lines.LinesPlotter(sweep_plot_specs)
-        # Plot
+
         lines_plotter.plotInPath(plot_path_without_extension)
-        # Return only the .png plot path for now
         png_plot_path = "{0}.png".format(plot_path_without_extension)
         return png_plot_path
 

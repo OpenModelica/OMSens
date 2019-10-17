@@ -6,24 +6,44 @@ import pandas
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import logging
+filehandler = logging.FileHandler("/home/omsens/Documents/results_experiments/logging/todo.log")
+logger = logging.getLogger("plot_in_folder")
+logger.addHandler(filehandler)
+logger.setLevel(logging.DEBUG)
 
-class LinesPlotter():
+
+class LinesPlotter:
     def __init__(self, plot_specs):
+        logger.debug('start init lines plotter')
         self.plot_specs = plot_specs
+        logger.debug('end init lines plotter')
 
     def plotInPath(self, plot_path_without_extension):
-        footer_artist = setupPlot(self.plot_specs.setup_specs)
+        try:
+            logger.debug('Start plotting')
+            footer_artist = setupPlot(self.plot_specs.setup_specs)
+            logger.debug('ploting 1')
+            # Plot lines
+            for line_spec in self.plot_specs.lines_specs:
+                plotLineSpec(line_spec)
+            logger.debug('plotting 2')
 
-        # Plot lines
-        for line_spec in self.plot_specs.lines_specs:
-            plotLineSpec(line_spec)
-        # Define legend
-        lgd = plt.legend(loc="center left", fontsize="small", fancybox=True, shadow=True,
-                         bbox_to_anchor=(1, 0.5))
+            # Define legend
+            lgd = plt.legend(loc="center left", fontsize="small", fancybox=True, shadow=True,
+                             bbox_to_anchor=(1, 0.5))
+            logger.debug('ploting 3')
+            # Post-line-plot setup
+            setupXTicks(self.plot_specs.setup_specs.extra_ticks)
+            logger.debug('plotting 2')
+            saveAndClearPlt(plot_path_without_extension, lgd, footer_artist)
 
-        # Post-line-plot setup
-        setupXTicks(self.plot_specs.setup_specs.extra_ticks)
-        saveAndClearPlt(plot_path_without_extension, lgd, footer_artist)
+            logger.debug('Ended plot')
+            return 1
+
+        except Exception:
+            return 1
+
 
 def plotLineSpec(line_spec):
     x_data          = xDataForLineSpec(line_spec)
@@ -45,6 +65,7 @@ def plotLineSpec(line_spec):
              color = color,
              )
 
+
 def xDataForLineSpec(line_spec):
     # Check if its a column or the index
     if line_spec.x_var:
@@ -54,6 +75,7 @@ def xDataForLineSpec(line_spec):
         index  = line_spec.df.index
         x_data = tryTimestampOrNumberForList(index)
     return x_data
+
 
 def tryTimestampOrNumberForList(orig_index):
     # There's no way in python to ask if an object is a number, so we just try
@@ -74,6 +96,7 @@ def tryTimestampOrNumberForList(orig_index):
             # Assume it's a number and matplotlib can plot it
             final_index = orig_index
     return final_index
+
 
 def setupPlot(setup_specs):
     plt.style.use('fivethirtyeight')
@@ -98,7 +121,8 @@ def setupXTicks(extra_ticks):
 
 
 def saveAndClearPlt(plot_path_without_extension, lgd, footer_artist, extra_lgd=None):
-    extensions = [".svg", ".png"]
+    logger.debug('SAVE AND CLEAR PLOT')
+    extensions = [".png"]
     for ext in extensions:
         plot_path = plot_path_without_extension + ext
         if extra_lgd:

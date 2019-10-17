@@ -11,6 +11,7 @@ import logging
 import argparse
 import pandas as pd
 from textwrap import wrap
+from plotting.scatter_plotter import ScatterPlotter
 
 logger = logging.getLogger("--Scatterplot Plotter--")
 script_description = "Scatter plt"
@@ -85,32 +86,22 @@ def plot_parameter(results_path, filename_path, runs_path, variable, parameter, 
     title = "RUNS (" + "Parameter:" + parameter + ")"
     title += " | "
     title += "Variable:" + variable + "(t=0)" + " vs. " + variable + "(t=" + str(time_value) + ") "
-    plt.title("\n".join(wrap(title, 40)))
-
-    plt.scatter(parameter_vals, variable_final_vals, c='b', alpha=0.5)
-    for i, run_id in enumerate(run_ids):
-        plt.annotate(str(run_id),
-                     xy=(parameter_vals[i], variable_final_vals[i]),
-                     fontsize=8)
-    min_x_real = round(min(parameter_vals), 3)
-    max_x_real = round(max(parameter_vals), 3)
-    min_x = min_x_real - .05 * (max_x_real - min_x_real)
-    max_x = max_x_real + .05 * (max_x_real - min_x_real)
-    xticks = np.linspace(min_x, max_x, 10)
-    plt.xticks(xticks, rotation=30)
-    plt.xlim((min_x, max_x))
-    plt.xlabel(parameter)
-    plt.ylabel(variable)
-
-    # plt.tight_layout()
-    plt.savefig(filename_path, figsize=(40, 40))
+    ScatterPlotter.plot_parameter({
+        'title': title,
+        'filename_path': filename_path,
+        'parameter_vals': parameter_vals,
+        'variable_final_vals': variable_final_vals,
+        'run_ids': run_ids,
+        'parameter': parameter,
+        'variable': variable
+    })
 
 
 def plot_variable(filename_path, runs_path, variable, time_value):
     # Get data (1. get parameter initial value; 2. get parameter value at time t_obs)
     initial_vals = []
-    final_vals   = []
-    run_ids      = []
+    final_vals = []
+    run_ids = []
     for root, directory, files in os.walk(runs_path):
         for filename in files:
             z = pd.read_csv(runs_path + filename, index_col=False).dropna()
@@ -126,26 +117,15 @@ def plot_variable(filename_path, runs_path, variable, time_value):
             run_ids.append(run_id)
 
     # Generate scatter plot
-    title = "ALL RUNS: " + variable + "(t=0)" + " vs. " + variable + "(t=" + str(time_value) + ") "
-    plt.title("\n".join(wrap(title, 40)))
-
-    plt.scatter(initial_vals, final_vals, c='b', alpha=0.5)
-    for i, txt in enumerate(run_ids):
-        plt.annotate(txt,
-                     xy=(initial_vals[i], final_vals[i]),
-                     fontsize=8)
-    min_x_real = round(min(initial_vals), 3)
-    max_x_real = round(max(initial_vals), 3)
-    min_x = min_x_real - .05*(max_x_real-min_x_real)
-    max_x = max_x_real + .05*(max_x_real-min_x_real)
-    xticks = np.linspace(min_x, max_x, 10)
-    plt.xticks(xticks)
-    plt.xlim((min_x, max_x))
-    plt.xlabel(variable)
-    plt.ylabel(variable)
-
-    plt.tight_layout()
-    plt.savefig(filename_path)
+    title = "ALL RUNS: " + variable + "(t=" + str(time_value) + ") "
+    ScatterPlotter.plot_variable({
+        'filename_path': filename_path,
+        'title': title,
+        'initial_vals': initial_vals,
+        'final_vals': final_vals,
+        'run_ids': run_ids,
+        'variable': variable
+    })
 
 
 if __name__ == "__main__":
