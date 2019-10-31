@@ -3,18 +3,18 @@ sys.path.append('/home/omsens/Documents/OMSens/')
 
 import matplotlib
 matplotlib.use('Agg')
-import numpy as np
 import os
-
-import matplotlib.pyplot as plt
-import logging
 import argparse
 import pandas as pd
-from textwrap import wrap
 from plotting.scatter_plotter import ScatterPlotter
 
-logger = logging.getLogger("--Scatterplot Plotter--")
-script_description = "Scatter plt"
+import logging
+filehandler = logging.FileHandler("/home/omsens/Documents/results_experiments/logging/todo.log")
+logger = logging.getLogger("plot_scatterplot")
+logger.addHandler(filehandler)
+logger.setLevel(logging.DEBUG)
+logger.debug("Entra en plot_scatterplot")
+script_description = "Scatter plot"
 
 
 def main():
@@ -69,18 +69,26 @@ def plot_parameter(results_path, filename_path, runs_path, variable, parameter, 
     for root, directory, files in os.walk(runs_path):
         for filename in files:
             run_id = int(filename.split('/')[-1].replace('.csv', '').split('_')[1])
-
             z = pd.read_csv(runs_path + filename, index_col=False).dropna()
 
-            parameter_val = groups[groups.run_id.apply(lambda xs: run_id in xs)][parameter].tolist()[0]
-            # Aproximation of parameter value
-            parameter_vals.append(parameter_val)
+            # Lookup the parameter in parameters spanned: should find the run_id if there are no run_id's skipped
+            parameter_val = groups[groups.run_id.apply(lambda xs: run_id in xs)][parameter].tolist()
 
-            # t_obs might be != t_final. Get last value of variable in simulation BEFORE t==time_value
-            final_val = z[(z.time < float(time_value))][variable].values.tolist()[-1]
+            if len(parameter_val) > 0:
 
-            variable_final_vals.append(final_val)
-            run_ids.append(run_id)
+                logger.debug('FOUND: ' + str(run_id) + ' ' + str(parameter_val))
+                parameter_val = parameter_val[0]
+
+                # Aproximation of parameter value
+                parameter_vals.append(parameter_val)
+
+                # t_obs might be != t_final. Get last value of variable in simulation BEFORE t==time_value
+                final_val = z[(z.time < float(time_value))][variable].values.tolist()[-1]
+
+                variable_final_vals.append(final_val)
+                run_ids.append(run_id)
+            else:
+                logger.warning('NOT FOUND: ' + str(run_id))
 
     # Generate scatter plot
     title = "RUNS (" + "Parameter:" + parameter + ")"
@@ -118,6 +126,9 @@ def plot_variable(filename_path, runs_path, variable, time_value):
 
     # Generate scatter plot
     title = "ALL RUNS: " + variable + "(t=" + str(time_value) + ") "
+
+    # TODO: Agregar parametros que fueron sweepeados en estas corridas !!!
+
     ScatterPlotter.plot_variable({
         'filename_path': filename_path,
         'title': title,

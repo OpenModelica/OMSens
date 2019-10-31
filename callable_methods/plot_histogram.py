@@ -89,9 +89,10 @@ def plot_parameter(results_path, filename_path, runs_path, variable, parameter, 
         ax.set_xlabel(variable)
 
     fig.suptitle("t = " + str(time_value), fontsize=16)
-    fig.subplots_adjust(top=10)
 
     fig.tight_layout()
+    # fig.subplots_adjust(top=30)
+
     plt.savefig(filename_path)
 
 
@@ -115,6 +116,8 @@ def plot_variable(filename_path, runs_path, variable, time_value):
 
     # Generate histogram
     fig = plt.hist(vals, bins=bins)
+
+    # TODO: Definir si agregar o no parametros que fueron sweepeados en estas corridas !!!
 
     title = "Variable:" + variable + "(t=" + str(time_value) + ") "
     plt.title("\n".join(wrap(title, 40)))
