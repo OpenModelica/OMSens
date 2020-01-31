@@ -4,7 +4,7 @@ omc_creation_settings_filename = "omc_creation_settings.txt"
 omc_run_log_filename = "omc_run_log.txt"
 readme_filename = "readme.txt"
 
-_interpreter_windows = "%OPENMODELICAHOME%\\bin\\omc"
+_interpreter_windows = "\"%OPENMODELICAHOME%\\bin\\omc\""
 _interpreter_linux = "omc"
 
 
