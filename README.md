@@ -4,6 +4,7 @@
 - OpenModelica basic install (with "omc" command in path in Linux or "%OPENMODELICAHOME%\\bin\\omc" for Windows). The SystemDynamics library is included in this repo and the one included in the complete install is not needed (or used)
 
 # Installation
+## Windows
 Assuming that you already have latest OpenModelica nightly installed.
 NOTE: Change the paths according to your installation where ever needed in the following commands.
 
@@ -38,3 +39,6 @@ f2py.exe -c -I. Curvif.o Rutf.o Rut.o -m curvif_simplified curvif_simplified.pyf
 ```
 
 Now use the OMEdit we just started and run the OMSens from the menu item i.e., "Sensitivity Optimization"
+
+## Linux 
+To be provided
