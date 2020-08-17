@@ -5,6 +5,7 @@ OpenModelica sensitivity analysis and optimization module.
 
 - [OpenModelica](https://openmodelica.org)
 - [Python >= 3.0](https://www.python.org/)
+- [Python setuptools](https://pypi.org/project/setuptools/)
 
 ## Build instructions
 
