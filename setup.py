@@ -33,15 +33,11 @@ __author__ = "Adeel Asghar, adeel.asghar@liu.se"
 __maintainer__ = "https://openmodelica.org"
 __status__ = "Production"
 
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
-
+from setuptools import setup
 import os
 import sys
 import platform
-from distutils import spawn
+from shutil import which
 from subprocess import call
 from shutil import copy2
 
@@ -64,7 +60,7 @@ setup(name='OMSens',
 platform_architecture = platform.architecture()[0]
 
 try:
-    omhome = os.path.split(os.path.split(os.path.realpath(spawn.find_executable("omc")))[0])[0]
+    omhome = os.path.split(os.path.split(os.path.realpath(which("omc")))[0])[0]
 except BaseException:
     omhome = None
     omhome = omhome or os.environ.get('OPENMODELICAHOME')
