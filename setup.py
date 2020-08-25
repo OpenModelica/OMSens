@@ -42,7 +42,7 @@ from subprocess import call
 from shutil import copy2
 
 setup(name='OMSens',
-      python_requires='>=3.0',
+      python_requires='>=3.6',
       version='1.0.0',
       description='OpenModelica sensitivity analysis and optimization module',
       author='Rodrigo Castro',
@@ -52,8 +52,11 @@ setup(name='OMSens',
       license="BSD, OSMC-PL 1.2, GPL (user's choice)",
       url='http://openmodelica.org/',
       install_requires=[
-          'pandas',
-          'matplotlib'
+          'six',
+          'pytest',
+          'matplotlib',
+          'numpy',
+          'pandas'
       ]
       )
 

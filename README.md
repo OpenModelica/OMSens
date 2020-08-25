@@ -4,7 +4,7 @@ OpenModelica sensitivity analysis and optimization module.
 ## Dependencies
 
 - [OpenModelica](https://openmodelica.org)
-- [Python >= 3.0](https://www.python.org/)
+- [Python >= 3.6](https://www.python.org/) (For Windows users, install 64-bit python if you install 64-bit OpenModelica)
 - [Python setuptools](https://pypi.org/project/setuptools/)
 
 ## Build instructions
