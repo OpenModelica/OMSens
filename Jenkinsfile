@@ -13,10 +13,9 @@ pipeline {
             }
           }
           steps {
-            sh '''
-            python3 setup.py install
-            pytest testting
-            '''
+            sh 'hostname'
+            sh 'python3 setup.py'
+            sh 'pytest testing'
           }
         }
       }
