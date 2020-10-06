@@ -14,7 +14,7 @@ pipeline {
           }
           steps {
             sh 'hostname'
-            sh 'python3 setup.py'
+            sh 'HOME="$PWD" python3 setup.py install --user'
             sh 'pytest testing'
           }
         }
