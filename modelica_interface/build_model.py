@@ -10,8 +10,6 @@ class ModelicaModelBuilder():
     mos_script_skeleton = \
     (
         # This shouldn't be the responsibility of the builder, but for now we leave it here
-        """print("Install Modelica");\n"""
-        """installPackage(Modelica);getErrorString();\n"""
         """print("Loading Modelica");\n"""
         """loadModel(Modelica);getErrorString();\n"""
         """print("Loading model in path {model_file_path}");\n"""
