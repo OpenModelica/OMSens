@@ -46,6 +46,11 @@ class TestsPredefinedJSONFiles(unittest.TestCase):
                     error_msg = str(e)
                     print("3. Calling ls -lh {0}".format(self._temp_dir))
                     print(os.system("ls -lh {0}".format(self._temp_dir)))
+                    if os.path.isfile("{0}/builder.mos".format(self._temp_dir)):
+                        f = open("{0}/builder.mos".format(self._temp_dir), "r")
+                        print(f.read())
+                    else:
+                        print("Failed to read the builder.mos file. No such file exist.")
                     if os.path.isfile("{0}/omc_run_log.txt".format(self._temp_dir)):
                         f = open("{0}/omc_run_log.txt".format(self._temp_dir), "r")
                         print(f.read())
@@ -77,6 +82,11 @@ class TestsPredefinedJSONFiles(unittest.TestCase):
                     error_msg = str(e)
                     print("6. Calling ls -lh {0}".format(self._temp_dir))
                     print(os.system("ls -lh {0}".format(self._temp_dir)))
+                    if os.path.isfile("{0}/builder.mos".format(self._temp_dir)):
+                        f = open("{0}/builder.mos".format(self._temp_dir), "r")
+                        print(f.read())
+                    else:
+                        print("Failed to read the builder.mos file. No such file exist.")
                     if os.path.isfile("{0}/omc_run_log.txt".format(self._temp_dir)):
                         f = open("{0}/omc_run_log.txt".format(self._temp_dir), "r")
                         print(f.read())

@@ -15,7 +15,10 @@ pipeline {
           steps {
             sh 'hostname'
             sh 'HOME="$PWD" python3 setup.py install --user'
-            sh 'HOME="$PWD" pytest -v --junit-xml=py3.xml testing'
+            sh '''
+            export HOME="$PWD"
+            pytest -v --junit-xml=py3.xml testing
+            '''
             junit 'py3.xml'
           }
         }
