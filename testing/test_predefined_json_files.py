@@ -35,27 +35,11 @@ class TestsPredefinedJSONFiles(unittest.TestCase):
             if os.path.isfile(json_file_path):
                 try:
                     individual_sens_calculator.perturbateAndAnalyzeFromJsonToPath(json_file_path, self._temp_dir)
-                    print("1. Calling ls -lh {0}".format(self._temp_dir))
-                    print(os.system("ls -lh {0}".format(self._temp_dir)))
                     # Remove every file so the next test has the folder clean
                     regex = '.*'
                     filesystem.files_aux.removeFilesWithRegexAndPath(regex, self._temp_dir)
-                    print("2. Calling ls -lh {0}".format(self._temp_dir))
-                    print(os.system("ls -lh {0}".format(self._temp_dir)))
                 except Exception as e:
                     error_msg = str(e)
-                    print("3. Calling ls -lh {0}".format(self._temp_dir))
-                    print(os.system("ls -lh {0}".format(self._temp_dir)))
-                    if os.path.isfile("{0}/builder.mos".format(self._temp_dir)):
-                        f = open("{0}/builder.mos".format(self._temp_dir), "r")
-                        print(f.read())
-                    else:
-                        print("Failed to read the builder.mos file. No such file exist.")
-                    if os.path.isfile("{0}/omc_run_log.txt".format(self._temp_dir)):
-                        f = open("{0}/omc_run_log.txt".format(self._temp_dir), "r")
-                        print(f.read())
-                    else:
-                        print("Failed to read the omc_run_log.txt file. No such file exist.")
                     self.fail("The file {0} is an invalid test file. It raised the following exception:\n {1}".format(
                         json_file_path, error_msg))
 
@@ -71,26 +55,10 @@ class TestsPredefinedJSONFiles(unittest.TestCase):
             if os.path.isfile(exp_file_path):
                 try:
                     multiparam_sweep.sweepAndPlotFromJSON(self._temp_dir,exp_file_path)
-                    print("4. Calling ls -lh {0}".format(self._temp_dir))
-                    print(os.system("ls -lh {0}".format(self._temp_dir)))
                     # Remove every file so the next test has the folder clean
                     regex = '.*'
                     filesystem.files_aux.removeFilesWithRegexAndPath(regex, self._temp_dir)
-                    print("5. Calling ls -lh {0}".format(self._temp_dir))
-                    print(os.system("ls -lh {0}".format(self._temp_dir)))
                 except Exception as e:
                     error_msg = str(e)
-                    print("6. Calling ls -lh {0}".format(self._temp_dir))
-                    print(os.system("ls -lh {0}".format(self._temp_dir)))
-                    if os.path.isfile("{0}/builder.mos".format(self._temp_dir)):
-                        f = open("{0}/builder.mos".format(self._temp_dir), "r")
-                        print(f.read())
-                    else:
-                        print("Failed to read the builder.mos file. No such file exist.")
-                    if os.path.isfile("{0}/omc_run_log.txt".format(self._temp_dir)):
-                        f = open("{0}/omc_run_log.txt".format(self._temp_dir), "r")
-                        print(f.read())
-                    else:
-                        print("Failed to read the omc_run_log.txt file. No such file exist.")
                     self.fail("The file {0} is an invalid test file. It raised the following exception:\n {1}".format(
                         exp_file_path, error_msg))                    

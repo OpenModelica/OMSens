@@ -16,13 +16,6 @@ class CompiledModelicaModel():
         xml_file_path = xmlFilePathForModel(self.binary_file_path, self.model_name)
         self.xml_file_path = xml_file_path
         # Read XML from XML file
-        print("1. XML file path is {0}".format(self.xml_file_path))
-        if os.path.isfile(self.xml_file_path):
-            print ("File exist")
-        else:
-            print ("File not exist")
-        f = open(self.xml_file_path, "r")
-        print(f.read())
         xml_tree = ElementTree.parse(self.xml_file_path)
         self.xml_tree = xml_tree
         # Save a copy of the xml with the original values
