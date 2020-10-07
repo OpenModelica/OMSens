@@ -46,6 +46,11 @@ class TestsPredefinedJSONFiles(unittest.TestCase):
                     error_msg = str(e)
                     print("3. Calling ls -lh {0}".format(self._temp_dir))
                     print(os.system("ls -lh {0}".format(self._temp_dir)))
+                    if os.path.isfile("{0}/omc_run_log.txt".format(self._temp_dir)):
+                        f = open("{0}/omc_run_log.txt".format(self._temp_dir), "r")
+                        print(f.read())
+                    else:
+                        print("Failed to read the omc_run_log.txt file. No such file exist.")
                     self.fail("The file {0} is an invalid test file. It raised the following exception:\n {1}".format(
                         json_file_path, error_msg))
 
@@ -72,5 +77,10 @@ class TestsPredefinedJSONFiles(unittest.TestCase):
                     error_msg = str(e)
                     print("6. Calling ls -lh {0}".format(self._temp_dir))
                     print(os.system("ls -lh {0}".format(self._temp_dir)))
+                    if os.path.isfile("{0}/omc_run_log.txt".format(self._temp_dir)):
+                        f = open("{0}/omc_run_log.txt".format(self._temp_dir), "r")
+                        print(f.read())
+                    else:
+                        print("Failed to read the omc_run_log.txt file. No such file exist.")
                     self.fail("The file {0} is an invalid test file. It raised the following exception:\n {1}".format(
                         exp_file_path, error_msg))                    
