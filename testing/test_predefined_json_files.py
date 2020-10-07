@@ -61,4 +61,4 @@ class TestsPredefinedJSONFiles(unittest.TestCase):
                 except Exception as e:
                     error_msg = str(e)
                     self.fail("The file {0} is an invalid test file. It raised the following exception:\n {1}".format(
-                        exp_file_path, error_msg))                    
+                        exp_file_path, error_msg))
