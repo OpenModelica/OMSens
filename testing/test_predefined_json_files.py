@@ -42,6 +42,7 @@ class TestsPredefinedJSONFiles(unittest.TestCase):
                     error_msg = str(e)
                     self.fail("The file {0} is an invalid test file. It raised the following exception:\n {1}".format(
                         json_file_path, error_msg))
+                    print(os.system("ls -lh {0}".format(self._temp_dir)))
 
 
     @pytest.mark.slow
@@ -62,3 +63,4 @@ class TestsPredefinedJSONFiles(unittest.TestCase):
                     error_msg = str(e)
                     self.fail("The file {0} is an invalid test file. It raised the following exception:\n {1}".format(
                         exp_file_path, error_msg))
+                    print(os.system("ls -lh {0}".format(self._temp_dir)))
