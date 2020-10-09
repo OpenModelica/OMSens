@@ -22,6 +22,8 @@ $ cd /path/to/OpenModelica/OMSens
 $ python setup.py install
 ```
 
+**Hint**: To find the installation path run `OMEdit` and then go to `Help->About OMEdit`.
+
 ## Bug Reports
 
 - Submit bugs through the [issues](issues).
