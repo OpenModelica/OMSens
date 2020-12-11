@@ -54,7 +54,7 @@ setup(name='OMSens',
           'pytest',
           'matplotlib',
           'numpy',
-          'pandas'
+          'pandas==1.1.3'
       ]
       )
 
