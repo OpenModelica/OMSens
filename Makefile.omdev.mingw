@@ -1,0 +1,31 @@
+ifeq ($(OMBUILDDIR),)
+$(error OMBUILDDIR variable is not set.)
+endif
+
+OMDEVMSYS=$(shell cygpath $$OMDEV)
+
+ifeq (MINGW32,$(findstring MINGW32,$(shell uname)))
+MINGWBIN = $(OMDEVMSYS)/tools/msys/mingw32/bin
+else # mingw64
+MINGWBIN = $(OMDEVMSYS)/tools/msys/mingw64/bin
+endif
+
+FORTRANDIR = fortran_interface
+
+all: install
+
+install: build
+	mkdir -p $(OMBUILDDIR)/OMSens
+	cp -rfp . $(OMBUILDDIR)/OMSens
+
+build:
+	(cd $(FORTRANDIR) && $(MINGWBIN)/gfortran.exe -fPIC -c Rutf.for Rut.for Curvif.for)
+	(cd $(FORTRANDIR) && f2py -c -I. Curvif.o Rutf.o Rut.o -m curvif_simplified curvif_simplified.pyf Curvif_simplified.f90 --compiler=mingw32 --fcompiler=gfortran)
+	cp -puf $(MINGWBIN)/libgcc_s_seh-1.dll $(FORTRANDIR)
+	cp -puf $(MINGWBIN)/libgfortran-5.dll $(FORTRANDIR)
+	cp -puf $(MINGWBIN)/libquadmath-0.dll $(FORTRANDIR)
+	cp -puf $(MINGWBIN)/libwinpthread-1.dll $(FORTRANDIR)
+
+clean:
+	(cd $(FORTRANDIR) && rm -f *.o *.dll)
+	rm -rf $(OMBUILDDIR)/OMSens

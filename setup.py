@@ -36,10 +36,8 @@ __status__ = "Production"
 from setuptools import setup
 import os
 import sys
-import platform
 from shutil import which
 from subprocess import call
-from shutil import copy2
 
 setup(name='OMSens',
       python_requires='>=3.6',
@@ -56,59 +54,29 @@ setup(name='OMSens',
           'pytest',
           'matplotlib',
           'numpy',
-          'pandas'
+          'pandas==1.1.3'
       ]
       )
 
-platform_architecture = platform.architecture()[0]
-
 try:
-    omhome = os.path.split(os.path.split(os.path.realpath(which("omc")))[0])[0]
+  omhome = os.path.split(os.path.split(os.path.realpath(which("omc")))[0])[0]
 except BaseException:
-    omhome = None
-    omhome = omhome or os.environ.get('OPENMODELICAHOME')
+  omhome = None
+omhome = omhome or os.environ.get('OPENMODELICAHOME')
 
-    if sys.platform=="win32":
-        omdev = os.environ.get('OMDEV')
-        if omdev:
-            omhome = omdev
-
-    if omhome is None:
-        raise Exception("Failed to find OPENMODELICAHOME (searched for environment variable as well as the omc executable)")
+if omhome is None:
+    raise Exception("Failed to find OPENMODELICAHOME (searched for environment variable as well as the omc executable)")
 
 try:
-    # Compile CURVI files
-    env = os.environ
-    if sys.platform=="win32":
-        if platform_architecture=="64bit":
-            gfortran_env = os.path.join(omhome, "tools", "msys", "mingw64", "bin")
-            gfortran_path = os.path.join(gfortran_env, "gfortran.exe")
-            env["PATH"] = gfortran_env + ";" + env["PATH"]
-        else:
-            gfortran_env = os.path.join(omhome, "tools", "msys", "mingw32", "bin")
-            gfortran_path = os.path.join(gfortran_env, "gfortran.exe")
-            env["PATH"] = gfortran_env + ";" + env["PATH"]
-    else:
-        gfortran_path = "gfortran"
-    if 0 != call([gfortran_path, "-fPIC", "-c", "Rutf.for", "Rut.for", "Curvif.for"], cwd="fortran_interface", env=env):
-        raise Exception("Failed to compile CURVI files.")
-    print("CURVI files compiled.")
+  # Compile CURVI files
+  if 0 != call(["gfortran", "-fPIC", "-c", "Rutf.for", "Rut.for", "Curvif.for"], cwd="fortran_interface"):
+    raise Exception("Failed to compile CURVI files.")
+  print("CURVI files compiled.")
 
-    # Generate CURVIF python binary
-    if sys.platform=="win32":
-        f2py_path = os.path.join(os.path.dirname(sys.executable), "Scripts", "f2py.exe")
-        f2py_call = call([f2py_path, "-c", "-I.", "Curvif.o", "Rutf.o", "Rut.o", "-m", "curvif_simplified", "curvif_simplified.pyf", "Curvif_simplified.f90", "--compiler=mingw32"], cwd="fortran_interface")
-    else:
-        f2py_path = "f2py"
-        f2py_call = call([f2py_path, "-c", "-I.", "Curvif.o", "Rutf.o", "Rut.o", "-m", "curvif_simplified", "curvif_simplified.pyf", "Curvif_simplified.f90"], cwd="fortran_interface")
-    if 0 != f2py_call:
-        raise Exception("Failed to generate CURVIF python binary.")
-    # Following dlls are needed to run curvif_simplified.xxxx-xxxxx.pyd
-    if sys.platform=="win32":
-        copy2(gfortran_env + "/libgcc_s_seh-1.dll", "./fortran_interface")
-        copy2(gfortran_env + "/libgfortran-3.dll", "./fortran_interface")
-        copy2(gfortran_env + "/libquadmath-0.dll", "./fortran_interface")
-        copy2(gfortran_env + "/libwinpthread-1.dll", "./fortran_interface")
-    print("Generated CURVIF python binary.")
+  # Generate CURVIF python binary
+  f2py_call = call(["f2py", "-c", "-I.", "Curvif.o", "Rutf.o", "Rut.o", "-m", "curvif_simplified", "curvif_simplified.pyf", "Curvif_simplified.f90"], cwd="fortran_interface")
+  if 0 != f2py_call:
+    raise Exception("Failed to generate CURVIF python binary.")
+  print("Generated CURVIF python binary.")
 except ImportError:
-    print("Error installing OMSens.")
+  print("Error installing OMSens.")

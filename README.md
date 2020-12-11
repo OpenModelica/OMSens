@@ -5,7 +5,7 @@ OpenModelica sensitivity analysis and optimization module.
 ## Dependencies
 
 - [OpenModelica](https://openmodelica.org)
-- [Python >= 3.6](https://www.python.org/) (For Windows users, install 64-bit python if you install 64-bit OpenModelica)
+- [Python >= 3.6](https://www.python.org/)
 - [Python setuptools](https://pypi.org/project/setuptools/)
 
 ## Supported platforms
@@ -15,7 +15,27 @@ OpenModelica sensitivity analysis and optimization module.
 
 ## Build/Install instructions
 
-Install the dependencies mentioned above and then run the following commands. Use `command prompt` for Windows and `terminal` for Linux. 
+### Windows
+
+OMSens is installed automatically with OpenModelica on Windows.
+If you still want to build it then setup the [Windows environment](https://github.com/OpenModelica/OpenModelica/blob/master/OMCompiler/README-OMDev-MINGW.md).
+Once the environment is ready then run the makefile.
+
+```bash
+cd /path/to/OpenModelica
+make -f Makefile.omdev.mingw omsens
+```
+
+OR
+
+```bash
+cd /path/to/OpenModelica/OMSens
+make -f Makefile.omdev.mingw OMBUILDDIR=/path/to/OpenModelica/builddirectory
+```
+
+### Linux
+
+Install the dependencies mentioned above and then run the following commands in the `terminal`.
 
 ```bash
 $ cd /path/to/OpenModelica/OMSens
