@@ -21,10 +21,10 @@ install: build
 build:
 	(cd $(FORTRANDIR) && $(MINGWBIN)/gfortran.exe -fPIC -c Rutf.for Rut.for Curvif.for)
 	(cd $(FORTRANDIR) && f2py -c -I. Curvif.o Rutf.o Rut.o -m curvif_simplified curvif_simplified.pyf Curvif_simplified.f90 --compiler=mingw32 --fcompiler=gfortran)
-	cp -puf $(MINGWBIN)/libgcc_s_seh-1.dll $(FORTRANDIR)
-	cp -puf $(MINGWBIN)/libgfortran-5.dll $(FORTRANDIR)
-	cp -puf $(MINGWBIN)/libquadmath-0.dll $(FORTRANDIR)
-	cp -puf $(MINGWBIN)/libwinpthread-1.dll $(FORTRANDIR)
+	cp -puf $(MINGWBIN)/libgcc_s_*.dll $(FORTRANDIR)
+	cp -puf $(MINGWBIN)/libgfortran*.dll $(FORTRANDIR)
+	cp -puf $(MINGWBIN)/libquadmath*.dll $(FORTRANDIR)
+	cp -puf $(MINGWBIN)/libwinpthread*.dll $(FORTRANDIR)
 
 clean:
 	(cd $(FORTRANDIR) && rm -f *.o *.dll)
