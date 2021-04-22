@@ -15,8 +15,8 @@ FORTRANDIR = fortran_interface
 all: install
 
 install: build
-	mkdir -p $(OMBUILDDIR)/OMSens
-	cp -rfp . $(OMBUILDDIR)/OMSens
+	mkdir -p $(OMBUILDDIR)/share/OMSens
+	cp -rfp . $(OMBUILDDIR)/share/OMSens
 
 build:
 	(cd $(FORTRANDIR) && $(MINGWBIN)/gfortran.exe -fPIC -c Rutf.for Rut.for Curvif.for)
@@ -28,4 +28,4 @@ build:
 
 clean:
 	(cd $(FORTRANDIR) && rm -f *.o *.dll)
-	rm -rf $(OMBUILDDIR)/OMSens
+	rm -rf $(OMBUILDDIR)/share/OMSens
