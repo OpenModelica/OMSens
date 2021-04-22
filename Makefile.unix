@@ -1,0 +1,12 @@
+ifeq ($(OMBUILDDIR),)
+$(error OMBUILDDIR variable is not set.)
+endif
+
+all: install
+
+install:
+	mkdir -p $(OMBUILDDIR)/share/OMSens
+	cp -rfp . $(OMBUILDDIR)/share/OMSens
+
+clean:
+	rm -rf $(OMBUILDDIR)/share/OMSens
