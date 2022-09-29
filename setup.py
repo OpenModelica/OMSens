@@ -52,8 +52,7 @@ setup(name='OMSens',
       install_requires=[
           'six',
           'pytest',
-          'cppy',
-          'matplotlib==3.3',
+          'matplotlib',
           'numpy',
           'pandas==1.1.3'
       ]
