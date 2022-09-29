@@ -53,6 +53,8 @@ setup(name='OMSens',
           'six',
           'pytest',
           'matplotlib==3.3',
+          'kiwisolver==1.3.2',
+          'Pillow==9.0.1',
           'numpy',
           'pandas==1.1.3'
       ]

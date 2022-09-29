@@ -118,13 +118,13 @@ def valueElementForParamAndXMLTree(param_name, xml_tree):
     # Get XML root
     root = xml_tree.getroot()
     # Find element with vars and parameters
-    modelvars_element = [e for e in root.getchildren() if e.tag == "ModelVariables"][0]
+    modelvars_element = [e for e in list(root) if e.tag == "ModelVariables"][0]
     # Find parameter
-    param_element = [x for x in modelvars_element.getchildren()
+    param_element = [x for x in list(modelvars_element)
                      if x.tag == "ScalarVariable" and
                      x.attrib["name"] == param_name][0]
     # Get value element for param
-    param_value_element = param_element.getchildren()[0]
+    param_value_element = list(param_element)[0]
     return param_value_element
 
 
