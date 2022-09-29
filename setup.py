@@ -53,6 +53,7 @@ setup(name='OMSens',
           'six',
           'pytest',
           'matplotlib==3.3',
+          'cppy',
           'numpy',
           'pandas==1.1.3'
       ]
