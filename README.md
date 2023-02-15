@@ -4,7 +4,7 @@ OpenModelica sensitivity analysis and optimization module.
 
 ## Dependencies
 
-  - [OpenModelica Compiler](../OMCompiler)
+  - [OpenModelica](https://github.com/OpenModelica/OpenModelica)
   - [Python >= 3.6](https://www.python.org/)
   - [Python setuptools](https://pypi.org/project/setuptools/)
 
@@ -17,8 +17,8 @@ OpenModelica sensitivity analysis and optimization module.
 
 Follow the instructions matching your OS:
 
-  - [OMCompiler/README.Linux.md](../OMCompiler/README.Linux.md)
-  - [OMCompiler/README.Windows.md](../OMCompiler/README.Windows.md)
+  - [OMCompiler/README.Linux.md](https://github.com/OpenModelica/OpenModelica/blob/master/OMCompiler/README.Linux.md)
+  - [OMCompiler/README.Windows.md](https://github.com/OpenModelica/OpenModelica/blob/master/OMCompiler/README.Windows.md)
 
 ### Windows MSYS Makefiles
 
@@ -46,4 +46,4 @@ $ python setup.py install
 ## Bug Reports
 
   - Submit bugs through the [OpenModelica GitHub issues](https://github.com/OpenModelica/OpenModelica/issues/new).
-  - [Pull requests](https://github.com/OpenModelica/OpenModelica/pulls) are welcome ❤️
+  - [Pull requests](../../pulls) are welcome ❤️
