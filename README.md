@@ -4,33 +4,32 @@ OpenModelica sensitivity analysis and optimization module.
 
 ## Dependencies
 
-- [OpenModelica](https://openmodelica.org)
-- [Python >= 3.6](https://www.python.org/)
-- [Python setuptools](https://pypi.org/project/setuptools/)
+  - [OpenModelica](https://github.com/OpenModelica/OpenModelica)
+  - [Python >= 3.6](https://www.python.org/)
+  - [Python setuptools](https://pypi.org/project/setuptools/)
 
 ## Supported platforms
 
-- Windows
-- Linux
+  - Windows
+  - Linux
 
 ## Build/Install instructions
 
-### Windows
+Follow the instructions matching your OS:
 
-OMSens is installed automatically with OpenModelica on Windows.
-If you still want to build it then setup the [Windows environment](https://github.com/OpenModelica/OpenModelica/blob/master/OMCompiler/README-OMDev-MINGW.md).
-Once the environment is ready then run the makefile.
+  - [OMCompiler/README.Linux.md](https://github.com/OpenModelica/OpenModelica/blob/master/OMCompiler/README.Linux.md)
+  - [OMCompiler/README.Windows.md](https://github.com/OpenModelica/OpenModelica/blob/master/OMCompiler/README.Windows.md)
+
+### Windows MSYS Makefiles
+
+If you used MSYS Makefiles to compile OpenModelica you need one additional step:
+
+Start a MSYS terminal `$OMDEV\tools\msys\mingw64.exe` (64 bit) or
+`$OMDEV\tools\msys\mingw32.exe` (32 bit) and run:
 
 ```bash
-cd /path/to/OpenModelica
-make -f Makefile.omdev.mingw omsens
-```
-
-OR
-
-```bash
-cd /path/to/OpenModelica/OMSens
-make -f Makefile.omdev.mingw OMBUILDDIR=/path/to/OpenModelica/builddirectory
+$ cd /path/to/OpenModelica
+make -f Makefile.omdev.mingw omsens -j<Nr. of cores>
 ```
 
 ### Linux
@@ -46,5 +45,5 @@ $ python setup.py install
 
 ## Bug Reports
 
-- Submit bugs through the [issues](issues).
-- [Pull requests](pulls) are welcome.
+  - Submit bugs through the [OpenModelica GitHub issues](https://github.com/OpenModelica/OpenModelica/issues/new).
+  - [Pull requests](../../pulls) are welcome ❤️
