@@ -20,7 +20,7 @@ install: build
 
 build:
 	(cd $(FORTRANDIR) && $(MINGWBIN)/gfortran.exe -fPIC -c Rutf.for Rut.for Curvif.for)
-	(cd $(FORTRANDIR) && f2py -c -I. Curvif.o Rutf.o Rut.o -m curvif_simplified curvif_simplified.pyf Curvif_simplified.f90 --compiler=mingw32 --fcompiler=gfortran)
+	(cd $(FORTRANDIR) && f2py -c -I. Curvif.o Rutf.o Rut.o -m curvif_simplified curvif_simplified.pyf Curvif_simplified.f90 --compiler=mingw32 --fcompiler=gfortran -DNPY_OS_MINGW)
 	cp -puf $(MINGWBIN)/libgcc_s_*.dll $(FORTRANDIR)
 	cp -puf $(MINGWBIN)/libgfortran*.dll $(FORTRANDIR)
 	cp -puf $(MINGWBIN)/libquadmath*.dll $(FORTRANDIR)
