@@ -36,7 +36,8 @@ def writeOMCLog(log_str, output_path):
     final_str = intro_str+separator_str+log_str
     filesystem.files_aux.writeStrToFile(final_str,output_path)
     return 0
+
 def removeTemporaryFiles(folder_path):
-    regex = '.*\.(c|o|h|makefile|log|libs|json)$'
+    regex = r'.*\.(c|o|h|makefile|log|libs|json)$'
     filesystem.files_aux.removeFilesWithRegexAndPath(regex,folder_path)
 
