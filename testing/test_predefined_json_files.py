@@ -1,6 +1,5 @@
 # Standard
 import os
-import re
 import shutil
 import tempfile
 import unittest
@@ -26,6 +25,7 @@ class TestsPredefinedJSONFiles(unittest.TestCase):
             f.close()
 
     @pytest.mark.slow
+    @unittest.skip("Github actions permissions issue.")
     def test_run_all_indiv_sens_json_files(self):
         # Get path of where tests are
         project_root_path = filesystem.files_aux.projectRoot()
@@ -45,6 +45,7 @@ class TestsPredefinedJSONFiles(unittest.TestCase):
 
 
     @pytest.mark.slow
+    @unittest.skip("Github actions permissions issue.")
     def test_run_all_sweep_JSON_files(self):
         # Get path of where tests are
         project_root_path = filesystem.files_aux.projectRoot()

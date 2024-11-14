@@ -125,7 +125,7 @@ class TestsBuildModel(unittest.TestCase):
 
 # Auxs
 model_str = \
-"""class Model
+"""model Model
   parameter Real a=-1;
   parameter Real b=1;
   Real x(start=1,fixed=true);

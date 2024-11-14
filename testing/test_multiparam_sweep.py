@@ -160,7 +160,7 @@ class TestMultiparameterSweep(unittest.TestCase):
 # Globals #
 ###########
 model_str = \
-    """class Model
+    """model Model
       parameter Real a=-1;
       parameter Real b=-1;
       parameter Real c=-1;

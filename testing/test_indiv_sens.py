@@ -344,7 +344,7 @@ bb_g_perturbed_2_str = \
 3,2.105894579818758e-11,0,0,0,0,0,1"""
 
 model_str = \
-    """class Model
+    """model Model
       parameter Real a=-1;
       parameter Real b=-1;
       parameter Real c=-1;
