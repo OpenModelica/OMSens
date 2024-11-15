@@ -74,9 +74,9 @@ def writeStrToFile(str_, file_path):
     return 0
 
 
-def callCMDStringInPath(command, path):
+def callCMDStringInPath(command, path, run_env):
     # shell=True
-    process = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True, cwd=path)
+    process = subprocess.Popen(command, env=run_env, stdout=subprocess.PIPE, shell=True, cwd=path)
     # shell=False
     # # Make list of strings splitting by whitespaces
     # args = command.split(" ")

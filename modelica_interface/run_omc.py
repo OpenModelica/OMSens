@@ -21,7 +21,7 @@ def runMosScript(script_path):
     #Check if windows or linux:
     interpreter = interpreterForCurrentPlatform()
     command = "{interpreter} {script_path}".format(interpreter=interpreter,script_path=script_path)
-    output = filesystem.files_aux.callCMDStringInPath(command,script_folder_path)
+    output = filesystem.files_aux.callCMDStringInPath(command,script_folder_path,None)
     folder_path = os.path.dirname(script_path)
     omc_log_path = os.path.join(folder_path,gral_settings.omc_run_log_filename)
     output_decoded = output.decode("UTF-8")
@@ -31,7 +31,7 @@ def runMosScript(script_path):
     return output_decoded
 
 def writeOMCLog(log_str, output_path):
-    intro_str ="""The following is the output from the OMC script runner from Open Modelica"""+"\n"
+    intro_str ="""The following is the output from the OMC script runner from OpenModelica"""+"\n"
     separator_str = 10*"""-"""+"\n"
     final_str = intro_str+separator_str+log_str
     filesystem.files_aux.writeStrToFile(final_str,output_path)

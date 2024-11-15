@@ -1,5 +1,6 @@
 # Std
 import os
+import platform
 # Mine
 import filesystem.files_aux as files_aux
 import modelica_interface.run_omc as run_omc
@@ -10,8 +11,8 @@ class ModelicaModelBuilder():
     mos_script_skeleton = \
     (
         # This shouldn't be the responsibility of the builder, but for now we leave it here
-        """print("Loading Modelica");\n"""
-        """loadModel(Modelica);getErrorString();\n"""
+        """print("Loading Modelica 3.2.3");\n"""
+        """loadModel(Modelica, {{"3.2.3"}});getErrorString();\n"""
         """print("Loading model in path {model_file_path}");\n"""
         """loadFile("{model_file_path}"); getErrorString();\n"""
         """print("Building model {model_name}");\n"""
@@ -35,11 +36,13 @@ class ModelicaModelBuilder():
         # Run mos script with OMC
         run_omc.runMosScript(mos_script_path)
         # Get binary path from folder and model name
-        binary_file_path = os.path.join(dest_folder_path, self.model_name)
+        if platform.system() == "Windows":
+            binary_file_path = os.path.join(dest_folder_path, self.model_name + ".exe")
+        else:
+            binary_file_path = os.path.join(dest_folder_path, self.model_name)
         # Initialize compiled model instance from path
         compiled_model = CompiledModelicaModel(self.model_name, binary_file_path)
         return compiled_model
-
 
     def mosScriptString(self):
         # There should be no backslashes (\) in paths, even in Windows

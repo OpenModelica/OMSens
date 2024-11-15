@@ -1,5 +1,7 @@
 # Std
 import os
+import platform
+import re
 import xml.etree.ElementTree as ElementTree
 import pandas
 import copy
@@ -88,7 +90,24 @@ class CompiledModelicaModel():
         flags_str = " ".join(all_flags)
         cmd = "{0} {1}".format(self.binary_file_path, flags_str)
         # Execute binary with args
-        output = files_aux.callCMDStringInPath(cmd, binary_folder_path)
+        if platform.system() == "Windows":
+            dllPath = ""
+            ## set the process environment from the generated .bat file in windows which should have all the dependencies
+            binary_file_name = os.path.splitext(self.binary_file_path)[0]
+            batFilePath = os.path.join(binary_folder_path, '{}.{}'.format(binary_file_name, "bat")).replace("\\", "/")
+            if (not os.path.exists(batFilePath)):
+                print("Error: bat does not exist " + batFilePath)
+
+            with open(batFilePath, 'r') as file:
+                for line in file:
+                    match = re.match(r"^SET PATH=([^%]*)", line, re.IGNORECASE)
+                    if match:
+                        dllPath = match.group(1).strip(';')  # Remove any trailing semicolons
+            my_env = os.environ.copy()
+            my_env["PATH"] = dllPath + os.pathsep + my_env["PATH"]
+        else:
+            my_env = None
+        output = files_aux.callCMDStringInPath(cmd, binary_folder_path, my_env)
         # Decode stdout
         output_decoded = output.decode("UTF-8")
         return output_decoded

@@ -35,7 +35,6 @@ __status__ = "Production"
 
 from setuptools import setup
 import os
-import sys
 from shutil import which
 from subprocess import call
 
@@ -49,14 +48,15 @@ setup(name='OMSens',
       maintainer_email='adeel.asghar@liu.se',
       license="BSD, OSMC-PL 1.2, GPL (user's choice)",
       url='http://openmodelica.org/',
+      py_modules=[],
       install_requires=[
           'six',
           'pytest',
-          'matplotlib==3.3',
-          'kiwisolver==1.3.2',
-          'Pillow==9.0.1',
+          'matplotlib',
+          'kiwisolver',
+          'Pillow',
           'numpy',
-          'pandas==1.1.3'
+          'pandas'
       ]
       )
 

@@ -48,7 +48,7 @@ class TestVectorialPlot(unittest.TestCase):
         # Plot vectorial specs to temp folder
         vectorial_plotter.plotInFolder(self._temp_dir)
         # Get plots extensions regex
-        regex = '.*\.(png|svg)$'
+        regex = r'.*\.(png|svg)$'
         # Get list of files from regex
         files_in_dir = os.listdir(self._temp_dir)
         plot_files = [x for x in files_in_dir if re.match(regex, x)]
