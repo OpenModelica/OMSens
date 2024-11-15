@@ -45,7 +45,7 @@ class TestsRunOMC(unittest.TestCase):
         mos_folder_path = os.path.dirname(mos_path)
         trash_files = []
         for x in os.listdir(mos_folder_path):
-            if re.match('.*\.(c|o|h|makefile|log|libs|json)$', x):
+            if re.match(r'.*\.(c|o|h|makefile|log|libs|json)$', x):
                 trash_files.append(x)
         if len(trash_files) > 0:
             not_removed_files = ",".join(trash_files)
@@ -65,7 +65,7 @@ def createTMPMos(file_str, test_case):
 
 model_str = \
     """loadString("
-    class Model
+    model Model
       parameter Real a=-1;
       Real x(start=1,fixed=true);
     equation

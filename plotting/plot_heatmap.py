@@ -172,13 +172,13 @@ def colorMapForDataFrame(df, colors=200):
     min_of_all = df.min().min()
     if min_of_all >= 0:
         # The following is to get the default colormap and manually set white as it starting value for 0
-        reds_cm = matplotlib.cm.get_cmap("Reds", colors)  # generate a predefined map with amount of  values
+        reds_cm = matplotlib.colormaps.get_cmap("Reds")  # generate a predefined map with amount of  values
         red_vals = reds_cm(np.arange(colors))  # extract those values as an array
         red_vals = np.insert(red_vals, 1, [1, 1, 1, 1], axis=0)  # prepend pure white to the list
         colormap = matplotlib.colors.LinearSegmentedColormap.from_list("newReds", red_vals)
     else:
         # The following is to get the default colormap and manually set white as it starting value for 0
-        colormap = matplotlib.cm.get_cmap("bwr")
+        colormap = matplotlib.colormaps.get_cmap("bwr")
     return colormap
 
 def shortenStringsWithPrefix(orig_strs, prefix):
@@ -470,13 +470,13 @@ def chooseColormapFromMin(min_of_all):
     values = 200 # how many colors
     if min_of_all >= 0:
         # The following is to get the default colormap and manually set white as it starting value for 0
-        reds_cm = matplotlib.cm.get_cmap("Reds", values) #generate a predefined map with amount of  values
+        reds_cm = matplotlib.colormaps.get_cmap("Reds") #generate a predefined map with amount of  values
         red_vals = reds_cm(np.arange(values)) #extract those values as an array
         red_vals = np.insert(red_vals,1,[1,1,1,1],axis=0)  # prepend pure white to the list
         colormap = matplotlib.colors.LinearSegmentedColormap.from_list("newReds", red_vals)
     else:
         # The following is to get the default colormap and manually set white as it starting value for 0
-        colormap = matplotlib.cm.get_cmap("bwr")
+        colormap = matplotlib.colormaps.get_cmap("bwr")
     return colormap
 
 

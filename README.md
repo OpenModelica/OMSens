@@ -2,6 +2,8 @@
 
 OpenModelica sensitivity analysis and optimization module.
 
+[![Test](https://github.com/OpenModelica/OMSens/actions/workflows/Test.yml/badge.svg)](https://github.com/OpenModelica/OMSens/actions/workflows/Test.yml)
+
 ## Dependencies
 
   - [OpenModelica](https://github.com/OpenModelica/OpenModelica)
@@ -40,8 +42,6 @@ Install the dependencies mentioned above and then run the following commands in 
 $ cd /path/to/OpenModelica/OMSens
 $ python setup.py install
 ```
-
-**Hint**: To find the installation path run `OMEdit` and then go to `Help->About OMEdit`.
 
 ## Bug Reports
 
