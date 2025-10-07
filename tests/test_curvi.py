@@ -112,7 +112,7 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
         # Get base args for an example function
         x0, obj_func, epsilon, lower_bounds, upper_bounds  = baseCuadraticFuncArgs()
         # Replace objective function to maximize instead of minimizing
-        obj_func = lambda x: -x**2
+        obj_func = lambda x: -(x.item() if isinstance(x, numpy.ndarray) and x.size == 1 else x)**2
         # Call curvi
         x_opt,f_opt = curvi_mod.curvif_simplified(x0,obj_func,lower_bounds,upper_bounds,epsilon)
         # Check results
@@ -159,7 +159,7 @@ class TestIndividualSensitivityAnalysis(unittest.TestCase):
 
 def baseCuadraticFuncArgs():
     x0 = numpy.array([1])
-    obj_func = lambda x: x**2
+    obj_func = lambda x: (x.item() if isinstance(x, numpy.ndarray) and x.size == 1 else x)**2
     epsilon = 0.0001
     lower_bounds = [-2]
     upper_bounds = [2]

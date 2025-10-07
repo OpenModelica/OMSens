@@ -5,7 +5,7 @@ import tempfile #para crear el tempdir
 import shutil #para borrar el tempdir
 import re #para los regex
 #Mine
-import testing.aux_tests
+import tests.aux_tests
 import filesystem.files_aux
 import misc.csv_output_to_csv_matrix_converter as to_matrix
 

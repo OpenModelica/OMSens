@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         python-version: ['3.13']
-        os: ['ubuntu-latest']
+        os: ['ubuntu-latest', 'windows-latest']
         omc-version: ['stable']
 
     permissions:
@@ -22,7 +22,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: "Set up OpenModelica Compiler"
-        uses: OpenModelica/setup-openmodelica@v1.0
+        uses: OpenModelica/setup-openmodelica@v1.0.2
         with:
           version: ${{ matrix.omc-version }}
           packages: |
@@ -40,9 +40,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install setuptools
-          sudo python setup.py install
-          pip install six matplotlib kiwisolver Pillow numpy pandas pytest pytest-md pytest-emoji
+          pip install . pytest pytest-md pytest-emoji pre-commit
 
       - name: Set timezone
         uses: szenius/set-timezone@v2.0
@@ -50,5 +48,11 @@ jobs:
           timezoneLinux: 'Europe/Berlin'
 
       - name: Run pytest
-        run: |
-          sudo pytest -v --junitxml=junit/test-results-${{ matrix.python-version }}.xml testing
+        uses: pavelzw/pytest-action@v2
+        with:
+          verbose: true
+          emoji: true
+          job-summary: true
+          custom-arguments: '-v '
+          click-to-expand: true
+          report-title: 'Test Report'
