@@ -19,7 +19,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: "Set up OpenModelica Compiler"
         uses: OpenModelica/setup-openmodelica@v1.0.2
