@@ -41,7 +41,7 @@ FORTRAN_FILES = ["Rutf.for", "Rut.for", "Curvif.for"]
 FPY_FILES = ["curvif_simplified.pyf", "Curvif_simplified.f90"]
 
 # Directory where Fortran sources live
-FORTRAN_DIR = Path(__file__).parent / "src" / "OMSens" / "fortran_interface"
+FORTRAN_DIR = Path(__file__).parent / "fortran_interface"
 
 class CustomBuildPy(_build_py):
     """Custom build_py to compile Fortran and f2py into the source package folder."""

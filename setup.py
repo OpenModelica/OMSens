@@ -32,9 +32,10 @@ __author__ = "Adeel Asghar, adeel.asghar@liu.se"
 
 import sys
 from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent))  # Make current dir importable
+# Add src folder to sys.path
+sys.path.insert(0, str(Path(__file__).parent / "src"))
 
-from build_hooks import CustomBuildPy
+from OMSens.build_hooks import CustomBuildPy
 
 from setuptools import setup
 
