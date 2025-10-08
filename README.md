@@ -1,49 +1,39 @@
 # OMSens
 
-OpenModelica sensitivity analysis and optimization module.
+**OMSens** is an OpenModelica module for **sensitivity analysis and optimization**, enabling single and multi-parameter sensitivity studies of Modelica models.
 
 [![Test](https://github.com/OpenModelica/OMSens/actions/workflows/Test.yml/badge.svg)](https://github.com/OpenModelica/OMSens/actions/workflows/Test.yml)
 
 ## Dependencies
 
   - [OpenModelica](https://github.com/OpenModelica/OpenModelica)
-  - [Python >= 3.6](https://www.python.org/)
-  - [Python setuptools](https://pypi.org/project/setuptools/)
+  - [Python >= 3.13](https://www.python.org/)
 
 ## Supported platforms
 
   - Windows
   - Linux
 
-## Build/Install instructions
+## Installation
 
-Follow the instructions matching your OS:
+Installation using `pip` is recommended.
 
-  - [OMCompiler/README.Linux.md](https://github.com/OpenModelica/OpenModelica/blob/master/OMCompiler/README.Linux.md)
-  - [OMCompiler/README.Windows.md](https://github.com/OpenModelica/OpenModelica/blob/master/OMCompiler/README.Windows.md)
-
-### Windows MSYS Makefiles
-
-If you used MSYS Makefiles to compile OpenModelica you need one additional step:
-
-Start a MSYS terminal `$OMDEV\tools\msys\mingw64.exe` (64 bit) or
-`$OMDEV\tools\msys\mingw32.exe` (32 bit) and run:
+### Via pip
 
 ```bash
-$ cd /path/to/OpenModelica
-make -f Makefile.omdev.mingw omsens -j<Nr. of cores>
+pip install OMSens
 ```
 
-### Linux
+### Via source
 
-Install the dependencies mentioned above and then run the following commands in the `terminal`.
+Clone the repository and run:
 
 ```bash
-$ cd /path/to/OpenModelica/OMSens
-$ python setup.py install
+cd <OMSensPath>
+pip install .
 ```
 
 ## Bug Reports
 
-  - Submit bugs through the [OpenModelica GitHub issues](https://github.com/OpenModelica/OpenModelica/issues/new).
+  - Submit bugs through the [OpenModelica GitHub issues](https://github.com/OpenModelica/OMSens/issues/new).
   - [Pull requests](../../pulls) are welcome ❤️

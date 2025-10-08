@@ -9,8 +9,7 @@ import pytest
 
 # Mine
 import modelica_interface.run_omc as omc_runner
-import testing.aux_tests
-
+import tests.aux_tests
 
 class TestsRunOMC(unittest.TestCase):
     # setup y teardown de los tests
@@ -58,9 +57,9 @@ class TestsRunOMC(unittest.TestCase):
 ###########
 def createTMPMos(file_str, test_case):
     # Creates mos script in temp folder
-    return testing.aux_tests.createTempFromStrIntoTestCaseTempFolder(file_str, test_case, "script.mos")
+    return tests.aux_tests.createTempFromStrIntoTestCaseTempFolder(file_str, test_case, "script.mos")
     # Creates stand alone tempfile
-    # return testing.aux_tests.createTempFromStrAndAddToTestCase(file_str,test_case,suffix=".mos")
+    # return tests.aux_tests.createTempFromStrAndAddToTestCase(file_str,test_case,suffix=".mos")
 
 
 model_str = \

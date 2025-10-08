@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 __license__ = """
@@ -30,55 +29,16 @@ IN THE BY RECIPIENT SELECTED SUBSIDIARY LICENSE CONDITIONS OF OSMC-PL.
 See the full OSMC Public License conditions for more details.
 """
 __author__ = "Adeel Asghar, adeel.asghar@liu.se"
-__maintainer__ = "https://openmodelica.org"
-__status__ = "Production"
+
+import sys
+from pathlib import Path
+# Add src folder to sys.path
+sys.path.insert(0, str(Path(__file__).parent / "src"))
+
+from OMSens.build_hooks import CustomBuildPy
 
 from setuptools import setup
-import os
-from shutil import which
-from subprocess import call
 
-setup(name='OMSens',
-      python_requires='>=3.6',
-      version='1.0.0',
-      description='OpenModelica sensitivity analysis and optimization module',
-      author='Rodrigo Castro',
-      author_email='rcastro@dc.uba.ar',
-      maintainer='Adeel Asghar',
-      maintainer_email='adeel.asghar@liu.se',
-      license="BSD, OSMC-PL 1.2, GPL (user's choice)",
-      url='http://openmodelica.org/',
-      py_modules=[],
-      install_requires=[
-          'six',
-          'pytest',
-          'matplotlib',
-          'kiwisolver',
-          'Pillow',
-          'numpy',
-          'pandas'
-      ]
-      )
-
-try:
-  omhome = os.path.split(os.path.split(os.path.realpath(which("omc")))[0])[0]
-except BaseException:
-  omhome = None
-omhome = omhome or os.environ.get('OPENMODELICAHOME')
-
-if omhome is None:
-    raise Exception("Failed to find OPENMODELICAHOME (searched for environment variable as well as the omc executable)")
-
-try:
-  # Compile CURVI files
-  if 0 != call(["gfortran", "-fPIC", "-c", "Rutf.for", "Rut.for", "Curvif.for"], cwd="fortran_interface"):
-    raise Exception("Failed to compile CURVI files.")
-  print("CURVI files compiled.")
-
-  # Generate CURVIF python binary
-  f2py_call = call(["f2py", "-c", "-I.", "Curvif.o", "Rutf.o", "Rut.o", "-m", "curvif_simplified", "curvif_simplified.pyf", "Curvif_simplified.f90"], cwd="fortran_interface")
-  if 0 != f2py_call:
-    raise Exception("Failed to generate CURVIF python binary.")
-  print("Generated CURVIF python binary.")
-except ImportError:
-  print("Error installing OMSens.")
+setup(
+    cmdclass={"build_py": CustomBuildPy}
+)
