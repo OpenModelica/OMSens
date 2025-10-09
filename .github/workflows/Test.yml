@@ -1,58 +1,100 @@
-name: Test
+name: Test & Publish
 
 on:
   push:
     branches: ['master']
+    tags:
+      - 'v*'   # only publish when pushing version tags (e.g., v1.0.0)
   pull_request:
   workflow_dispatch:
 
+env:
+  PYTHON_VERSION: '3.13'
+  OMC_VERSION: 'stable'
+
 jobs:
-  Test:
+  TestAndBuild:
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 30
     strategy:
       matrix:
-        python-version: ['3.13']
         os: ['ubuntu-latest', 'windows-latest']
-        omc-version: ['stable']
 
-    permissions:
-      contents: write
     steps:
       - uses: actions/checkout@v5
 
       - name: "Set up OpenModelica Compiler"
         uses: OpenModelica/setup-openmodelica@v1.0.2
         with:
-          version: ${{ matrix.omc-version }}
+          version: ${{ env.OMC_VERSION }}
           packages: |
             omc
           libraries: |
             'Modelica 3.2.3'
-      - run: "omc --version"
+      - run: omc --version
 
-      - name: Set up Python ${{ matrix.python-version }}
+      - &setup-python
+        name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: ${{ env.PYTHON_VERSION }}
           architecture: 'x64'
 
-      - name: Install dependencies
+      - &install-deps
+        name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install . pytest pytest-md pytest-emoji pre-commit
+          pip install . pytest pytest-md pytest-emoji pre-commit build twine
 
       - name: Set timezone
         uses: szenius/set-timezone@v2.0
         with:
           timezoneLinux: 'Europe/Berlin'
 
-      - name: Run pytest
+      - &run-tests
+        name: Run pytest
         uses: pavelzw/pytest-action@v2
         with:
           verbose: true
           emoji: true
           job-summary: true
-          custom-arguments: '-v '
+          custom-arguments: '-v'
           click-to-expand: true
           report-title: 'Test Report'
+
+      - name: Build wheel and sdist
+        run: python -m build
+
+      - name: Upload dist artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ matrix.os }}
+          path: dist/*
+
+
+  Publish:
+    name: Publish to PyPI
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [TestAndBuild]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+      - <<: *setup-python
+
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+
+      - name: Merge artifacts into single dist folder
+        run: |
+          mkdir merged_dist
+          find dist -type f -name "*.whl" -exec cp {} merged_dist/ \;
+          find dist -type f -name "*.tar.gz" -exec cp {} merged_dist/ \;
+          ls -R merged_dist
+
+      - name: Upload to PyPI
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_OMSENS_API_TOKEN }}
+        run: python -m twine upload --repository pypi merged_dist/*
