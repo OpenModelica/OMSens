@@ -37,7 +37,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "OMSens"
-version = "1.0.0"
+version = "1.0.1"
 description = "OpenModelica sensitivity analysis and optimization module"
 readme = "README.md"
 authors = [
