@@ -44,6 +44,14 @@ class wheel(bdist_wheel):
         super().finalize_options()
         self.root_is_pure = False  # mark as platform-specific
 
+    def get_tag(self):
+        python, abi, plat = super().get_tag()
+        # Replace generic linux tag with PyPI-compatible one
+        if plat.startswith("linux"):
+            plat = "manylinux2014_x86_64"
+        return python, abi, plat
+
+
 setup(
     cmdclass={"build_py": CustomBuildPy, "bdist_wheel": wheel}
 )
