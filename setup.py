@@ -36,9 +36,14 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent / "src"))
 
 from OMSens.build_hooks import CustomBuildPy
-
 from setuptools import setup
+from wheel.bdist_wheel import bdist_wheel
+
+class wheel(bdist_wheel):
+    def finalize_options(self):
+        super().finalize_options()
+        self.root_is_pure = False  # mark as platform-specific
 
 setup(
-    cmdclass={"build_py": CustomBuildPy}
+    cmdclass={"build_py": CustomBuildPy, "bdist_wheel": wheel}
 )

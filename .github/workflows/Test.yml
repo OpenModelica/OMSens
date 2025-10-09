@@ -9,8 +9,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-test-publish:
-    name: ${{ matrix.os }} - Python ${{ matrix.python-version }}
+  test:
+    name: Test - ${{ matrix.os }} - Python ${{ matrix.python-version }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -42,13 +42,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip build setuptools wheel numpy meson ninja
+          python -m pip install --upgrade pip
           pip install . pytest pytest-md pytest-emoji
-
-      - name: Set timezone
-        uses: szenius/set-timezone@v2.0
-        with:
-          timezoneLinux: 'Europe/Berlin'
 
       - name: Run pytest
         uses: pavelzw/pytest-action@v2
@@ -60,12 +55,57 @@ jobs:
           click-to-expand: true
           report-title: 'Test Report'
 
-      - name: Build distributions
-        run: python -m build --wheel --sdist
+  build:
+    name: Build Wheel - ${{ matrix.os }} - Python ${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        python-version: ['3.13']
+        os: ['ubuntu-latest', 'windows-latest']
+    needs: test
+    steps:
+      - uses: actions/checkout@v5
 
-      - name: Upload to PyPI
-        if: startsWith(github.ref, 'refs/tags/')
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: 'x64'
+
+      - name: Install build tools
+        run: python -m pip install --upgrade pip build setuptools wheel numpy meson ninja
+
+      - name: Build wheel
+        run: python -m build --wheel --outdir wheelhouse
+
+      - name: Upload wheel as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: wheel-${{ matrix.os }}
+          path: wheelhouse/*
+
+  publish:
+    name: Publish to PyPI
+    runs-on: ubuntu-latest
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - name: Download wheels from all platforms
+        uses: actions/download-artifact@v3
+        with:
+          name: wheels-ubuntu-latest
+          path: wheelhouse/ubuntu
+      - uses: actions/download-artifact@v3
+        with:
+          name: wheels-windows-latest
+          path: wheelhouse/windows
+
+      - name: Install twine
+        run: python -m pip install --upgrade twine
+
+      - name: Publish to PyPI
         env:
           TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.PYPI_OMSENS_API_TOKEN  }}
-        run: python -m twine upload dist/*
+          TWINE_PASSWORD: ${{ secrets.PYPI_OMSENS_API_TOKEN }}
+        run: python -m twine upload wheelhouse/**/*
+
