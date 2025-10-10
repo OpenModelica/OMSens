@@ -13,7 +13,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        python-version: ['3.12']
+        python-version: ['3.12', '3.13']
         os: ['ubuntu-latest', 'windows-latest']
         omc-version: ['stable']
 
@@ -54,14 +54,14 @@ jobs:
           click-to-expand: true
           report-title: 'Test Report'
 
-      - name: Build distribution
-        run: python -m build --wheel --sdist --outdir dist
+      - name: Build wheel
+        run: python -m build --wheel --outdir wheels
 
-      - name: Upload artifacts
+      - name: Upload wheel artifact
         uses: actions/upload-artifact@v4.6.2
         with:
-          name: dist-${{ matrix.os }}
-          path: dist/*
+          name: wheel-${{ matrix.os }}-${{ matrix.python-version }}
+          path: wheels/*
 
   Publish:
     name: Publish to PyPI
@@ -69,23 +69,36 @@ jobs:
     needs: Test-Build
     if: startsWith(github.ref, 'refs/tags/')
     steps:
-      - name: Download Ubuntu artifacts
+      - name: Download Ubuntu wheel artifact 3.12
         uses: actions/download-artifact@v5
         with:
-          name: dist-ubuntu-latest
-          path: dist/ubuntu
-      - name: Download Windows artifacts
-        uses: actions/download-artifact@v5
-        with:
-          name: dist-windows-latest
-          path: dist/windows
+          name: wheel-ubuntu-latest-3.12
+          path: wheels/ubuntu
 
-      - name: Install Twine
+      - name: Download Ubuntu wheel artifact 3.13
+        uses: actions/download-artifact@v5
+        with:
+          name: wheel-ubuntu-latest-3.13
+          path: wheels/ubuntu
+
+      - name: Download Windows wheel artifact 3.12
+        uses: actions/download-artifact@v5
+        with:
+          name: wheel-windows-latest-3.12
+          path: wheels/windows
+
+      - name: Download Windows wheel artifact 3.13
+        uses: actions/download-artifact@v5
+        with:
+          name: wheel-windows-latest-3.13
+          path: wheels/windows
+
+      - name: Install twine
         run: python -m pip install --upgrade twine
 
-      - name: Publish all distributions to PyPI
+      - name: Publish all wheels to PyPI
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_OMSENS_API_TOKEN }}
         run: |
-          python -m twine upload dist/ubuntu/* dist/windows/* --skip-existing
+          python -m twine upload wheels/ubuntu/* wheels/windows/* --skip-existing
