@@ -46,7 +46,7 @@ authors = [
 maintainers = [
     { name = "Adeel Asghar", email = "adeel.asghar@liu.se" }
 ]
-license = { file = "license.txt" }
+license = "LicenseRef-OSMC-PL"
 requires-python = ">=3.12"
 dependencies = [
     "six",
@@ -57,6 +57,9 @@ dependencies = [
     "numpy",
     "pandas"
 ]
+
+[tool.setuptools]
+license-files = ["license.txt"]
 
 # include OMSens and all its subpackages
 [tool.setuptools.packages.find]
