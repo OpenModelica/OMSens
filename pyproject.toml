@@ -47,7 +47,7 @@ maintainers = [
     { name = "Adeel Asghar", email = "adeel.asghar@liu.se" }
 ]
 license = { file = "license.txt" }
-requires-python = ">=3.13"
+requires-python = ">=3.12"
 dependencies = [
     "six",
     "pytest",
