@@ -37,7 +37,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "OMSens"
-version = "1.0.1"
+version = "1.0.2"
 description = "OpenModelica sensitivity analysis and optimization module"
 readme = "README.md"
 authors = [
@@ -46,7 +46,7 @@ authors = [
 maintainers = [
     { name = "Adeel Asghar", email = "adeel.asghar@liu.se" }
 ]
-license = { file = "osmc-license.txt" }
+license = { file = "LICENSE" }
 requires-python = ">=3.13"
 dependencies = [
     "six",
@@ -58,9 +58,14 @@ dependencies = [
     "pandas"
 ]
 
+# include OMSens and all its subpackages
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["OMSens*", "OMSens.*"]   # include OMSens and all its subpackages
+include = ["OMSens*", "OMSens.*"]
+
+# include fortran interface files
+[tool.setuptools.package-data]
+"OMSens" = ["fortran_interface/*"]
 
 [project.urls]
 Homepage = "http://openmodelica.org/"
