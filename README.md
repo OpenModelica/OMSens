@@ -7,7 +7,7 @@
 ## Dependencies
 
   - [OpenModelica](https://github.com/OpenModelica/OpenModelica)
-  - [Python >= 3.13](https://www.python.org/)
+  - [Python >= 3.12](https://www.python.org/)
 
 ## Supported platforms
 
