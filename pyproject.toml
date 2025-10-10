@@ -46,7 +46,7 @@ authors = [
 maintainers = [
     { name = "Adeel Asghar", email = "adeel.asghar@liu.se" }
 ]
-license = { file = "license.txt" }
+license = { file = "OSMC-License.txt" }
 requires-python = ">=3.12"
 dependencies = [
     "six",
