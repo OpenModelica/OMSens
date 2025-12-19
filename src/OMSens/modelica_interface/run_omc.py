@@ -8,12 +8,15 @@ import settings.gral_settings as gral_settings
 import filesystem.files_aux
 
 def interpreterForCurrentPlatform():
-    if platform.system() == "Linux":
+    system = platform.system()
+    if system == "Linux":
         interpreter = gral_settings._interpreter_linux
-    elif platform.system() == "Windows":
+    elif system == "Windows":
         interpreter = gral_settings._interpreter_windows
     else:
         logger.error("This script was tested only on Windows and Linux. The omc interpreter for another platform has not been set")
+        # This should really crash, otherwise interpreter could be uninitialized, setting this to None for now
+        interpreter = None
     return interpreter
 
 def runMosScript(script_path):

@@ -21,11 +21,11 @@ def makeOutputPath(folder_name="modelica_output"):
     return timestamp_dir
 
 
-def makeFolderWithPath(dest_path):
+def makeFolderWithPath(dest_path:str):
     if not os.path.exists(dest_path):
         os.makedirs(dest_path)
 
-def makeDirFromCurrentTimestamp(dest_path):
+def makeDirFromCurrentTimestamp(dest_path:str):
     logger.debug("Making timestamp dir")
     if not os.path.exists(dest_path):
         os.makedirs(dest_path)
@@ -43,12 +43,18 @@ def destPath(folder_name):
 
 
 def projectRoot():
-    currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+    frame = inspect.currentframe()
+    if frame is None:
+        raise SystemError("Project root could not be determined")
+    currentdir = os.path.dirname(os.path.abspath(inspect.getfile(frame)))
     project_root = parentDir(currentdir)
     return project_root
 
 def tmpPath():
-    currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+    frame = inspect.currentframe()
+    if frame is None:
+        raise SystemError("Project root could not be determined")
+    currentdir = os.path.dirname(os.path.abspath(inspect.getfile(frame)))
     parentdir = parentDir(currentdir)
     return os.path.join(parentdir, "tmp")
     # return os.path.join(currentdir,"tmp")

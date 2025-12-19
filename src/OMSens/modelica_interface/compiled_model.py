@@ -5,6 +5,7 @@ import re
 import xml.etree.ElementTree as ElementTree
 import pandas
 import copy
+from typing import Any
 
 # Mine
 import filesystem.files_aux as files_aux
@@ -24,20 +25,20 @@ class CompiledModelicaModel():
         self.default_xml_tree = copy.deepcopy(xml_tree)
 
     # Getters
-    def parameterValue(self,param_name):
+    def parameterValue(self,param_name: str):
         # Get XML element for param and its value from the (changed) XML
         xml_tree = self.xml_tree
         param_val_casted = parameterValueInModelicaXML(param_name, xml_tree)
         return param_val_casted
 
-    def defaultParameterValue(self,param_name):
+    def defaultParameterValue(self,param_name: str):
         # Get XML element for param and its value from the original XML
         xml_tree = self.default_xml_tree
         param_val_casted = parameterValueInModelicaXML(param_name, xml_tree)
         return param_val_casted
 
     # Setters
-    def setParameterStartValue(self,param_name,param_val):
+    def setParameterStartValue(self,param_name:str,param_val:float):
         # Cast value as string
         param_val_str = str(param_val)
         # Get XML element for param and its value
@@ -58,7 +59,7 @@ class CompiledModelicaModel():
         simu_results = simu_run_info.SimulationResults(dest_csv_path, self.model_name, self.binary_file_path, output)
         return simu_results
 
-    def quickSimulate(self, var_name, params_vals_dict=None):
+    def quickSimulate(self, var_name: str, params_vals_dict=None):
         # Set flags
         output_flag = "-output {0}".format(var_name)
         minimal_output_flag = "-lv=-LOG_SUCCESS"

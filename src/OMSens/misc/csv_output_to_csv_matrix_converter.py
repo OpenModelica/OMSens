@@ -52,7 +52,7 @@ def W3TheoSensToMatrixRowsListFromHeadersAndYearRow(header_row, year_row):
         # Check if its a sensitivity param/variable value
         complex_var_name = header_row_list[i]
         # Check if its a sens param/variable value
-        w3TheoSens_regex = "\$Sensitivities\..*"
+        w3TheoSens_regex = r"\$Sensitivities\..*"
         if re.match(w3TheoSens_regex, complex_var_name):
             param_name, var_name = extractParamNameAndVarNameFromComplexVarName(complex_var_name)
             # Add parameter influence to variable to the param_influences_dict dict

@@ -1,5 +1,6 @@
 import inspect
 from abc import ABC
+from typing import Any
 # Mine:
 import mos_writer.sweeping_mos_writer
 
@@ -7,6 +8,8 @@ import mos_writer.sweeping_mos_writer
 # Abstract class that implements most of the functionaltity.
 # The only responsibility of the subclasses is to set if uniparam or multiparam mos_writer
 class MosScriptFactory(ABC):
+    _sweeping_mos_writer: Any
+    
     # Init
     def __init__(self, *args, **kwargs):
         self._settings_dict = kwargs.pop("settings_dict")
@@ -17,7 +20,7 @@ class MosScriptFactory(ABC):
 
     def allSeteableSettings(self):
         # Returns the mandatory and the optional parameters
-        argsspecmsf = inspect.getargspec(self._sweeping_mos_writer.createMos)
+        argsspecmsf = inspect.getfullargspec(self._sweeping_mos_writer.createMos)
         if argsspecmsf.defaults:
             # If there are args with default values
             mandatory = argsspecmsf.args[0:len(argsspecmsf.args) - len(argsspecmsf.defaults)]

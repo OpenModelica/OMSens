@@ -27,7 +27,7 @@ def main():
     return 0
 
 
-def perturbateAndAnalyzeFromJsonToPath(json_file_path, dest_folder_path):
+def perturbateAndAnalyzeFromJsonToPath(json_file_path: str, dest_folder_path: str):
     # Read JSON
     with open(json_file_path, 'r') as fp:
         full_json = json.load(fp)
@@ -45,8 +45,8 @@ def perturbateAndAnalyzeFromJsonToPath(json_file_path, dest_folder_path):
     perturbateAndAnalyze(**perturbateAndAnalyze_kwargs)
 
 
-def perturbateAndAnalyze( model_name, model_file_path, start_time, stop_time, parameters_to_perturb, percentage,
-                              target_vars, dest_folder_path ):
+def perturbateAndAnalyze( model_name: str, model_file_path: str, start_time: float, stop_time: float, parameters_to_perturb: list[str], percentage: int,
+                              target_vars: list[str], dest_folder_path: str ):
     # Create simulations folder
     perturbations_folder_name = "simulation"
     perturbations_folder_path = os.path.join(dest_folder_path, perturbations_folder_name)
@@ -92,7 +92,7 @@ def perturbateAndAnalyze( model_name, model_file_path, start_time, stop_time, pa
     logger.info("Finished. The file {0} has all the analysis files paths.".format(paths_json_file_path))
 
 
-def listOfParametersPerturbationInfo(param_names, param_vals, percentage):
+def listOfParametersPerturbationInfo(param_names: list[str], param_vals: list[float], percentage: int):
     parameters_to_perturbate_tuples = []
     # Iterate parameters name and default info
     for p_name, p_val in zip(param_names, param_vals):
@@ -104,7 +104,7 @@ def listOfParametersPerturbationInfo(param_names, param_vals, percentage):
     return parameters_to_perturbate_tuples
 
 
-def finalDestFolderPath(dest_folder_path_arg):
+def finalDestFolderPath(dest_folder_path_arg:str):
     # Make dest folder path in this projects root if none indicated in command line
     if not dest_folder_path_arg:
         dest_folder_path = files_aux.makeOutputPath("indiv_sens_analysis")
@@ -114,7 +114,7 @@ def finalDestFolderPath(dest_folder_path_arg):
     return dest_folder_path
 
 
-def csvPathAndParameterNameForFolderAndParametersInfo(dest_folder_path, parameters_info):
+def csvPathAndParameterNameForFolderAndParametersInfo(dest_folder_path: str, parameters_info):
     perturbed_csvs_path_and_info_pairs = []
     for param_info in parameters_info:
         param_name = param_info[0]
