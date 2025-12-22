@@ -9,7 +9,7 @@ class SweepingFormulas(ABC):
     # This abstract class forces all of its subclasses to implement the "initialize" method. We need the formulas to be represented like this because
     #   we want to maximize userfriendliness and for that, the parameter info has to be set programatically (default value, for example)
     @abstractmethod
-    def initialize(extra_info):
+    def initialize(self, extra_info) -> str:
         pass
 
 

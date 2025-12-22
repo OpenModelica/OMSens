@@ -78,7 +78,7 @@ def tryTimestampOrNumberForList(orig_index):
 
 def setupPlot(setup_specs):
     plt.style.use('fivethirtyeight')
-    plt.gca().set_position([0.10, 0.15, 0.80, 0.77])
+    plt.gca().set_position((0.10, 0.15, 0.80, 0.77))
     plt.xlabel(setup_specs.x_label)
     plt.title(setup_specs.title + "\n" + setup_specs.subtitle, fontsize=14, y=1.08)
     plt.ylabel(setup_specs.y_label)
