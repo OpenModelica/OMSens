@@ -337,6 +337,11 @@ def rootMeanSquareForVar(df_std_run: pandas.DataFrame, df_param_perturbed: panda
     t_pert = df_param_perturbed.index.to_numpy()
     y_pert = df_param_perturbed[target_var].to_numpy()
 
+    # time axes need to be sorted, otherwise np.interp will fail silently
+    # given that this should always be the case an assertion makes sense here.
+    # the implementation can handle very large arrays, it shouldn't be a problem here
+    assert np.all(t_std[:-1] <= t_std[1:]) and np.all(t_pert[:-1] <= t_pert[1:]), "Time-Axes are not monotonous"
+
     # resample perturbed timeseries to unperturbed time-axis so they share the same X-Axis, in case of different samplings
     y_pert_resampled = np.interp(t_std, t_pert, y_pert)
 
