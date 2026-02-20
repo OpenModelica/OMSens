@@ -170,6 +170,3 @@ for my_param in my_params loop
   all_params_are_valid := all_params_are_valid and my_param_is_valid;
 end for;
 print(String(all_params_are_valid));"""
-
-if __name__ == "__main__":
-    main()

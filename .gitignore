@@ -93,3 +93,6 @@ ENV/
 
 *.o
 *.dll
+
+# VSCode Settings
+.vscode/*
