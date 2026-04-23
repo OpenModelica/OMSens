@@ -7,7 +7,7 @@ import modelica_interface.run_omc as run_omc
 from modelica_interface.compiled_model import CompiledModelicaModel
 
 
-class ModelicaModelBuilder():
+class ModelicaModelBuilder:
     mos_script_skeleton = \
     (
         # This shouldn't be the responsibility of the builder, but for now we leave it here
@@ -19,7 +19,7 @@ class ModelicaModelBuilder():
         """buildModel({model_name}, startTime={startTime},stopTime={stopTime},outputFormat="csv", numberOfIntervals={numberOfIntervals}); getErrorString();"""
     )
 
-    def __init__(self, model_name, start_time, stop_time, model_file_path, number_of_intervals=300):
+    def __init__(self, model_name:str, start_time:float, stop_time:float, model_file_path:str, number_of_intervals:int=300):
         # Attrs from args
         self.model_name        = model_name
         self.start_time        = start_time
@@ -29,7 +29,7 @@ class ModelicaModelBuilder():
         # Hardcoded attrs
         self.mos_script_file_name = "builder.mos"
 
-    def buildToFolderPath(self,dest_folder_path):
+    def buildToFolderPath(self,dest_folder_path:str):
         # Write .mos script to folder
         mos_script_path = os.path.join(dest_folder_path, self.mos_script_file_name)
         self.writeMOSScriptToPath(mos_script_path)
@@ -55,7 +55,7 @@ class ModelicaModelBuilder():
                                                          stopTime          = self.stop_time)
         return mos_script_str
 
-    def writeMOSScriptToPath(self,file_path):
+    def writeMOSScriptToPath(self,file_path:str):
         # This shouldn't be the responsibility of the builder, but for now we leave it here
         mos_script_str = self.mosScriptString()
         files_aux.writeStrToFile(mos_script_str,file_path)

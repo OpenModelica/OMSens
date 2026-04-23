@@ -1,5 +1,7 @@
+from typing import Any
+
 class SimulationResults():
-    def __init__(self, output_path, model_name, executable_path, std_output):
+    def __init__(self, output_path: Any, model_name: str, executable_path:str, std_output:str):
         self.output_path = output_path
         self.model_name = model_name
         self.executable = executable_path

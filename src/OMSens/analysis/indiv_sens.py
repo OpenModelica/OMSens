@@ -4,19 +4,23 @@ import math  # for sqrt
 import os  # for os.path
 import re  # regular expressions
 import unicodedata  # slugifying file names
+from typing import Any
 
 import pandas  # dataframes
+import numpy as np # arrays
 
 import filesystem.files_aux as files_aux
 import plotting.plot_heatmap as heatmap_f
 import modelica_interface.build_model as build_model
+from modelica_interface.compiled_model import CompiledModelicaModel
+from running.simulation_run_info import SimulationResults, PerturbedParameterInfo
 import running.simulation_run_info as simu_run_info
 
 logger = logging.getLogger("--ParameterSensAnalysis--")  # this modules logger
 
 
 class ParametersIsolatedPerturbator():
-    def __init__(self, model_name, model_file_path, start_time, stop_time, parameters, perc_perturb, build_folder_path):
+    def __init__(self, model_name:str, model_file_path:str, start_time:float, stop_time:float, parameters: list[str], perc_perturb: int, build_folder_path: str):
         # Save args
         self.model_name = model_name
         self.model_file_path = model_file_path
@@ -33,7 +37,7 @@ class ParametersIsolatedPerturbator():
         # Calculate the values per param
         self.values_per_param = perturbedValuePerParam(self.params_defaults, self.parameters, self.perc_perturb)
 
-    def runSimulations(self,dest_folder_path):
+    def runSimulations(self,dest_folder_path:str):
         # Make folder for runs
         runs_folder_name = "runs"
         runs_folder_path = os.path.join(dest_folder_path, runs_folder_name)
@@ -74,29 +78,24 @@ class ParametersIsolatedPerturbator():
                                                                       runs_per_parameter)
         return isolated_perturbations_results
 
-
     # Auxs
-    def defaultValuesForParamsToPerturb(self, compiled_model):
+    def defaultValuesForParamsToPerturb(self, compiled_model: CompiledModelicaModel):
         # Using the compiled model, ask for the default value of each one
-        params_defaults = {}
-        for p in self.parameters:
-            p_def_val = compiled_model.defaultParameterValue(p)
-            params_defaults[p] = p_def_val
-        return params_defaults
+        return {p: compiled_model.defaultParameterValue(p) for p in self.parameters}
 
 
 class IsolatedPerturbationsResults():
-    def __init__(self,model_name, std_run, runs_per_parameter):
+    def __init__(self,model_name:str, std_run: SimulationResults, runs_per_parameter:dict[str, "OneParameterPerturbedResults"]):
         self.model_name = model_name
         self.std_run = std_run
         self.runs_per_parameter = runs_per_parameter
 
 class OneParameterPerturbedResults():
-    def __init__(self, simu_results, pert_param_info):
+    def __init__(self, simu_results: SimulationResults, pert_param_info: PerturbedParameterInfo):
         self.simu_results = simu_results
         self.pert_param_info = pert_param_info
 
-def perturbedValuePerParam(params_defaults, parameters, perc_perturb):
+def perturbedValuePerParam(params_defaults: dict[str, float], parameters: list[str], perc_perturb: int):
     value_per_param = {}
     for param_name in parameters:
         # Disaggregate param info
@@ -106,8 +105,8 @@ def perturbedValuePerParam(params_defaults, parameters, perc_perturb):
     return value_per_param
 
 
-def completeIndividualSensAnalysis(isolated_perturbations_results, target_vars, percentage_perturbed, specific_year,
-                                   rms_first_year, rms_last_year, output_folder_analyses_path):
+def completeIndividualSensAnalysis(isolated_perturbations_results: IsolatedPerturbationsResults, target_vars: list[str], percentage_perturbed: int, specific_year: float,
+                                   rms_first_year: float, rms_last_year: float, output_folder_analyses_path:str):
     # Create perturbed runs info list using the dict output form the mos script
     #  TODO: adapt this function when we stop using tuples inside the analyzer in favor of using proper objects to represent the info
     perturbed_csvs_path_and_info_pairs = perturbationAsTuplesFromDict(isolated_perturbations_results)
@@ -154,7 +153,7 @@ def completeIndividualSensAnalysis(isolated_perturbations_results, target_vars, 
     return analysis_results
 
 
-def perturbationAsTuplesFromDict(isolated_perturbations_results):
+def perturbationAsTuplesFromDict(isolated_perturbations_results: IsolatedPerturbationsResults):
     runs_per_parameter = isolated_perturbations_results.runs_per_parameter
     perturbed_csvs_path_and_info_pairs = []
     for param_name in runs_per_parameter:
@@ -170,8 +169,8 @@ def perturbationAsTuplesFromDict(isolated_perturbations_results):
     return perturbed_csvs_path_and_info_pairs
 
 
-def generateSensMatricesPerMethod(rms_first_year, rms_last_year,
-                                  sens_to_params_per_var):
+def generateSensMatricesPerMethod(rms_first_year: float, rms_last_year: float,
+                                  sens_to_params_per_var: dict[str,dict]):
     methods_records_dict = generateMatrixRecordsForEachSensitivityMethod(rms_first_year, rms_last_year,
                                                                          sens_to_params_per_var)
     df_rel_matrix_trans, df_rms_matrix_trans = methodsDataframesFromRecordsDict(methods_records_dict)
@@ -182,7 +181,7 @@ def generateSensMatricesPerMethod(rms_first_year, rms_last_year,
     }
     return sens_matrices_dfs_dict
 
-def makeFolderForMethodsHeatmapFiles(output_folder_analyses_path):
+def makeFolderForMethodsHeatmapFiles(output_folder_analyses_path: str):
     # Create folder for matrices per method
     sens_matrices_folder_name = "heatmaps"
     sens_matrices_folder_path = os.path.join(output_folder_analyses_path, sens_matrices_folder_name)
@@ -190,7 +189,7 @@ def makeFolderForMethodsHeatmapFiles(output_folder_analyses_path):
     return sens_matrices_folder_path
 
 
-def generateMatrixRecordsForEachSensitivityMethod(rms_first_year, rms_last_year, sens_to_params_per_var):
+def generateMatrixRecordsForEachSensitivityMethod(rms_first_year: float, rms_last_year: float, sens_to_params_per_var: dict[str, dict]):
     # Initialize the dict that will have the records (rows of the matrix) for each method
     methods_records_dict = {"Rel": [], "RMS": []}
     # Generate the records (row of the matrix) from the sensitivities of the params vs vars
@@ -203,7 +202,7 @@ def generateMatrixRecordsForEachSensitivityMethod(rms_first_year, rms_last_year,
     return methods_records_dict
 
 
-def methodsRecordsForVariable(rms_first_year, rms_last_year, sens_to_params_per_var, var_name):
+def methodsRecordsForVariable(rms_first_year: float, rms_last_year: float, sens_to_params_per_var: dict[str, dict[str, Any]], var_name: str):
     # Get the sens info associated with this variable
     params_sens_to_var = sens_to_params_per_var[var_name]
     # Initialize the records for this variable. Each record corresponds to a variable and has information of its
@@ -217,8 +216,8 @@ def methodsRecordsForVariable(rms_first_year, rms_last_year, sens_to_params_per_
     return rel_method_record, rms_method_record
 
 
-def addParamsMethodsValsToVarsRecords(param_name, params_sens_to_var, rel_method_record, rms_first_year, rms_last_year,
-                                      rms_method_record):
+def addParamsMethodsValsToVarsRecords(param_name: str, params_sens_to_var: dict[str, dict[str, Any]], rel_method_record: dict[str,str], rms_first_year: float, rms_last_year: float,
+                                      rms_method_record: dict[str,str]):
     var_vs_param_sens = params_sens_to_var[param_name]
     # Get relative method info
     rel_method_val = var_vs_param_sens["(new-std)/std"]
@@ -230,7 +229,7 @@ def addParamsMethodsValsToVarsRecords(param_name, params_sens_to_var, rel_method
     rms_method_record[param_name] = rms_method_val
 
 
-def methodsDataframesFromRecordsDict(methods_records_dict):
+def methodsDataframesFromRecordsDict(methods_records_dict: dict[str, list[dict[str, Any]]]):
     # Generate dataframes from the matrices
     df_rel_matrix = pandas.DataFrame.from_records(methods_records_dict["Rel"], index="parameter/variable")
     df_rms_matrix = pandas.DataFrame.from_records(methods_records_dict["RMS"], index="parameter/variable")
@@ -239,8 +238,8 @@ def methodsDataframesFromRecordsDict(methods_records_dict):
     df_rms_matrix_trans = df_rms_matrix.transpose()
     return df_rel_matrix_trans, df_rms_matrix_trans
 
-def sensitivitiesInformationPathsPerVariable(output_folder_analyses_path, percentage_perturbed, rms_first_year,
-                                             rms_last_year, sens_to_params_per_var, specific_year, target_vars):
+def sensitivitiesInformationPathsPerVariable(output_folder_analyses_path: str, percentage_perturbed: int, rms_first_year: float,
+                                             rms_last_year: float, sens_to_params_per_var: dict[str, dict[str, Any]], specific_year: float, target_vars: list[str]):
     # Create folder for complete sensitivity info per var
     vars_sens_info_folder_name = "vars_sens_info"
     vars_sens_info_folder_path = os.path.join(output_folder_analyses_path, vars_sens_info_folder_name)
@@ -253,8 +252,8 @@ def sensitivitiesInformationPathsPerVariable(output_folder_analyses_path, percen
     return vars_sens_infos_paths
 
 
-def analysisPerParamPerturbedForEachVar(isolated_perturbations_results, percentage_perturbed, rms_first_year,
-                                        rms_last_year, specific_year, target_vars):
+def analysisPerParamPerturbedForEachVar(isolated_perturbations_results: IsolatedPerturbationsResults, percentage_perturbed: int, rms_first_year: float,
+                                        rms_last_year: float, specific_year: float, target_vars: list[str]):
     # Initialize dict with rows for each variable. Each row will correspond to the values of said variable for a
     #   respective run from each respective parameter perturbed
     sens_to_params_per_var = {var_name: {} for var_name in target_vars}
@@ -270,8 +269,8 @@ def analysisPerParamPerturbedForEachVar(isolated_perturbations_results, percenta
     return sens_to_params_per_var
 
 
-def analyzeParamResultsForEachVar(df_std_run, pert_run_info, percentage_perturbed, rms_first_year,
-                                  rms_last_year, specific_year, target_vars, sens_to_params_per_var):
+def analyzeParamResultsForEachVar(df_std_run: pandas.DataFrame, pert_run_info: OneParameterPerturbedResults, percentage_perturbed: int, rms_first_year: float,
+                                  rms_last_year: float, specific_year: float, target_vars: list[str], sens_to_params_per_var: dict[str, dict[str, Any]]):
     # Read perturbed parameter csv
     param_csv_path = pert_run_info.simu_results.output_path
     df_param_perturbed = pandas.read_csv(param_csv_path, index_col=0)
@@ -286,9 +285,9 @@ def analyzeParamResultsForEachVar(df_std_run, pert_run_info, percentage_perturbe
                                             rms_last_year, specific_year, target_var, sens_to_params_per_var)
 
 
-def analyzeVarFromPerturbedParamResults(df_param_perturbed, df_std_run, param_csv_path, param_default, param_name,
-                                        param_new_value, percentage_perturbed, rms_first_year, rms_last_year,
-                                        specific_year, target_var, sens_to_params_per_var):
+def analyzeVarFromPerturbedParamResults(df_param_perturbed: pandas.DataFrame, df_std_run: pandas.DataFrame, param_csv_path: str, param_default: float, param_name: str,
+                                        param_new_value:float, percentage_perturbed: int, rms_first_year: float, rms_last_year: float,
+                                        specific_year: float, target_var: str, sens_to_params_per_var: dict[str, dict[str, Any]]):
     var_analysis_dict = varAnalysisForPerturbedParam(df_std_run, df_param_perturbed, target_var, specific_year,
                                                      rms_first_year, rms_last_year)
     sens_file_row_dict = rowDictFromParamVarSensAnal(param_name, param_default, param_new_value,
@@ -300,8 +299,8 @@ def analyzeVarFromPerturbedParamResults(df_param_perturbed, df_std_run, param_cs
     var_sens_per_param[param_name] = sens_file_row_dict
 
 
-def writeRunInfosAndReturnThePaths(output_folder_analyses_path, percentage_perturbed, rms_first_year, rms_last_year,
-                                   specific_year, target_vars, sens_to_params_per_var):
+def writeRunInfosAndReturnThePaths(output_folder_analyses_path: str, percentage_perturbed: int, rms_first_year: float, rms_last_year: float,
+                                   specific_year: float, target_vars: list[str], sens_to_params_per_var: dict[str, dict[str, Any]]):
     run_infos_paths = {}
     # Set the columns order of the sensitivity analysis csv
     columns_order = varSensAnalysisInfodefaultColsOrder(percentage_perturbed, specific_year, rms_first_year,
@@ -317,7 +316,7 @@ def writeRunInfosAndReturnThePaths(output_folder_analyses_path, percentage_pertu
     return run_infos_paths
 
 
-def slugify(value):
+def slugify(value: str):
     """
     Normalizes string, converts to lowercase, removes non-alpha characters,
     and converts spaces to hyphens.
@@ -328,28 +327,58 @@ def slugify(value):
     return value
 
 
-def rootMeanSquareForVar(df_std_run, df_param_perturbed, rms_first_year, rms_last_year, target_var):
-    # Get the columns from year to year indicated for std run and perturbed param run
-    col_subyrs_std = df_std_run[target_var].loc[rms_first_year:rms_last_year]
-    col_subyrs_perturbed = df_param_perturbed[target_var].loc[rms_first_year:rms_last_year]
-    # Assert that both columns have the same number of rows
-    raiseErrorIfDifferentLengthsInDFs(df_std_run, df_param_perturbed)
-    # Calculate root mean square from both columns
-    diff = col_subyrs_std - col_subyrs_perturbed
+def rootMeanSquareForVar(df_std_run: pandas.DataFrame, df_param_perturbed: pandas.DataFrame, rms_first_year: float, rms_last_year: float, target_var: str):
+    """
+    Computes the RMS using Numpy Arrays.
+    """
+    t_std = df_std_run.index.to_numpy()
+    y_std = df_std_run[target_var].to_numpy()
+    
+    t_pert = df_param_perturbed.index.to_numpy()
+    y_pert = df_param_perturbed[target_var].to_numpy()
+
+    # time axes need to be sorted, otherwise np.interp will fail silently
+    # given that this should always be the case an assertion makes sense here.
+    # the implementation can handle very large arrays, it shouldn't be a problem here
+    assert np.all(t_std[:-1] <= t_std[1:]) and np.all(t_pert[:-1] <= t_pert[1:]), "Time-Axes are not monotonous"
+
+    # resample perturbed timeseries to unperturbed time-axis so they share the same X-Axis, in case of different samplings
+    y_pert_resampled = np.interp(t_std, t_pert, y_pert)
+
+    # create boolean mask to only consider times inside first_year and last_year
+    mask = (t_std >= rms_first_year) & (t_std <= rms_last_year)
+    
+    diff = y_std[mask] - y_pert_resampled[mask]
     diff_squared = diff ** 2
-    mean_diff_squared = diff_squared.mean()
+    
+    mean_diff_squared = np.mean(diff_squared)
     rms = math.sqrt(mean_diff_squared)
+    
     return rms
 
-def varAnalysisForPerturbedParam(df_std_run, df_param_perturbed, target_var, specific_year, rms_first_year,
-                                 rms_last_year):
-    # Get values for variable from standard run and perturbed run outputs and an specific year
-    var_std_value_for_year = df_std_run[target_var][specific_year]
-    var_new_value_for_year = df_param_perturbed[target_var][specific_year]
+def varAnalysisForPerturbedParam(df_std_run: pandas.DataFrame, df_param_perturbed: pandas.DataFrame, target_var: str, specific_year: float, rms_first_year: float,
+                                 rms_last_year: float):
+    # Get nearest values for variable from standard run and perturbed run outputs and an specific year
+    target_idx = pandas.Index([specific_year])
+    idx_pos_std = int(df_std_run.index.get_indexer(target_idx, method='nearest')[0])
+    var_std_value_for_year = df_std_run[target_var].iloc[idx_pos_std]
+
+    idx_pos_pert = int(df_param_perturbed.index.get_indexer(target_idx, method='nearest')[0])
+    var_new_value_for_year = df_param_perturbed[target_var].iloc[idx_pos_pert]
+    
     # Calculate sensitivity methods for an specific year
-    std_div_new = var_std_value_for_year / var_new_value_for_year
-    perturbation_proportion = (var_new_value_for_year - var_std_value_for_year) / var_std_value_for_year
+    if var_new_value_for_year == 0:
+         std_div_new = 0
+    else:
+         std_div_new = var_std_value_for_year / var_new_value_for_year
+
+    if var_std_value_for_year == 0:
+        perturbation_proportion = 0 # avoid ZeroDivisionError
+    else:
+        perturbation_proportion = (var_new_value_for_year - var_std_value_for_year) / var_std_value_for_year
+    
     perturbation_proportion_abs = abs(perturbation_proportion)
+    
     # Calculate sensitivity methods for the whole run
     rootMeanSquare = rootMeanSquareForVar(df_std_run, df_param_perturbed, rms_first_year, rms_last_year, target_var)
 
@@ -364,7 +393,7 @@ def varAnalysisForPerturbedParam(df_std_run, df_param_perturbed, target_var, spe
     return var_analysis_dict
 
 
-def varSensAnalysisInfodefaultColsOrder(percentage_perturbed, specific_year, rms_first_year, rms_last_year):
+def varSensAnalysisInfodefaultColsOrder(percentage_perturbed: int, specific_year: float, rms_first_year: float, rms_last_year: float):
     columns_order = [
         "parameter",
         "parameter_default",
@@ -380,7 +409,7 @@ def varSensAnalysisInfodefaultColsOrder(percentage_perturbed, specific_year, rms
     return columns_order
 
 
-def dataFrameWithSensAnalysisForVar(sens_to_params_per_var, target_var, columns_order):
+def dataFrameWithSensAnalysisForVar(sens_to_params_per_var: dict[str, dict[str, Any]], target_var: str, columns_order: list[str]):
     # Get sensitivities corresponding to this variable
     var_sens_per_param = sens_to_params_per_var[target_var]
     # Make records from the sens to be used in the dataframe
@@ -391,15 +420,15 @@ def dataFrameWithSensAnalysisForVar(sens_to_params_per_var, target_var, columns_
     df_run_info = df_run_info.sort_values(by="ABS((new-std)/std)", ascending=False)
     return df_run_info
 
-def dfPathFromFolderPathAndVarName(output_folder_analyses_path, target_var):
+def dfPathFromFolderPathAndVarName(output_folder_analyses_path: str, target_var: str):
     var_name_slugified = slugify(target_var)
     var_sens_csv_file_name = "sens_{0}.csv".format(var_name_slugified)
     output_analysis_path = os.path.join(output_folder_analyses_path, var_sens_csv_file_name)
     return output_analysis_path
 
 
-def rowDictFromParamVarSensAnal(param_name, param_default, param_new_value, percentage_perturbed, specific_year,
-                                rms_first_year, rms_last_year, var_analysis_dict, param_csv_path):
+def rowDictFromParamVarSensAnal(param_name: str, param_default: float, param_new_value:float, percentage_perturbed: int, specific_year: float,
+                                rms_first_year: float, rms_last_year: float, var_analysis_dict: dict[str, Any], param_csv_path: str):
     sens_file_row_dict = {
         "parameter": param_name,
         "parameter_default": param_default,
@@ -415,7 +444,7 @@ def rowDictFromParamVarSensAnal(param_name, param_default, param_new_value, perc
     return sens_file_row_dict
 
 
-def raiseErrorIfDifferentLengthsInDFs(df_1, df_2):
+def raiseErrorIfDifferentLengthsInDFs(df_1: pandas.DataFrame, df_2: pandas.DataFrame):
     # Get both dfs shapes
     nrows_1, ncols_1 = df_1.shape
     nrows_2, ncols_2 = df_2.shape
