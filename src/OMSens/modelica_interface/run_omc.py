@@ -5,13 +5,20 @@ import logging #en reemplazo de los prints
 logger = logging.getLogger("--Run OMC--") #un logger especifico para este modulo
 #Mine
 import settings.gral_settings as gral_settings
+import settings.om_home as om_home
 import filesystem.files_aux
 
 def interpreterForCurrentPlatform():
     if platform.system() == "Linux":
         interpreter = gral_settings._interpreter_linux
     elif platform.system() == "Windows":
-        interpreter = gral_settings._interpreter_windows
+        # OPENMODELICAHOME is the default one of the installed OpenModelica versions. Without it, or if
+        # that version was uninstalled, use the newest installed version and then the omc on the PATH.
+        omhome = om_home.findOMHome()
+        if omhome:
+            interpreter = gral_settings._interpreter_windows_omhome.format(omhome=omhome.rstrip("\\/"))
+        else:
+            interpreter = gral_settings._interpreter_linux
     else:
         logger.error("This script was tested only on Windows and Linux. The omc interpreter for another platform has not been set")
     return interpreter
