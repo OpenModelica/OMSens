@@ -4,7 +4,8 @@ omc_creation_settings_filename = "omc_creation_settings.txt"
 omc_run_log_filename = "omc_run_log.txt"
 readme_filename = "readme.txt"
 
-_interpreter_windows = "\"%OPENMODELICAHOME%\\bin\\omc\""
+# the omc of the installation directory {omhome}, see settings/om_home.py
+_interpreter_windows_omhome = "\"{omhome}\\bin\\omc\""
 _interpreter_linux = "omc"
 
 

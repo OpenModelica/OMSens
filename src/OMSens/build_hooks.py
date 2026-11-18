@@ -43,6 +43,15 @@ FPY_FILES = ["curvif_simplified.pyf", "Curvif_simplified.f90"]
 # Directory where Fortran sources live
 FORTRAN_DIR = Path(__file__).parent / "fortran_interface"
 
+def load_om_home():
+    """Load settings/om_home.py from its file, the package is not importable while it is built."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("om_home", Path(__file__).parent / "settings" / "om_home.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 class CustomBuildPy(_build_py):
     """Custom build_py to compile Fortran and f2py into the source package folder."""
 
@@ -55,8 +64,9 @@ class CustomBuildPy(_build_py):
             omc_dir = Path(omc_executable).parent
             omhome = omc_dir.parent
         else:
-            # Fallback to environment variable
-            omhome = subprocess.os.environ.get("OPENMODELICAHOME")
+            # Fallback to the environment variables: OPENMODELICAHOME, or the newest of the versions that
+            # the Windows installer registers as OPENMODELICAHOME_<version>
+            omhome = load_om_home().findOMHome()
             if not omhome:
                 raise RuntimeError("Failed to find OPENMODELICAHOME (searched for environment variable as well as the omc executable).")
 
